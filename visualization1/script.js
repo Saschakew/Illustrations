@@ -42,6 +42,18 @@ function generateNewData() {
   epsilon1 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
   epsilon2 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
 
+   // Normalize epsilon1
+   const mean1 = epsilon1.reduce((acc, val) => acc + val, 0) / T;
+   const centered1 = epsilon1.map(val => val - mean1);
+   const stdDev1 = Math.sqrt(centered1.reduce((acc, val) => acc + val * val, 0) / T);
+   epsilon1 = centered1.map(val => val / stdDev1);
+ 
+   // Normalize epsilon2
+   const mean2 = epsilon2.reduce((acc, val) => acc + val, 0) / T;
+   const centered2 = epsilon2.map(val => val - mean2);
+   const stdDev2 = Math.sqrt(centered2.reduce((acc, val) => acc + val * val, 0) / (T));
+   epsilon2 = centered2.map(val => val / stdDev2);
+   
   updateChart(chart1, epsilon1, epsilon2, "Structural Shocks (Uniform)", "ε₁", "ε₂");
   updateChartWithPhi();
 }
@@ -52,6 +64,9 @@ function updateChartWithPhi() {
   // Calculate u1 and u2 using the current phi value
   const u1 = epsilon1.map((e1, i) => e1 * Math.cos(phi) - epsilon2[i] * Math.sin(phi));
   const u2 = epsilon1.map((e1, i) => e1 * Math.sin(phi) + epsilon2[i] * Math.cos(phi));
+
+ 
+
 
   updateChart(chart2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
 
