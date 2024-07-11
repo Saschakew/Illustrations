@@ -25,7 +25,7 @@ function updateBMatrix(phi) {
 
   const matrixHtml = `
   $$
-  B(${phi.toFixed(2)}) = \\begin{bmatrix} 
+  B( \\phi_0 = ${phi.toFixed(2)}) = \\begin{bmatrix} 
   ${cosPhiFixed} & ${-sinPhiFixed} \\\\ 
   ${sinPhiFixed} & ${cosPhiFixed} 
   \\end{bmatrix}
@@ -47,7 +47,7 @@ function generateNewData() {
 }
 
 function updateChartWithPhi() {
-  const phi = parseFloat(document.getElementById('phi').value);
+  const phi = parseFloat(document.getElementById('phi0').value);
 
   // Calculate u1 and u2 using the current phi value
   const u1 = epsilon1.map((e1, i) => e1 * Math.cos(phi) - epsilon2[i] * Math.sin(phi));
@@ -225,9 +225,9 @@ function mean(arr) {
   return arr.reduce((a, b) => a + b) / arr.length;
 }
 
-document.getElementById('phi').addEventListener('input', function() {
+document.getElementById('phi0').addEventListener('input', function() {
   const phiValue = parseFloat(this.value);
-  document.getElementById('phiValue').textContent = phiValue.toFixed(2);
+  document.getElementById('phi0Value').textContent = phiValue.toFixed(2);
   updateBMatrix(phiValue);
   updateChartWithPhi();
 });
@@ -290,6 +290,10 @@ window.onload = function() {
 
   chart1 = new Chart(ctx1, JSON.parse(JSON.stringify(chartConfig)));
   chart2 = new Chart(ctx2, JSON.parse(JSON.stringify(chartConfig)));
+
+    // Get the initial phi0 value and update the B matrix
+    const initialPhi = parseFloat(document.getElementById('phi0').value);
+    updateBMatrix(initialPhi);
 
   generateNewData();
   updateBMatrix(parseFloat(document.getElementById('phi').value));
