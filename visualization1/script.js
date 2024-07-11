@@ -1,5 +1,12 @@
 let chart1, chart2;
 let epsilon1, epsilon2;
+document.getElementById('menu-toggle').addEventListener('click', function() {
+  const navMenu = document.querySelector('nav ul');
+  navMenu.classList.toggle('expanded');
+});
+
+
+ 
 
   document.querySelectorAll('nav ul li a').forEach(link => {
     link.addEventListener('click', function(e) {
@@ -19,13 +26,29 @@ let epsilon1, epsilon2;
   });
 
 
+  function updateB0Matrix(phi) {
+    const cosPhiFixed = Math.cos(phi).toFixed(4);
+    const sinPhiFixed = Math.sin(phi).toFixed(4);
+  
+    const matrixHtml = `
+    $$
+    B( \\phi_0 = ${phi.toFixed(2)}) = \\begin{bmatrix} 
+    ${cosPhiFixed} & ${-sinPhiFixed} \\\\ 
+    ${sinPhiFixed} & ${cosPhiFixed} 
+    \\end{bmatrix}
+    $$`;
+  
+    document.getElementById('current-B0').innerHTML = matrixHtml;
+    MathJax.typeset();
+  }
+
 function updateBMatrix(phi) {
   const cosPhiFixed = Math.cos(phi).toFixed(4);
   const sinPhiFixed = Math.sin(phi).toFixed(4);
 
   const matrixHtml = `
   $$
-  B( \\phi_0 = ${phi.toFixed(2)}) = \\begin{bmatrix} 
+  B( \\phi = ${phi.toFixed(2)}) = \\begin{bmatrix} 
   ${cosPhiFixed} & ${-sinPhiFixed} \\\\ 
   ${sinPhiFixed} & ${cosPhiFixed} 
   \\end{bmatrix}
@@ -64,9 +87,6 @@ function updateChartWithPhi() {
   // Calculate u1 and u2 using the current phi value
   const u1 = epsilon1.map((e1, i) => e1 * Math.cos(phi) - epsilon2[i] * Math.sin(phi));
   const u2 = epsilon1.map((e1, i) => e1 * Math.sin(phi) + epsilon2[i] * Math.cos(phi));
-
- 
-
 
   updateChart(chart2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
 
@@ -241,8 +261,15 @@ function mean(arr) {
 }
 
 document.getElementById('phi0').addEventListener('input', function() {
+  const phiValue0 = parseFloat(this.value);
+  document.getElementById('phi0Value').textContent = phiValue0.toFixed(2);
+  updateB0Matrix(phiValue0);
+  updateChartWithPhi();
+});
+
+document.getElementById('phi').addEventListener('input', function() {
   const phiValue = parseFloat(this.value);
-  document.getElementById('phi0Value').textContent = phiValue.toFixed(2);
+  document.getElementById('phiValue').textContent = phiValue.toFixed(2);
   updateBMatrix(phiValue);
   updateChartWithPhi();
 });
@@ -307,10 +334,16 @@ window.onload = function() {
   chart2 = new Chart(ctx2, JSON.parse(JSON.stringify(chartConfig)));
 
     // Get the initial phi0 value and update the B matrix
-    const initialPhi = parseFloat(document.getElementById('phi0').value);
+    const initialPhi0 = parseFloat(document.getElementById('phi0').value);
+    updateB0Matrix(initialPhi0);
+
+    // Get the initial phi0 value and update the B matrix
+    const initialPhi = parseFloat(document.getElementById('phi').value);
     updateBMatrix(initialPhi);
 
   generateNewData();
+  updateB0Matrix(parseFloat(document.getElementById('phi0').value));
   updateBMatrix(parseFloat(document.getElementById('phi').value));
+
   MathJax.typeset();
 };

@@ -14,18 +14,20 @@
     <h1>Interactive Dashboard</h1>
   </header>
 
-  <main> 
+  <main>
+    <div class="menu-bar">
+      <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+    </div>
     <nav>
       <ul>
-      <li><a href="index.html">Setup</a></li>
-      <li><a href="page2.html" class="active">Reduced Form Shocks</a></li>
-      <li><a href="page3.html">Identification Problem</a></li>
-      <li><a href="page4.html">Minimize Dependencies</a></li>
-      <li><a href="page5.html">Maximize non-Gaussianity</a></li>
-      <li><a href="page6.html">Impact of non-Gaussianity</a></li>
+        <li><a href="index.html" >Setup</a></li>
+        <li><a href="page2.html" class="active">Reduced Form Shocks</a></li>
+        <li><a href="page3.html">Identification Problem</a></li>
+        <li><a href="page4.html">Non-Gaussian Estimation 1</a></li>
+        <li><a href="page5.html">Non-Gaussian Estimation 2</a></li>
+        <li><a href="page6.html">Impact of non-Gaussianity</a></li>
       </ul>
-      </nav>
-
+    </nav> 
 
     
     <section class="input-container">
@@ -34,11 +36,14 @@
       <label for="phi0">$$\phi_0=$$</label>
       <input type="range" id="phi0" value="0.5" min="0" max="0.78" step="0.01">
       <span id="phi0Value" style="margin-right: 10px;">0.50</span> 
+      <input type="hidden" id="phi" value="0.5" > 
       <button onclick="generateNewData()">Generate new data</button>
     </section>
 
     <section id="formula-container">
-      <div>$$ u_t = B(\phi_0) \epsilon_t \quad \text{ where } \quad B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$$</div>
+      <div>$$ u_t = B(\phi) \epsilon_t \quad \text{ where } \quad B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$$</div>
+      <div id="current-B0"></div>
+      <div>$$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  $$</div>
       <div id="current-B"></div>
     </section>
 

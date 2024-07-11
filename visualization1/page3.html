@@ -15,6 +15,9 @@
   </header>
 
   <main> 
+    <div class="menu-bar">
+      <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+    </div>
     <nav>
       <ul>
       <li><a href="index.html">Setup</a></li>
@@ -42,6 +45,8 @@
 
     <section id="formula-container">
       <div>$$ u_t = B(\phi) \epsilon_t \quad \text{ where } \quad B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$$</div>
+      <div id="current-B0"></div>
+      <div>$$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  $$</div>
       <div id="current-B"></div>
     </section>
 

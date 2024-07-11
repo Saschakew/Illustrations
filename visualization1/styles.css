@@ -1,124 +1,116 @@
 body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #f4f4f9;
-  }
-  .container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    flex-wrap: wrap;
-  }
-  .chart-container {
-    width: 25%;
-    margin: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  .input-container {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 00px;
-    background-color: #fff;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  input[type="number"], input[type="range"] {
-    margin: 0 10px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #0056b3;
-  }
-  .stats-container {
-    flex: 1;
-    min-width: 45%;
-  }
-  .stats-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-  }
-  .stats-table th, .stats-table td {
-    padding: 8px;
-    text-align: right;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  .stats-table th {
-    font-weight: bold;
-    text-align: left;
-    background-color: #f8f8f8;
-  }
-  .stats-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  .stats-table tr:last-child td {
-    border-bottom: none;
-  }
-  .stats-table .measure {
-    text-align: left;
-    font-weight: bold;
-  }
-  .stats-table .formula {
-    text-align: left;
-    font-style: italic;
-  }
-  #formula-container {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 1.2em;
-  }
-  .stats-tables-container {
-    display: flex;
-    flex-direction: column; /* Stack children vertically */
-    justify-content: space-between;
-    width: 100%;
-    gap: 20px;
-  }
-
-.stats-container {
-flex: 1;
-min-width: 45%;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f4f9;
 }
-
-
-
-
-
-
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.chart-container {
+  width: 25%;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.input-container {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 00px;
+  background-color: #fff;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+input[type="number"], input[type="range"] {
+  margin: 0 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #0056b3;
+}
+.stats-container {
+  flex: 1;
+  min-width: 45%;
+}
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+.stats-table th, .stats-table td {
+  padding: 8px;
+  text-align: right;
+  border-bottom: 1px solid #e0e0e0;
+}
+.stats-table th {
+  font-weight: bold;
+  text-align: left;
+  background-color: #f8f8f8;
+}
+.stats-table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+.stats-table tr:last-child td {
+  border-bottom: none;
+}
+.stats-table .measure {
+  text-align: left;
+  font-weight: bold;
+}
+.stats-table .formula {
+  text-align: left;
+  font-style: italic;
+}
+#formula-container {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2em;
+}
+.stats-tables-container {
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+.stats-container {
+  flex: 1;
+  min-width: 45%;
+}
 nav {
   display: flex;
   justify-content: center; /* Center the menu items */
   width: 100%; /* Ensure nav takes full width */
 }
-
 nav ul {
   list-style-type: none;
   padding: 0;
@@ -139,11 +131,68 @@ nav ul li a {
   text-decoration: none;
 } 
 nav ul li a.active {
-    font-weight: bold; 
+  font-weight: bold; 
 }
 .page {
   display: none; /* Hide all pages by default */
 }
 .active {
   display: block; /* Show the active page */
+}
+
+/* Hide the menu toggle button on larger screens */
+#menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+/* Add background color to the space behind the button on full width */
+.menu-bar {
+  display: none; /* Hide by default */
+  width: 100%;
+  background-color: #ffa500; /* Add background color */
+  display: flex;
+  justify-content: flex-start; /* Align button to the left */
+  align-items: center;
+}
+
+/* Show the menu toggle button on small screens */
+@media (max-width: 768px) {
+  #menu-toggle {
+    display: block;
+    background-color: #ffa500; /* Add background color */
+    color: #1c1c1c; /* Add text color */
+    padding: 10px; /* Add padding */
+    border-radius: 4px; /* Add border radius */
+    margin-bottom: 10px; /* Add margin below the button */
+  }
+
+  .menu-bar {
+    display: flex; /* Show the menu bar on small screens */
+  }
+
+  nav ul {
+    display: none; /* Hide the menu by default */
+    flex-direction: column; /* Stack menu items vertically */
+    padding: 0; /* Remove padding */
+    margin: 0; /* Remove margin */
+  }
+
+  nav ul.expanded {
+    display: flex; /* Show the menu when expanded */
+  }
+
+  nav ul li {
+    float: none; /* Remove float to stack items vertically */
+    width: 100%; /* Make menu items take full width */
+  }
+
+  nav ul li a {
+    padding: 14px 16px; /* Increase padding */
+    font-size: 1.2em; /* Increase font size */
+    text-align: center; /* Center text */
+  }
 }
