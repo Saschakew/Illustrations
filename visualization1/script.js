@@ -1,46 +1,59 @@
-let chart1, chart2;
-let epsilon1, epsilon2;
+let charts = {};
+let epsilon1, epsilon2, u1, u2;
+
 document.getElementById('menu-toggle').addEventListener('click', function() {
-  const navMenu = document.querySelector('nav ul');
-  navMenu.classList.toggle('expanded');
+  document.querySelector('nav').classList.toggle('expanded');
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+  const inputContainer = document.querySelector('.input-container');
+  const inputContainerTop = inputContainer.offsetTop;
 
- 
-
-  document.querySelectorAll('nav ul li a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      const href = this.getAttribute('href');
-      if (href.startsWith('#')) {
-        e.preventDefault();
-        document.querySelectorAll('.page').forEach(page => {
-          page.style.display = 'none';
-        });
-        const activePage = document.querySelector(href);
-        if (activePage) {
-          activePage.style.display = 'block';
-        }
-      }
-      // If it's not a hash link, let the browser handle navigation
-    });
-  });
-
-
-  function updateB0Matrix(phi) {
-    const cosPhiFixed = Math.cos(phi).toFixed(4);
-    const sinPhiFixed = Math.sin(phi).toFixed(4);
-  
-    const matrixHtml = `
-    $$
-    B( \\phi_0 = ${phi.toFixed(2)}) = \\begin{bmatrix} 
-    ${cosPhiFixed} & ${-sinPhiFixed} \\\\ 
-    ${sinPhiFixed} & ${cosPhiFixed} 
-    \\end{bmatrix}
-    $$`;
-  
-    document.getElementById('current-B0').innerHTML = matrixHtml;
-    MathJax.typeset();
+  function handleScroll() {
+    if (window.pageYOffset > inputContainerTop) {
+      inputContainer.classList.add('sticky');
+      document.body.style.paddingTop = inputContainer.offsetHeight + 'px';
+    } else {
+      inputContainer.classList.remove('sticky');
+      document.body.style.paddingTop = 0;
+    }
   }
+
+  window.addEventListener('scroll', handleScroll);
+});
+
+document.querySelectorAll('nav ul li a').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelectorAll('.page').forEach(page => {
+        page.style.display = 'none';
+      });
+      const activePage = document.querySelector(href);
+      if (activePage) {
+        activePage.style.display = 'block';
+      }
+    }
+    // If it's not a hash link, let the browser handle navigation
+  });
+});
+
+function updateB0Matrix(phi) {
+  const cosPhiFixed = Math.cos(phi).toFixed(4);
+  const sinPhiFixed = Math.sin(phi).toFixed(4);
+
+  const matrixHtml = `
+  $$
+  B( \\phi_0 = ${phi.toFixed(2)}) = \\begin{bmatrix} 
+  ${cosPhiFixed} & ${-sinPhiFixed} \\\\ 
+  ${sinPhiFixed} & ${cosPhiFixed} 
+  \\end{bmatrix}
+  $$`;
+
+  document.getElementById('current-B0').innerHTML = matrixHtml;
+  MathJax.typeset();
+}
 
 function updateBMatrix(phi) {
   const cosPhiFixed = Math.cos(phi).toFixed(4);
@@ -65,35 +78,49 @@ function generateNewData() {
   epsilon1 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
   epsilon2 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
 
-   // Normalize epsilon1
-   const mean1 = epsilon1.reduce((acc, val) => acc + val, 0) / T;
-   const centered1 = epsilon1.map(val => val - mean1);
-   const stdDev1 = Math.sqrt(centered1.reduce((acc, val) => acc + val * val, 0) / T);
-   epsilon1 = centered1.map(val => val / stdDev1);
- 
-   // Normalize epsilon2
-   const mean2 = epsilon2.reduce((acc, val) => acc + val, 0) / T;
-   const centered2 = epsilon2.map(val => val - mean2);
-   const stdDev2 = Math.sqrt(centered2.reduce((acc, val) => acc + val * val, 0) / (T));
-   epsilon2 = centered2.map(val => val / stdDev2);
+  // Normalize epsilon1 and epsilon2
+  epsilon1 = normalizeData(epsilon1);
+  epsilon2 = normalizeData(epsilon2);
    
-  updateChart(chart1, epsilon1, epsilon2, "Structural Shocks (Uniform)", "ε₁", "ε₂");
+  if (charts.scatterPlot1) {
+    updateChart(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks (Uniform)", "ε₁", "ε₂");
+  }
   updateChartWithPhi();
 }
 
+function normalizeData(data) {
+  const mean = data.reduce((a, b) => a + b) / data.length;
+  const centered = data.map(val => val - mean);
+  const stdDev = Math.sqrt(centered.reduce((acc, val) => acc + val * val, 0) / data.length);
+  return centered.map(val => val / stdDev);
+}
+
 function updateChartWithPhi() {
-  const phi = parseFloat(document.getElementById('phi0').value);
+  const phi0 = parseFloat(document.getElementById('phi0').value);
+  const phi = parseFloat(document.getElementById('phi').value);
 
-  // Calculate u1 and u2 using the current phi value
-  const u1 = epsilon1.map((e1, i) => e1 * Math.cos(phi) - epsilon2[i] * Math.sin(phi));
-  const u2 = epsilon1.map((e1, i) => e1 * Math.sin(phi) + epsilon2[i] * Math.cos(phi));
+  // Calculate u1 and u2
+  u1 = epsilon1.map((e1, i) => e1 * Math.cos(phi0) - epsilon2[i] * Math.sin(phi0));
+  u2 = epsilon1.map((e1, i) => e1 * Math.sin(phi0) + epsilon2[i] * Math.cos(phi0));
 
-  updateChart(chart2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+  if (charts.scatterPlot2) {
+    updateChart(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+  }
 
-  calculateStats(epsilon1, epsilon2, u1, u2);
+  // Calculate e1 and e2
+  const e1 = u1.map((u1, i) => u1 * Math.cos(phi) + u2[i] * Math.sin(phi));
+  const e2 = u1.map((u1, i) => -u1 * Math.sin(phi) + u2[i] * Math.cos(phi));
+
+  if (charts.scatterPlot3) {
+    updateChart(charts.scatterPlot3, e1, e2, "Transformed Shocks", "e₁", "e₂", true);
+  }
+
+  calculateStats(epsilon1, epsilon2, u1, u2, e1, e2);
 }
 
 function updateChart(chart, xData, yData, title, xLabel, yLabel, animate = false) {
+  if (!chart) return;  // Exit if the chart doesn't exist
+
   const newData = xData.map((x, i) => ({x: x, y: yData[i]}));
 
   chart.data.datasets[0].data = newData;
@@ -115,146 +142,147 @@ function updateChart(chart, xData, yData, title, xLabel, yLabel, animate = false
   chart.update();
 }
 
-function calculateStats(epsilon1, epsilon2, u1, u2) {
+function calculateStats(epsilon1, epsilon2, u1, u2, e1, e2) {
   const stats = {
-    epsilon: {
-      covariance: mean(epsilon1.map((e1, i) => e1 * epsilon2[i])),
-      coskewness1: mean(epsilon1.map((e1, i) => e1 * e1 * epsilon2[i])),
-      coskewness2: mean(epsilon1.map((e1, i) => e1 * epsilon2[i] * epsilon2[i])),
-      cokurtosis1: mean(epsilon1.map((e1, i) => e1 * e1 * e1 * epsilon2[i])),
-      cokurtosis2: mean(epsilon1.map((e1, i) => e1 * epsilon2[i] * epsilon2[i] * epsilon2[i])),
-      cokurtosis3: mean(epsilon1.map((e1, i) => e1 * e1 * epsilon2[i] * epsilon2[i])) - 1
-    },
-    u: {
-      covariance: mean(u1.map((u1, i) => u1 * u2[i])),
-      coskewness1: mean(u1.map((u1, i) => u1 * u1 * u2[i])),
-      coskewness2: mean(u1.map((u1, i) => u1 * u2[i] * u2[i])),
-      cokurtosis1: mean(u1.map((u1, i) => u1 * u1 * u1 * u2[i])),
-      cokurtosis2: mean(u1.map((u1, i) => u1 * u2[i] * u2[i] * u2[i])),
-      cokurtosis3: mean(u1.map((u1, i) => u1 * u1 * u2[i] * u2[i])) - 1
-    },
-    epsilon_additional: {
-      mean1: mean(epsilon1),
-      mean2: mean(epsilon2),
-      mean_squared1: mean(epsilon1.map(e => e * e)),
-      mean_squared2: mean(epsilon2.map(e => e * e)),
-      mean_cubed1: mean(epsilon1.map(e => e * e * e)),
-      mean_cubed2: mean(epsilon2.map(e => e * e * e)),
-      mean_fourth1: mean(epsilon1.map(e => e * e * e * e)),
-      mean_fourth2: mean(epsilon2.map(e => e * e * e * e))
-    },
-    u_additional: {
-      mean1: mean(u1),
-      mean2: mean(u2),
-      mean_squared1: mean(u1.map(u => u * u)),
-      mean_squared2: mean(u2.map(u => u * u)),
-      mean_cubed1: mean(u1.map(u => u * u * u)),
-      mean_cubed2: mean(u2.map(u => u * u * u)),
-      mean_fourth1: mean(u1.map(u => u * u * u * u)),
-      mean_fourth2: mean(u2.map(u => u * u * u * u))
+    epsilon: calculateMoments(epsilon1, epsilon2),
+    u: calculateMoments(u1, u2),
+    e: calculateMoments(e1, e2),
+    epsilon_additional: calculateAdditionalStats(epsilon1, epsilon2),
+    u_additional: calculateAdditionalStats(u1, u2),
+    e_additional: calculateAdditionalStats(e1, e2)
+  };
+
+  updateStatsDisplay(stats);
+}
+
+function calculateMoments(data1, data2) {
+  return {
+    covariance: mean(data1.map((d1, i) => d1 * data2[i])),
+    coskewness1: mean(data1.map((d1, i) => d1 * d1 * data2[i])),
+    coskewness2: mean(data1.map((d1, i) => d1 * data2[i] * data2[i])),
+    cokurtosis1: mean(data1.map((d1, i) => d1 * d1 * d1 * data2[i])),
+    cokurtosis2: mean(data1.map((d1, i) => d1 * data2[i] * data2[i] * data2[i])),
+    cokurtosis3: mean(data1.map((d1, i) => d1 * d1 * data2[i] * data2[i])) - 1
+  };
+}
+
+function calculateAdditionalStats(data1, data2) {
+  return {
+    mean1: mean(data1),
+    mean2: mean(data2),
+    mean_squared1: mean(data1.map(d => d * d)),
+    mean_squared2: mean(data2.map(d => d * d)),
+    mean_cubed1: mean(data1.map(d => d * d * d)),
+    mean_cubed2: mean(data2.map(d => d * d * d)),
+    mean_fourth1: mean(data1.map(d => d * d * d * d)),
+    mean_fourth2: mean(data2.map(d => d * d * d * d))
+  };
+}
+
+function updateStatsDisplay(stats) {
+  const updateStatsTable = (elementId, data, title, symbol) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.innerHTML = createTable(data, title, symbol);
     }
   };
 
-  const createAdditionalTable = (data, title, symbol) => `
-    <h3>${title}</h3>
-    <table class="stats-table">
-    <tr>
-    <th> </th>
-    <th>Formula</th>
-    <th>$$i=1$$</th>
-    <th>$$i=2$$</th>
-    </tr>
-    <tr>
-    <td class="measure">Mean</td>
-    <td class="formula">mean(${symbol}ᵢ)</td>
-    <td>${data.mean1.toFixed(4)}</td>
-    <td>${data.mean2.toFixed(4)}</td>
-    </tr>
-    <tr>
-    <td class="measure">Mean Squared</td>
-    <td class="formula">mean(${symbol}ᵢ²)</td>
-    <td>${data.mean_squared1.toFixed(4)}</td>
-    <td>${data.mean_squared2.toFixed(4)}</td>
-    </tr>
-    <tr>
-    <td class="measure">Mean Cubed</td>
-    <td class="formula">mean(${symbol}ᵢ³)</td>
-    <td>${data.mean_cubed1.toFixed(4)}</td>
-    <td>${data.mean_cubed2.toFixed(4)}</td>
-    </tr>
-    <tr>
-    <td class="measure">Mean Fourth</td>
-    <td class="formula">mean(${symbol}ᵢ⁴)</td>
-    <td>${data.mean_fourth1.toFixed(4)}</td>
-    <td>${data.mean_fourth2.toFixed(4)}</td>
-    </tr>
-    </table>
-    `;
+  const updateAdditionalStatsTable = (elementId, data, title, symbol) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.innerHTML = createAdditionalTable(data, title, symbol);
+    }
+  };
 
-  const createTable = (data, title, symbol) => `
-  <h3>${title} co-moments</h3>
-  <table class="stats-table">
-  <tr>
-  <th> </th>
-  <th>Formula</th>
-  <th>Value</th>
-  </tr>
-  <tr>
-  <td class="measure">Covariance</td>
-  <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
-  <td>${data.covariance.toFixed(4)}</td>
-  </tr>
-  <tr>
-  <td class="measure">Coskewness 1</td>
-  <td class="formula">mean(${symbol}₁² * ${symbol}₂)</td>
-  <td>${data.coskewness1.toFixed(4)}</td>
-  </tr>
-  <tr>
-  <td class="measure">Coskewness 2</td>
-  <td class="formula">mean(${symbol}₁ * ${symbol}₂²)</td>
-  <td>${data.coskewness2.toFixed(4)}</td>
-  </tr>
-  <tr>
-  <td class="measure">Cokurtosis 1</td>
-  <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
-  <td>${data.cokurtosis1.toFixed(4)}</td>
-  </tr>
-  <tr>
-  <td class="measure">Cokurtosis 2</td>
-  <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
-  <td>${data.cokurtosis2.toFixed(4)}</td>
-  </tr>
-  <tr>
-  <td class="measure">Cokurtosis 3</td>
-  <td class="formula">mean(${symbol}₁² * ${symbol}₂²) - 1</td>
-  <td>${data.cokurtosis3.toFixed(4)}</td>
-  </tr>
-  </table>
-  `;
+  updateStatsTable('stats-epsilon', stats.epsilon, "ε co-moments", "ε");
+  updateStatsTable('stats-u', stats.u, "u co-moments", "u");
+  updateStatsTable('stats-e', stats.e, "e co-moments", "e");
 
-  // Update elements only if they exist
-  const statsEpsilon = document.getElementById('stats-epsilon');
-  if (statsEpsilon) {
-    statsEpsilon.innerHTML = createTable(stats.epsilon, "ε", "ε");
-  }
-
-  const statsU = document.getElementById('stats-u');
-  if (statsU) {
-    statsU.innerHTML = createTable(stats.u, "u", "u");
-  }
-
-  const statsEpsilonAdditional = document.getElementById('stats-epsilon-additional');
-  if (statsEpsilonAdditional) {
-    statsEpsilonAdditional.innerHTML = createAdditionalTable(stats.epsilon_additional, "ε moments", "ε");
-  }
-
-  const statsUAdditional = document.getElementById('stats-u-additional');
-  if (statsUAdditional) {
-    statsUAdditional.innerHTML = createAdditionalTable(stats.u_additional, "u moments", "u");
-  }
+  updateAdditionalStatsTable('stats-epsilon-additional', stats.epsilon_additional, "ε moments", "ε");
+  updateAdditionalStatsTable('stats-u-additional', stats.u_additional, "u moments", "u");
+  updateAdditionalStatsTable('stats-e-additional', stats.e_additional, "e moments", "e");
 }
 
+function createTable(data, title, symbol) {
+  return `
+  <h3>${title}</h3>
+  <table class="stats-table">
+    <tr>
+      <th> </th>
+      <th>Formula</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td class="measure">Covariance</td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
+      <td>${data.covariance.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Coskewness 1</td>
+      <td class="formula">mean(${symbol}₁² * ${symbol}₂)</td>
+      <td>${data.coskewness1.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Coskewness 2</td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂²)</td>
+      <td>${data.coskewness2.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Cokurtosis 1</td>
+      <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
+      <td>${data.cokurtosis1.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Cokurtosis 2</td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
+      <td>${data.cokurtosis2.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Cokurtosis 3</td>
+      <td class="formula">mean(${symbol}₁² * ${symbol}₂²) - 1</td>
+      <td>${data.cokurtosis3.toFixed(4)}</td>
+    </tr>
+  </table>
+  `;
+}
 
+function createAdditionalTable(data, title, symbol) {
+  return `
+  <h3>${title}</h3>
+  <table class="stats-table">
+    <tr>
+      <th> </th>
+      <th>Formula</th>
+      <th>$i=1$</th>
+      <th>$i=2$</th>
+    </tr>
+    <tr>
+      <td class="measure">Mean</td>
+      <td class="formula">mean(${symbol}ᵢ)</td>
+      <td>${data.mean1.toFixed(4)}</td>
+      <td>${data.mean2.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Mean Squared</td>
+      <td class="formula">mean(${symbol}ᵢ²)</td>
+      <td>${data.mean_squared1.toFixed(4)}</td>
+      <td>${data.mean_squared2.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Mean Cubed</td>
+      <td class="formula">mean(${symbol}ᵢ³)</td>
+      <td>${data.mean_cubed1.toFixed(4)}</td>
+      <td>${data.mean_cubed2.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Mean Fourth</td>
+      <td class="formula">mean(${symbol}ᵢ⁴)</td>
+      <td>${data.mean_fourth1.toFixed(4)}</td>
+      <td>${data.mean_fourth2.toFixed(4)}</td>
+    </tr>
+  </table>
+  `;
+}
 
 function mean(arr) {
   return arr.reduce((a, b) => a + b) / arr.length;
@@ -267,83 +295,96 @@ document.getElementById('phi0').addEventListener('input', function() {
   updateChartWithPhi();
 });
 
-document.getElementById('phi').addEventListener('input', function() {
-  const phiValue = parseFloat(this.value);
-  document.getElementById('phiValue').textContent = phiValue.toFixed(2);
-  updateBMatrix(phiValue);
-  updateChartWithPhi();
-});
+const phiElement = document.getElementById('phi');
+if (phiElement) {
+  phiElement.addEventListener('input', function() {
+    const phiValue = parseFloat(this.value);
+    document.getElementById('phiValue').textContent = phiValue.toFixed(2);
+    updateBMatrix(phiValue);
+    updateChartWithPhi();   
+  });
+}
 
 document.getElementById('T').addEventListener('input', function() {
   generateNewData();
 });
 
 window.onload = function() {
-  const ctx1 = document.getElementById('scatterPlot1').getContext('2d');
-  const ctx2 = document.getElementById('scatterPlot2').getContext('2d');
-
   const chartConfig = {
-  type: 'scatter',
-  data: {
-    datasets: [{
-      label: 'Data',
-      data: [],
-      backgroundColor: 'rgba(255, 165, 0, 0.6)'
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: true,
-    aspectRatio: 1,
-    plugins: {
-      title: {
-        display: true,
-        text: '',
-        font: {
-          size: 18 // Increase font size for the title
-        }
-      },
-      legend: {
-        display: false // Disable the legend
-      }
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Data',
+        data: [],
+        backgroundColor: 'rgba(255, 165, 0, 0.6)'
+      }]
     },
-    scales: {
-      x: {
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 1,
+      plugins: {
         title: {
           display: true,
           text: '',
           font: {
-            size: 16 // Increase font size for the x-axis label
+            size: 18
           }
+        },
+        legend: {
+          display: false
         }
       },
-      y: {
-        title: {
-          display: true,
-          text: '',
-          font: {
-            size: 16 // Increase font size for the y-axis label
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: '',
+            font: {
+              size: 16
+            }
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: '',
+            font: {
+              size: 16
+            }
           }
         }
       }
     }
+  };
+
+  function createChartIfExists(id) {
+    const element = document.getElementById(id);
+    if (element) {
+      const ctx = element.getContext('2d');
+      charts[id] = new Chart(ctx, JSON.parse(JSON.stringify(chartConfig)));
+    }
   }
-};
 
-  chart1 = new Chart(ctx1, JSON.parse(JSON.stringify(chartConfig)));
-  chart2 = new Chart(ctx2, JSON.parse(JSON.stringify(chartConfig)));
+  createChartIfExists('scatterPlot1');
+  createChartIfExists('scatterPlot2');
+  createChartIfExists('scatterPlot3');
 
-    // Get the initial phi0 value and update the B matrix
-    const initialPhi0 = parseFloat(document.getElementById('phi0').value);
-    updateB0Matrix(initialPhi0);
+  const initialPhi0 = parseFloat(document.getElementById('phi0').value);
+  updateB0Matrix(initialPhi0);
 
-    // Get the initial phi0 value and update the B matrix
-    const initialPhi = parseFloat(document.getElementById('phi').value);
+  const phiElement = document.getElementById('phi');
+  if (phiElement) {
+    const initialPhi = parseFloat(phiElement.value);
     updateBMatrix(initialPhi);
+  }
 
   generateNewData();
   updateB0Matrix(parseFloat(document.getElementById('phi0').value));
-  updateBMatrix(parseFloat(document.getElementById('phi').value));
+
+  if (phiElement) {
+    updateBMatrix(parseFloat(phiElement.value));
+  }
 
   MathJax.typeset();
 };

@@ -14,6 +14,7 @@ body {
   flex-wrap: wrap;
 }
 .chart-container {
+  min-width: 300px;  /* Adjust this value as needed */
   width: 25%;
   margin: 10px;
   display: flex;
@@ -28,13 +29,26 @@ body {
   margin-bottom: 20px;
   display: flex;
   align-items: center;
-  gap: 00px;
+  gap: 10px;
   background-color: #fff;
   justify-content: center;
   align-items: center;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: calc(100% - 40px); /* Subtract padding from width */
+  max-width: 1200px; /* Or whatever maximum width you prefer */
+  box-sizing: border-box;
+}
+
+.input-container.sticky {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom when sticky */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 input[type="number"], input[type="range"] {
   margin: 0 10px;
@@ -53,6 +67,44 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+.T-input {
+  width: 50px; /* Adjust this value to make it as small as you need */
+  margin-left: 0; /* Remove left margin */
+  padding: 5px;
+  font-size: 14px; /* Adjust font size if needed */
+}   
+label[for="T"] {
+  margin-right: 0;
+  padding-right: 0;
+}
+
+input#T.T-input {
+  margin-left: 0;
+  padding-left: 0;
+}
+label[for="phi"] {
+  margin-right: 0;
+  padding-right: 0;
+}
+input#phi {
+  margin-left: 0;
+  padding-left: 0;
+}
+label[for="phi0"] {
+  margin-right: 0;
+  padding-right: 0;
+}
+input#phi0 {
+  margin-left: 0;
+  padding-left: 0;
+}
+/* To ensure consistency with other inputs, you might want to add: */
+input[type="number"] {
+  margin: 0 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+} 
 .stats-container {
   flex: 1;
   min-width: 45%;
@@ -107,29 +159,29 @@ button:hover {
   min-width: 45%;
 }
 nav {
-  display: flex;
-  justify-content: center; /* Center the menu items */
-  width: 100%; /* Ensure nav takes full width */
+  width: 100%;
+  background-color: #ffa500;
 }
+
 nav ul {
   list-style-type: none;
   padding: 0;
-  background-color: #ffa500;
-  overflow: hidden;
   margin: 0;
-  width: 100%; /* Make the list items take full width */
-  text-align: center; /* Center the text inside the list items */
+  display: flex;
+  justify-content: center;
 }
+
 nav ul li {
-  float: left;
+  margin: 0;
 }
+
 nav ul li a {
   display: block;
   color: #1c1c1c;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-} 
+}
 nav ul li a.active {
   font-weight: bold; 
 }
@@ -163,36 +215,49 @@ nav ul li a.active {
 @media (max-width: 768px) {
   #menu-toggle {
     display: block;
-    background-color: #ffa500; /* Add background color */
-    color: #1c1c1c; /* Add text color */
-    padding: 10px; /* Add padding */
-    border-radius: 4px; /* Add border radius */
-    margin-bottom: 10px; /* Add margin below the button */
+    background-color: #ffa500;
+    color: #1c1c1c;
+    padding: 10px;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
   }
 
   .menu-bar {
-    display: flex; /* Show the menu bar on small screens */
+    display: flex;
+    width: 100%;
+    background-color: #ffa500;
+    justify-content: flex-start;
+    align-items: center;
   }
 
-  nav ul {
-    display: none; /* Hide the menu by default */
-    flex-direction: column; /* Stack menu items vertically */
-    padding: 0; /* Remove padding */
-    margin: 0; /* Remove margin */
+  nav {
+    display: none;
   }
 
-  nav ul.expanded {
-    display: flex; /* Show the menu when expanded */
+  nav.expanded {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(255, 165, 0, 0.9);
+    z-index: 1000;
+  }
+
+  nav.expanded ul {
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   nav ul li {
-    float: none; /* Remove float to stack items vertically */
-    width: 100%; /* Make menu items take full width */
+    margin: 10px 0;
   }
 
   nav ul li a {
-    padding: 14px 16px; /* Increase padding */
-    font-size: 1.2em; /* Increase font size */
-    text-align: center; /* Center text */
+    font-size: 1.5em;
   }
 }
