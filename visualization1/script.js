@@ -1,22 +1,22 @@
 let chart1, chart2;
 let epsilon1, epsilon2;
 
-   document.querySelectorAll('nav ul li a').forEach(link => {
-     link.addEventListener('click', function(e) {
-       const href = this.getAttribute('href');
-       if (href.startsWith('#')) {
-         e.preventDefault();
-         document.querySelectorAll('.page').forEach(page => {
-           page.style.display = 'none';
-         });
-         const activePage = document.querySelector(href);
-         if (activePage) {
-           activePage.style.display = 'block';
-         }
-       }
-       // If it's not a hash link, let the browser handle navigation
-     });
-   });
+  document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href.startsWith('#')) {
+        e.preventDefault();
+        document.querySelectorAll('.page').forEach(page => {
+          page.style.display = 'none';
+        });
+        const activePage = document.querySelector(href);
+        if (activePage) {
+          activePage.style.display = 'block';
+        }
+      }
+      // If it's not a hash link, let the browser handle navigation
+    });
+  });
 
 
 function updateBMatrix(phi) {
@@ -120,8 +120,7 @@ function calculateStats(epsilon1, epsilon2, u1, u2) {
     }
   };
 
-  function createAdditionalTable(data, title, symbol) {
-    return `
+  const createAdditionalTable = (data, title, symbol) => `
     <h3>${title}</h3>
     <table class="stats-table">
     <tr>
@@ -156,7 +155,6 @@ function calculateStats(epsilon1, epsilon2, u1, u2) {
     </tr>
     </table>
     `;
-  }
 
   const createTable = (data, title, symbol) => `
   <h3>${title} co-moments</h3>
@@ -199,11 +197,29 @@ function calculateStats(epsilon1, epsilon2, u1, u2) {
   </table>
   `;
 
-  document.getElementById('stats-epsilon').innerHTML = createTable(stats.epsilon, "ε", "ε");
-  document.getElementById('stats-u').innerHTML = createTable(stats.u, "u", "u");
-  document.getElementById('stats-epsilon-additional').innerHTML = createAdditionalTable(stats.epsilon_additional, "ε moments", "ε");
-  document.getElementById('stats-u-additional').innerHTML = createAdditionalTable(stats.u_additional, "u moments", "u");
+  // Update elements only if they exist
+  const statsEpsilon = document.getElementById('stats-epsilon');
+  if (statsEpsilon) {
+    statsEpsilon.innerHTML = createTable(stats.epsilon, "ε", "ε");
+  }
+
+  const statsU = document.getElementById('stats-u');
+  if (statsU) {
+    statsU.innerHTML = createTable(stats.u, "u", "u");
+  }
+
+  const statsEpsilonAdditional = document.getElementById('stats-epsilon-additional');
+  if (statsEpsilonAdditional) {
+    statsEpsilonAdditional.innerHTML = createAdditionalTable(stats.epsilon_additional, "ε moments", "ε");
+  }
+
+  const statsUAdditional = document.getElementById('stats-u-additional');
+  if (statsUAdditional) {
+    statsUAdditional.innerHTML = createAdditionalTable(stats.u_additional, "u moments", "u");
+  }
 }
+
+
 
 function mean(arr) {
   return arr.reduce((a, b) => a + b) / arr.length;
