@@ -32,7 +32,7 @@
     
     <section class="input-container">
       <label for="T">T = </label>
-      <input type="number" id="T" value="1000" min="10" max="1000">
+      <input type="number" id="T" value="1000" min="10" max="2000">
       <label for="phi0">$$\phi_0=$$</label>
       <input type="range" id="phi0" value="0.5" min="0" max="0.78" step="0.01">
       <span id="phi0Value" style="margin-right: 10px;">0.50</span> 
@@ -43,8 +43,7 @@
     <section id="formula-container">
       <div>$$ u_t = B(\phi) \epsilon_t \quad \text{ where } \quad B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$$</div>
       <div id="current-B0"></div>
-      <div>$$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  $$</div>
-      <div id="current-B"></div>
+      <div id="current-B" style="display: none;"></div>
     </section>
 
     <div class="container">
