@@ -200,8 +200,8 @@ function calculateStats(epsilon1, epsilon2, u1, u2) {
   `;
 
   document.getElementById('stats-epsilon').innerHTML = createTable(stats.epsilon, "ε", "ε");
-  document.getElementById('stats-epsilon-additional').innerHTML = createAdditionalTable(stats.epsilon_additional, "ε moments", "ε");
   document.getElementById('stats-u').innerHTML = createTable(stats.u, "u", "u");
+  document.getElementById('stats-epsilon-additional').innerHTML = createAdditionalTable(stats.epsilon_additional, "ε moments", "ε");
   document.getElementById('stats-u-additional').innerHTML = createAdditionalTable(stats.u_additional, "u moments", "u");
 }
 
