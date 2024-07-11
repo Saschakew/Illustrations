@@ -122,7 +122,7 @@ nav {
 nav ul {
   list-style-type: none;
   padding: 0;
-  background-color: #333;
+  background-color: #ffa500;
   overflow: hidden;
   margin: 0;
   width: 100%; /* Make the list items take full width */
@@ -133,13 +133,13 @@ nav ul li {
 }
 nav ul li a {
   display: block;
-  color: white;
+  color: #1c1c1c;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-}
-nav ul li a:hover {
-  background-color: #111;
+} 
+nav ul li a.active {
+    font-weight: bold; 
 }
 .page {
   display: none; /* Hide all pages by default */

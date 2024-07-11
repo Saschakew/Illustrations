@@ -230,7 +230,7 @@ window.onload = function() {
     datasets: [{
       label: 'Data',
       data: [],
-      backgroundColor: 'rgba(75, 192, 192, 0.6)'
+      backgroundColor: 'rgba(255, 165, 0, 0.6)'
     }]
   },
   options: {
