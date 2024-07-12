@@ -14,9 +14,7 @@ body {
   flex-wrap: wrap;
 }
 .chart-container {
-  min-width: 300px;  /* Adjust this value as needed */
-  width: 25%;
-  margin: 10px;
+  min-width: 250px;  /* Adjust this value as needed */ 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,6 +22,7 @@ body {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
 }
 .input-container {
   margin-bottom: 20px;
@@ -32,11 +31,10 @@ body {
   gap: 10px;
   background-color: #fff;
   justify-content: center;
-  align-items: center;
-  padding: 15px;
+  align-items: center; 
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: calc(100% - 40px); /* Subtract padding from width */
+  width: calc(100% ); /* Subtract padding from width */
   max-width: 1200px; /* Or whatever maximum width you prefer */
   box-sizing: border-box;
 }
@@ -48,7 +46,8 @@ body {
   transform: translateX(-50%);
   z-index: 1000;
   border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom when sticky */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);  
+  width: calc(100% - 40px); /* Subtract padding from width */
 }
 input[type="number"], input[type="range"] {
   margin: 0 10px;
