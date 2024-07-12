@@ -7,16 +7,21 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize UI elements
   initializeUI();
   
+  // Initialize charts (creates empty chart objects)
+  initializeCharts();
+  
   // Set up event listeners
   setupEventListeners();
   
-  // Initialize charts
-  initializeCharts();
-  
-  // Generate initial data and update displays
+  // Generate initial data
   generateNewData();
+  
+  // Update B0 and B matrices
   updateB0Matrix(parseFloat(document.getElementById('phi0').value));
   updateBMatrix(parseFloat(document.getElementById('phi').value));
+  
+  // Update all charts with the generated data
+  updateAllCharts();
   
   // Typeset MathJax elements
   MathJax.typeset();
@@ -80,8 +85,10 @@ function setupEventListeners() {
       document.getElementById('phiValue').textContent = phiValue.toFixed(2);
       updateBMatrix(phiValue);
       updateChartWithPhi();   
+      updateLossPlot();  // Add this line
     });
   }
+ 
 
   document.getElementById('T').addEventListener('input', function() {
     generateNewData();
@@ -128,6 +135,7 @@ function initializeCharts() {
         }
       }
     }
+    
   };
 
   function createChartIfExists(id) {
@@ -141,7 +149,149 @@ function initializeCharts() {
   createChartIfExists('scatterPlot1');
   createChartIfExists('scatterPlot2');
   createChartIfExists('scatterPlot3');
+
+  const lossplot4Element = document.getElementById('lossplot4');
+  if (lossplot4Element) {
+    const ctx = lossplot4Element.getContext('2d');
+    charts.lossplot4 = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Loss',
+          data: [],
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }, {
+          label: 'Current φ',
+          data: [],
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgb(255, 99, 132)',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          showLine: false
+        }, {
+          label: 'φ₀',
+          data: [],
+          borderColor: 'rgb(255, 206, 86)',
+          backgroundColor: 'rgb(255, 206, 86)',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          showLine: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Loss Plot'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'φ'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Loss'
+            }
+          }
+        }
+      }
+    });
+    console.log('lossplot4 chart created');
+  } else {
+    console.log('lossplot4 element not found');
+  }
+  updateLossPlot() 
 }
+
+function updateAllCharts() {
+  if (charts.scatterPlot1) {
+    updateChart(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks (Uniform)", "ε₁", "ε₂");
+  }
+  updateChartWithPhi();
+  updateLossPlot();
+}
+
+function updateLossPlot() {
+  if (charts && charts.lossplot4 && u1 && u2) {
+    const currentPhi = parseFloat(document.getElementById('phi').value);
+    const phi0 = parseFloat(document.getElementById('phi0').value);
+    const xValues = Array.from({length: 79}, (_, i) => i * 0.01);
+    const yValues = xValues.map(x => myloss(u1, u2, x));
+
+    charts.lossplot4.data.labels = xValues.map(x => x.toFixed(2));
+    charts.lossplot4.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
+
+    // Update the current phi point
+    const currentLoss = myloss(u1, u2, currentPhi);
+    charts.lossplot4.data.datasets[1].data = [{
+      x: currentPhi,
+      y: currentLoss
+    }];
+
+    // Update the phi0 point
+    const phi0Loss = myloss(u1, u2, phi0);
+    charts.lossplot4.data.datasets[2].data = [{
+      x: phi0,
+      y: phi0Loss
+    }];
+
+    charts.lossplot4.options.scales.x = {
+      type: 'linear',
+      position: 'bottom',
+      title: {
+        display: true,
+        text: 'φ'
+      },
+      min: 0,
+      max: 0.78,
+      ticks: {
+        callback: function(value) {
+          return value.toFixed(2);
+        },
+        maxTicksLimit: 10
+      }
+    };
+    
+    charts.lossplot4.options.scales.y = {
+      title: {
+        display: true,
+        text: 'Loss'
+      }
+    };
+
+    charts.lossplot4.update();
+
+    // Update the loss value displays
+    const lossValueElement = document.getElementById('current-loss-value');
+    if (lossValueElement) {
+      lossValueElement.textContent = currentLoss.toFixed(4);
+    }
+    const phi0LossValueElement = document.getElementById('phi0-loss-value');
+    if (phi0LossValueElement) {
+      phi0LossValueElement.textContent = phi0Loss.toFixed(4);
+    }
+  }
+}
+
+function myloss(u1,u2,x) {
+  const e1tmp = u1.map((u1, i) => u1 * Math.cos(x) + u2[i] * Math.sin(x));
+  const e2tmp = u1.map((u1, i) => -u1 * Math.sin(x) + u2[i] * Math.cos(x));
+
+  const out = calculateMoments(e1tmp, e2tmp).loss
+
+  return out;
+}
+ 
 
 // Data Generation and Chart Updates
 function generateNewData() {
@@ -155,10 +305,7 @@ function generateNewData() {
   epsilon1 = normalizeData(epsilon1);
   epsilon2 = normalizeData(epsilon2);
    
-  if (charts.scatterPlot1) {
-    updateChart(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks (Uniform)", "ε₁", "ε₂");
-  }
-  updateChartWithPhi();
+  updateAllCharts();
 }
 
 function updateChartWithPhi() {
@@ -254,35 +401,66 @@ function calculateStats(epsilon1, epsilon2, u1, u2, e1, e2) {
     e: calculateMoments(e1, e2),
     epsilon_additional: calculateAdditionalStats(epsilon1, epsilon2),
     u_additional: calculateAdditionalStats(u1, u2),
-    e_additional: calculateAdditionalStats(e1, e2)
+    e_additional: calculateAdditionalStats(e1, e2) 
   };
 
   updateStatsDisplay(stats);
 }
 
 function calculateMoments(data1, data2) {
+  if (!Array.isArray(data1) || !Array.isArray(data2) || data1.length !== data2.length || data1.length === 0) {
+    throw new Error("Input must be non-empty arrays of equal length");
+  }
+
+  const n = data1.length;
+  
+  // Helper function to calculate mean
+  const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
+
+  // Calculate basic moments
+  const covariance = mean(data1.map((d1, i) => d1 * data2[i]));
+  const coskewness1 = mean(data1.map((d1, i) => d1 * d1 * data2[i]));
+  const coskewness2 = mean(data1.map((d1, i) => d1 * data2[i] * data2[i]));
+  const cokurtosis1 = mean(data1.map((d1, i) => d1 * d1 * d1 * data2[i]));
+  const cokurtosis2 = mean(data1.map((d1, i) => d1 * data2[i] * data2[i] * data2[i]));
+  const cokurtosis3 = mean(data1.map((d1, i) => d1 * d1 * data2[i] * data2[i]))-1;
+
   return {
-    covariance: mean(data1.map((d1, i) => d1 * data2[i])),
-    coskewness1: mean(data1.map((d1, i) => d1 * d1 * data2[i])),
-    coskewness2: mean(data1.map((d1, i) => d1 * data2[i] * data2[i])),
-    cokurtosis1: mean(data1.map((d1, i) => d1 * d1 * d1 * data2[i])),
-    cokurtosis2: mean(data1.map((d1, i) => d1 * data2[i] * data2[i] * data2[i])),
-    cokurtosis3: mean(data1.map((d1, i) => d1 * d1 * data2[i] * data2[i])) - 1
+    covariance,
+    coskewness1,
+    coskewness2,
+    cokurtosis1,
+    cokurtosis2,
+    cokurtosis3,
+    loss: Math.pow(cokurtosis1, 2) + Math.pow(cokurtosis2, 2) + Math.pow(cokurtosis3, 2)
   };
 }
 
+
+
 function calculateAdditionalStats(data1, data2) {
+  mean1 = mean(data1)
+  mean2 = mean(data2)
+  mean_squared1 = mean(data1.map(d => d * d))
+  mean_squared2= mean(data2.map(d => d * d))
+  mean_cubed1= mean(data1.map(d => d * d * d))
+  mean_cubed2= mean(data2.map(d => d * d * d))
+  mean_fourth1= mean(data1.map(d => d * d * d * d))
+  mean_fourth2= mean(data2.map(d => d * d * d * d))-3
   return {
-    mean1: mean(data1),
-    mean2: mean(data2),
-    mean_squared1: mean(data1.map(d => d * d)),
-    mean_squared2: mean(data2.map(d => d * d)),
-    mean_cubed1: mean(data1.map(d => d * d * d)),
-    mean_cubed2: mean(data2.map(d => d * d * d)),
-    mean_fourth1: mean(data1.map(d => d * d * d * d)),
-    mean_fourth2: mean(data2.map(d => d * d * d * d))
+    mean1,
+    mean2,
+    mean_squared1,
+    mean_squared2,
+    mean_cubed1,
+    mean_cubed2,
+    mean_fourth1,
+    mean_fourth2,
+    loss: Math.pow(mean_fourth1, 2) + Math.pow(mean_fourth2, 2)
   };
 }
+
+ 
 
 // Stats Display Updates
 function updateStatsDisplay(stats) {
@@ -322,17 +500,7 @@ function createTable(data, title, symbol) {
       <td class="measure">Covariance</td>
       <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
       <td>${data.covariance.toFixed(4)}</td>
-    </tr>
-    <tr>
-      <td class="measure">Coskewness 1</td>
-      <td class="formula">mean(${symbol}₁² * ${symbol}₂)</td>
-      <td>${data.coskewness1.toFixed(4)}</td>
-    </tr>
-    <tr>
-      <td class="measure">Coskewness 2</td>
-      <td class="formula">mean(${symbol}₁ * ${symbol}₂²)</td>
-      <td>${data.coskewness2.toFixed(4)}</td>
-    </tr>
+    </tr> 
     <tr>
       <td class="measure">Cokurtosis 1</td>
       <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
@@ -348,6 +516,11 @@ function createTable(data, title, symbol) {
       <td class="formula">mean(${symbol}₁² * ${symbol}₂²) - 1</td>
       <td>${data.cokurtosis3.toFixed(4)}</td>
     </tr>
+    <tr>
+      <td class="measure">Loss</td>
+      <td class="formula">...</td>
+      <td>${data.loss.toFixed(4)}</td>
+    </tr>
   </table>
   `;
 }
@@ -361,30 +534,24 @@ function createAdditionalTable(data, title, symbol) {
       <th>Formula</th>
       <th>$i=1$</th>
       <th>$i=2$</th>
-    </tr>
+    </tr> 
     <tr>
-      <td class="measure">Mean</td>
-      <td class="formula">mean(${symbol}ᵢ)</td>
-      <td>${data.mean1.toFixed(4)}</td>
-      <td>${data.mean2.toFixed(4)}</td>
-    </tr>
-    <tr>
-      <td class="measure">Mean Squared</td>
+      <td class="measure">Variance</td>
       <td class="formula">mean(${symbol}ᵢ²)</td>
       <td>${data.mean_squared1.toFixed(4)}</td>
       <td>${data.mean_squared2.toFixed(4)}</td>
-    </tr>
+    </tr> 
     <tr>
-      <td class="measure">Mean Cubed</td>
-      <td class="formula">mean(${symbol}ᵢ³)</td>
-      <td>${data.mean_cubed1.toFixed(4)}</td>
-      <td>${data.mean_cubed2.toFixed(4)}</td>
-    </tr>
-    <tr>
-      <td class="measure">Mean Fourth</td>
-      <td class="formula">mean(${symbol}ᵢ⁴)</td>
+      <td class="measure">Excess Kurtosis</td>
+      <td class="formula">mean(${symbol}ᵢ⁴)-3</td>
       <td>${data.mean_fourth1.toFixed(4)}</td>
       <td>${data.mean_fourth2.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Loss</td>
+      <td class="formula">...</td>
+      <td>${data.loss.toFixed(4)}</td>
+      <td> </td>
     </tr>
   </table>
   `;

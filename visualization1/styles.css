@@ -7,22 +7,23 @@ body {
   align-items: center;
   background-color: #f4f4f9;
 }
+main {
+  width: calc(100% - 40px);
+  max-width: 1200px;
+}
 .container {
   display: flex;
   justify-content: center;
   width: 100%;
   flex-wrap: wrap;
+  padding: 0px;
 }
 .chart-container {
-  min-width: 250px;  /* Adjust this value as needed */ 
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+  margin-bottom: 20px; 
 }
 .input-container {
   margin-bottom: 20px;
@@ -31,12 +32,10 @@ body {
   gap: 10px;
   background-color: #fff;
   justify-content: center;
-  align-items: center; 
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  width: calc(100% ); /* Subtract padding from width */
-  max-width: 1200px; /* Or whatever maximum width you prefer */
+  align-items: center;  
+  width: calc(100% ); /* Subtract padding from width */ 
   box-sizing: border-box;
+  border: 1px solid #ffa500; 
 }
 
 .input-container.sticky {
@@ -44,10 +43,9 @@ body {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
-  border-radius: 0 0 8px 8px; /* Rounded corners only at the bottom when sticky */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);  
-  width: calc(100% - 40px); /* Subtract padding from width */
+  z-index: 1000; 
+    width: calc(100% - 80px); /* Subtract padding from width */
+  max-width: 1200px;
 }
 input[type="number"], input[type="range"] {
   margin: 0 10px;
@@ -106,7 +104,6 @@ input[type="number"] {
 } 
 .stats-container {
   flex: 1;
-  min-width: 45%;
 }
 .stats-table {
   width: 100%;
@@ -139,9 +136,14 @@ input[type="number"] {
 }
 #formula-container {
   background-color: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 15px; 
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2em;
+}
+.text-container {
+  background-color: #fff;
+  padding: 15px; 
   margin-bottom: 20px;
   text-align: center;
   font-size: 1.2em;
@@ -151,12 +153,8 @@ input[type="number"] {
   flex-direction: column; /* Stack children vertically */
   justify-content: space-between;
   width: 100%;
-  gap: 20px;
-}
-.stats-container {
-  flex: 1;
-  min-width: 45%;
-}
+  gap: 20px;1
+} 
 nav {
   width: 100%;
   background-color: #ffa500;
@@ -212,6 +210,11 @@ nav ul li a.active {
 
 /* Show the menu toggle button on small screens */
 @media (max-width: 768px) {
+  .chart-container {
+     width: 100%  !important; 
+     margin: 0px  !important;  
+  }
+  
   #menu-toggle {
     display: block;
     background-color: #ffa500;
@@ -221,6 +224,7 @@ nav ul li a.active {
     font-size: 1.5em;
     cursor: pointer;
   }
+
 
   .menu-bar {
     display: flex;
