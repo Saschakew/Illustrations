@@ -30,16 +30,23 @@
     </nav>
 
     
-      <section class="input-container">
+    <section class="input-container">
+      <div>
         <label for="T">T =</label>
-        <input type="number" id="T" class="T-input" value="1000" min="10" max="2000">
-        <label for="phi0" style="margin-right: 10px;">$$\phi_0=0.5$$</label>
-        <input type="hidden" id="phi0" value="0.5" > 
-        <label for="phi">$$\phi=$$</label>
-        <input type="range" id="phi" value="0.5" min="0" max="0.78" step="0.01">
-        <span id="phiValue" style="margin-right: 10px;">0.50</span>
-        <button onclick="generateNewData()">New data</button>
-      </section>
+        <input type="number" id="T" class="T-input" value="100" min="10" max="999">
+      </div>
+      <div>
+        <label for="phi0">φ₀ = 0.5</label>
+        <input type="hidden" id="phi0" value="0.5" min="0" max="1" step="0.1">
+      </div>
+      <div>
+        <label for="phi">φ =</label>
+        <input type="range" id="phi" min="0" max="0.78" step="0.01" value="0.5">
+      
+        <div id="phiValue">0.50</div>
+      </div>
+      <button id="newDataBtn" class="orange-button">New data</button>
+    </section>
 
       <section id="formula-container">
         <div>$$ u_t = B(\phi) \epsilon_t \quad \text{ where } \quad B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$$</div>
@@ -74,10 +81,9 @@
           <div id="stats-e" class="stats-container"></div> 
         </div>
       </section>
-      
-  
-
     </div>
+
+
   </main>
 
   <script src="main.js"></script>

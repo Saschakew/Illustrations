@@ -86,6 +86,7 @@ function setupEventListeners() {
       updateBMatrix(phiValue);
       updateChartWithPhi();   
       updateLossPlot();  // Add this line
+      updateLossPlotm();  // Add this line
     });
   }
  
@@ -93,8 +94,21 @@ function setupEventListeners() {
   document.getElementById('T').addEventListener('input', function() {
     generateNewData();
   });
+
+  
+  const rollBallButtonPage4 = document.querySelector('body.page4 #rollBallButton');
+  if (rollBallButtonPage4) {
+    rollBallButtonPage4.addEventListener('click', () => animateBallRolling('min'));
+  }
+
+  const rollBallButtonPage5 = document.querySelector('body.page5 #rollBallButton');
+  if (rollBallButtonPage5) {
+    rollBallButtonPage5.addEventListener('click', () => animateBallRolling('max'));
+  }
 }
 
+
+ 
 // Chart Initialization
 function initializeCharts() {
   const chartConfig = {
@@ -211,6 +225,69 @@ function initializeCharts() {
     console.log('lossplot4 element not found');
   }
   updateLossPlot() 
+
+
+  const lossplot4mElement = document.getElementById('lossplot4m');
+  if (lossplot4mElement) {
+    const ctx = lossplot4mElement.getContext('2d');
+    charts.lossplot4m = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Loss',
+          data: [],
+          borderColor: 'rgb(75, 192, 192)',
+          tension: 0.1
+        }, {
+          label: 'Current φ',
+          data: [],
+          borderColor: 'rgb(255, 99, 132)',
+          backgroundColor: 'rgb(255, 99, 132)',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          showLine: false
+        }, {
+          label: 'φ₀',
+          data: [],
+          borderColor: 'rgb(255, 206, 86)',
+          backgroundColor: 'rgb(255, 206, 86)',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          showLine: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Loss Plot'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'φ'
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Loss'
+            }
+          }
+        }
+      }
+    });
+    console.log('lossplot4 chart created');
+  } else {
+    console.log('lossplot4 element not found');
+  }
+  updateLossPlotm() 
 }
 
 function updateAllCharts() {
@@ -219,7 +296,68 @@ function updateAllCharts() {
   }
   updateChartWithPhi();
   updateLossPlot();
+  updateLossPlotm();
 }
+
+function animateBallRolling(lossType) {
+  const currentPhi = parseFloat(document.getElementById('phi').value);
+  let x = currentPhi;
+  const maxLearningRate = 15;
+  const fps = 60;
+  const duration = 5000; // 5 seconds
+  const frames = duration / (1000 / fps);
+  let frame = 0;
+
+  function easeInQuad(t) {
+    return t * t;
+  }
+
+  function animate() {
+    if (frame < frames) {
+      const progress = frame / frames;
+      const currentLearningRate = maxLearningRate * easeInQuad(progress);
+
+      const currentLoss = lossType === 'min' ? myloss(u1, u2, x) : mylossm(u1, u2, x);
+      const gradientStep = 0.0001;
+      const nextLoss = lossType === 'min' ? myloss(u1, u2, x + gradientStep) : mylossm(u1, u2, x + gradientStep);
+      const gradient = (nextLoss - currentLoss) / gradientStep;
+      
+      // Change the sign of the gradient for maximization (page 5)
+      const direction = lossType === 'min' ? -1 : 1;
+      const newX = x + direction * currentLearningRate * gradient;
+      x = Math.max(0, Math.min(newX, 0.78));
+
+      const newLoss = lossType === 'min' ? myloss(u1, u2, x) : mylossm(u1, u2, x);
+      
+      const chartToUpdate = lossType === 'min' ? charts.lossplot4 : charts.lossplot4m;
+      chartToUpdate.data.datasets[1].data = [{
+        x: x,
+        y: newLoss
+      }];
+      
+      chartToUpdate.update('none');
+
+      document.getElementById('phi').value = x.toFixed(2);
+      document.getElementById('phiValue').textContent = x.toFixed(2);
+
+      updateBMatrix(x);
+      updateChartWithPhi();
+
+      frame++;
+
+      if (Math.abs(gradient) < 0.0001 || frame === frames) {
+        console.log("Animation complete");
+        return;
+      }
+
+      requestAnimationFrame(animate);
+    }
+  }
+
+  animate();
+}
+
+
 
 function updateLossPlot() {
   if (charts && charts.lossplot4 && u1 && u2) {
@@ -291,7 +429,78 @@ function myloss(u1,u2,x) {
 
   return out;
 }
+
+
+
+function updateLossPlotm() {
+  if (charts && charts.lossplot4m && u1 && u2) {
+    const currentPhi = parseFloat(document.getElementById('phi').value);
+    const phi0 = parseFloat(document.getElementById('phi0').value);
+    const xValues = Array.from({length: 79}, (_, i) => i * 0.01);
+    const yValues = xValues.map(x => mylossm(u1, u2, x));
+
+    charts.lossplot4m.data.labels = xValues.map(x => x.toFixed(2));
+    charts.lossplot4m.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
+
+    // Update the current phi point
+    const currentLoss = mylossm(u1, u2, currentPhi);
+    charts.lossplot4m.data.datasets[1].data = [{
+      x: currentPhi,
+      y: currentLoss
+    }];
+
+    // Update the phi0 point
+    const phi0Loss = mylossm(u1, u2, phi0);
+    charts.lossplot4m.data.datasets[2].data = [{
+      x: phi0,
+      y: phi0Loss
+    }];
+
+    charts.lossplot4m.options.scales.x = {
+      type: 'linear',
+      position: 'bottom',
+      title: {
+        display: true,
+        text: 'φ'
+      },
+      min: 0,
+      max: 0.78,
+      ticks: {
+        callback: function(value) {
+          return value.toFixed(2);
+        },
+        maxTicksLimit: 10
+      }
+    };
+    
+    charts.lossplot4m.options.scales.y = {
+      title: {
+        display: true,
+        text: 'Loss'
+      }
+    };
+
+    charts.lossplot4m.update();
+
+    // Update the loss value displays
+    const lossValueElement = document.getElementById('current-loss-value');
+    if (lossValueElement) {
+      lossValueElement.textContent = currentLoss.toFixed(4);
+    }
+    const phi0LossValueElement = document.getElementById('phi0-loss-value');
+    if (phi0LossValueElement) {
+      phi0LossValueElement.textContent = phi0Loss.toFixed(4);
+    }
+  }
+}
+
  
+function mylossm(u1, u2, x) {
+  const e1tmp = u1.map((u1, i) => u1 * Math.cos(x) + u2[i] * Math.sin(x));
+  const e2tmp = u1.map((u1, i) => -u1 * Math.sin(x) + u2[i] * Math.cos(x));
+  const out = calculateAdditionalStats(e1tmp, e2tmp).loss;
+  return out;
+}
 
 // Data Generation and Chart Updates
 function generateNewData() {
@@ -445,7 +654,7 @@ function calculateAdditionalStats(data1, data2) {
   mean_squared2= mean(data2.map(d => d * d))
   mean_cubed1= mean(data1.map(d => d * d * d))
   mean_cubed2= mean(data2.map(d => d * d * d))
-  mean_fourth1= mean(data1.map(d => d * d * d * d))
+  mean_fourth1= mean(data1.map(d => d * d * d * d))-3
   mean_fourth2= mean(data2.map(d => d * d * d * d))-3
   return {
     mean1,
