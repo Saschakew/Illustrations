@@ -6,6 +6,10 @@ let epsilon1, epsilon2, u1, u2;
 document.addEventListener('DOMContentLoaded', function() {
   // Initialize UI elements
   initializeUI();
+
+  
+  // Initialize UI elements
+  initializeVariables();
   
   // Initialize charts (creates empty chart objects)
   initializeCharts();
@@ -17,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
   generateNewData();
   
   // Update B0 and B matrices
-  updateB0Matrix(parseFloat(document.getElementById('phi0').value));
-  updateBMatrix(parseFloat(document.getElementById('phi').value));
+  updateB0Matrix(phi0Value);
+  updateBMatrix(phiValue);
   
   // Update all charts with the generated data
   updateAllCharts();
@@ -69,6 +73,32 @@ function initializeUI() {
   });
 }
 
+function initializeVariables() {
+  const sSlider = document.getElementById('sSlider');
+  if (sSlider) {
+    s = parseFloat(sSlider.value);
+  } else {
+    s = 0; // Default value if slider is not found
+  }
+  
+  const phi0Element = document.getElementById('phi0');
+  if (phi0Element) {
+    phi0Value = parseFloat(phi0Element.value);
+  }
+  else {
+    phi0Value = 0;
+  }
+
+  const phiElement = document.getElementById('phi');
+  if (phiElement) {
+    phiValue = parseFloat(phiElement.value);
+  }
+  else {
+    phiValue = 0;
+  }
+
+}
+
 // Event Listeners Setup
 function setupEventListeners() {
   document.getElementById('phi0').addEventListener('input', function() {
@@ -81,7 +111,6 @@ function setupEventListeners() {
   const phiElement = document.getElementById('phi');
   if (phiElement) {
     phiElement.addEventListener('input', function() {
-      const phiValue = parseFloat(this.value);
       document.getElementById('phiValue').textContent = phiValue.toFixed(2);
       updateBMatrix(phiValue);
       updateChartWithPhi();   
@@ -95,10 +124,31 @@ function setupEventListeners() {
     generateNewData();
   });
 
+  const newDataButton = document.getElementById('newDataBtn');
+  if (newDataButton) {
+    newDataButton.addEventListener('click', function() {
+      generateNewData();
+    })
+  }
+  
+  const sSlider = document.getElementById('sSlider');
+  if (sSlider) {
+    sSlider.addEventListener('input', function() {
+      s = parseFloat(this.value);
+      document.getElementById('sValue').textContent = s.toFixed(2);
+      generateNewData();
+    });
+  }
+
+  
   
   const rollBallButtonPage4 = document.querySelector('body.page4 #rollBallButton');
   if (rollBallButtonPage4) {
     rollBallButtonPage4.addEventListener('click', () => animateBallRolling('min'));
+  }
+  const rollBallButtonPage6 = document.querySelector('body.page6 #rollBallButton');
+  if (rollBallButtonPage6) {
+    rollBallButtonPage6.addEventListener('click', () => animateBallRolling('min'));
   }
 
   const rollBallButtonPage5 = document.querySelector('body.page5 #rollBallButton');
@@ -505,10 +555,17 @@ function mylossm(u1, u2, x) {
 // Data Generation and Chart Updates
 function generateNewData() {
   const T = parseInt(document.getElementById('T').value);
+  const currentPage = document.body.className;
 
-  // Generate new epsilon1 and epsilon2
-  epsilon1 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
-  epsilon2 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
+  if (currentPage === 'page6') {
+    console.log('Generating mixed normal data for page 6');
+    epsilon1 = generateMixedNormalData(T, s);
+    epsilon2 = generateMixedNormalData(T, 0);
+  } else {
+    console.log('Generating uniform data for other pages');
+    epsilon1 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
+    epsilon2 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
+  }
 
   // Normalize epsilon1 and epsilon2
   epsilon1 = normalizeData(epsilon1);
@@ -517,9 +574,37 @@ function generateNewData() {
   updateAllCharts();
 }
 
+function generateMixedNormalData(length, s) {
+  return Array.from({length}, () => {
+    if (Math.random() < 0.8) {
+      // 90% standard normal
+      return normalRandom();
+    } else {
+      // 10% normal with mean s and variance 1
+      return normalRandom() + s;
+    }
+  });
+}
+
+function normalRandom() {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+
+// Helper function to generate random numbers from a standard normal distribution
+function normalRandom() {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random(); // Converting [0,1) to (0,1)
+  while (v === 0) v = Math.random();
+  return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+}
+
 function updateChartWithPhi() {
   const phi0 = parseFloat(document.getElementById('phi0').value);
   const phi = parseFloat(document.getElementById('phi').value);
+  
 
   // Calculate u1 and u2
   u1 = epsilon1.map((e1, i) => e1 * Math.cos(phi0) - epsilon2[i] * Math.sin(phi0));
@@ -641,7 +726,7 @@ function calculateMoments(data1, data2) {
     cokurtosis1,
     cokurtosis2,
     cokurtosis3,
-    loss: Math.pow(cokurtosis1, 2) + Math.pow(cokurtosis2, 2) + Math.pow(cokurtosis3, 2)
+    loss: Math.pow(coskewness1, 2) +Math.pow(coskewness2, 2) +Math.pow(cokurtosis1, 2) + Math.pow(cokurtosis2, 2) + Math.pow(cokurtosis3, 2)
   };
 }
 
@@ -665,7 +750,7 @@ function calculateAdditionalStats(data1, data2) {
     mean_cubed2,
     mean_fourth1,
     mean_fourth2,
-    loss: Math.pow(mean_fourth1, 2) + Math.pow(mean_fourth2, 2)
+    loss: Math.pow(mean_cubed1, 2) + Math.pow(mean_cubed2, 2) +Math.pow(mean_fourth1, 2) + Math.pow(mean_fourth2, 2)
   };
 }
 
