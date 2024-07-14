@@ -348,65 +348,90 @@ function updateAllCharts() {
   updateLossPlot();
   updateLossPlotm();
 }
-
 function animateBallRolling(lossType) {
-  const currentPhi = parseFloat(document.getElementById('phi').value);
-  let x = currentPhi;
-  const maxLearningRate = 15;
-  const fps = 60;
-  const duration = 5000; // 5 seconds
-  const frames = duration / (1000 / fps);
-  let frame = 0;
-
-  function easeInQuad(t) {
-    return t * t;
+  const startPhi = parseFloat(document.getElementById('phi').value);
+  let currentPhi = startPhi;
+  const stepSize = 0.01;
+  const maxSteps = 500;
+  let step = 0;
+  let animationId;
+  let isAnimating = true;
+  
+  function calculateLoss(phi) {
+    return lossType === 'min' ? myloss(u1, u2, phi) : -mylossm(u1, u2, phi);
+  }
+  
+  function updateChart(phi, loss) {
+    const chartToUpdate = lossType === 'min' ? charts.lossplot4 : charts.lossplot4m;
+    chartToUpdate.data.datasets[1].data = [{ x: phi, y: Math.abs(loss) }];
+    chartToUpdate.update('none');
+  }
+  
+  function updateUI(phi) {
+    document.getElementById('phi').value = phi.toFixed(2);
+    document.getElementById('phiValue').textContent = phi.toFixed(2);
+    updateBMatrix(phi);
+    updateChartWithPhi();
   }
 
+  function stopAnimation() {
+    isAnimating = false;
+    cancelAnimationFrame(animationId);
+    console.log("Animation stopped by user input");
+  }
+
+  function addEventListeners() {
+    const inputs = document.querySelectorAll('input:not(#phi), button');
+    inputs.forEach(input => {
+      input.addEventListener('change', stopAnimation);
+      input.addEventListener('click', stopAnimation);
+    });
+  }
+
+  function removeEventListeners() {
+    const inputs = document.querySelectorAll('input:not(#phi), button');
+    inputs.forEach(input => {
+      input.removeEventListener('change', stopAnimation);
+      input.removeEventListener('click', stopAnimation);
+    });
+  }
+
+  addEventListeners();
+  
   function animate() {
-    if (frame < frames) {
-      const progress = frame / frames;
-      const currentLearningRate = maxLearningRate * easeInQuad(progress);
-
-      const currentLoss = lossType === 'min' ? myloss(u1, u2, x) : mylossm(u1, u2, x);
-      const gradientStep = 0.0001;
-      const nextLoss = lossType === 'min' ? myloss(u1, u2, x + gradientStep) : mylossm(u1, u2, x + gradientStep);
-      const gradient = (nextLoss - currentLoss) / gradientStep;
-      
-      // Change the sign of the gradient for maximization (page 5)
-      const direction = lossType === 'min' ? -1 : 1;
-      const newX = x + direction * currentLearningRate * gradient;
-      x = Math.max(0, Math.min(newX, 0.78));
-
-      const newLoss = lossType === 'min' ? myloss(u1, u2, x) : mylossm(u1, u2, x);
-      
-      const chartToUpdate = lossType === 'min' ? charts.lossplot4 : charts.lossplot4m;
-      chartToUpdate.data.datasets[1].data = [{
-        x: x,
-        y: newLoss
-      }];
-      
-      chartToUpdate.update('none');
-
-      document.getElementById('phi').value = x.toFixed(2);
-      document.getElementById('phiValue').textContent = x.toFixed(2);
-
-      updateBMatrix(x);
-      updateChartWithPhi();
-
-      frame++;
-
-      if (Math.abs(gradient) < 0.0001 || frame === frames) {
-        console.log("Animation complete");
-        return;
-      }
-
-      requestAnimationFrame(animate);
+    if (!isAnimating || step >= maxSteps) {
+      console.log(isAnimating ? "Maximum steps reached" : "Animation stopped");
+      removeEventListeners();
+      return;
     }
+    
+    const currentLoss = calculateLoss(currentPhi);
+    const leftLoss = calculateLoss(currentPhi - stepSize);
+    const rightLoss = calculateLoss(currentPhi + stepSize);
+    
+    let newPhi = currentPhi;
+    if (leftLoss < currentLoss && leftLoss < rightLoss) {
+      newPhi = Math.max(0, currentPhi - stepSize);
+    } else if (rightLoss < currentLoss && rightLoss < leftLoss) {
+      newPhi = Math.min(0.78, currentPhi + stepSize);
+    } else {
+      console.log("Optima reached");
+      removeEventListeners();
+      return;
+    }
+    
+    currentPhi = newPhi;
+    const newLoss = calculateLoss(currentPhi);
+    
+    updateChart(currentPhi, newLoss);
+    updateUI(currentPhi);
+    
+    step++;
+    animationId = requestAnimationFrame(animate);
   }
-
+  
   animate();
 }
-
 
 
 function updateLossPlot() {
@@ -454,7 +479,9 @@ function updateLossPlot() {
       title: {
         display: true,
         text: 'Loss'
-      }
+      },
+      min: 0,
+      max: Math.max(0.5, ...yValues, currentLoss, phi0Loss)
     };
 
     charts.lossplot4.update();
@@ -559,29 +586,26 @@ function generateNewData() {
 
   if (currentPage === 'page6') {
     console.log('Generating mixed normal data for page 6');
-    epsilon1 = generateMixedNormalData(T, s);
+    epsilon1 = generateMixedNormalData(T, s) ;
     epsilon2 = generateMixedNormalData(T, 0);
   } else {
     console.log('Generating uniform data for other pages');
     epsilon1 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
     epsilon2 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
   }
-
-  // Normalize epsilon1 and epsilon2
-  epsilon1 = normalizeData(epsilon1);
-  epsilon2 = normalizeData(epsilon2);
+ 
    
   updateAllCharts();
 }
 
 function generateMixedNormalData(length, s) {
   return Array.from({length}, () => {
-    if (Math.random() < 0.8) {
+    if (Math.random() < 0.9) {
       // 90% standard normal
-      return normalRandom();
+      return normalRandom() - 0.1*s;
     } else {
       // 10% normal with mean s and variance 1
-      return normalRandom() + s;
+      return normalRandom() + s - 0.1*s;
     }
   });
 }
@@ -658,13 +682,7 @@ function updateBMatrix(phi) {
   MathJax.typeset();
 }
 
-// Utility Functions
-function normalizeData(data) {
-  const mean = data.reduce((a, b) => a + b) / data.length;
-  const centered = data.map(val => val - mean);
-  const stdDev = Math.sqrt(centered.reduce((acc, val) => acc + val * val, 0) / data.length);
-  return centered.map(val => val / stdDev);
-}
+ 
 
 function updateChart(chart, xData, yData, title, xLabel, yLabel, animate = false) {
   if (!chart) return;  // Exit if the chart doesn't exist
@@ -796,6 +814,16 @@ function createTable(data, title, symbol) {
       <td>${data.covariance.toFixed(4)}</td>
     </tr> 
     <tr>
+      <td class="measure">Coskewness 1</td>
+      <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
+      <td>${data.coskewness1.toFixed(4)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Coskewness 2</td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
+      <td>${data.coskewness2.toFixed(4)}</td>
+    </tr>
+    <tr>
       <td class="measure">Cokurtosis 1</td>
       <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
       <td>${data.cokurtosis1.toFixed(4)}</td>
@@ -830,10 +858,22 @@ function createAdditionalTable(data, title, symbol) {
       <th>$i=2$</th>
     </tr> 
     <tr>
+      <td class="measure">Mean</td>
+      <td class="formula">mean(${symbol}ᵢ²)</td>
+      <td>${data.mean1.toFixed(4)}</td>
+      <td>${data.mean2.toFixed(4)}</td>
+    </tr> 
+    <tr>
       <td class="measure">Variance</td>
       <td class="formula">mean(${symbol}ᵢ²)</td>
       <td>${data.mean_squared1.toFixed(4)}</td>
       <td>${data.mean_squared2.toFixed(4)}</td>
+    </tr> 
+    <tr>
+      <td class="measure">Skewness</td>
+      <td class="formula">mean(${symbol}ᵢ³)</td>
+      <td>${data.mean_cubed1.toFixed(4)}</td>
+      <td>${data.mean_cubed2.toFixed(4)}</td>
     </tr> 
     <tr>
       <td class="measure">Excess Kurtosis</td>
