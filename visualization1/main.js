@@ -254,7 +254,7 @@ function initializeCharts() {
         aspectRatio: 1,
         plugins: {
           title: {
-            display: true,
+            display: false,
             text: 'Loss Plot'
           }
         },
@@ -316,7 +316,7 @@ function initializeCharts() {
         aspectRatio: 1,
         plugins: {
           title: {
-            display: true,
+            display: false,
             text: 'Loss Plot'
           }
         },
@@ -345,7 +345,7 @@ function initializeCharts() {
 
 function updateAllCharts() {
   if (charts.scatterPlot1) {
-    updateChart(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks (Uniform)", "ε₁", "ε₂");
+    updateChart(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂");
   }
   updateChartWithPhi();
   updateLossPlotm();
@@ -701,7 +701,7 @@ function updateChartWithPhi() {
   const e2 = u1.map((u1, i) => -u1 * Math.sin(phi) + u2[i] * Math.cos(phi));
 
   if (charts.scatterPlot3) {
-    updateChart(charts.scatterPlot3, e1, e2, "Transformed Shocks", "e₁", "e₂", true);
+    updateChart(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true);
   }
 
   calculateStats(epsilon1, epsilon2, u1, u2, e1, e2);
