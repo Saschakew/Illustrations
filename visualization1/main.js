@@ -10,25 +10,24 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize UI elements
   initializeVariables();
+
+  
   
   // Initialize charts (creates empty chart objects)
   initializeCharts();
   
+  
   // Set up event listeners
   setupEventListeners();
+  
   
   // Generate initial data
   generateNewData();
   
+  
   // Update B0 and B matrices
-  updateB0Matrix(phi0Value);
-  updateBMatrix(phiValue);
-  
-  // Update all charts with the generated data
-  updateAllCharts();
-  
-  // Typeset MathJax elements
-  MathJax.typeset();
+  updateAllMatrices(phi0Value,phiValue); 
+   
 });
 
 // UI Initialization
@@ -104,18 +103,22 @@ function setupEventListeners() {
   document.getElementById('phi0').addEventListener('input', function() {
     const phiValue0 = parseFloat(this.value);
     document.getElementById('phi0Value').textContent = phiValue0.toFixed(2);
-    updateB0Matrix(phiValue0);
+  updateAllMatrices(phi0Value,phiValue);
+    
     updateChartWithPhi();
   });
 
   const phiElement = document.getElementById('phi');
   if (phiElement) {
-    phiElement.addEventListener('input', function() {
-      document.getElementById('phiValue').textContent = phiValue.toFixed(2);
-      updateBMatrix(phiValue);
+    
+  document.getElementById('phi').addEventListener('input', function() {
+    const phiValue = parseFloat(this.value);
+    document.getElementById('phiValue').textContent = phiValue.toFixed(2);
+  updateAllMatrices(phi0Value,phiValue);
+      
       updateChartWithPhi();   
       updateLossPlot();  // Add this line
-      updateLossPlotm();  // Add this line
+      updateLossPlotm();  // Add this line 
     });
   }
  
@@ -161,6 +164,7 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
+  
   const chartConfig = {
     type: 'scatter',
     data: {
@@ -273,8 +277,7 @@ function initializeCharts() {
     console.log('lossplot4 chart created');
   } else {
     console.log('lossplot4 element not found');
-  }
-  updateLossPlot() 
+  } 
 
 
   const lossplot4mElement = document.getElementById('lossplot4m');
@@ -337,7 +340,7 @@ function initializeCharts() {
   } else {
     console.log('lossplot4 element not found');
   }
-  updateLossPlotm() 
+  
 }
 
 function updateAllCharts() {
@@ -345,9 +348,12 @@ function updateAllCharts() {
     updateChart(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks (Uniform)", "ε₁", "ε₂");
   }
   updateChartWithPhi();
-  updateLossPlot();
   updateLossPlotm();
+  updateLossPlot();
 }
+
+
+
 function animateBallRolling(lossType) {
   const startPhi = parseFloat(document.getElementById('phi').value);
   let currentPhi = startPhi;
@@ -370,7 +376,8 @@ function animateBallRolling(lossType) {
   function updateUI(phi) {
     document.getElementById('phi').value = phi.toFixed(2);
     document.getElementById('phiValue').textContent = phi.toFixed(2);
-    updateBMatrix(phi);
+  updateAllMatrices(phi0Value,phi);
+    
     updateChartWithPhi();
   }
 
@@ -571,29 +578,80 @@ function updateLossPlotm() {
   }
 }
 
- 
-function mylossm(u1, u2, x) {
+function mylossm(u1,u2,x) {
   const e1tmp = u1.map((u1, i) => u1 * Math.cos(x) + u2[i] * Math.sin(x));
   const e2tmp = u1.map((u1, i) => -u1 * Math.sin(x) + u2[i] * Math.cos(x));
-  const out = calculateAdditionalStats(e1tmp, e2tmp).loss;
+
+  const out = calculateAdditionalStats(e1tmp, e2tmp).loss
+
   return out;
 }
 
-// Data Generation and Chart Updates
+ 
 function generateNewData() {
   const T = parseInt(document.getElementById('T').value);
   const currentPage = document.body.className;
 
+  let rawEpsilon1, rawEpsilon2;
+
   if (currentPage === 'page6') {
     console.log('Generating mixed normal data for page 6');
-    epsilon1 = generateMixedNormalData(T, s) ;
-    epsilon2 = generateMixedNormalData(T, 0);
+    rawEpsilon1 = generateMixedNormalData(T, s);
+    rawEpsilon2 = generateMixedNormalData(T, 0);
   } else {
     console.log('Generating uniform data for other pages');
-    epsilon1 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
-    epsilon2 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
+    rawEpsilon1 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
+    rawEpsilon2 = Array.from({length: T}, () => Math.sqrt(3) * (2 * Math.random() - 1));
   }
- 
+
+  // Compute sample means and covariance matrix
+  const mean1 = rawEpsilon1.reduce((a, b) => a + b, 0) / T;
+  const mean2 = rawEpsilon2.reduce((a, b) => a + b, 0) / T;
+  let cov11 = 0, cov12 = 0, cov22 = 0;
+  for (let i = 0; i < T; i++) {
+    cov11 += (rawEpsilon1[i] - mean1) * (rawEpsilon1[i] - mean1);
+    cov12 += (rawEpsilon1[i] - mean1) * (rawEpsilon2[i] - mean2);
+    cov22 += (rawEpsilon2[i] - mean2) * (rawEpsilon2[i] - mean2);
+  }
+  cov11 /= T - 1;
+  cov12 /= T - 1;
+  cov22 /= T - 1;
+
+  // Compute Cholesky decomposition
+  const L11 = Math.sqrt(cov11);
+  const L21 = cov12 / L11;
+  const L22 = Math.sqrt(cov22 - L21 * L21);
+
+  // Orthogonalize and normalize the shocks
+  epsilon1 = new Array(T);
+  epsilon2 = new Array(T);
+  for (let i = 0; i < T; i++) {
+    epsilon1[i] = (rawEpsilon1[i] - mean1) / L11;
+    epsilon2[i] = ((rawEpsilon2[i] - mean2) - L21 * epsilon1[i]) / L22;
+  }
+
+  // Ensure zero mean and unit variance
+  let newMean1 = 0, newMean2 = 0, newVar1 = 0, newVar2 = 0;
+  for (let i = 0; i < T; i++) {
+    newMean1 += epsilon1[i];
+    newMean2 += epsilon2[i];
+  }
+  newMean1 /= T;
+  newMean2 /= T;
+
+  for (let i = 0; i < T; i++) {
+    epsilon1[i] -= newMean1;
+    epsilon2[i] -= newMean2;
+    newVar1 += epsilon1[i] * epsilon1[i];
+    newVar2 += epsilon2[i] * epsilon2[i];
+  }
+  newVar1 = Math.sqrt(newVar1 / (T ));
+  newVar2 = Math.sqrt(newVar2 / (T ));
+
+  for (let i = 0; i < T; i++) {
+    epsilon1[i] /= newVar1;
+    epsilon2[i] /= newVar2;
+  }
    
   updateAllCharts();
 }
@@ -649,26 +707,20 @@ function updateChartWithPhi() {
   calculateStats(epsilon1, epsilon2, u1, u2, e1, e2);
 }
 
-// Matrix Updates
-function updateB0Matrix(phi) {
+ 
+function updateAllMatrices(phi0, phi) {
+  const cosPhiFixed0 = Math.cos(phi0).toFixed(4);
+  const sinPhiFixed0 = Math.sin(phi0).toFixed(4);
   const cosPhiFixed = Math.cos(phi).toFixed(4);
   const sinPhiFixed = Math.sin(phi).toFixed(4);
 
-  const matrixHtml = `
+  const matrixHtml0 = `
   $$
-  B( \\phi_0 = ${phi.toFixed(2)}) = \\begin{bmatrix} 
-  ${cosPhiFixed} & ${-sinPhiFixed} \\\\ 
-  ${sinPhiFixed} & ${cosPhiFixed} 
+  B( \\phi_0 = ${phi0.toFixed(2)}) = \\begin{bmatrix} 
+  ${cosPhiFixed0} & ${-sinPhiFixed0} \\\\ 
+  ${sinPhiFixed0} & ${cosPhiFixed0} 
   \\end{bmatrix}
   $$`;
-
-  document.getElementById('current-B0').innerHTML = matrixHtml;
-  MathJax.typeset();
-}
-
-function updateBMatrix(phi) {
-  const cosPhiFixed = Math.cos(phi).toFixed(4);
-  const sinPhiFixed = Math.sin(phi).toFixed(4);
 
   const matrixHtml = `
   $$
@@ -678,10 +730,16 @@ function updateBMatrix(phi) {
   \\end{bmatrix}
   $$`;
 
-  document.getElementById('current-B').innerHTML = matrixHtml;
+  const b0Element = document.getElementById('current-B0');
+  const bElement = document.getElementById('current-B');
+
+  if (b0Element) b0Element.innerHTML = matrixHtml0;
+  if (bElement) bElement.innerHTML = matrixHtml;
+
   MathJax.typeset();
 }
 
+ 
  
 
 function updateChart(chart, xData, yData, title, xLabel, yLabel, animate = false) {
