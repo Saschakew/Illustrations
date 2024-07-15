@@ -709,10 +709,10 @@ function updateChartWithPhi() {
 
  
 function updateAllMatrices(phi0, phi) {
-  const cosPhiFixed0 = Math.cos(phi0).toFixed(4);
-  const sinPhiFixed0 = Math.sin(phi0).toFixed(4);
-  const cosPhiFixed = Math.cos(phi).toFixed(4);
-  const sinPhiFixed = Math.sin(phi).toFixed(4);
+  const cosPhiFixed0 = Math.cos(phi0).toFixed(2);
+  const sinPhiFixed0 = Math.sin(phi0).toFixed(2);
+  const cosPhiFixed = Math.cos(phi).toFixed(2);
+  const sinPhiFixed = Math.sin(phi).toFixed(2);
 
   const matrixHtml0 = `
   $$

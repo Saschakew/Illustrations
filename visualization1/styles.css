@@ -312,6 +312,21 @@ input[type="range"]::-moz-range-thumb {
   align-self: center;
 }
 
+footer {
+  background-color: #ffa500;
+  color: #1c1c1c;
+  text-align: center;
+  padding: 20px 0;
+  width: 100%;
+  margin-top: 20px;
+  width: calc(100% - 40px);
+  max-width: 1200px;
+}
+
+footer p {
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .input-container {
     flex-direction: column;
