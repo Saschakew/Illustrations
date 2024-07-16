@@ -218,6 +218,11 @@ nav ul li a {
 nav ul li a.active {
   font-weight: bold; 
 }
+
+a {
+  color: #1c1c1c; 
+}
+
 .page {
   display: none; /* Hide all pages by default */
 }
@@ -316,13 +321,17 @@ footer {
   background-color: #ffa500;
   color: #1c1c1c;
   text-align: center;
-  padding: 20px 0;
+  padding: 0px  ;
   width: 100%;
   margin-top: 20px;
   width: calc(100% - 40px);
   max-width: 1200px;
 }
-
+.footer-container {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}
 footer p {
   margin: 0;
 }
