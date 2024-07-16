@@ -45,6 +45,103 @@ a {
   max-width: 600px;
 }
 
+.info-icon {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: #ffa500;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 16px;
+  font-style: italic;
+  cursor: pointer;
+  margin-left: 4px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.info-icon:hover {
+  background-color: #ff8c00;
+}
+
+.info-popup {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ffa500;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-width: 300px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+
+.ref-icon {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-color: #ffa500; /* A blue color to distinguish from the orange info icon */
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 16px;
+  font-style: italic;
+  cursor: pointer;
+  margin-left: 4px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.ref-icon:hover {
+  background-color: #ffa500;
+}
+
+.ref-popup {
+  display: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ffa500;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-width: 300px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+}
+.assumption-box {
+  padding: 15px 20px;
+  border: 1px solid #ffa500;
+  border-radius: 8px;
+  background-color: #fff9e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.assumption-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.assumption-box h5 {
+  margin-top: 0;
+  color: #ffa500;
+  font-size: 1.1em;
+  border-bottom: 1px solid #ffd180;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.assumption-box p {
+  line-height: 1.5;
+  color: #333;
+}
+
 /* Input Styles */
 .input-container {
   margin-bottom: 20px;
@@ -72,7 +169,7 @@ a {
 }
 
 .input-container input[type="number"] {
-  width: 60px;
+  width: 40px;
 }
 
 .input-container input[type="range"] {
@@ -236,7 +333,7 @@ input#phi0 {
   background-color: #fff;
   padding: 15px;
   margin-bottom: 20px;
-  text-align: center;
+  text-align:justify;
   font-size: 1.2em;
 }
 

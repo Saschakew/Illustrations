@@ -17,12 +17,15 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeCharts();
   
   
+  console.log('DOM fully loaded');
   // Set up event listeners
   setupEventListeners();
   
-  
+  const currentPage = document.body.className;
+  if (currentPage !== 'index') {
   // Generate initial data
   generateNewData();
+  }
   
   
   // Update B0 and B matrices
@@ -34,19 +37,25 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeUI() {
   // Setup sticky input container
   const inputContainer = document.querySelector('.input-container');
-  const inputContainerTop = inputContainer.offsetTop;
 
-  function handleScroll() {
-    if (window.pageYOffset > inputContainerTop) {
-      inputContainer.classList.add('sticky');
-      document.body.style.paddingTop = inputContainer.offsetHeight + 'px';
-    } else {
-      inputContainer.classList.remove('sticky');
-      document.body.style.paddingTop = 0;
+  if (inputContainer) {
+    const inputContainerTop = inputContainer.offsetTop;
+    const paddingTop = 15; // Account for the existing padding-top
+  
+    function handleScroll() {
+      if (window.pageYOffset > inputContainerTop - paddingTop) {
+        inputContainer.classList.add('sticky');
+        document.body.style.paddingTop = `${inputContainer.offsetHeight + paddingTop}px`;
+      } else {
+        inputContainer.classList.remove('sticky');
+        document.body.style.paddingTop = `${paddingTop}px`;
+      }
     }
+  
+    window.addEventListener('scroll', handleScroll);
+  } else {
+    console.log('Input container not found. Sticky functionality not applied.');
   }
-
-  window.addEventListener('scroll', handleScroll);
 
   // Setup navigation menu toggle
   document.getElementById('menu-toggle').addEventListener('click', function() {
@@ -70,6 +79,8 @@ function initializeUI() {
       // If it's not a hash link, let the browser handle navigation
     });
   });
+
+  
 }
 
 function initializeVariables() {
@@ -100,17 +111,22 @@ function initializeVariables() {
 
 // Event Listeners Setup
 function setupEventListeners() {
-  document.getElementById('phi0').addEventListener('input', function() {
-    const phiValue0 = parseFloat(this.value);
-    document.getElementById('phi0Value').textContent = phiValue0.toFixed(2);
-  updateAllMatrices(phi0Value,phiValue);
-    
-    updateChartWithPhi();
-  });
+
+  const phi0Element = document.getElementById('phi0');
+  if (phi0Element) {
+    document.getElementById('phi0').addEventListener('input', function() {
+      const phi0Value = parseFloat(this.value);
+      document.getElementById('phi0Value').textContent = phiValue.toFixed(2);
+    updateAllMatrices(phi0Value,phiValue);
+        
+        updateChartWithPhi();    
+      });
+    }
+
+
 
   const phiElement = document.getElementById('phi');
   if (phiElement) {
-    
   document.getElementById('phi').addEventListener('input', function() {
     const phiValue = parseFloat(this.value);
     document.getElementById('phiValue').textContent = phiValue.toFixed(2);
@@ -122,10 +138,12 @@ function setupEventListeners() {
     });
   }
  
-
+  const TElement = document.getElementById('T');
+  if (TElement) {
   document.getElementById('T').addEventListener('input', function() {
     generateNewData();
-  });
+    });
+  } 
 
   const newDataButton = document.getElementById('newDataBtn');
   if (newDataButton) {
@@ -158,6 +176,60 @@ function setupEventListeners() {
   if (rollBallButtonPage5) {
     rollBallButtonPage5.addEventListener('click', () => animateBallRolling('max'));
   }
+
+  function createPopup(icon, className) {
+    const content = icon.getAttribute(className === 'info-popup' ? 'data-info' : 'data-ref');
+    
+    // Remove any existing pop-ups
+    const existingPopup = document.querySelector('.info-popup, .ref-popup');
+    if (existingPopup) {
+      existingPopup.remove();
+    }
+    
+    // Create and position the pop-up
+    const popup = document.createElement('div');
+    popup.className = className;
+    popup.innerHTML = content;
+    document.body.appendChild(popup);
+    
+    const iconRect = icon.getBoundingClientRect();
+    popup.style.left = `${iconRect.left + window.scrollX}px`;
+    popup.style.top = `${iconRect.bottom + window.scrollY + 5}px`;
+    popup.style.display = 'block';
+    
+    // Ensure the popup doesn't go off-screen
+    const popupRect = popup.getBoundingClientRect();
+    if (popupRect.right > window.innerWidth) {
+      popup.style.left = `${window.innerWidth - popupRect.width - 10}px`;
+    }
+    
+    // Process LaTeX in the popup
+    MathJax.typesetPromise([popup]).then(() => {
+      // Reposition after typesetting (LaTeX rendering might change size)
+      const newPopupRect = popup.getBoundingClientRect();
+      if (newPopupRect.right > window.innerWidth) {
+        popup.style.left = `${window.innerWidth - newPopupRect.width - 10}px`;
+      }
+    });
+    
+    // Close the pop-up when clicking outside
+    document.addEventListener('click', function closePopup(event) {
+      if (!popup.contains(event.target) && event.target !== icon) {
+        popup.remove();
+        document.removeEventListener('click', closePopup);
+      }
+    });
+  }
+  
+  // Add event listeners for info and ref icons
+  document.querySelectorAll('.info-icon, .ref-icon').forEach(icon => {
+    icon.addEventListener('click', function(e) {
+      createPopup(this, this.classList.contains('info-icon') ? 'info-popup' : 'ref-popup');
+      e.stopPropagation();
+    });
+  });
+
+
 }
 
 
@@ -588,8 +660,8 @@ function mylossm(u1,u2,x) {
 }
 
  
-function generateNewData() {
-  const T = parseInt(document.getElementById('T').value);
+function generateNewData() { 
+   const T = parseInt(document.getElementById('T').value);
   const currentPage = document.body.className;
 
   let rawEpsilon1, rawEpsilon2;
@@ -715,20 +787,18 @@ function updateAllMatrices(phi0, phi) {
   const sinPhiFixed = Math.sin(phi).toFixed(2);
 
   const matrixHtml0 = `
-  $$
-  B( \\phi_0 = ${phi0.toFixed(2)}) = \\begin{bmatrix} 
+  $  \\begin{bmatrix} 
   ${cosPhiFixed0} & ${-sinPhiFixed0} \\\\ 
   ${sinPhiFixed0} & ${cosPhiFixed0} 
   \\end{bmatrix}
-  $$`;
+  $`;
 
   const matrixHtml = `
-  $$
-  B( \\phi = ${phi.toFixed(2)}) = \\begin{bmatrix} 
-  ${cosPhiFixed} & ${-sinPhiFixed} \\\\ 
-  ${sinPhiFixed} & ${cosPhiFixed} 
+  $  \\begin{bmatrix} 
+  ${cosPhiFixed} & ${sinPhiFixed} \\\\ 
+  ${-sinPhiFixed} & ${cosPhiFixed} 
   \\end{bmatrix}
-  $$`;
+  $`;
 
   const b0Element = document.getElementById('current-B0');
   const bElement = document.getElementById('current-B');
@@ -737,6 +807,7 @@ function updateAllMatrices(phi0, phi) {
   if (bElement) bElement.innerHTML = matrixHtml;
 
   MathJax.typeset();
+  
 }
 
  
@@ -848,13 +919,13 @@ function updateStatsDisplay(stats) {
     }
   };
 
-  updateStatsTable('stats-epsilon', stats.epsilon, "ε co-moments", "ε");
-  updateStatsTable('stats-u', stats.u, "u co-moments", "u");
-  updateStatsTable('stats-e', stats.e, "e co-moments", "e");
+  updateStatsTable('stats-epsilon', stats.epsilon, "Co-moments of structural shocks ε ", "ε");
+  updateStatsTable('stats-u', stats.u, "Co-moments of reduced form shocks u ", "u");
+  updateStatsTable('stats-e', stats.e, "Co-moments of innovations e  ", "e");
 
-  updateAdditionalStatsTable('stats-epsilon-additional', stats.epsilon_additional, "ε moments", "ε");
-  updateAdditionalStatsTable('stats-u-additional', stats.u_additional, "u moments", "u");
-  updateAdditionalStatsTable('stats-e-additional', stats.e_additional, "e moments", "e");
+  updateAdditionalStatsTable('stats-epsilon-additional', stats.epsilon_additional, " Moments of structural shocks  ε", "ε");
+  updateAdditionalStatsTable('stats-u-additional', stats.u_additional, "Moments of reduced form shocks u", "u");
+  updateAdditionalStatsTable('stats-e-additional', stats.e_additional, "Moments of innovatinos e", "e");
 }
 
 function createTable(data, title, symbol) {

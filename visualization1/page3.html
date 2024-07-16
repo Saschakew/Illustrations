@@ -7,11 +7,25 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\$', '\$']]
+        },
+        startup: {
+            pageReady: () => {
+                return MathJax.startup.defaultPageReady().then(() => {
+                    console.log('MathJax initial typesetting complete');
+                });
+            }
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
-<body>
+<body  class="page3">
   <header>
-    <h1>Interactive Dashboard</h1>
+    <h1>Visualization: Non-Gaussian SVAR</h1>
   </header>
 
   <main> 
@@ -42,7 +56,7 @@
         </div>
         <div>
           <label for="phi">φ =</label>
-          <input type="range" id="phi" min="0" max="0.78" step="0.01" value="0.">
+          <input type="range" id="phi" min="0" max="0.78" step="0.01" value="0">
         
           <div id="phiValue">0.00</div>
         </div>
@@ -51,11 +65,15 @@
 
     <section id="formula-container">
       <p>.....</p>
-      <div>$$ u_t = B(\phi) \epsilon_t \quad \text{ where } \quad B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$$</div>
-      <div id="current-B0"></div>
-      <p>.....</p>
-      <div>$$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  $$</div>
-      <div id="current-B"></div>
+      <div>
+        $ u_t = B(\phi_0) \epsilon_t$ 
+        with
+        $B(\phi_0) = $ 
+        <span id="current-B0"></span>
+      </div>
+       <p>.....</p>
+      <div>$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  =$ <span id="current-B"></span> $ u_t$</div>
+    
     </section>
 
     <div class="container">
@@ -71,6 +89,17 @@
       </section>
 
     </div>
+
+
+    
+    <div class="text-container">
+      <p>
+        The <a href="page4.html">next</a> page ....
+      </p>
+      
+    </div>
+
+
   </main>
 
   <footer>

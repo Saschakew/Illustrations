@@ -7,11 +7,25 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\$', '\$']]
+        },
+        startup: {
+            pageReady: () => {
+                return MathJax.startup.defaultPageReady().then(() => {
+                    console.log('MathJax initial typesetting complete');
+                });
+            }
+        }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
-<body>
+<body  class="page2">
   <header>
-    <h1>Interactive Dashboard</h1>
+    <h1>Visualization: Non-Gaussian SVAR</h1>
   </header>
 
   <main>
@@ -47,9 +61,14 @@
         <button id="newDataBtn" class="orange-button">New data</button>
       </section>
     <section id="formula-container">
-      <p>.....</p>
-      <div>$$ u_t = B(\phi) \epsilon_t \quad \text{ where } \quad B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$$</div>
-      <div id="current-B0"></div>
+      <p>.....$y_t$<span class="info-icon" data-info="This is additional information.">i</span>...</p>
+      <div>
+        $ u_t = B(\phi) \epsilon_t$ 
+        where
+        $B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}=$ 
+        <span id="current-B0"></span>
+      </div>
+      
       <div id="current-B" style="display: none;"></div>
     </section>
 
@@ -71,6 +90,15 @@
   <section class="text-container">
     <div>....</div>
   </section>
+
+  
+  <div class="text-container">
+    <p>
+      The <a href="page3.html">next</a> page ....
+    </p>
+    
+  </div>
+
 
   </main>
 
