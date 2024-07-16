@@ -7,34 +7,86 @@ body {
   align-items: center;
   background-color: #f4f4f9;
 }
+main {
+  width: calc(100% - 40px);
+  max-width: 1200px;
+}
 .container {
   display: flex;
   justify-content: center;
   width: 100%;
   flex-wrap: wrap;
+  padding: 0px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding-top:15px;
 }
+.chart-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .chart-container {
-  width: 25%;
-  margin: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 49%;
+  max-width: 600px; /* Adjust this value as needed */
 }
+
+
 .input-container {
   margin-bottom: 20px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 00px;
+  gap: 10px;
   background-color: #fff;
   justify-content: center;
-  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ffa500;
   padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.input-container > div {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.input-container label {
+  margin-right: 5px;
+  white-space: nowrap;
+}
+
+.input-container input[type="number"]{
+  width: 60px;
+}
+.input-container input[type="range"] {
+  width: 120px;
+}
+
+#phiValue {
+  min-width: 40px;
+  text-align: center;
+}
+
+.input-container button {
+  flex: 0 0 auto;
+}
+
+
+.input-container.sticky {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; 
+    width: calc(100% - 80px); /* Subtract padding from width */
+  max-width: 1200px;
 }
 input[type="number"], input[type="range"] {
   margin: 0 10px;
@@ -53,9 +105,41 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+.T-input {
+  width: 50px; /* Adjust this value to make it as small as you need */
+  margin-left: 0; /* Remove left margin */
+  padding: 5px;
+  font-size: 14px; /* Adjust font size if needed */
+}   
+label[for="T"] {
+  margin-right: 0;
+  padding-right: 0;
+}
+
+input#T.T-input {
+  margin-left: 0;
+  padding-left: 0;
+}
+label[for="phi"] {
+  margin-right: 0;
+  padding-right: 0;
+}
+input#phi {
+  margin-left: 0;
+  padding-left: 0;
+}
+label[for="phi0"] {
+  margin-right: 0;
+  padding-right: 0;
+}
+input#phi0 {
+  margin-left: 0;
+  padding-left: 0;
+}
+/* To ensure consistency with other inputs, you might want to add: */
+ 
 .stats-container {
   flex: 1;
-  min-width: 45%;
 }
 .stats-table {
   width: 100%;
@@ -88,9 +172,14 @@ button:hover {
 }
 #formula-container {
   background-color: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 15px; 
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2em;
+}
+.text-container {
+  background-color: #fff;
+  padding: 15px; 
   margin-bottom: 20px;
   text-align: center;
   font-size: 1.2em;
@@ -101,35 +190,31 @@ button:hover {
   justify-content: space-between;
   width: 100%;
   gap: 20px;
-}
-.stats-container {
-  flex: 1;
-  min-width: 45%;
-}
+} 
 nav {
-  display: flex;
-  justify-content: center; /* Center the menu items */
-  width: 100%; /* Ensure nav takes full width */
+  width: 100%;
+  background-color: #ffa500;
 }
+
 nav ul {
   list-style-type: none;
   padding: 0;
-  background-color: #ffa500;
-  overflow: hidden;
   margin: 0;
-  width: 100%; /* Make the list items take full width */
-  text-align: center; /* Center the text inside the list items */
+  display: flex;
+  justify-content: center;
 }
+
 nav ul li {
-  float: left;
+  margin: 0;
 }
+
 nav ul li a {
   display: block;
   color: #1c1c1c;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-} 
+}
 nav ul li a.active {
   font-weight: bold; 
 }
@@ -159,40 +244,171 @@ nav ul li a.active {
   align-items: center;
 }
 
+
+
+input[type="number"], input[type="range"] {
+  margin: 0 10px;
+  padding: 5px;
+  border: 1px solid #ffa500;
+  border-radius: 4px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100px;
+  height: 10px;
+  background: #ffa500;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 20px;
+  background: #fff;
+  cursor: pointer;
+  border: 2px solid #ffa500;
+  border-radius: 50%;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 10px;
+  height: 20px;
+  background: #fff;
+  cursor: pointer;
+  border: 2px solid #ffa500;
+  border-radius: 50%;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.orange-button {
+  padding: 10px 20px;
+  background-color: #ffa500;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.orange-button:hover {
+  background-color: #ff8c00;
+}
+
+/* Rest of the CSS remains the same */
+
+/* Add these new styles at the end of the file */
+#rollBallBtn {
+  margin-bottom: 20px;
+  align-self: center;
+}
+
+footer {
+  background-color: #ffa500;
+  color: #1c1c1c;
+  text-align: center;
+  padding: 20px 0;
+  width: 100%;
+  margin-top: 20px;
+  width: calc(100% - 40px);
+  max-width: 1200px;
+}
+
+footer p {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .input-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-container > div {
+    width: 100%;
+    margin-bottom: 5px; 
+  }
+
+  .input-container input[type="number"],
+  .input-container input[type="range"] { 
+    text-align: left;
+  }
+
+  #phiValue {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  
+  .orange-button {
+    flex: 1 1 100%;
+  }
+} 
+
+
 /* Show the menu toggle button on small screens */
 @media (max-width: 768px) {
+  .chart-container {
+     width: 100%  !important; 
+     margin: 0px  !important;  
+  }
+  
   #menu-toggle {
     display: block;
-    background-color: #ffa500; /* Add background color */
-    color: #1c1c1c; /* Add text color */
-    padding: 10px; /* Add padding */
-    border-radius: 4px; /* Add border radius */
-    margin-bottom: 10px; /* Add margin below the button */
+    background-color: #ffa500;
+    color: #1c1c1c;
+    padding: 10px;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
   }
+
 
   .menu-bar {
-    display: flex; /* Show the menu bar on small screens */
+    display: flex;
+    width: 100%;
+    background-color: #ffa500;
+    justify-content: flex-start;
+    align-items: center;
   }
 
-  nav ul {
-    display: none; /* Hide the menu by default */
-    flex-direction: column; /* Stack menu items vertically */
-    padding: 0; /* Remove padding */
-    margin: 0; /* Remove margin */
+  nav {
+    display: none;
   }
 
-  nav ul.expanded {
-    display: flex; /* Show the menu when expanded */
+  nav.expanded {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(255, 165, 0, 0.9);
+    z-index: 1000;
+  }
+
+  nav.expanded ul {
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   nav ul li {
-    float: none; /* Remove float to stack items vertically */
-    width: 100%; /* Make menu items take full width */
+    margin: 10px 0;
   }
 
   nav ul li a {
-    padding: 14px 16px; /* Increase padding */
-    font-size: 1.2em; /* Increase font size */
-    text-align: center; /* Center text */
+    font-size: 1.5em;
   }
 }
