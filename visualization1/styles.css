@@ -1,3 +1,4 @@
+/* General Styles */
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
@@ -7,20 +8,27 @@ body {
   align-items: center;
   background-color: #f4f4f9;
 }
+
 main {
   width: calc(100% - 40px);
   max-width: 1200px;
 }
+
+a {
+  color: #1c1c1c;
+}
+
+/* Container Styles */
 .container {
   display: flex;
   justify-content: center;
   width: 100%;
   flex-wrap: wrap;
-  padding: 0px;
+  padding: 15px 0;
   margin-bottom: 20px;
   background-color: #fff;
-  padding-top:15px;
 }
+
 .chart-wrapper {
   display: flex;
   justify-content: center;
@@ -33,10 +41,10 @@ main {
   align-items: center;
   background-color: #fff;
   width: 49%;
-  max-width: 600px; /* Adjust this value as needed */
+  max-width: 600px;
 }
 
-
+/* Input Styles */
 .input-container {
   margin-bottom: 20px;
   display: flex;
@@ -62,9 +70,10 @@ main {
   white-space: nowrap;
 }
 
-.input-container input[type="number"]{
+.input-container input[type="number"] {
   width: 60px;
 }
+
 .input-container input[type="range"] {
   width: 120px;
 }
@@ -78,119 +87,166 @@ main {
   flex: 0 0 auto;
 }
 
-
 .input-container.sticky {
   position: fixed;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000; 
-    width: calc(100% - 80px); /* Subtract padding from width */
+  z-index: 1000;
+  width: calc(100% - 80px);
   max-width: 1200px;
 }
+
+/* Form Element Styles */
 input[type="number"], input[type="range"] {
   margin: 0 10px;
   padding: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #ffa500;
   border-radius: 4px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100px;
+  height: 10px;
+  background: #fff;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ffa500;
+  cursor: pointer;
+  border: 2px solid #ffa500;
+  border-radius: 50%;
+}
+input[type="range"]::-ms-thumb {
+  width: 20px  ;
+  height: 20px  ;
+  background: #ffa500 !important;
+  cursor: pointer ; 
 }
 button {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: #ffa500;
+  color: #ffa500;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
+
 button:hover {
-  background-color: #0056b3;
-}
-.T-input {
-  width: 50px; /* Adjust this value to make it as small as you need */
-  margin-left: 0; /* Remove left margin */
-  padding: 5px;
-  font-size: 14px; /* Adjust font size if needed */
-}   
-label[for="T"] {
-  margin-right: 0;
-  padding-right: 0;
+  background-color: #ffa500;
 }
 
-input#T.T-input {
+.orange-button {
+  padding: 10px 20px;
+  background-color: #ffa500;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.orange-button:hover {
+  background-color: #ff8c00;
+}
+
+/* Specific Input Styles */
+.T-input {
+  width: 50px;
   margin-left: 0;
-  padding-left: 0;
+  padding: 5px;
+  font-size: 14px;
 }
-label[for="phi"] {
-  margin-right: 0;
-  padding-right: 0;
-}
-input#phi {
-  margin-left: 0;
-  padding-left: 0;
-}
+
+label[for="T"],
+label[for="phi"],
 label[for="phi0"] {
   margin-right: 0;
   padding-right: 0;
 }
+
+input#T.T-input,
+input#phi,
 input#phi0 {
   margin-left: 0;
   padding-left: 0;
 }
-/* To ensure consistency with other inputs, you might want to add: */
- 
+
+/* Stats Styles */
 .stats-container {
   flex: 1;
 }
+
 .stats-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
 }
+
 .stats-table th, .stats-table td {
   padding: 8px;
   text-align: right;
   border-bottom: 1px solid #e0e0e0;
 }
+
 .stats-table th {
   font-weight: bold;
   text-align: left;
   background-color: #f8f8f8;
 }
+
 .stats-table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
+
 .stats-table tr:last-child td {
   border-bottom: none;
 }
+
 .stats-table .measure {
   text-align: left;
   font-weight: bold;
 }
+
 .stats-table .formula {
   text-align: left;
   font-style: italic;
 }
-#formula-container {
-  background-color: #fff;
-  padding: 15px; 
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 1.2em;
-}
-.text-container {
-  background-color: #fff;
-  padding: 15px; 
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 1.2em;
-}
+
 .stats-tables-container {
   display: flex;
-  flex-direction: column; /* Stack children vertically */
+  flex-direction: column;
   justify-content: space-between;
   width: 100%;
   gap: 20px;
-} 
+}
+
+/* Other Container Styles */
+#formula-container,
+.text-container {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Navigation Styles */
 nav {
   width: 100%;
   background-color: #ffa500;
@@ -215,22 +271,21 @@ nav ul li a {
   padding: 14px 16px;
   text-decoration: none;
 }
+
 nav ul li a.active {
-  font-weight: bold; 
+  font-weight: bold;
 }
 
-a {
-  color: #1c1c1c; 
-}
-
+/* Page Styles */
 .page {
-  display: none; /* Hide all pages by default */
-}
-.active {
-  display: block; /* Show the active page */
+  display: none;
 }
 
-/* Hide the menu toggle button on larger screens */
+.active {
+  display: block;
+}
+
+/* Menu Toggle Styles */
 #menu-toggle {
   display: none;
   background: none;
@@ -239,103 +294,37 @@ a {
   cursor: pointer;
 }
 
-/* Add background color to the space behind the button on full width */
 .menu-bar {
-  display: none; /* Hide by default */
+  display: none;
   width: 100%;
-  background-color: #ffa500; /* Add background color */
+  background-color: #ffa500;
   display: flex;
-  justify-content: flex-start; /* Align button to the left */
+  justify-content: flex-start;
   align-items: center;
 }
 
-
-
-input[type="number"], input[type="range"] {
-  margin: 0 10px;
-  padding: 5px;
-  border: 1px solid #ffa500;
-  border-radius: 4px;
-}
-
-input[type="range"] {
-  -webkit-appearance: none;
-  width: 100px;
-  height: 10px;
-  background: #ffa500;
-  outline: none;
-  opacity: 0.7;
-  transition: opacity .2s;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 10px;
-  height: 20px;
-  background: #fff;
-  cursor: pointer;
-  border: 2px solid #ffa500;
-  border-radius: 50%;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 10px;
-  height: 20px;
-  background: #fff;
-  cursor: pointer;
-  border: 2px solid #ffa500;
-  border-radius: 50%;
-}
-
-.button-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.orange-button {
-  padding: 10px 20px;
-  background-color: #ffa500;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.orange-button:hover {
-  background-color: #ff8c00;
-}
-
-/* Rest of the CSS remains the same */
-
-/* Add these new styles at the end of the file */
-#rollBallBtn {
-  margin-bottom: 20px;
-  align-self: center;
-}
-
+/* Footer Styles */
 footer {
   background-color: #ffa500;
   color: #1c1c1c;
   text-align: center;
-  padding: 0px  ;
-  width: 100%;
-  margin-top: 20px;
+  padding: 0;
   width: calc(100% - 40px);
   max-width: 1200px;
+  margin-top: 20px;
 }
+
 .footer-container {
   padding: 20px;
   display: flex;
   justify-content: space-between;
 }
+
 footer p {
   margin: 0;
 }
 
+/* Responsive Styles */
 @media (max-width: 768px) {
   .input-container {
     flex-direction: column;
@@ -344,11 +333,11 @@ footer p {
 
   .input-container > div {
     width: 100%;
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
   }
 
   .input-container input[type="number"],
-  .input-container input[type="range"] { 
+  .input-container input[type="range"] {
     text-align: left;
   }
 
@@ -358,20 +347,15 @@ footer p {
     margin-bottom: 5px;
   }
 
-  
   .orange-button {
     flex: 1 1 100%;
   }
-} 
 
-
-/* Show the menu toggle button on small screens */
-@media (max-width: 768px) {
   .chart-container {
-     width: 100%  !important; 
-     margin: 0px  !important;  
+    width: 100% !important;
+    margin: 0 !important;
   }
-  
+
   #menu-toggle {
     display: block;
     background-color: #ffa500;
@@ -381,7 +365,6 @@ footer p {
     font-size: 1.5em;
     cursor: pointer;
   }
-
 
   .menu-bar {
     display: flex;
