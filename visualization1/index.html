@@ -1,9 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VDNR1PZVLE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VDNR1PZVLE');
+</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Dashboard</title>
+  <title>Understanding Non-Gaussian SVAR: An Interactive Guide</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Non-Gaussian SVAR",
+      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.", 
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      } 
+    }
+    </script>
+
+
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -27,7 +65,7 @@
   <header>
     <h1>Non-Gaussian SVAR</h1>
   </header>
-
+ 
   <main>
 
 
@@ -46,18 +84,19 @@
       </nav>
 
  
- 
-      <section class="text-container"> 
-        <p>
-          In a structural vector autoregression (SVAR) a vector of time series $ y_t = [y_{1,t},...,y_{n,t}]'$ 
-          is explained by its own past and a vector of independent<span class="info-icon" data-info=".......">i</span> structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
-          $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t$$  $$ \quad u_t =B_0 \epsilon_t.  $$
-          The goal of this dashboard is to visualize how independent and non-Gaussian shocks allow to identify a SVAR using higher-order moment conditions. More precicely, the question is, given the a set of macroeconomnic variables $y_t$, how can we consistently estimate the matrix $B_0$ representing the simulatenous impact of shocks $\epsilon_t$ on $y_t$.
-          Consequently, the dashboard aims at illustrate the identification approach in 
-           <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target=”_blank”>
-            Keweloh (2021)</a>.
-          </p>
+      <section id="introduction" class="text-container">
+        <h3>Introduction</h3>
+        <p>Welcome to our interactive guide on Non-Gaussian Structural Vector Autoregression (SVAR) models. This website aims to visualize and explain the identification approach in <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target="_blank">Keweloh (2021)</a>.</p>
+         
+    </section>
 
+      <section id="svar-model" class="text-container"> 
+        <h3>The SVAR Model</h3>
+        <p>In a structural vector autoregression (SVAR) a vector of time series $ y_t = [y_{1,t},...,y_{n,t}]'$ 
+          is explained by its own past and a vector of independent<span class="info-icon" data-info=".......">i</span> structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
+          $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t$$  $$ \quad u_t =B_0 \epsilon_t.  $$</p>
+
+        
        
 
         <p>
@@ -67,7 +106,8 @@
       </section>
 
       
-    <section class="text-container"> 
+    <section id="assumptions" class="text-container"> 
+      <h3>Simplifying Assumptions</h3>
       <p>The VAR(p) $ y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t   $  can be estimated by OLS. To simplify, consider an SVAR(0) such that the reduced form shocks $u_t$ can be thought of as observable random variables equal to an unknown linear combination $B_0$ of unknown structural form shocks $\epsilon_t$.  
       </p>
       <div class="assumption-box">
@@ -75,12 +115,7 @@
           The SVAR has zero lags:
           <p>   $$  y_t =   u_t \quad \text{and} \quad u_t =B_0 \epsilon_t  $$</p> 
         </div> 
-    </section>
-
-
-
-         
-    <section class="text-container"> 
+ 
       <p>To further simplify, lets consider an SVAR with only two variables and shocks such that each of the two reduced form shocks is equal to an unknown linear combination of the two structural shocks.</p>
       <div class="assumption-box">
           <h5>Assumption 2: Bivariate SVAR</h5>
@@ -91,10 +126,7 @@
             \begin{bmatrix} b_{11} & b_{12} \\ b_{21} & b_{22} \end{bmatrix} 
             \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix}  $$</p> 
         </div> 
-    </section>
-
-         
-    <section class="text-container"> 
+    
       <p>Finally, lets assume that the matrix $B_0$ is orthogonal.<span class="info-icon" data-info=".......">i</span>
         Without the orthogonality assumption the matrix $B_0$ contains four unknown parameters. However, an orothogonal matrix $B_0$ essentially only depends on a single unknown parameter, which simplfies the visualizations on the next pages.</p>
       <div class="assumption-box">
@@ -107,7 +139,10 @@
         </div> 
     </section>
 
-    <div class="text-container">
+ 
+
+    <div class="text-container" id="next-steps">
+      <h3>Next Steps</h3>
       <p>
         The <a href="page2.html">next</a> page illustrates that the relation between reduced form shocks and structural shocks.
       </p>

@@ -1,9 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VDNR1PZVLE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VDNR1PZVLE');
+</script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Dashboard</title>
+  <title>Understanding Non-Gaussian SVAR: An Interactive Guide</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Non-Gaussian SVAR",
+      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.", 
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      } 
+    }
+    </script>
+
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -61,8 +98,16 @@
         <button id="newDataBtn" class="orange-button">New Data</button>
       </section>
 
-    <section class="text-container">
-      <p>Using the simplifications from the <a href="index.html">previous</a> page, the reduced form shocks $u_t$ and consequently the macroeconomnic variables $y_t$ can be thought of a with angle $\phi_0$ of the structural form shocks $\epsilon_t$:
+      <section id="introduction" class="text-container">
+        <h3>Introduction</h3>
+        <p>This page explores the relationship between reduced form shocks and structural shocks in our Non-Gaussian SVAR model.</p>
+    </section>
+
+
+    <section  id="shock-relationship" class="text-container">
+      <h3>The Relationship Between Reduced and Structural Form Shocks</h3>
+            
+      <p>In our simplified SVAR model, the reduced form shocks $u_t$ and consequently the macroeconomnic variables $y_t$ can be thought of a with angle $\phi_0$ of the structural form shocks $\epsilon_t$:
         $$   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
         =  
        \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
@@ -71,6 +116,11 @@
         <span id="current-B0"></span>
         
       </p>
+    </section>
+
+    
+    <section  id="interactive-simulation" class="text-container">
+      <h3>Interactive Simulation</h3>
       <p>
         In the simulation below, the structural form shocks are independently drawn from a uniform distribution.<span class="info-icon" data-info="normalization....">i</span>
         <br>
@@ -79,28 +129,43 @@
         Push the New-Data-Button to draw a new set of structural shocks $\epsilon_t$.
       </p>
       
-      <div id="current-B" style="display: none;"></div>
+      <div id="current-B" style="display: none;"></div>   
+      
+      <div class="container"> 
+        <section class="chart-container" style="width: 49%; margin-right: 2%;">
+          <canvas id="scatterPlot1"></canvas>
+        </section>
+  
+        <section class="chart-container" style="width: 49%;">
+          <canvas id="scatterPlot2"></canvas>
+        </section> 
+      </div>
     </section>
 
-    <div class="container">
 
-      <section class="chart-container" style="width: 49%; margin-right: 2%;">
-        <canvas id="scatterPlot1"></canvas>
-      </section>
+    <section id="key-observations" class="text-container">
+      <h3>Key Observations</h3>
+      <ul>
+          <li>As φ_0 changes, observe how the pattern of reduced form shocks rotates.</li>
+          <li>The structural shocks maintain their independent distribution.</li>
+          <li>The reduced form shocks, while still uncorrelated, may show patterns of dependence.</li>
+      </ul>
+  </section>
 
-      <section class="chart-container" style="width: 49%;">
-        <canvas id="scatterPlot2"></canvas>
-      </section>
-
-
-    </div>
-
+  <section id="implications" class="text-container">
+      <h3>Implications for Identification</h3>
+      <p>Understanding this relationship is crucial for our identification strategy:</p>
+      <ol>
+          <li>We observe u_t but not ε_t or φ_0.</li>
+          <li>Our goal is to estimate φ_0 and recover ε_t from u_t.</li>
+          <li>The non-Gaussian properties of ε_t will be key to our identification strategy.</li>
+      </ol>
+  </section>
   
-  <div class="text-container">
-    <p>
-      The <a href="page3.html">next</a> page illustrates the identification problem.
-    </p>
-    
+  <div  id="next-steps" class="text-container">
+    <h3>Next Steps</h3>
+    <p>In the next section, we'll delve deeper into the identification problem and why traditional methods fall short for non-Gaussian shocks. Proceed to <a href="page3.html">The Identification Problem</a> to continue.</p>
+       
   </div>
 
 
