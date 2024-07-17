@@ -71,6 +71,7 @@
       <button id="menu-toggle" aria-label="Toggle menu">☰</button>
     </div>
     <nav>
+      <h3 id="table-of-content">Table of Contents</h3>
       <ul>
         <li><a href="index.html">Setup</a></li>
         <li><a href="page2.html">Reduced Form</a></li>
@@ -105,24 +106,41 @@
       <button id="newDataBtn" class="orange-button">New Data</button>
     </section>
 
-    <section id="formula-container">
-      <p>This last pages illustrates how the degree of non-Gaussianity affects the estimation.</p> 
+    <section id="introduction" class="text-container">
+      <h2>Impact of Non-Gaussianity on Estimation</h2>
       
+      <p>This page illustrates how the degree of non-Gaussianity affects the estimation of structural shocks in our SVAR model.</p>
+      </section>
+      
+<section id="shock-distributions" class="text-container">
+  <h3>Shock Distributions</h3>
+       
       <p>In the simulation below, the second structural form shock $\epsilon_{2,t}$ is independently drawn from a uniform distribution.
         The first structural form shock $\epsilon_{1,t}$ is independently drawn from a mixture of uniform distributions<span class="info-icon" data-info="...normalization....">i</span>
         $$ 
-        \epsilon_{1,t} \sim 0.9 \mathcal{N} (0, 1 ) + 0.1 \mathcal{N} (s, 1)
+        \epsilon_{1,t} \sim 0.9 \mathcal{N} (0, 1 ) + 0.1 \mathcal{N} (s, 1).
         $$
-        where the mixing coefficient $s$ can be chosen using the slider above. For $s=0$, both shocks are normal. For $s <  0$ the first shock is left skewed and for $s ></0>  0$ the first shock is right skewed.
-      </p>
+          </p>
           
+          <p>The mixing coefficient s can be chosen using the slider above:</p>
+<ul>
+  <li>For s = 0, both shocks are normal.</li>
+  <li>For s < 0, the first shock is left-skewed.</li>
+  <li>For s > 0, the first shock is right-skewed.</li>
+</ul>
       
+    </section>
+
+
+    
+<section id="interactive-simulation" class="text-container">
+  <h3>Interactive Simulation</h3>
+  
       <p>
         Move the $\phi$ and $s$ slider to see how the rotations and non-Gaussianity affects the dependencies of the innovations displayed in the table below the scatter plot. 
         <span id="current-B"></span>
        </p> 
     
-    </section>
 
     <div class="container">
 
@@ -144,36 +162,42 @@
         </div>
       </section>
     </div>
+    </section>
 
-    <section class="text-container"> 
+    
+<section id="interactive-loss" class="text-container">
+  <h3>Interactive Loss Calculation</h3>
 
       <p>The loss value in the table again summes up all squared co-moments to get an overall measure of the dependencies 
         $$ 
         loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
         $$
+        </p>
 
-       The plot below shows how the loss for all rotation angles $\phi$. 
-       <br>
-       Push the Minimize-Dependencies-Button to find the rotation angle $\phi$ which leads to the least dependent innovations. 
-       <br>
-      Vary the degree of non-Gaussianity using $s$ to see it affects the optimization landscape.
-    </p>
+        
+<p>The plot below shows the loss for all rotation angles φ.</p>
+
+<ul>
+  <li>Push the Minimize-Dependencies-Button to find the rotation angle φ which leads to the least dependent innovations.</li>
+  <li>Vary the degree of non-Gaussianity using s to see how it affects the optimization landscape.</li>
+</ul>
     <p>
-      Take-away: Gaussian shocks lead to a flat optimization landscape without a unique minimum at $\phi_0$.
-    </p>
-    </section>
+          Take-away:  Gaussian shocks lead to a flat optimization landscape without a unique minimum at φ<sub>0</sub>. This illustrates why non-Gaussianity is crucial for identifying structural shocks in SVAR models based on independent shocks.</p>
 
 
-<div class="container">
-  <div class="button-container">
-    <button id="rollBallButton" class="orange-button">Minimize Dependencies</button>
-  </div>
-  <div class="chart-wrapper">
-    <section class="chart-container">
-      <canvas id="lossplot4"></canvas>
+
+    <div class="container">
+      <div class="button-container">
+        <button id="rollBallButton" class="orange-button">Minimize Dependencies</button>
+      </div>
+      <div class="chart-wrapper">
+        <section class="chart-container">
+          <canvas id="lossplot4"></canvas>
+        </section>
+      </div>
+    </div>
     </section>
-  </div>
-</div>
+
 
 
   </main>

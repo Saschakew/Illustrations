@@ -70,6 +70,7 @@
       <button id="menu-toggle" aria-label="Toggle menu">☰</button>
     </div>
     <nav>
+      <h3 id="table-of-content">Table of Contents</h3>
       <ul>
       <li><a href="index.html">Setup</a></li>
       <li><a href="page2.html">Reduced Form</a></li>
@@ -99,9 +100,14 @@
         <button id="newDataBtn" class="orange-button">New Data</button>
       </section>
 
-      <section class="text-container">
-        <p>So how can we verify whether we picked  $\phi=\phi_0$ and whether our inovations are equal to the structural shocks?</p>
+      
+      <section id="introduction" class="text-container">
+        <h2>Mininmizing Dependencies</h2>
+        <p>This page explores how we can verify whether we've correctly identified the structural shocks by minimizing dependencies between innovations.</p>
+ </section>
 
+      <section id="independent-shocks" class="text-container">
+         <h3>Independent Shocks</h3>
         <p>
           While we cannot observe the structural shocks $\epsilon_t$, we do know something about their stochastic properties: The structural shocks $\epsilon_t$ are independent, meaning a given shock $\epsilon_{1,t}$ contains no information on the shock $\epsilon_{2,t}$ and vice versa.
           The same stochastic property should apply to the innovations $e_t(B(\phi))$, meaning a given innovation $e_{1,t}$ should contain no information on the innovation $e_{2,t}$ and vice versa. 
@@ -114,7 +120,11 @@
           <li>Measure the dependency of the innovations and rule out rotation angles $ \phi $ that lead to dependent innovations.</li>
         </ol>
         </p>
+      </section>
 
+
+      <section id="measuring-dependencies" class="text-container">
+        <h3>Moment Conditions for Independent Shocks</h3>
         <p>The dependency of the innovations $ e_t(B(\phi)) $ can be measured using moment conditions.
           Specifically, independent shocks with mean zero and unit variance will satistfy the following   covariance-, coskewness-, and cokurtosis- conditions 
           $$ 
@@ -133,14 +143,17 @@
           \end{matrix}
           $$
         </p>
+      </section>
         
      
+        <section id="interactive-simulation" class="text-container">
+          <h3>Interactive Loss Calculation</h3>
+         
          <p>
           Move the $\phi$ slider to see how the rotation angle affects the dependencies of the innovations displayed in the table below the scatter plot. 
           <span id="current-B"></span>
          </p> 
       
-      </section>
 
     <div class="container">
       <section class="chart-container" style="width: 49%; margin-right: 2%;"> 
@@ -157,10 +170,12 @@
         </div>
       </section>
     </div>
+  </section>
 
 
 
-    <section class="text-container">
+    <section id="simulation-results" class="text-container">
+      <h3>Observations</h3>
       <p>
           Note that any rotation $\phi$ yields uncorrelated shocks. 
           However, eventhough all innovations are uncorrelated, some are clearly dependent as measured by the higher-order moment conditions.
@@ -172,17 +187,23 @@
         loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
         $$
 
-       The plot below shows how the loss for all rotation angles $\phi$. 
-       <br>
-       Push the Minimize-Dependencies-Button to find the rotation angle $\phi$ which leads to the least dependent innovations. 
-       <br>
-      Try out different sample sizes $T$ and new data sets using the New-Data-Button to see how the rotation $\phi$ which minimizes the innovations' dependencies is located arround the true rotation $\phi_0=0.5$.
-    </p>
-    <p>
-      Take-away: Choosing the angle $\phi$ which minimizes the innovations' dependencies allows to estimate $\phi_0$.<span class="info-icon" data-info=".......">i</span>
-    </p>
-    </section>
+      </section>
 
+      
+     
+      <section id="interactive-loss" class="text-container">
+        <h3>Interactive Simulation</h3>
+       
+        <ul>
+          <li>Push the Minimize-Dependencies-Button to find the rotation angle φ which leads to the least dependent innovations</li>
+          <li>Try different sample sizes T and new data sets using the New-Data-Button</li>
+          <li>Observe how the rotation φ which minimizes the innovations' dependencies is located around the true rotation φ<sub>0</sub> = 0.5</li>
+        </ul>
+       </p>
+    <p>
+      Take-away: Choosing the angle φ which minimizes the innovations' dependencies allows us to estimate φ.</p>
+    </p>
+    
 <div class="container">
   <div class="button-container">
     <button id="rollBallButton" class="orange-button">Minimize Dependencies</button>
@@ -193,15 +214,17 @@
     </section> 
   </div>
 </div>
+    </section>
 
 
 
-<div class="text-container">
-  <p>
-    The <a href="page5.html">next</a> page shows that instead of minimizing the innovations' dependencies, we can also maximize the innovations non-Gaussianity.
-  </p>
-  
-</div>
+
+    
+    <section id="next-steps" class="text-container">
+      <h3>Next Steps</h3> 
+      <p>Proceed to <a href="page5.html">Maximizing non-Gaussianity</a> to see how maximizing the non-Gaussianity of the innovations can be used to identify the SVAR.</p>
+  </section>
+
 
 
 

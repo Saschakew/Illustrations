@@ -71,6 +71,7 @@
       <button id="menu-toggle" aria-label="Toggle menu">☰</button>
     </div>
     <nav>
+      <h3 id="table-of-content">Table of Contents</h3>
       <ul>
       <li><a href="index.html">Setup</a></li>
       <li><a href="page2.html">Reduced Form</a></li>
@@ -99,15 +100,16 @@
         <button id="newDataBtn" class="orange-button">New Data</button>
       </section>
 
+      <section id="introduction" class="text-container"> 
+        <h2>Maximizing non-Gaussianity</h2>
+        
+        <p>This page demonstrates that minimizing the innovations' dependencies (as shown on the <a href="page4.html">previous page</a>) is equivalent to maximizing the shocks' non-Gaussianity.<span class="info-icon" data-info="....">i</span> Consequently, we can identify φ<sub>0</sub> by finding the most non-Gaussian innovations.</p>
+        </section>
+        
 
 
-
-      <section class="text-container">
-        <p>
-          The <a href="page4.html">previous</a> page focuses on estimating $\phi_0$ by minimizing the innovations dependencies. 
-          This page shows that minimizing the innovations dependencies is equivalent to maximizing the shocks non-Gaussianity.<span class="info-icon" data-info="....">i</span>
-          Consequently, instead of trying to find the least independent innovations, we can also find the most non-Gaussian innovations.
-        </p> 
+        <section id="non-gaussianity-measures" class="text-container">
+          <h3>Measuring Non-Gaussianity</h3>
   
         <p>The non-Gaussianity of the innovations $ e_t(B(\phi)) $ can be measured using the skewness and excess kurtosis:
           $$
@@ -122,16 +124,18 @@
           \end{matrix}
           $$
         </p>
+      </section>
  
   
        
      
-         <p>
+      
+<section id="interactive-simulation" class="text-container">
+  <h3>Interactive Simulation</h3>
           Move the $\phi$ slider to see how the rotation angle affects the on-Gaussianity of the innovations displayed in the table below the scatter plot. 
           <span id="current-B"></span>
          </p> 
       
-      </section>
 
 
       
@@ -151,9 +155,11 @@
         </div>
       </section>
     </div>
+  </section>
 
 
-    <section class="text-container">
+  <section id="interactive-loss" class="text-container">
+    <h3>Interactive Loss Calculation</h3>
       <p>The loss value in the table above simply summes up all squared higher-order moments to get an overall measure of the non-Gaussianity 
         $$ 
         loss(\phi) = mean(  e_{1,t}(\phi)^3 )^2 + mean(  e_{2,t}(\phi)^3 )^2 +  
@@ -161,16 +167,14 @@
         $$
 
        The plot below shows how the loss for all rotation angles $\phi$. 
-       <br>
-       Push the Maximize-Non-Gaussianity-Button to find the rotation angle $\phi$ which leads to the most non-Gaussian innovations. 
-       <br>
-      Try out different sample sizes $T$ and new data sets using the New-Data-Button to   see how the rotation $\phi$ which maxiizes the innovations' non-Gaussianity is located arround the true rotation $\phi_0=0.5$.
+       <ul>
+        <li>Push the Maximize-Non-Gaussianity-Button to find the rotation angle φ which leads to the most non-Gaussian innovations.</li>
+        <li>Try out different sample sizes T and new data sets using the New-Data-Button to see how the rotation φ which maximizes the innovations' non-Gaussianity is located around the true rotation φ<sub>0</sub> = 0.5.</li>
+      </ul>
     </p>
     <p>
       Take-away: Choosing the angle $\phi$ which minimizes the innovations' non-Gaussianity allows to estimate $\phi_0$.<span class="info-icon" data-info=".......">i</span>
     </p>
-    </section> 
-
     <div class="container">
       <div class="button-container">
         <button id="rollBallButton" class="orange-button">Maximize non-Gaussianity</button>
@@ -182,14 +186,13 @@
       </div>
     </div>
 
+  </section> 
 
+  <section id="next-steps" class="text-container">
+    <h3>Next Steps</h3>
     
-    <div class="text-container">
-      <p>
-        The <a href="page6.html">next</a> page illustrates how the degree of non-Gaussianity of the structural shocks affects the estimation.
-      </p>
-      
-    </div>
+    <p>The <a href="page6.html">next page</a> illustrates how the degree of non-Gaussianity of the structural shocks affects the estimation.</p>
+    </section>
 
 
  
