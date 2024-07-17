@@ -947,37 +947,37 @@ function createTable(data, title, symbol) {
     <tr>
       <td class="measure">Covariance</td>
       <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
-      <td>${data.covariance.toFixed(4)}</td>
+      <td  class="value">${data.covariance.toFixed(4)}</td>
     </tr> 
     <tr>
-      <td class="measure">Coskewness 1</td>
+      <td class="measure">Coskewness </td>
       <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
-      <td>${data.coskewness1.toFixed(4)}</td>
+      <td  class="value">${data.coskewness1.toFixed(4)}</td>
     </tr>
     <tr>
-      <td class="measure">Coskewness 2</td>
+      <td class="measure">Coskewness </td>
       <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
-      <td>${data.coskewness2.toFixed(4)}</td>
+      <td  class="value">${data.coskewness2.toFixed(4)}</td>
     </tr>
     <tr>
-      <td class="measure">Cokurtosis 1</td>
+      <td class="measure">Cokurtosis </td>
       <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
-      <td>${data.cokurtosis1.toFixed(4)}</td>
+      <td  class="value">${data.cokurtosis1.toFixed(4)}</td>
     </tr>
     <tr>
-      <td class="measure">Cokurtosis 2</td>
+      <td class="measure">Cokurtosis </td>
       <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
-      <td>${data.cokurtosis2.toFixed(4)}</td>
+      <td  class="value">${data.cokurtosis2.toFixed(4)}</td>
     </tr>
     <tr>
-      <td class="measure">Cokurtosis 3</td>
+      <td class="measure">Cokurtosis </td>
       <td class="formula">mean(${symbol}₁² * ${symbol}₂²) - 1</td>
-      <td>${data.cokurtosis3.toFixed(4)}</td>
+      <td  class="value">${data.cokurtosis3.toFixed(4)}</td>
     </tr>
     <tr>
       <td class="measure">Loss</td>
       <td class="formula">...</td>
-      <td>${data.loss.toFixed(4)}</td>
+      <td  class="value">${data.loss.toFixed(4)}</td>
     </tr>
   </table>
   `;

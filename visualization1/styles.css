@@ -77,7 +77,8 @@ a {
   font-size: 14px;
   line-height: 1.4;
   color: #333;
-}
+} 
+
 
  /* List Styles */
 .styled-list { 
@@ -261,11 +262,21 @@ input#phi0 {
 }
 
 .stats-table {
-  width: 100%;
+  table-layout: auto;
+  width: auto;
   border-collapse: collapse;
   margin-bottom: 20px;
 }
-
+.stats-table th:first-child,
+.stats-table td:first-child {
+  width: 1%;
+  white-space: nowrap;
+} 
+.stats-table th,
+.stats-table td {
+  text-align: left;
+  white-space: nowrap;
+}
 .stats-table th, .stats-table td {
   padding: 8px;
   text-align: right;
@@ -296,11 +307,14 @@ input#phi0 {
   font-style: italic;
 }
 
+.stats-table .value {
+  text-align: left; 
+}
+
 .stats-tables-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 100%;
   gap: 20px;
 }
 
