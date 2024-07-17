@@ -59,7 +59,20 @@
     };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-</head>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        CommonHTML: {
+          linebreaks: { automatic: true }
+        },
+        "HTML-CSS": {
+          linebreaks: { automatic: true }
+        },
+        SVG: {
+          linebreaks: { automatic: true }
+        }
+      });
+      </script>
+  </head>
 <body class="page4">
   <header>
     <h1>Non-Gaussian SVAR</h1>
@@ -126,28 +139,33 @@
       <section id="measuring-dependencies" class="text-container">
         <h3>Moment Conditions for Independent Shocks</h3>
         <p>The dependency of the innovations $ e_t(B(\phi)) $ can be measured using moment conditions.
-          Specifically, independent shocks with mean zero and unit variance will satistfy the following   covariance-, coskewness-, and cokurtosis- conditions 
+          Specifically, independent shocks with mean zero and unit variance will satistfy the following covariance-, coskewness-, and cokurtosis- conditions.
+          <div class="equation-wrapper" style="text-align: center;">
+            Covariance condition:
+          $$  
+           E[\varepsilon_{1,t}\varepsilon_{2,t}] = 0 \implies  	E[e_{1,t}(B)e_{2,t}(B)]  \overset{!}{=} 0  
           $$ 
-          \begin{matrix} 
-          \text{Covariance condition} &E[\varepsilon_{1,t}\varepsilon_{2,t}] = 0 &\implies&  	E[e_{1,t}(B)e_{2,t}(B)]  \overset{!}{=} 0  
-          \\
-          \text{Coskewness condition} &E[\varepsilon_{1,t}^2\varepsilon_{2,t}] = 0 & \implies & 	E[e_{1,t}(B)^2e_{2,t}(B)]  \overset{!}{=} 0
-          \\
-          \text{Coskewness condition} &E[\varepsilon_{1,t}\varepsilon_{2,t}^2]=0  & \implies & 		E[e_{1,t}(B)e_{2,t}(B)^2] \overset{!}{=} 0
-          \\   
-          \text{Cokurtosis condition} &E[\varepsilon_{1,t}^3\varepsilon_{2,t}]  = 0 &\implies&  E[e_{1,t}(B)^3 e_{2,t}(B)]  \overset{!}{=} 0
-          \\ 
-          \text{Cokurtosis condition} &E[\varepsilon_{1,t}\varepsilon_{2,t}^3]  = 0 &\implies& 	E[e_{1,t}(B) e_{2,t}(B)^3] \overset{!}{=} 0 
-			    \\ 
-          \text{Cokurtosis condition} &E[\varepsilon_{1,t}^2\varepsilon_{2,t}^2]  = 1 &\implies&  	E[e_{1,t}(B)^2 e_{2,t}(B)^2]  \overset{!}{=} 1
-          \end{matrix}
+          Coskewness condition
           $$
+            E[\varepsilon_{1,t}^2\varepsilon_{2,t}] = 0 \implies  	E[e_{1,t}(B)^2e_{2,t}(B)]  \overset{!}{=} 0
+          $$ $$
+           E[\varepsilon_{1,t}\varepsilon_{2,t}^2]=0  \implies 		E[e_{1,t}(B)e_{2,t}(B)^2] \overset{!}{=} 0
+          $$ 
+          Cokurtosis condition
+          $$ 
+           E[\varepsilon_{1,t}^3\varepsilon_{2,t}]  = 0 \implies   E[e_{1,t}(B)^3 e_{2,t}(B)]  \overset{!}{=} 0
+          $$ $$
+            E[\varepsilon_{1,t}\varepsilon_{2,t}^3]  = 0 \implies 	E[e_{1,t}(B) e_{2,t}(B)^3] \overset{!}{=} 0 
+          $$ $$
+            E[\varepsilon_{1,t}^2\varepsilon_{2,t}^2]  = 1 \implies   	E[e_{1,t}(B)^2 e_{2,t}(B)^2]  \overset{!}{=} 1
+          $$
+          </div>
         </p>
       </section>
         
      
         <section id="interactive-simulation" class="text-container">
-          <h3>Interactive Loss Calculation</h3>
+          <h3>Interactive Simulation</h3>
          
          <p>
           Move the $\phi$ slider to see how the rotation angle affects the dependencies of the innovations displayed in the table below the scatter plot. 
@@ -192,7 +210,7 @@
       
      
       <section id="interactive-loss" class="text-container">
-        <h3>Interactive Simulation</h3>
+        <h3>Interactive Loss Calculation</h3>
        
         <ul>
           <li>Push the Minimize-Dependencies-Button to find the rotation angle φ which leads to the least dependent innovations</li>
