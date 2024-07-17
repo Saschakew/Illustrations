@@ -242,7 +242,15 @@ function initializeCharts() {
       datasets: [{
         label: 'Data',
         data: [],
-        backgroundColor: 'rgba(255, 165, 0, 0.6)'
+        backgroundColor: 'rgba(255, 165, 0, 0.6)',
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }, {
+        label: 'Selected Point',
+        data: [],
+        backgroundColor: 'red',
+        pointRadius: 7,
+        pointHoverRadius: 9
       }]
     },
     options: {
@@ -272,21 +280,42 @@ function initializeCharts() {
             font: { size: 16 }
           }
         }
-      }
+      },
+      onClick: handleChartClick
     }
-    
   };
 
-  function createChartIfExists(id) {
-    const element = document.getElementById(id);
-    if (element) {
-      const ctx = element.getContext('2d');
-      charts[id] = new Chart(ctx, JSON.parse(JSON.stringify(chartConfig)));
+  // Add this function to handle chart clicks
+function handleChartClick(event, elements, chart) {
+  if (elements.length > 0) {
+    const clickedIndex = elements[0].index;
+    highlightPoint(chart, clickedIndex);
+    
+    // Highlight the corresponding point in the other chart
+    const otherChartId = chart.canvas.id === 'scatterPlot1' ? 'scatterPlot2' : 'scatterPlot1';
+    const otherChart = charts[otherChartId];
+    if (otherChart) {
+      highlightPoint(otherChart, clickedIndex);
     }
   }
+}
+// Add this function to highlight a specific point
+function highlightPoint(chart, index) {
+  const selectedDataset = chart.data.datasets[1];
+  selectedDataset.data = [chart.data.datasets[0].data[index]];
+  chart.update();
+}
 
-  createChartIfExists('scatterPlot1');
-  createChartIfExists('scatterPlot2');
+function createChartIfExists(id) {
+  const element = document.getElementById(id);
+  if (element) {
+    const ctx = element.getContext('2d');
+    charts[id] = new Chart(ctx, JSON.parse(JSON.stringify(chartConfig)));
+  }
+}
+
+createChartIfExists('scatterPlot1');
+createChartIfExists('scatterPlot2');
   createChartIfExists('scatterPlot3');
 
   const lossplot4Element = document.getElementById('lossplot4');
@@ -304,8 +333,8 @@ function initializeCharts() {
         }, {
           label: 'Current φ',
           data: [],
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: '#ffa500',
+          backgroundColor: '#ffa500',
           pointRadius: 6,
           pointHoverRadius: 8,
           showLine: false
@@ -366,8 +395,8 @@ function initializeCharts() {
         }, {
           label: 'Current φ',
           data: [],
-          borderColor: 'rgb(255, 99, 132)',
-          backgroundColor: 'rgb(255, 99, 132)',
+          borderColor: '#ffa500',
+          backgroundColor: '#ffa500',
           pointRadius: 6,
           pointHoverRadius: 8,
           showLine: false
@@ -531,10 +560,37 @@ function updateLossPlot() {
 
     // Update the phi0 point
     const phi0Loss = myloss(u1, u2, phi0);
-    charts.lossplot4.data.datasets[2].data = [{
-      x: phi0,
-      y: phi0Loss
-    }];
+const yMin = Math.min(0,...charts.lossplot4.data.datasets[0].data.map(point => point.y));
+const yMax = Math.max(0.5,...charts.lossplot4.data.datasets[0].data.map(point => point.y));
+
+charts.lossplot4.data.datasets[2] = {
+  type: 'line',
+  label: 'φ₀',
+  data: [
+    { x: phi0, y: yMin },
+    { x: phi0, y: yMax }
+  ],
+  borderColor: '#ffa500',
+  borderWidth: 2,
+  pointRadius: 0,
+  animation: false
+};
+
+charts.lossplot4.options.annotation = {
+  annotations: [{
+    type: 'line',
+    mode: 'vertical',
+    scaleID: 'x',
+    value: phi0,
+    borderColor: '#ffa500',
+    borderWidth: 2,
+    label: {
+      content: 'φ₀',
+      enabled: false,
+      position: 'top'
+    }
+  }]
+};
 
     charts.lossplot4.options.scales.x = {
       type: 'linear',
@@ -597,19 +653,41 @@ function updateLossPlotm() {
     charts.lossplot4m.data.labels = xValues.map(x => x.toFixed(2));
     charts.lossplot4m.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
 
-    // Update the current phi point
-    const currentLoss = mylossm(u1, u2, currentPhi);
-    charts.lossplot4m.data.datasets[1].data = [{
-      x: currentPhi,
-      y: currentLoss
-    }];
+ 
 
-    // Update the phi0 point
-    const phi0Loss = mylossm(u1, u2, phi0);
-    charts.lossplot4m.data.datasets[2].data = [{
-      x: phi0,
-      y: phi0Loss
-    }];
+        // Update the phi0 point
+        const phi0Loss = mylossm(u1, u2, phi0);
+        const yMin = Math.min(0,...charts.lossplot4m.data.datasets[0].data.map(point => point.y));
+        const yMax = Math.max(0.5,...charts.lossplot4m.data.datasets[0].data.map(point => point.y));
+        
+        charts.lossplot4m.data.datasets[2] = {
+          type: 'line',
+          label: 'φ₀',
+          data: [
+            { x: phi0, y: yMin },
+            { x: phi0, y: yMax }
+          ],
+          borderColor: '#ffa500',
+          borderWidth: 2,
+          pointRadius: 0,
+          animation: false
+        };
+        
+        charts.lossplot4m.options.annotation = {
+          annotations: [{
+            type: 'line',
+            mode: 'vertical',
+            scaleID: 'x',
+            value: phi0,
+            borderColor: '#ffa500',
+            borderWidth: 2,
+            label: {
+              content: 'φ₀',
+              enabled: false,
+              position: 'top'
+            }
+          }]
+        };
 
     charts.lossplot4m.options.scales.x = {
       type: 'linear',
@@ -821,11 +899,12 @@ function updateAllMatrices(phi0, phi) {
  
 
 function updateChart(chart, xData, yData, title, xLabel, yLabel, animate = false) {
-  if (!chart) return;  // Exit if the chart doesn't exist
+  if (!chart) return;
 
   const newData = xData.map((x, i) => ({x: x, y: yData[i]}));
 
   chart.data.datasets[0].data = newData;
+  chart.data.datasets[1].data = []; // Reset selected point
   chart.options.plugins.title.text = title;
   chart.options.scales.x.title.text = xLabel;
   chart.options.scales.y.title.text = yLabel;
