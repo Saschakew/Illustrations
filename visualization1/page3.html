@@ -60,20 +60,42 @@
         
           <div id="phiValue">0.00</div>
         </div>
-        <button id="newDataBtn" class="orange-button">New data</button>
+        <button id="newDataBtn" class="orange-button">New Data</button>
       </section>
 
-    <section id="formula-container">
-      <p>.....</p>
-      <div>
-        $ u_t = B(\phi_0) \epsilon_t$ 
-        with
-        $B(\phi_0) = $ 
+    <section class="text-container">
+      <p>Lets fix the rotation at $\phi_0=0.5$ such that the reduced form shocks are equal to one specific rotaion of the structural shocks:  
         <span id="current-B0"></span>
-      </div>
-       <p>.....</p>
-      <div>$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  =$ <span id="current-B"></span> $ u_t$</div>
-    
+
+      <p> 
+      However, in a given application, we neither know the rotation matrix $B(\phi_0)$ nor do we observe the structural shocks $\epsilon_t$.
+      Instead, we only observe the reduced form shocks $u_t$.<span class="info-icon" data-info=".......">i</span> 
+      Consequently, the question is how can we identify $B(\phi_0)$ and recover the structural shocks $\epsilon_t$ from the reduced form shocks $u_t$?
+      </p>
+
+      </p>
+      We can always choose an angle $\phi$<span class="info-icon" data-info=".......">i</span>, calculate $B(\phi)=  \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$, and get the corresponding innovations $e(B(\phi))$ with
+      $
+      e_t( B(\phi) ) = B(\phi)^{-1} u_t 
+      $.
+      These innovations represent the shocks that would yield $u_t$ if the true angle of the data-generating process $\phi_0$ where equal to the chosen angle $\phi$.
+      Specifically, for $\phi=\phi_0$ we get $e_t( B(\phi_0) ) = \epsilon_t$.
+    </p>
+
+    <p>
+      Move the $\phi$ slider above to see how $B(\phi)$ leads to different innovations $e_t$ equal to rotations of $u_t$:
+      $$   \begin{bmatrix} e_{1,t}   \\ e_{2,t}  \end{bmatrix} 
+      =  
+     \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
+      \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
+    $$
+      <span id="current-B"></span> 
+    </p>
+
+    <p>
+      The question is how do we know whether we picked  $\phi=\phi_0$ and whether our inovations are equal to the structural shocks?
+    </p>
+       
     </section>
 
     <div class="container">
@@ -94,7 +116,7 @@
     
     <div class="text-container">
       <p>
-        The <a href="page4.html">next</a> page ....
+        The <a href="page4.html">next</a> page illustrates how higher-order moment conditions measuring the innovations' dependencies allow to verify whether $\phi=\phi_0$ and  whether the inovations are equal to the structural shocks.
       </p>
       
     </div>
@@ -104,11 +126,10 @@
 
   <footer>
     <div class="footer-container">
-        <a href="...">Github Repository</a>
+        <a href="about.html">About</a>
         <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
     </div>
 </footer>
-  
   <script src="main.js"></script>
 </body>
 </html>

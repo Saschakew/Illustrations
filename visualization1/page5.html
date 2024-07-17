@@ -58,19 +58,32 @@
         
           <div id="phiValue">0.00</div>
         </div>
-        <button id="newDataBtn" class="orange-button">New data</button>
+        <button id="newDataBtn" class="orange-button">New Data</button>
       </section>
 
-      <section id="formula-container">
-        <p>.....</p>
-        <div>
-          $ u_t = B(\phi_0) \epsilon_t$ 
-          with
-          $B(\phi_0) = $ 
-          <span id="current-B0"></span>
-        </div>
-         <p>.....</p>
-        <div>$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  =$ <span id="current-B"></span> $ u_t$</div>
+
+
+
+      <section class="text-container">
+        <p>While the <a href="page4.html">previous</a> page ....
+        </p> 
+  
+        <p>
+          ...explain equivalence of max n-G and min dependencies....
+        </p>
+         
+  
+        <p>The non-Gaussianity of the innovations $ e_t(B(\phi)) $ can be measured using moment conditions.
+          Specifically, independent innovations with mean zero and unit variance will satistfy the following covariance, coskewness, and cokurtosis moment conditions:
+          $$
+          ...
+          $$
+        </p>
+     
+         <p>
+          Move the $\phi$ slider to see how the rotation angle affects the on-Gaussianity of the innovations displayed in the table below the scatter plot. 
+          <span id="current-B"></span>
+         </p> 
       
       </section>
 
@@ -93,6 +106,24 @@
       </section>
     </div>
 
+
+    <section class="text-container">
+      <p>The loss value in the table above simply summarizes .... 
+        $$ 
+        ...
+        $$
+
+       The plot below shows how the loss for all rotation angles $\phi$. 
+       <br>
+       Push the Maximize-Non-Gaussianity-Button to find the rotation angle $\phi$ which leads to the most non-Gaussian innovations. 
+       <br>
+      Try out different sample sizes $T$ and new data sets using the New-Data-Button to see ....
+    </p>
+    <p>
+      Take-away: Choosing the angle $\phi$ which minimizes the innovations' non-Gaussianity allows to estimate $\phi_0$.<span class="info-icon" data-info=".......">i</span>
+    </p>
+    </section> 
+
     <div class="container">
       <div class="button-container">
         <button id="rollBallButton" class="orange-button">Maximize non-Gaussianity</button>
@@ -108,7 +139,7 @@
     
     <div class="text-container">
       <p>
-        The <a href="page6.html">next</a> page ....
+        The <a href="page6.html">next</a> page illustrates how the degree of non-Gaussianity of the structural shocks affects the estimation.
       </p>
       
     </div>
@@ -120,7 +151,7 @@
 
   <footer>
     <div class="footer-container">
-        <a href="...">Github Repository</a>
+        <a href="about.html">About</a>
         <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
     </div>
 </footer>

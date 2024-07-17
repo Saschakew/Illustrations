@@ -53,11 +53,10 @@ a {
   color: white;
   border-radius: 50%;
   text-align: center;
-  line-height: 16px;
+  line-height: 20px;
   font-style: italic;
-  cursor: pointer;
-  margin-left: 4px;
-  font-size: 16px;
+  cursor: pointer; 
+  font-size: 20px;
   transition: background-color 0.3s;
 }
 
@@ -80,39 +79,17 @@ a {
   color: #333;
 }
 
-.ref-icon {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-color: #ffa500; /* A blue color to distinguish from the orange info icon */
-  color: white;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 16px;
-  font-style: italic;
-  cursor: pointer;
-  margin-left: 4px;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-.ref-icon:hover {
-  background-color: #ffa500;
-}
-
-.ref-popup {
-  display: none;
-  position: absolute;
-  background-color: #fff;
-  border: 1px solid #ffa500;
-  padding: 12px;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  z-index: 1000;
-  max-width: 300px;
-  font-size: 14px;
-  line-height: 1.4;
+ /* List Styles */
+.styled-list { 
+  margin-bottom: 20px;
+  list-style-type: decimal;
   color: #333;
+  font-size: 1em;
+  line-height: 1.5;
+}
+
+.styled-list li {
+  margin-bottom: 10px;
 }
 .assumption-box {
   padding: 15px 20px;

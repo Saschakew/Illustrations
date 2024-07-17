@@ -58,16 +58,26 @@
           <input type="hidden" id="phi" min="0" max="0.78" step="0.01" value="0.">
         
         </div>
-        <button id="newDataBtn" class="orange-button">New data</button>
+        <button id="newDataBtn" class="orange-button">New Data</button>
       </section>
-    <section id="formula-container">
-      <p>.....$y_t$<span class="info-icon" data-info="This is additional information.">i</span>...</p>
-      <div>
-        $ u_t = B(\phi) \epsilon_t$ 
-        where
-        $B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}=$ 
+
+    <section class="text-container">
+      <p>Using the simplifications from the <a href="index.html">previous</a> page, the reduced form shocks $u_t$ and consequently the macroeconomnic variables $y_t$ can be thought of a with angle $\phi_0$ of the structural form shocks $\epsilon_t$:
+        $$   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
+        =  
+       \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+        \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix} 
+      $$
         <span id="current-B0"></span>
-      </div>
+        
+      </p>
+      <p>
+        In the simulation below, the structural form shocks are independently drawn from a uniform distribution.<span class="info-icon" data-info="normalization....">i</span>
+        <br>
+        Move the $\phi_0$ slider above to see how $B(\phi_0)$ leads to different rotations $u_t$ of $\epsilon_t$.
+        <br>
+        Push the New-Data-Button to draw a new set of structural shocks $\epsilon_t$.
+      </p>
       
       <div id="current-B" style="display: none;"></div>
     </section>
@@ -85,16 +95,10 @@
 
     </div>
 
-
-
-  <section class="text-container">
-    <div>....</div>
-  </section>
-
   
   <div class="text-container">
     <p>
-      The <a href="page3.html">next</a> page ....
+      The <a href="page3.html">next</a> page illustrates the identification problem.
     </p>
     
   </div>
@@ -104,7 +108,7 @@
 
   <footer>
     <div class="footer-container">
-        <a href="...">Github Repository</a>
+        <a href="about.html">About</a>
         <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
     </div>
 </footer>

@@ -50,12 +50,15 @@
       <section class="text-container"> 
         <p>
           In a structural vector autoregression (SVAR) a vector of time series $ y_t = [y_{1,t},...,y_{n,t}]'$ 
-          is explained by its own past and a vector of orthogonal structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
-          $$ y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t \quad \text{and} \quad u_t =B_0 \epsilon_t.  $$
+          is explained by its own past and a vector of independent<span class="info-icon" data-info=".......">i</span> structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
+          $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t \quad \text{and} \quad u_t =B_0 \epsilon_t.  $$
           The goal of this dashboard is to visualize how independent and non-Gaussian shocks allow to identify a SVAR using higher-order moment conditions. More precicely, the question is, given the a set of macroeconomnic variables $y_t$, how can we consistently estimate the matrix $B_0$ representing the simulatenous impact of shocks $\epsilon_t$ on $y_t$.
+          Consequently, the dashboard aims at illustrate the identification approach in 
+           <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target=”_blank”>
+            Keweloh (2021)</a>.
           </p>
 
-        
+       
 
         <p>
           The following assumptions allow for a simple visualization of the identification method.
@@ -65,10 +68,12 @@
 
       
     <section class="text-container"> 
-      <p>....explain<span class="info-icon" data-info="This is additional $y_t$ information.">i</span>....</p>
+      <p>The VAR(p) $ y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t   $  can be estimated by OLS. To simplify, consider an SVAR(0) such that the reduced form shocks $u_t$ can be thought of as observable random variables equal to an unknown linear combination $B_0$ of unknown structural form shocks $\epsilon_t$.  
+      </p>
       <div class="assumption-box">
-          <h5>Assumption 1: XYZ</h5>
-          <p>.......</p> 
+          <h5>Assumption 1: No Lags</h5>
+          The SVAR has zero lags:
+          <p>   $$  y_t =   u_t \quad \text{and} \quad u_t =B_0 \epsilon_t  $$</p> 
         </div> 
     </section>
 
@@ -76,25 +81,35 @@
 
          
     <section class="text-container"> 
-      <p>....explain<span class="ref-icon" data-ref="Keweloh, Sascha Alexander. &quot;A generalized method of moments estimator for structural vector autoregressions based on higher moments.&quot; Journal of Business & Economic Statistics 39.3 (2021): 772-782.">r</span>....</p>
+      <p>To further simplify, lets consider an SVAR with only two variables and shocks such that each of the two reduced form shocks is equal to an unknown linear combination of the two structural shocks.</p>
       <div class="assumption-box">
-          <h5>Assumption 2: XYZ</h5>
-          <p>...</p> 
+          <h5>Assumption 2: Bivariate SVAR</h5>
+          <p>
+            The SVAR contains only two variables and shocks:
+            $$   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
+            =  
+            \begin{bmatrix} b_{11} & b_{12} \\ b_{21} & b_{22} \end{bmatrix} 
+            \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix}  $$</p> 
         </div> 
     </section>
 
          
     <section class="text-container"> 
-      <p>....explain....</p>
+      <p>Finally, lets assume that the matrix $B_0$ is orthogonal.<span class="info-icon" data-info=".......">i</span>
+        Without the orthogonality assumption the matrix $B_0$ contains four unknown parameters. However, an orothogonal matrix $B_0$ essentially only depends on a single unknown parameter, which simplfies the visualizations on the next pages.</p>
       <div class="assumption-box">
-          <h5>Assumption 3: XYZ</h5>
-          <p>...</p> 
+          <h5>Assumption 3: Orthogonal $B_0$</h5>
+          <p>The matrix $B_0$ is orthogonal and can be written as:
+            $$
+            B_0 = B(\phi_0) = \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+            $$ 
+          </p> 
         </div> 
     </section>
 
     <div class="text-container">
       <p>
-        The <a href="page2.html">next</a> page ....
+        The <a href="page2.html">next</a> page illustrates that the relation between reduced form shocks and structural shocks.
       </p>
       
     </div>
@@ -103,7 +118,7 @@
 
   <footer>
     <div class="footer-container">
-        <a href="...">Github Repository</a>
+        <a href="about.html">About</a>
         <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
     </div>
 </footer>

@@ -116,9 +116,8 @@ function setupEventListeners() {
   if (phi0Element) {
     document.getElementById('phi0').addEventListener('input', function() {
       const phi0Value = parseFloat(this.value);
-      document.getElementById('phi0Value').textContent = phiValue.toFixed(2);
-    updateAllMatrices(phi0Value,phiValue);
-        
+      document.getElementById('phi0Value').textContent = phi0Value.toFixed(2);
+      updateAllMatrices(phi0Value,phiValue); 
         updateChartWithPhi();    
       });
     }
@@ -181,7 +180,7 @@ function setupEventListeners() {
     const content = icon.getAttribute(className === 'info-popup' ? 'data-info' : 'data-ref');
     
     // Remove any existing pop-ups
-    const existingPopup = document.querySelector('.info-popup, .ref-popup');
+    const existingPopup = document.querySelector('.info-popup');
     if (existingPopup) {
       existingPopup.remove();
     }
@@ -222,7 +221,7 @@ function setupEventListeners() {
   }
   
   // Add event listeners for info and ref icons
-  document.querySelectorAll('.info-icon, .ref-icon').forEach(icon => {
+  document.querySelectorAll('.info-icon').forEach(icon => {
     icon.addEventListener('click', function(e) {
       createPopup(this, this.classList.contains('info-icon') ? 'info-popup' : 'ref-popup');
       e.stopPropagation();
@@ -786,19 +785,27 @@ function updateAllMatrices(phi0, phi) {
   const cosPhiFixed = Math.cos(phi).toFixed(2);
   const sinPhiFixed = Math.sin(phi).toFixed(2);
 
-  const matrixHtml0 = `
-  $  \\begin{bmatrix} 
+  const matrixHtml0 = ` 
+    $$
+        \\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix} 
+         =  
+      \\begin{bmatrix} 
   ${cosPhiFixed0} & ${-sinPhiFixed0} \\\\ 
   ${sinPhiFixed0} & ${cosPhiFixed0} 
-  \\end{bmatrix}
-  $`;
+  \\end{bmatrix} 
+    \\begin{bmatrix} \\epsilon_{1,t}   \\\\ \\epsilon_{2,t}  \\end{bmatrix}
+         $$ `;
 
-  const matrixHtml = `
-  $  \\begin{bmatrix} 
+  const matrixHtml = ` 
+    $$
+        \\begin{bmatrix} e_{1,t}   \\\\ e_{2,t}  \\end{bmatrix} 
+         =  
+      \\begin{bmatrix} 
   ${cosPhiFixed} & ${sinPhiFixed} \\\\ 
   ${-sinPhiFixed} & ${cosPhiFixed} 
-  \\end{bmatrix}
-  $`;
+  \\end{bmatrix} 
+    \\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix}
+         $$ `; 
 
   const b0Element = document.getElementById('current-B0');
   const bElement = document.getElementById('current-B');
