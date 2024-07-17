@@ -51,7 +51,7 @@
         <p>
           In a structural vector autoregression (SVAR) a vector of time series $ y_t = [y_{1,t},...,y_{n,t}]'$ 
           is explained by its own past and a vector of independent<span class="info-icon" data-info=".......">i</span> structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
-          $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t \quad \text{and} \quad u_t =B_0 \epsilon_t.  $$
+          $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t$$  $$ \quad u_t =B_0 \epsilon_t.  $$
           The goal of this dashboard is to visualize how independent and non-Gaussian shocks allow to identify a SVAR using higher-order moment conditions. More precicely, the question is, given the a set of macroeconomnic variables $y_t$, how can we consistently estimate the matrix $B_0$ representing the simulatenous impact of shocks $\epsilon_t$ on $y_t$.
           Consequently, the dashboard aims at illustrate the identification approach in 
            <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target=”_blank”>
