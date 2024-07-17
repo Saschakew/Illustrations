@@ -41,6 +41,33 @@
       } 
     }
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Impact of Non-Gaussianity on Estimation",
+        "description": "This page illustrates how the degree of non-Gaussianity affects the estimation of structural shocks in our SVAR model.",
+        "learningResourceType": "Interactive Simulation",
+        "educationalLevel": "Graduate",
+        "isPartOf": {
+          "@type": "Course",
+          "name": "Non-Gaussian SVAR Analysis"
+        },
+        "teaches": [
+          {
+            "@type": "DefinedTerm",
+            "name": "Independent Shocks",
+            "description": "Structural shocks that contain no information about each other"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Moment Conditions",
+            "description": "Statistical conditions used to measure dependencies between variables"
+          }
+        ],
+        "interactivityType": "active"
+      }
+      </script>
     
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -145,7 +172,7 @@
     <div class="container">
 
       <section class="chart-container" style="width: 49%; margin-right: 2%;">
-        <canvas id="scatterPlot1"></canvas>
+        <canvas id="scatterPlot1" aria-label="Scatter plot showing structural shocks epsilon1 and epsilon2"></canvas>
         <div class="stats-tables-container">
           <div id="stats-epsilon-additional" class="stats-container"></div>
           <div id="stats-epsilon" class="stats-container"></div> 
@@ -155,7 +182,7 @@
  
 
       <section class="chart-container" style="width: 49%;  ">
-        <canvas id="scatterPlot3"></canvas>
+        <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2  "></canvas>
         <div class="stats-tables-container">
           <div id="stats-e-additional" class="stats-container"></div>
           <div id="stats-e" class="stats-container"></div> 
@@ -192,7 +219,7 @@
       </div>
       <div class="chart-wrapper">
         <section class="chart-container">
-          <canvas id="lossplot4"></canvas>
+          <canvas id="lossplot4"  aria-label="Plot of dependencies"></canvas>
         </section>
       </div>
     </div>

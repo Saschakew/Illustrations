@@ -41,6 +41,27 @@
       } 
     }
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "The Identification Problem in Non-Gaussian SVAR",
+        "description": "This page explores the central challenge in SVAR analysis: the identification problem, discussing why identifying structural shocks from reduced form shocks is difficult.",
+        "learningResourceType": "Lecture",
+        "educationalLevel": "Graduate",
+        "isPartOf": {
+          "@type": "Course",
+          "name": "Non-Gaussian SVAR Analysis"
+        },
+        "teaches": {
+          "@type": "DefinedTerm",
+          "name": "Identification Problem",
+          "description": "The challenge of recovering structural shocks from observed reduced form shocks in SVAR models"
+        },
+        "interactivityType": "expositive"
+      }
+      </script>
+      
 
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -155,11 +176,11 @@
    
 
       <section class="chart-container" style="width: 49%; margin-right: 2%;"> 
-        <canvas id="scatterPlot2"></canvas>
+        <canvas id="scatterPlot2"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
       </section>
  
       <section class="chart-container" style="width: 49%;"> 
-        <canvas id="scatterPlot3"></canvas>
+        <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2"></canvas>
       </section>
 
     </div>

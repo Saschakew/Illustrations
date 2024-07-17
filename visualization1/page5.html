@@ -41,6 +41,38 @@
       } 
     }
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Maximizing Non-Gaussianity in SVAR Analysis",
+        "description": "This page demonstrates that minimizing the innovations' dependencies is equivalent to maximizing the shocks' non-Gaussianity in SVAR models.",
+        "learningResourceType": "Interactive Simulation",
+        "educationalLevel": "Graduate",
+        "isPartOf": {
+          "@type": "Course",
+          "name": "Non-Gaussian SVAR Analysis"
+        },
+        "teaches": [
+          {
+            "@type": "DefinedTerm",
+            "name": "Non-Gaussianity",
+            "description": "The degree to which a distribution deviates from a Gaussian (normal) distribution"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Skewness",
+            "description": "A measure of the asymmetry of a probability distribution"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Excess Kurtosis",
+            "description": "A measure of the 'tailedness' of a probability distribution"
+          }
+        ],
+        "interactivityType": "active"
+      }
+      </script>
     
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -142,14 +174,14 @@
     <div class="container">
 
       <section class="chart-container" style="width: 49%; margin-right: 2%;"> 
-        <canvas id="scatterPlot2"></canvas>
+        <canvas id="scatterPlot2"  aria-label="Scatter plot showing reduced form shocks u1 and u2 with additional stats"></canvas>
         <div class="stats-tables-container">
           <div id="stats-u-additional" class="stats-container"></div>
         </div>
       </section>
  
       <section class="chart-container" style="width: 49%;"> 
-        <canvas id="scatterPlot3"></canvas>
+        <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2 with additional stats"></canvas>
         <div class="stats-tables-container">
           <div id="stats-e-additional" class="stats-container"></div>
         </div>
@@ -181,7 +213,7 @@
       </div>
       <div class="chart-wrapper">
         <section class="chart-container">
-          <canvas id="lossplot4m"></canvas>
+          <canvas id="lossplot4m" aria-label="Plot of non-Gaussianity"></canvas>
         </section>
       </div>
     </div>

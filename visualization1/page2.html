@@ -40,6 +40,33 @@
       } 
     }
     </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Reduced and Structural Form Shocks in Non-Gaussian SVAR",
+        "description": "This page explores the relationship between reduced form shocks and structural shocks in our Non-Gaussian SVAR model.",
+        "learningResourceType": "Interactive Simulation",
+        "educationalLevel": "Graduate",
+        "isPartOf": {
+          "@type": "Course",
+          "name": "Non-Gaussian SVAR Analysis"
+        },
+        "teaches": [
+          {
+            "@type": "DefinedTerm",
+            "name": "Reduced Form Shocks",
+            "description": "Observable shocks in a SVAR model"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Structural Shocks",
+            "description": "Underlying economic shocks in a SVAR model"
+          }
+        ],
+        "interactivityType": "active"
+      }
+      </script>
 
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -134,11 +161,11 @@
       
       <div class="container"> 
         <section class="chart-container" style="width: 49%; margin-right: 2%;">
-          <canvas id="scatterPlot1"></canvas>
+          <canvas id="scatterPlot1" aria-label="Scatter plot showing structural shocks epsilon1 and epsilon2"></canvas>
         </section>
   
         <section class="chart-container" style="width: 49%;">
-          <canvas id="scatterPlot2"></canvas>
+          <canvas id="scatterPlot2" aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
         </section> 
       </div>
     </section>
