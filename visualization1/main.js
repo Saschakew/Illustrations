@@ -1069,40 +1069,40 @@ function createTable(data, title, symbol) {
     <tr>
       <td class="measure">Covariance</td>
       <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
-      <td  class="value">${data.covariance.toFixed(4)}</td>
+      <td  class="value">${data.covariance.toFixed(2)}</td>
     </tr> 
     <tr>
       <td class="measure">Coskewness </td>
       <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
-      <td  class="value">${data.coskewness1.toFixed(4)}</td>
+      <td  class="value">${data.coskewness1.toFixed(2)}</td>
     </tr>
     <tr>
       <td class="measure">Coskewness </td>
       <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
-      <td  class="value">${data.coskewness2.toFixed(4)}</td>
+      <td  class="value">${data.coskewness2.toFixed(2)}</td>
     </tr>
     <tr>
       <td class="measure">Cokurtosis </td>
       <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
-      <td  class="value">${data.cokurtosis1.toFixed(4)}</td>
+      <td  class="value">${data.cokurtosis1.toFixed(2)}</td>
     </tr>
     <tr>
       <td class="measure">Cokurtosis </td>
       <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
-      <td  class="value">${data.cokurtosis2.toFixed(4)}</td>
+      <td  class="value">${data.cokurtosis2.toFixed(2)}</td>
     </tr>
     <tr>
       <td class="measure">Cokurtosis </td>
-      <td class="formula">mean(${symbol}₁² * ${symbol}₂²) - 1</td>
-      <td  class="value">${data.cokurtosis3.toFixed(4)}</td>
+      <td class="formula">mean(${symbol}₁² * ${symbol}₂² - 1 ) </td>
+      <td  class="value">${data.cokurtosis3.toFixed(2)}</td>
     </tr>
     <tr>
       <td class="measure">Loss</td>
-      <td class="formula">...</td>
-      <td  class="value">${data.loss.toFixed(4)}</td>
+      <td class="formula"> </td>
+      <td  class="value">${data.loss.toFixed(2)}</td>
     </tr>
   </table>
-  `;
+  `; 
 }
 
 function createAdditionalTable(data, title, symbol) {
@@ -1118,33 +1118,33 @@ function createAdditionalTable(data, title, symbol) {
     <tr>
       <td class="measure">Mean</td>
       <td class="formula">mean(${symbol}ᵢ²)</td>
-      <td>${data.mean1.toFixed(4)}</td>
-      <td>${data.mean2.toFixed(4)}</td>
+      <td>${data.mean1.toFixed(2)}</td>
+      <td>${data.mean2.toFixed(2)}</td>
     </tr> 
     <tr>
       <td class="measure">Variance</td>
       <td class="formula">mean(${symbol}ᵢ²)</td>
-      <td>${data.mean_squared1.toFixed(4)}</td>
-      <td>${data.mean_squared2.toFixed(4)}</td>
+      <td>${data.mean_squared1.toFixed(2)}</td>
+      <td>${data.mean_squared2.toFixed(2)}</td>
     </tr> 
     <tr>
       <td class="measure">Skewness</td>
       <td class="formula">mean(${symbol}ᵢ³)</td>
-      <td>${data.mean_cubed1.toFixed(4)}</td>
-      <td>${data.mean_cubed2.toFixed(4)}</td>
+      <td>${data.mean_cubed1.toFixed(2)}</td>
+      <td>${data.mean_cubed2.toFixed(2)}</td>
     </tr> 
     <tr>
       <td class="measure">Excess Kurtosis</td>
       <td class="formula">mean(${symbol}ᵢ⁴)-3</td>
-      <td>${data.mean_fourth1.toFixed(4)}</td>
-      <td>${data.mean_fourth2.toFixed(4)}</td>
+      <td>${data.mean_fourth1.toFixed(2)}</td>
+      <td>${data.mean_fourth2.toFixed(2)}</td>
     </tr>
     <tr>
       <td class="measure">Loss</td>
-      <td class="formula">...</td>
-      <td>${data.loss.toFixed(4)}</td>
+      <td class="formula"> </td>
+      <td>${data.loss.toFixed(2)}</td>
       <td> </td>
     </tr>
   </table>
-  `;
+  `; 
 }

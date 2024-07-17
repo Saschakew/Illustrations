@@ -25,7 +25,7 @@
 </head>
 <body class="page5">
   <header>
-    <h1>Visualization: Non-Gaussian SVAR</h1>
+    <h1>Non-Gaussian SVAR</h1>
   </header>
 
   <main> 
@@ -65,20 +65,28 @@
 
 
       <section class="text-container">
-        <p>While the <a href="page4.html">previous</a> page ....
+        <p>
+          The <a href="page4.html">previous</a> page focuses on estimating $\phi_0$ by minimizing the innovations dependencies. 
+          This page shows that minimizing the innovations dependencies is equivalent to maximizing the shocks non-Gaussianity.<span class="info-icon" data-info="....">i</span>
+          Consequently, instead of trying to find the least independent innovations, we can also find the most non-Gaussian innovations.
         </p> 
   
-        <p>
-          ...explain equivalence of max n-G and min dependencies....
+        <p>The non-Gaussianity of the innovations $ e_t(B(\phi)) $ can be measured using the skewness and excess kurtosis:
+          $$
+          \begin{matrix} 
+          \text{Skewness} &   	E[e_{1,t}(B)^3]  
+          \\
+          \text{Skewness} &   	E[e_{2,t}(B)^3]  
+          \\
+          \text{Excess kurtosis} &   	E[e_{1,t}(B)^4-3]  
+          \\   
+          \text{Excess kurtosis} &   	E[e_{2,t}(B)^4-3]   
+          \end{matrix}
+          $$
         </p>
-         
+ 
   
-        <p>The non-Gaussianity of the innovations $ e_t(B(\phi)) $ can be measured using moment conditions.
-          Specifically, independent innovations with mean zero and unit variance will satistfy the following covariance, coskewness, and cokurtosis moment conditions:
-          $$
-          ...
-          $$
-        </p>
+       
      
          <p>
           Move the $\phi$ slider to see how the rotation angle affects the on-Gaussianity of the innovations displayed in the table below the scatter plot. 
@@ -108,9 +116,10 @@
 
 
     <section class="text-container">
-      <p>The loss value in the table above simply summarizes .... 
+      <p>The loss value in the table above simply summes up all squared higher-order moments to get an overall measure of the non-Gaussianity 
         $$ 
-        loss(\phi) = ... 
+        loss(\phi) = mean(  e_{1,t}(\phi)^3 )^2 + mean(  e_{2,t}(\phi)^3 )^2 +  
+                    mean(  e_{1,t}(\phi)^4-3 )^2 + mean(  e_{2,t}(\phi)^4-3 )^2    
         $$
 
        The plot below shows how the loss for all rotation angles $\phi$. 
@@ -151,7 +160,7 @@
 
   <footer>
     <div class="footer-container">
-        <a href="about.html">About</a>
+      <a href="https://github.com/Saschakew/Illustrations" target="_blank">Github</a>
         <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
     </div>
 </footer>

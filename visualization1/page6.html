@@ -25,7 +25,7 @@
 </head>
 <body class="page6">
   <header>
-    <h1>Visualization: Non-Gaussian SVAR</h1>
+    <h1>Non-Gaussian SVAR</h1>
   </header>
 
   <main>  
@@ -68,15 +68,21 @@
     </section>
 
     <section id="formula-container">
-      <p>.....</p>
-      <div>
-        $ u_t = B(\phi_0) \epsilon_t$ 
-        with
-        $B(\phi_0) = $ 
-        <span id="current-B0"></span>
-      </div>
-       <p>.....</p>
-      <div>$ e_t( B(\phi) ) = B(\phi)^{-1} u_t  =$ <span id="current-B"></span> $ u_t$</div>
+      <p>This last pages illustrates how the degree of non-Gaussianity affects the estimation.</p> 
+      
+      <p>In the simulation below, the second structural form shock $\epsilon_{2,t}$ is independently drawn from a uniform distribution.
+        The first structural form shock $\epsilon_{1,t}$ is independently drawn from a mixture of uniform distributions<span class="info-icon" data-info="...normalization....">i</span>
+        $$ 
+        \epsilon_{1,t} \sim 0.9 \mathcal{N} (0, 1 ) + 0.1 \mathcal{N} (s, 1)
+        $$
+        where the mixing coefficient $s$ can be chosen using the slider above. For $s=0$, both shocks are normal. For $s <  0$ the first shock is left skewed and for $s ></0>  0$ the first shock is right skewed.
+      </p>
+          
+      
+      <p>
+        Move the $\phi$ and $s$ slider to see how the rotations and non-Gaussianity affects the dependencies of the innovations displayed in the table below the scatter plot. 
+        <span id="current-B"></span>
+       </p> 
     
     </section>
 
@@ -101,9 +107,24 @@
       </section>
     </div>
 
-    <section class="text-container">
-      <div>....</div>
+    <section class="text-container"> 
+
+      <p>The loss value in the table again summes up all squared co-moments to get an overall measure of the dependencies 
+        $$ 
+        loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
+        $$
+
+       The plot below shows how the loss for all rotation angles $\phi$. 
+       <br>
+       Push the Minimize-Dependencies-Button to find the rotation angle $\phi$ which leads to the least dependent innovations. 
+       <br>
+      Vary the degree of non-Gaussianity using $s$ to see it affects the optimization landscape.
+    </p>
+    <p>
+      Take-away: Gaussian shocks lead to a flat optimization landscape without a unique minimum at $\phi_0$.
+    </p>
     </section>
+
 
 <div class="container">
   <div class="button-container">
@@ -121,7 +142,7 @@
 
   <footer>
     <div class="footer-container">
-        <a href="about.html">About</a>
+        <a href="https://github.com/Saschakew/Illustrations" target="_blank">Github</a>
         <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
     </div>
 </footer>

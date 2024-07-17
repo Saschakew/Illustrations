@@ -25,7 +25,7 @@
 </head>
 <body class="page4">
   <header>
-    <h1>Visualization: Non-Gaussian SVAR</h1>
+    <h1>Non-Gaussian SVAR</h1>
   </header>
 
   <main> 
@@ -79,11 +79,24 @@
         </p>
 
         <p>The dependency of the innovations $ e_t(B(\phi)) $ can be measured using moment conditions.
-          Specifically, independent innovations with mean zero and unit variance will satistfy the following covariance, coskewness, and cokurtosis moment conditions:
-          $$
-          ...
+          Specifically, independent shocks with mean zero and unit variance will satistfy the following   covariance-, coskewness-, and cokurtosis- conditions 
+          $$ 
+          \begin{matrix} 
+          \text{Covariance condition} &E[\varepsilon_{1,t}\varepsilon_{2,t}] = 0 &\implies&  	E[e_{1,t}(B)e_{2,t}(B)]  \overset{!}{=} 0  
+          \\
+          \text{Coskewness condition} &E[\varepsilon_{1,t}^2\varepsilon_{2,t}] = 0 & \implies & 	E[e_{1,t}(B)^2e_{2,t}(B)]  \overset{!}{=} 0
+          \\
+          \text{Coskewness condition} &E[\varepsilon_{1,t}\varepsilon_{2,t}^2]=0  & \implies & 		E[e_{1,t}(B)e_{2,t}(B)^2] \overset{!}{=} 0
+          \\   
+          \text{Cokurtosis condition} &E[\varepsilon_{1,t}^3\varepsilon_{2,t}]  = 0 &\implies&  E[e_{1,t}(B)^3 e_{2,t}(B)]  \overset{!}{=} 0
+          \\ 
+          \text{Cokurtosis condition} &E[\varepsilon_{1,t}\varepsilon_{2,t}^3]  = 0 &\implies& 	E[e_{1,t}(B) e_{2,t}(B)^3] \overset{!}{=} 0 
+			    \\ 
+          \text{Cokurtosis condition} &E[\varepsilon_{1,t}^2\varepsilon_{2,t}^2]  = 1 &\implies&  	E[e_{1,t}(B)^2 e_{2,t}(B)^2]  \overset{!}{=} 1
+          \end{matrix}
           $$
         </p>
+        
      
          <p>
           Move the $\phi$ slider to see how the rotation angle affects the dependencies of the innovations displayed in the table below the scatter plot. 
@@ -111,9 +124,15 @@
 
 
     <section class="text-container">
-      <p>The loss value in the table above simply summarizes .... 
+      <p>
+          Note that any rotation $\phi$ yields uncorrelated shocks. 
+          However, eventhough all innovations are uncorrelated, some are clearly dependent as measured by the higher-order moment conditions.
+          <span class="info-icon" data-info="interpretation....">i</span>
+      </p>
+
+      <p>The loss value in the table above simply summes up all squared co-moments to get an overall measure of the dependencies 
         $$ 
-        loss(\phi) = ... 
+        loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
         $$
 
        The plot below shows how the loss for all rotation angles $\phi$. 
@@ -153,7 +172,7 @@
 
   <footer>
     <div class="footer-container">
-        <a href="about.html">About</a>
+      <a href="https://github.com/Saschakew/Illustrations" target="_blank">Github</a>
         <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
     </div>
 </footer>
