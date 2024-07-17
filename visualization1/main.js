@@ -232,7 +232,7 @@ function setupEventListeners() {
 
 
 
-  ['scatterPlot1', 'scatterPlot2'].forEach(id => {
+  ['scatterPlot1', 'scatterPlot2', 'scatterPlot3'].forEach(id => {
     const canvas = document.getElementById(id);
     if (canvas) {
       canvas.addEventListener('click', function(event) {
@@ -519,7 +519,7 @@ function animateBallRolling(lossType) {
     if (leftLoss < currentLoss && leftLoss < rightLoss) {
       newPhi = Math.max(0, currentPhi - stepSize);
     } else if (rightLoss < currentLoss && rightLoss < leftLoss) {
-      newPhi = Math.min(0.78, currentPhi + stepSize);
+      newPhi = Math.min(1.57, currentPhi + stepSize);
     } else {
       console.log("Optima reached");
       removeEventListeners();
@@ -574,7 +574,7 @@ function updateLossPlot() {
   if (charts && charts.lossplot4 && u1 && u2) {
     const currentPhi = parseFloat(document.getElementById('phi').value);
     const phi0 = parseFloat(document.getElementById('phi0').value);
-    const xValues = Array.from({length: 79}, (_, i) => i * 0.01);
+    const xValues = Array.from({length: 159}, (_, i) => i * 0.01);
     const yValues = xValues.map(x => myloss(u1, u2, x));
 
     charts.lossplot4.data.labels = xValues.map(x => x.toFixed(2));
@@ -629,7 +629,7 @@ charts.lossplot4.options.annotation = {
         text: 'φ'
       },
       min: 0,
-      max: 0.78,
+      max: 1.57,
       ticks: {
         callback: function(value) {
           return value.toFixed(2);
@@ -676,7 +676,7 @@ function updateLossPlotm() {
   if (charts && charts.lossplot4m && u1 && u2) {
     const currentPhi = parseFloat(document.getElementById('phi').value);
     const phi0 = parseFloat(document.getElementById('phi0').value);
-    const xValues = Array.from({length: 79}, (_, i) => i * 0.01);
+    const xValues = Array.from({length: 159}, (_, i) => i * 0.01);
     const yValues = xValues.map(x => mylossm(u1, u2, x));
 
     charts.lossplot4m.data.labels = xValues.map(x => x.toFixed(2));
@@ -731,7 +731,7 @@ function updateLossPlotm() {
         text: 'φ'
       },
       min: 0,
-      max: 0.78,
+      max: 1.57,
       ticks: {
         callback: function(value) {
           return value.toFixed(2);
