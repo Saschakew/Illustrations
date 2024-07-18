@@ -330,7 +330,7 @@ createChartIfExists('scatterPlot2');
           borderColor: 'rgb(75, 192, 192)',
           tension: 0.1
         }, {
-          label: 'Current φ',
+          label: 'Current ϕ',
           data: [],
           borderColor: '#ffa500',
           backgroundColor: '#ffa500',
@@ -338,7 +338,7 @@ createChartIfExists('scatterPlot2');
           pointHoverRadius: 8,
           showLine: false
         }, {
-          label: 'φ₀',
+          label: 'ϕ₀',
           data: [],
           borderColor: 'rgb(255, 206, 86)',
           backgroundColor: 'rgb(255, 206, 86)',
@@ -361,7 +361,7 @@ createChartIfExists('scatterPlot2');
           x: {
             title: {
               display: true,
-              text: 'φ'
+              text: 'ϕ'
             }
           },
           y: {
@@ -376,7 +376,7 @@ createChartIfExists('scatterPlot2');
     console.log('lossplot4 chart created');
   } else {
     console.log('lossplot4 element not found');
-  } 
+  }
 
 
   const lossplot4mElement = document.getElementById('lossplot4m');
@@ -392,7 +392,7 @@ createChartIfExists('scatterPlot2');
           borderColor: 'rgb(75, 192, 192)',
           tension: 0.1
         }, {
-          label: 'Current φ',
+          label: 'Current ϕ',
           data: [],
           borderColor: '#ffa500',
           backgroundColor: '#ffa500',
@@ -400,7 +400,7 @@ createChartIfExists('scatterPlot2');
           pointHoverRadius: 8,
           showLine: false
         }, {
-          label: 'φ₀',
+          label: 'ϕ₀',
           data: [],
           borderColor: 'rgb(255, 206, 86)',
           backgroundColor: 'rgb(255, 206, 86)',
@@ -423,7 +423,7 @@ createChartIfExists('scatterPlot2');
           x: {
             title: {
               display: true,
-              text: 'φ'
+              text: 'ϕ'
             }
           },
           y: {
