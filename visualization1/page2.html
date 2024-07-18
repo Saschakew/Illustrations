@@ -73,19 +73,21 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script>
     MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\$', '\$']]
-        },
-        startup: {
-            pageReady: () => {
-                return MathJax.startup.defaultPageReady().then(() => {
-                    console.log('MathJax initial typesetting complete');
-                });
-            }
+      tex: {
+        inlineMath: [['$', '$'], ['\\$', '\\$']]
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            console.log('MathJax initial typesetting complete');
+            // Notify that MathJax is ready
+            document.dispatchEvent(new Event('MathJaxReady'));
+          });
         }
+      }
     };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body  class="page2">
   <header>

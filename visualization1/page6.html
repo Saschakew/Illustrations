@@ -74,19 +74,21 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script>
     MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\$', '\$']]
-        },
-        startup: {
-            pageReady: () => {
-                return MathJax.startup.defaultPageReady().then(() => {
-                    console.log('MathJax initial typesetting complete');
-                });
-            }
+      tex: {
+        inlineMath: [['$', '$'], ['\\$', '\\$']]
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            console.log('MathJax initial typesetting complete');
+            // Notify that MathJax is ready
+            document.dispatchEvent(new Event('MathJaxReady'));
+          });
         }
+      }
     };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body class="page6">
   <header>
@@ -170,6 +172,7 @@
     Move the $\phi$ and $s$ sliders to see how the rotations and non-Gaussianity affects the dependencies of the innovations displayed in the table below the scatter plot. 
     <div class="equation-wrapper" style="text-align: center;"> 
     <span id="current-B"></span>
+    <span id="current-nG"></span>
     </div>
     </p> 
     
@@ -178,8 +181,7 @@
 
       <section class="chart-container" style="width: 49%; margin-right: 2%;">
         <canvas id="scatterPlot1" aria-label="Scatter plot showing structural shocks epsilon1 and epsilon2"></canvas>
-        <div class="stats-tables-container">
-          <div id="stats-epsilon-additional" class="stats-container"></div>
+        <div class="stats-tables-container"> 
           <div id="stats-epsilon" class="stats-container"></div> 
         </div>
       </section>
@@ -188,8 +190,7 @@
 
       <section class="chart-container" style="width: 49%;  ">
         <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2  "></canvas>
-        <div class="stats-tables-container">
-          <div id="stats-e-additional" class="stats-container"></div>
+        <div class="stats-tables-container"> 
           <div id="stats-e" class="stats-container"></div> 
         </div>
       </section>

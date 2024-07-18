@@ -3,8 +3,16 @@ let charts = {};
 let epsilon1, epsilon2, u1, u2;
 let selectedPointIndex = null;
 
-// DOM Content Loaded Event Listener
-document.addEventListener('DOMContentLoaded', function() {
+// Wait for MathJax to be ready
+document.addEventListener('MathJaxReady', function() {
+  // Wait for DOMContentLoaded event
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeApp();
+  });
+});
+
+
+function initializeApp() {
   // Initialize UI elements
   initializeUI();
 
@@ -30,9 +38,20 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
   // Update B0 and B matrices
-  updateAllMatrices(phi0Value,phiValue); 
+  updateAllMatrices(phi0Value,phiValue);  
    
-});
+  if (document.body.className === 'page6') {
+    console.log('Page 6 detected');
+    updateNonGaussianityDisplay();
+  }
+  
+  
+     // Typeset MathJax content
+  MathJax.typeset();
+
+} ;
+
+
 
 // UI Initialization
 function initializeUI() {
@@ -143,6 +162,7 @@ function setupEventListeners() {
   if (TElement) {
   document.getElementById('T').addEventListener('input', function() {
     generateNewData();
+    updateNonGaussianityDisplay();
     });
   } 
 
@@ -150,6 +170,7 @@ function setupEventListeners() {
   if (newDataButton) {
     newDataButton.addEventListener('click', function() {
       generateNewData();
+      updateNonGaussianityDisplay();
     })
   }
   
@@ -159,6 +180,7 @@ function setupEventListeners() {
       s = parseFloat(this.value);
       document.getElementById('sValue').textContent = s.toFixed(2);
       generateNewData();
+      updateNonGaussianityDisplay();
     });
   }
 
@@ -928,7 +950,10 @@ function updateAllMatrices(phi0, phi) {
   if (b0Element) b0Element.innerHTML = matrixHtml0;
   if (bElement) bElement.innerHTML = matrixHtml;
 
-  MathJax.typeset();
+   // Trigger MathJax to render the new content
+   if (typeof MathJax !== 'undefined') {
+    MathJax.typeset();
+  }
   
 }
 
@@ -1027,7 +1052,46 @@ function calculateAdditionalStats(data1, data2) {
   };
 }
 
- 
+ // Function to calculate skewness
+function calculateSkewness(data) {
+  const n = data.length;
+  const mean = data.reduce((sum, value) => sum + value, 0) / n;
+  const m2 = data.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / n;
+  const m3 = data.reduce((sum, value) => sum + Math.pow(value - mean, 3), 0) / n;
+  return m3 / Math.pow(m2, 1.5);
+}
+
+// Function to calculate excess kurtosis
+function calculateExcessKurtosis(data) {
+  const n = data.length;
+  const mean = data.reduce((sum, value) => sum + value, 0) / n;
+  const m2 = data.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / n;
+  const m4 = data.reduce((sum, value) => sum + Math.pow(value - mean, 4), 0) / n;
+  return m4 / Math.pow(m2, 2) - 3;
+}
+
+// Function to update the non-Gaussianity display
+function updateNonGaussianityDisplay() {
+  if (!epsilon1 || !epsilon2) return;
+
+  const skewness1 = calculateSkewness(epsilon1);
+  const skewness2 = calculateSkewness(epsilon2);
+  const excessKurtosis1 = calculateExcessKurtosis(epsilon1);
+  const excessKurtosis2 = calculateExcessKurtosis(epsilon2);
+
+  const displayElement = document.getElementById('current-nG');
+  if (displayElement) {
+    displayElement.innerHTML = `
+      <p>Skewness: $E[\\epsilon_{1t}^3]$ = ${skewness1.toFixed(2)}  </p>
+      <p>Excess Kurtosis: $E[\\epsilon_{1t}^4-3]$  = ${excessKurtosis1.toFixed(2)}  </p>
+    `;
+  }
+
+  // Trigger MathJax to render the new content
+  if (typeof MathJax !== 'undefined') {
+    MathJax.typesetPromise([displayElement]);
+  }
+}
 
 // Stats Display Updates
 function updateStatsDisplay(stats) {
