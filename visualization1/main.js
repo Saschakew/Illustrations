@@ -510,7 +510,6 @@ function animateBallRolling(lossType) {
     inputs.forEach(input => {
       input.addEventListener('click', stopAnimation);
       input.addEventListener('touchstart', stopAnimation);
-      console.log("add animation listener")
     });
   }
 
@@ -519,7 +518,6 @@ function animateBallRolling(lossType) {
     inputs.forEach(input => {
       input.removeEventListener('click', stopAnimation);
       input.addEventListener('touchstart', stopAnimation);
-      console.log("remove animation listener")
     });
   }
 
