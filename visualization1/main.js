@@ -457,7 +457,7 @@ function animateBallRolling(lossType) {
   const startPhi = parseFloat(document.getElementById('phi').value);
   let currentPhi = startPhi;
   const stepSize = 0.01;
-  const maxSteps = 500;
+  const maxSteps = 100;
   let step = 0;
   let animationId;
   let isAnimating = true;
@@ -475,8 +475,7 @@ function animateBallRolling(lossType) {
   function updateUI(phi) {
     document.getElementById('phi').value = phi.toFixed(2);
     document.getElementById('phiValue').textContent = phi.toFixed(2);
-  updateAllMatrices(phi0Value,phi);
-    
+    updateAllMatrices(phi0Value,phi);
     updateChartWithPhi();
   }
 
@@ -487,17 +486,15 @@ function animateBallRolling(lossType) {
   }
 
   function addEventListeners() {
-    const inputs = document.querySelectorAll('input:not(#phi), button');
-    inputs.forEach(input => {
-      input.addEventListener('change', stopAnimation);
+    const inputs = document.querySelectorAll('input, button');
+    inputs.forEach(input => { 
       input.addEventListener('click', stopAnimation);
     });
   }
 
   function removeEventListeners() {
-    const inputs = document.querySelectorAll('input:not(#phi), button');
-    inputs.forEach(input => {
-      input.removeEventListener('change', stopAnimation);
+    const inputs = document.querySelectorAll('input, button');
+    inputs.forEach(input => { 
       input.removeEventListener('click', stopAnimation);
     });
   }
