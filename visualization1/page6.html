@@ -144,9 +144,11 @@
        
       <p>In the simulation below, the second structural form shock $\epsilon_{2,t}$ is independently drawn from a uniform distribution.
         The first structural form shock $\epsilon_{1,t}$ is independently drawn from a mixture of uniform distributions<span class="info-icon" data-info="...normalization....">i</span>
+        <div class="equation-wrapper" style="text-align: center;"> 
         $$ 
         \epsilon_{1,t} \sim 0.9 \mathcal{N} (0, 1 ) + 0.1 \mathcal{N} (s, 1).
         $$
+        </div>
           </p>
           
           <p>The mixing coefficient s can be chosen using the slider above:</p>
@@ -165,7 +167,9 @@
   
       <p>
         Move the $\phi$ and $s$ slider to see how the rotations and non-Gaussianity affects the dependencies of the innovations displayed in the table below the scatter plot. 
+        <div class="equation-wrapper" style="text-align: center;"> 
         <span id="current-B"></span>
+        </div>
        </p> 
     
 
@@ -196,9 +200,11 @@
   <h3>Interactive Loss Calculation</h3>
 
       <p>The loss value in the table again summes up all squared co-moments to get an overall measure of the dependencies 
+        <div class="equation-wrapper" style="text-align: center;"> 
         $$ 
         loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
         $$
+        </div>
         </p>
 
         

@@ -144,6 +144,8 @@
           <h3>Measuring Non-Gaussianity</h3>
   
         <p>The non-Gaussianity of the innovations $ e_t(B(\phi)) $ can be measured using the skewness and excess kurtosis:
+          
+          <div class="equation-wrapper" style="text-align: center;">
           $$
           \begin{matrix} 
           \text{Skewness} &   	E[e_{1,t}(B)^3]  
@@ -155,6 +157,7 @@
           \text{Excess kurtosis} &   	E[e_{2,t}(B)^4-3]   
           \end{matrix}
           $$
+          </div>
         </p>
       </section>
  
@@ -165,7 +168,9 @@
 <section id="interactive-simulation" class="text-container">
   <h3>Interactive Simulation</h3>
           Move the $\phi$ slider to see how the rotation angle affects the on-Gaussianity of the innovations displayed in the table below the scatter plot. 
+          <div class="equation-wrapper" style="text-align: center;"> 
           <span id="current-B"></span>
+          </div>
          </p> 
       
 
@@ -193,10 +198,13 @@
   <section id="interactive-loss" class="text-container">
     <h3>Interactive Loss Calculation</h3>
       <p>The loss value in the table above simply summes up all squared higher-order moments to get an overall measure of the non-Gaussianity 
+        
+        <div class="equation-wrapper" style="text-align: center;">
         $$ 
         loss(\phi) = mean(  e_{1,t}(\phi)^3 )^2 + mean(  e_{2,t}(\phi)^3 )^2 +  
                     mean(  e_{1,t}(\phi)^4-3 )^2 + mean(  e_{2,t}(\phi)^4-3 )^2    
         $$
+        </div>
 
        The plot below shows how the loss for all rotation angles $\phi$. 
        <ul>

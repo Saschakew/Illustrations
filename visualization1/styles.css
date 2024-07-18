@@ -15,6 +15,47 @@ main {
   max-width: 1200px;
 }
 
+.equation-wrapper {
+  max-width: 100%;
+  overflow-y: hidden;
+  overflow-x: auto;
+  background-color: #fff;
+  border: 1px solid #ffa500;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.equation-wrapper .MathJax_Display {
+  overflow-y: visible;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.equation-wrapper .MathJax_Display > .MathJax_SVG {
+  max-width: none !important;
+  white-space: nowrap;
+}
+
+/* Custom scrollbar styles for better visibility */
+.equation-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.equation-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.equation-wrapper::-webkit-scrollbar-thumb {
+  background: #ffa500;
+  border-radius: 4px;
+}
+
+.equation-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #ff8c00;
+}
+
 a {
   color: #1c1c1c;
 }

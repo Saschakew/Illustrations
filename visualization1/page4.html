@@ -170,21 +170,21 @@
           <div class="equation-wrapper" style="text-align: center;">
             Covariance condition:
           $$  
-           E[\varepsilon_{1,t}\varepsilon_{2,t}] = 0 \implies  	E[e_{1,t}(B)e_{2,t}(B)]  \overset{!}{=} 0  
+           E[\varepsilon_{1,t}\varepsilon_{2,t}] = 0 \implies  	E[e_{1,t}(\phi)e_{2,t}(\phi)]  \overset{!}{=} 0  
           $$ 
           Coskewness condition
           $$
-            E[\varepsilon_{1,t}^2\varepsilon_{2,t}] = 0 \implies  	E[e_{1,t}(B)^2e_{2,t}(B)]  \overset{!}{=} 0
+            E[\varepsilon_{1,t}^2\varepsilon_{2,t}] = 0 \implies  	E[e_{1,t}(\phi)^2e_{2,t}(\phi)]  \overset{!}{=} 0
           $$ $$
-           E[\varepsilon_{1,t}\varepsilon_{2,t}^2]=0  \implies 		E[e_{1,t}(B)e_{2,t}(B)^2] \overset{!}{=} 0
+           E[\varepsilon_{1,t}\varepsilon_{2,t}^2]=0  \implies 		E[e_{1,t}(\phi)e_{2,t}(\phi)^2] \overset{!}{=} 0
           $$ 
           Cokurtosis condition
           $$ 
-           E[\varepsilon_{1,t}^3\varepsilon_{2,t}]  = 0 \implies   E[e_{1,t}(B)^3 e_{2,t}(B)]  \overset{!}{=} 0
+           E[\varepsilon_{1,t}^3\varepsilon_{2,t}]  = 0 \implies   E[e_{1,t}(\phi)^3 e_{2,t}(\phi)]  \overset{!}{=} 0
           $$ $$
-            E[\varepsilon_{1,t}\varepsilon_{2,t}^3]  = 0 \implies 	E[e_{1,t}(B) e_{2,t}(B)^3] \overset{!}{=} 0 
+            E[\varepsilon_{1,t}\varepsilon_{2,t}^3]  = 0 \implies 	E[e_{1,t}(\phi) e_{2,t}(\phi)^3] \overset{!}{=} 0 
           $$ $$
-            E[\varepsilon_{1,t}^2\varepsilon_{2,t}^2]  = 1 \implies   	E[e_{1,t}(B)^2 e_{2,t}(B)^2]  \overset{!}{=} 1
+            E[\varepsilon_{1,t}^2\varepsilon_{2,t}^2]  = 1 \implies   	E[e_{1,t}(\phi)^2 e_{2,t}(\phi)^2]  \overset{!}{=} 1
           $$
           </div>
         </p>
@@ -196,7 +196,9 @@
          
          <p>
           Move the $\phi$ slider to see how the rotation angle affects the dependencies of the innovations displayed in the table below the scatter plot. 
+          <div class="equation-wrapper" style="text-align: center;"> 
           <span id="current-B"></span>
+          </div>
          </p> 
       
 
@@ -228,9 +230,11 @@
       </p>
 
       <p>The loss value in the table above simply summes up all squared co-moments to get an overall measure of the dependencies 
+        <div class="equation-wrapper" style="text-align: center;">
         $$ 
         loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
         $$
+        </div>
 
       </section>
 
