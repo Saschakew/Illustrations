@@ -1109,8 +1109,8 @@ function createAdditionalTable(data, title, symbol) {
     <tr>
       <th> </th>
       <th>Formula</th>
-      <th>$i=1$</th>
-      <th>$i=2$</th>
+      <th>i=1</th>
+      <th>i=2</th>
     </tr> 
     <tr>
       <td class="measure">Mean</td>
