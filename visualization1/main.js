@@ -509,6 +509,7 @@ function animateBallRolling(lossType) {
     const inputs = document.querySelectorAll('input, button');
     inputs.forEach(input => { 
       input.addEventListener('click', stopAnimation);
+      input.addEventListener('input', stopAnimation);
     });
   }
 
@@ -516,6 +517,7 @@ function animateBallRolling(lossType) {
     const inputs = document.querySelectorAll('input, button');
     inputs.forEach(input => { 
       input.removeEventListener('click', stopAnimation);
+      input.removeEventListener('input', stopAnimation);
     });
   }
 
