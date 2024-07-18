@@ -142,9 +142,10 @@
 <section id="shock-distributions" class="text-container">
   <h3>Shock Distributions</h3>
        
-      <p>In the simulation below, the second structural form shock $\epsilon_{2,t}$ is independently drawn from a uniform distribution.
-        The first structural form shock $\epsilon_{1,t}$ is independently drawn from a mixture of uniform distributions<span class="info-icon" data-info="...normalization....">i</span>
-        <div class="equation-wrapper" style="text-align: center;"> 
+  <p>In the simulation below, the second structural form shock $\epsilon_{2,t}$ is independently drawn from a uniform distribution.
+    The first structural form shock $\epsilon_{1,t}$ is independently drawn from a mixture of uniform distributions<span class="info-icon" data-info="The shocks are 
+    normalized to mean zero, unit variance, and zero correlation.">i</span>
+    <div class="equation-wrapper" style="text-align: center;"> 
         $$ 
         \epsilon_{1,t} \sim 0.9 \mathcal{N} (0, 1 ) + 0.1 \mathcal{N} (s, 1).
         $$
@@ -165,12 +166,12 @@
 <section id="interactive-simulation" class="text-container">
   <h3>Interactive Simulation</h3>
   
-      <p>
-        Move the $\phi$ and $s$ slider to see how the rotations and non-Gaussianity affects the dependencies of the innovations displayed in the table below the scatter plot. 
-        <div class="equation-wrapper" style="text-align: center;"> 
-        <span id="current-B"></span>
-        </div>
-       </p> 
+  <p>
+    Move the $\phi$ and $s$ sliders to see how the rotations and non-Gaussianity affects the dependencies of the innovations displayed in the table below the scatter plot. 
+    <div class="equation-wrapper" style="text-align: center;"> 
+    <span id="current-B"></span>
+    </div>
+    </p> 
     
 
     <div class="container">
@@ -199,7 +200,7 @@
 <section id="interactive-loss" class="text-container">
   <h3>Interactive Loss Calculation</h3>
 
-      <p>The loss value in the table again summes up all squared co-moments to get an overall measure of the dependencies 
+  <p>The loss value in the table again sums up all squared co-moments to get an overall measure of the dependencies 
         <div class="equation-wrapper" style="text-align: center;"> 
         $$ 
         loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
@@ -208,14 +209,15 @@
         </p>
 
         
-<p>The plot below shows the loss for all rotation angles φ.</p>
+        <p>The plot below shows the loss for all rotation angles $\phi$.</p>
 
 <ul>
   <li>Push the Minimize-Dependencies-Button to find the rotation angle φ which leads to the least dependent innovations.</li>
   <li>Vary the degree of non-Gaussianity using s to see how it affects the optimization landscape.</li>
 </ul>
     <p>
-          Take-away:  Gaussian shocks lead to a flat optimization landscape without a unique minimum at φ<sub>0</sub>. This illustrates why non-Gaussianity is crucial for identifying structural shocks in SVAR models based on independent shocks.</p>
+          Take-away:  Gaussian shocks lead to a flat optimization landscape without a unique minimum at φ<sub>0</sub>. 
+          This illustrates why non-Gaussianity is crucial for identifying structural shocks in SVAR models based on independent shocks.</p>
 
 
 

@@ -2,7 +2,7 @@
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 0px;
   padding-bottom: 0px;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@ body {
 }
 
 main {
-  width: calc(100% - 40px);
+  width: 100% ; 
   max-width: 1200px;
 }
 
@@ -211,7 +211,7 @@ a {
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  width: calc(100% - 80px);
+  width: 100%; 
   max-width: 1200px;
 }
 
@@ -445,7 +445,7 @@ footer {
   color: #1c1c1c;
   text-align: center;
   padding: 0;
-  width: calc(100% - 40px);
+  width: 100%; 
   max-width: 1200px;
   margin-top: 20px;
 }
@@ -462,18 +462,7 @@ footer p {
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  body { 
-    padding: 0px; 
-  }
-  main {
-    width: 100% ; 
-  }
-  .input-container.sticky { 
-    width: 100%; 
-  }
-  footer  {
-    width: 100%; 
-  }
+ 
 
   .input-container {
     flex-direction: column;

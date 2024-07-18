@@ -126,55 +126,68 @@
 
       <section id="introduction" class="text-container">
         <h2>The identification problem</h2>
-        <p>This page explores the central challenge in SVAR analysis: the identification problem. We'll discuss why identifying structural shocks from reduced form shocks is difficult and how non-Gaussian properties can help.</p>
+        <p>This page explores the central challenge in SVAR analysis: the identification problem. We'll discuss why identifying structural shocks 
+          from reduced form shocks is difficult and how non-Gaussian properties can help.</p>
     </section>
 
-    <section  id="identification-challenge" class="text-container">
+    <section id="identification-challenge" class="text-container">
       <h3>Structural shocks and Innovations</h3>
-            
-            
-      <p>Lets fix the rotation at $\phi_0=0.5$ such that the reduced form shocks are equal to one specific rotaion of the structural shocks:  
-        <div class="equation-wrapper" style="text-align: center;"> 
-        <span id="current-B0"></span>
-        </div>
-
+      
+      <p>Let's fix the rotation at $\phi_0=0.5$ such that the reduced form shocks are equal to one specific rotation of the structural shocks:  
+      <div class="equation-wrapper" style="text-align: center;"> 
+      <span id="current-B0"></span>
+      </div>
+      </p>
+      
       <p> 
       However, in a given application, we neither know the rotation matrix $B(\phi_0)$ nor do we observe the structural shocks $\epsilon_t$.
-      Instead, we only observe the reduced form shocks $u_t$.<span class="info-icon" data-info=".......">i</span> 
+      Instead, we only observe the reduced form shocks $u_t$.<span class="info-icon" data-info="In practice we only observe the macroeconomic 
+      variables $y_t$ and need to estimate the VAR to get the reduced form shocks $u_t$. However, with the simplifying no-lags assumption it holds that $u_t=y_t$.">i</span> 
       Consequently, the question is how can we identify $B(\phi_0)$ and recover the structural shocks $\epsilon_t$ from the reduced form shocks $u_t$?
       </p>   
-
-      </p>
-      We can always choose an angle $\phi$<span class="info-icon" data-info=".......">i</span>, calculate $B(\phi)=  \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}$, 
-      and get the corresponding innovations   
-      $
-      e_t( B(\phi) ) = B(\phi)^{-1} u_t 
-      $.
-      These innovations represent the shocks that would yield $u_t$ if the true angle of the data-generating process $\phi_0$ where equal to the chosen angle $\phi$.
-      Specifically, for $\phi=\phi_0$ we get $e_t( B(\phi_0) ) = \epsilon_t$.
-    </p>
-  </section>
-
-
-
-  <section id="interactive-simulation" class="text-container">
-    <h3>Interactive Simulation</h3>
-   
-    <p>
-      Move the $\phi$ slider above to see how $B(\phi)$ leads to different innovations $e_t$ equal to rotations of $u_t$:
+      
+      <p>
+      We can always choose an angle $\phi$, calculate $B(\phi)$:
       <div class="equation-wrapper" style="text-align: center;"> 
-      $$   \begin{bmatrix} e_{1,t}   \\ e_{2,t}  \end{bmatrix} 
-      =  
-     \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
-      \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
-    $$
-      <span id="current-B"></span> 
+      $
+      B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}
+      $
       </div>
-    </p>
+      and get the corresponding innovations:   
+      <div class="equation-wrapper" style="text-align: center;"> 
+      $
+      e_t(B(\phi)) = B(\phi)^{-1} u_t 
+      $
+      </div>
+      These innovations represent the shocks that would yield $u_t$ if the true angle of the data-generating process $\phi_0$ were equal to the chosen angle $\phi$.
+      Specifically, for $\phi=\phi_0$ we get $e_t(B(\phi_0)) = \epsilon_t$.
+      </p>
+      </section>
 
-    <p>
-      The question is how do we know whether we picked  $\phi=\phi_0$ and whether our inovations are equal to the structural shocks?
-    </p>
+
+
+      <section id="interactive-simulation" class="text-container">
+        <h3>Interactive Simulation</h3>
+        
+        <p>
+        Move the $\phi$ slider above to see how $B(\phi)$ leads to different innovations $e_t$ equal to rotations of $u_t$:
+        <div class="equation-wrapper" style="text-align: center;"> 
+        $   
+        \begin{bmatrix} e_{1,t} \\ e_{2,t} \end{bmatrix} 
+        =  
+        \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
+        \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
+        $
+        <span id="current-B"></span> 
+        </div>
+        </p>
+        
+        <p>
+        The question is: how do we know whether we picked $\phi=\phi_0$ and whether our innovations are equal to the structural shocks?
+        </p>
+
+
+
     <div class="container">
 
    
@@ -194,16 +207,15 @@
 
 
     
-    <section id="next-steps" class="text-container">
-      <h3>Next Steps</h3>
-      <p>In the following sections, we'll explore two complementary approaches to solving the identification problem using non-Gaussian properties:</p>
-      <ol>
-          <li>Minimizing the dependencies between the recovered shocks.</li>
-          <li>Maximizing the non-Gaussianity of the recovered shocks.</li>
-      </ol>
-      <p>Proceed to <a href="page4.html">Minimizing Dependencies</a> to learn about the first approach.</p>
-  </section>
-
+ <section id="next-steps" class="text-container">
+<h3>Next Steps</h3>
+<p>In the following sections, we'll explore two complementary approaches to solving the identification problem using non-Gaussian properties:</p>
+<ol>
+<li>Minimizing the dependencies between the recovered shocks.</li>
+<li>Maximizing the non-Gaussianity of the recovered shocks.</li>
+</ol>
+<p>Proceed to <a href="page4.html">Minimizing Dependencies</a> to learn about the first approach.</p>
+</section>
 
   </main>
 

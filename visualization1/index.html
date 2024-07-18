@@ -116,14 +116,18 @@
  
       <section id="introduction" class="text-container">
         <h2>Introduction</h2>
-        <p>Welcome to an interactive guide on Non-Gaussian Structural Vector Autoregression (SVAR) models. This website aims to visualize and explain the identification approach in <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target="_blank">Keweloh (2021)</a>.</p>
-         
+        <p>Welcome to an interactive guide on Non-Gaussian Structural Vector Autoregression (SVAR) models. 
+          This website aims to visualize and explain the identification approach in <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target="_blank">Keweloh (2021)</a>.</p>  
     </section>
 
       <section id="svar-model" class="text-container"> 
         <h3>The SVAR Model</h3>
         <p>In a structural vector autoregression (SVAR) a vector of time series $ y_t = [y_{1,t},...,y_{n,t}]'$ 
-          is explained by its own past and a vector of independent<span class="info-icon" data-info=".......">i</span> structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
+          is explained by its own past and a vector of independent<span class="info-icon" data-info="The underlying idea of the independence assumption is 
+          that a given structural shock shall contain no information on another structural shock. 
+          Note that there is a debate on whether the appropriate assumption to model this dependency 
+          structure is to assume uncorrelated, mean independent, or independent shocks, see, e.g., section 3.1 in <a href='https://www.researchgate.net/publication/369476699_Uncertain_Short-Run_Restrictions_and_Statistically_Identified_Structural_Vector_Autoregressions' target='_blank'>Keweloh (2023)</a>.">i</span> 
+          structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
           <div class="equation-wrapper" style="text-align: center;"> 
           $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t$$  $$ \quad u_t =B_0 \epsilon_t.  $$</p>
           </div>
@@ -139,7 +143,8 @@
       
     <section id="assumptions" class="text-container"> 
       <h3>Simplifying Assumptions</h3>
-      <p>The VAR(p) $ y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t   $  can be estimated by OLS. To simplify, consider an SVAR(0) such that the reduced form shocks $u_t$ can be thought of as observable random variables equal to an unknown linear combination $B_0$ of unknown structural form shocks $\epsilon_t$.  
+      <p>The VAR(p) $ y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t   $  can be estimated by OLS. To simplify, consider an SVAR(0) such that the 
+        reduced form shocks $u_t$ can be thought of as observable random variables equal to an unknown linear combination $B_0$ of unknown structural form shocks $\epsilon_t$.  
       </p>
       <div class="assumption-box">
           <h5>Assumption 1: No Lags</h5>
@@ -147,7 +152,8 @@
           <p>   $$  y_t =   u_t \quad \text{and} \quad u_t =B_0 \epsilon_t  $$</p> 
         </div> 
  
-      <p>To further simplify, lets consider an SVAR with only two variables and shocks such that each of the two reduced form shocks is equal to an unknown linear combination of the two structural shocks.</p>
+      <p>To further simplify, let's consider an SVAR with only two variables and shocks such that each of the two reduced form shocks 
+        is equal to an unknown linear combination of the two structural shocks.</p>
       <div class="assumption-box">
           <h5>Assumption 2: Bivariate SVAR</h5>
           <p>
@@ -158,15 +164,18 @@
             \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix}  $$</p> 
         </div> 
     
-      <p>Finally, lets assume that the matrix $B_0$ is orthogonal.<span class="info-icon" data-info=".......">i</span>
-        Without the orthogonality assumption the matrix $B_0$ contains four unknown parameters. However, an orothogonal matrix $B_0$ essentially only depends on a single unknown parameter, which simplfies the visualizations on the next pages.</p>
+      <p>Finally, let's assume that the matrix $B_0$ is orthogonal.<span class="info-icon" data-info="If $B_0$ where not orthogonal, 
+        we could always transform the SVAR such that $B_0$ is orthogonal, see, e.g., section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span>
+        Without the orthogonality assumption the matrix $B_0$ contains four unknown parameters. However, an orthogonal matrix $B_0$ essentially 
+        only depends on a single unknown parameter, which simplifies the visualizations on the next pages.</p>
       <div class="assumption-box">
-          <h5>Assumption 3: Orthogonal $B_0$</h5>
-          <p>The matrix $B_0$ is orthogonal and can be written as:
-            $$
-            B_0 = B(\phi_0) = \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
-            $$ 
-          </p> 
+        <h5>Assumption 3: Orthogonal $B_0$</h5>
+        <p>The matrix $B_0$ is orthogonal and can be written as:
+        $
+        B_0 = B(\phi_0) = \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+        $ 
+        where $\phi_0$ is the unknown rotation angle.
+        </p> 
         </div> 
     </section>
 

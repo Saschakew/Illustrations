@@ -148,13 +148,16 @@
 
       <section id="independent-shocks" class="text-container">
          <h3>Independent Shocks</h3>
-        <p>
-          While we cannot observe the structural shocks $\epsilon_t$, we do know something about their stochastic properties: The structural shocks $\epsilon_t$ are independent, meaning a given shock $\epsilon_{1,t}$ contains no information on the shock $\epsilon_{2,t}$ and vice versa.
-          The same stochastic property should apply to the innovations $e_t(B(\phi))$, meaning a given innovation $e_{1,t}$ should contain no information on the innovation $e_{2,t}$ and vice versa. 
-        </p>
+         <p>
+          While we cannot observe the structural shocks $\epsilon_t$, we do know something about their stochastic properties: The structural shocks $\epsilon_t$ are 
+          independent, meaning a given shock $\epsilon_{1,t}$ contains no information on the shock $\epsilon_{2,t}$ and vice versa.
+          The same stochastic property should apply to the innovations $e_t(B(\phi))$, meaning a given innovation $e_{1,t}$ should contain no information 
+          on the innovation $e_{2,t}$ and vice versa. 
+          </p>
         
         <p>
-          We can use the stochastic property of independent shocks to verify whether we have chosen $ \phi = \phi_0 $ and whether our innovations are equal to the structural shocks. We can do this in two steps:
+          We can use the stochastic property of independent shocks to verify whether we have chosen $ \phi = \phi_0 $ and whether our 
+          innovations are equal to the structural shocks. We can do this in two steps:
         <ol class="styled-list">
           <li>Propose a rotation angle $ \phi $ and calculate the corresponding innovations $ e_t(B(\phi)) $.</li>
           <li>Measure the dependency of the innovations and rule out rotation angles $ \phi $ that lead to dependent innovations.</li>
@@ -166,7 +169,7 @@
       <section id="measuring-dependencies" class="text-container">
         <h3>Moment Conditions for Independent Shocks</h3>
         <p>The dependency of the innovations $ e_t(B(\phi)) $ can be measured using moment conditions.
-          Specifically, independent shocks with mean zero and unit variance will satistfy the following covariance-, coskewness-, and cokurtosis- conditions.
+          Specifically, independent shocks with mean zero and unit variance will satisfy the following covariance-, coskewness-, and cokurtosis- conditions.
           <div class="equation-wrapper" style="text-align: center;">
             Covariance condition:
           $$  
@@ -194,12 +197,12 @@
         <section id="interactive-simulation" class="text-container">
           <h3>Interactive Simulation</h3>
          
-         <p>
-          Move the $\phi$ slider to see how the rotation angle affects the dependencies of the innovations displayed in the table below the scatter plot. 
-          <div class="equation-wrapper" style="text-align: center;"> 
-          <span id="current-B"></span>
-          </div>
-         </p> 
+          <p>
+            Move the $\phi$ slider to see how the rotation angle affects the dependencies of the innovations displayed in the table below the scatter plot. 
+            <div class="equation-wrapper" style="text-align: center;"> 
+            <span id="current-B"></span>
+            </div>
+            </p> 
       
 
     <div class="container">
@@ -224,12 +227,13 @@
     <section id="simulation-results" class="text-container">
       <h3>Observations</h3>
       <p>
-          Note that any rotation $\phi$ yields uncorrelated shocks. 
-          However, eventhough all innovations are uncorrelated, some are clearly dependent as measured by the higher-order moment conditions.
-          <span class="info-icon" data-info="interpretation....">i</span>
-      </p>
-
-      <p>The loss value in the table above simply summes up all squared co-moments to get an overall measure of the dependencies 
+        Note that any rotation $\phi$ yields uncorrelated shocks. 
+        However, even though all innovations are uncorrelated, some are clearly dependent as measured by the higher-order moment conditions.<span class="info-icon" data-info="Consider for example the rotation angle $\phi=0$ such that the innovations are just equal to the reduced form shocks, i.e. $u_t=e_t$. 
+        The reduced form shocks are uncorrelated, however, the cokurtosis indicates a dependency between the shocks. 
+        For example $mean(e_1^3 e_2) < 0 $ which indicates that large positive values of $e_1$ coincide with negative values of $e_2$. " >i</span>
+        </p>
+        
+        <p>The loss value in the table above simply sums up all squared co-moments to get an overall measure of the dependencies 
         <div class="equation-wrapper" style="text-align: center;">
         $$ 
         loss(\phi) = mean(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 +   .... + mean(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
@@ -250,7 +254,7 @@
         </ul>
        </p>
     <p>
-      Take-away: Choosing the angle φ which minimizes the innovations' dependencies allows us to estimate φ.</p>
+      Take-away: Choosing the angle φ which minimizes the innovations' dependencies allows us to estimate φ.<span class="info-icon" data-info="Details can be found in section 5 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span></p>
     </p>
     
 <div class="container">

@@ -135,28 +135,29 @@
     <section  id="shock-relationship" class="text-container">
       <h3>The Relationship Between Reduced and Structural Form Shocks</h3>
             
-      <p>In our simplified SVAR model, the reduced form shocks $u_t$ and consequently the macroeconomnic variables $y_t$ can be thought of a with angle $\phi_0$ of the structural form shocks $\epsilon_t$:
+      <p>In our simplified SVAR model, the reduced form shocks $u_t$ and consequently the macroeconomic variables $y_t$ can 
+        be thought of a rotation with angle $\phi_0$ of the structural form shocks $\epsilon_t$:
         <div class="equation-wrapper" style="text-align: center;"> 
-        $$   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
+        $   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
         =  
-       \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+        \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
         \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix} 
-      $$
+        $
         <span id="current-B0"></span>
-      </div>
-      </p>
+        </div>
+        </p>
     </section>
 
     
     <section  id="interactive-simulation" class="text-container">
       <h3>Interactive Simulation</h3>
       <p>
-        In the simulation below, the structural form shocks are independently drawn from a uniform distribution.<span class="info-icon" data-info="normalization....">i</span>
+        In the simulation below, the structural form shocks are independently drawn from a uniform distribution.<span class="info-icon" data-info="The shocks are normalized to mean zero, unit variance, and zero correlation.">i</span>
         <br>
         Move the $\phi_0$ slider above to see how $B(\phi_0)$ leads to different rotations $u_t$ of $\epsilon_t$.
         <br>
         Push the New-Data-Button to draw a new set of structural shocks $\epsilon_t$.
-      </p>
+        </p>
       
       <div id="current-B" style="display: none;"></div>   
       
@@ -172,28 +173,22 @@
     </section>
 
 
-    <section id="key-observations" class="text-container">
-      <h3>Key Observations</h3>
-      <ul>
-          <li>As φ_0 changes, observe how the pattern of reduced form shocks rotates.</li>
-          <li>The structural shocks maintain their independent distribution.</li>
-          <li>The reduced form shocks, while still uncorrelated, may show patterns of dependence.</li>
-      </ul>
-  </section>
+ 
 
   <section id="implications" class="text-container">
       <h3>Implications for Identification</h3>
       <p>Understanding this relationship is crucial for our identification strategy:</p>
       <ol>
-          <li>We observe u_t but not ε_t or φ_0.</li>
-          <li>Our goal is to estimate φ_0 and recover ε_t from u_t.</li>
-          <li>The non-Gaussian properties of ε_t will be key to our identification strategy.</li>
-      </ol>
+        <li>We observe $u_t$ but not $\epsilon_t$ or $\phi_0$.</li>
+        <li>Our goal is to estimate $\phi_0$ and recover $\epsilon_t$ from $u_t$.</li>
+        <li>The non-Gaussian properties of $\epsilon_t$ will be key to our identification strategy.</li>
+        </ol>
   </section>
   
   <div  id="next-steps" class="text-container">
     <h3>Next Steps</h3>
-    <p>In the next section, we'll delve deeper into the identification problem and why traditional methods fall short for non-Gaussian shocks. Proceed to <a href="page3.html">The Identification Problem</a> to continue.</p>
+    <p>In the next section, we'll delve deeper into the identification problem and why traditional methods fall short for non-Gaussian shocks. 
+      Proceed to <a href="page3.html">The Identification Problem</a> to continue.</p>
        
   </div>
 
