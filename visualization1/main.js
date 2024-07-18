@@ -480,57 +480,62 @@ function animateBallRolling(lossType) {
   let animationId;
   let isAnimating = true;
   let stuckAtBorder = false;
-  
+
   function calculateLoss(phi) {
     return lossType === 'min' ? myloss(u1, u2, phi) : -mylossm(u1, u2, phi);
   }
-  
+
   function updateChart(phi, loss) {
     const chartToUpdate = lossType === 'min' ? charts.lossplot4 : charts.lossplot4m;
     chartToUpdate.data.datasets[1].data = [{ x: phi, y: Math.abs(loss) }];
     chartToUpdate.update('none');
   }
-  
+
   function updateUI(phi) {
     document.getElementById('phi').value = phi.toFixed(2);
     document.getElementById('phiValue').textContent = phi.toFixed(2);
-    updateAllMatrices(phi0Value,phi);
+    updateAllMatrices(phi0Value, phi);
     updateChartWithPhi();
   }
 
   function stopAnimation() {
     isAnimating = false;
     cancelAnimationFrame(animationId);
+    removeEventListeners()
     console.log("Animation stopped by user input");
   }
 
   function addEventListeners() {
     const inputs = document.querySelectorAll('input, button');
-    inputs.forEach(input => { 
+    inputs.forEach(input => {
       input.addEventListener('click', stopAnimation);
+      input.addEventListener('touchstart', stopAnimation);
+      console.log("add animation listener")
     });
   }
 
   function removeEventListeners() {
     const inputs = document.querySelectorAll('input, button');
-    inputs.forEach(input => { 
+    inputs.forEach(input => {
       input.removeEventListener('click', stopAnimation);
+      input.addEventListener('touchstart', stopAnimation);
+      console.log("remove animation listener")
     });
   }
 
   addEventListeners();
-  
+
   function animate() {
     if (!isAnimating || step >= maxSteps || stuckAtBorder) {
       console.log(isAnimating ? (stuckAtBorder ? "Stuck at border" : "Maximum steps reached") : "Animation stopped");
       removeEventListeners();
       return;
     }
-    
+
     const currentLoss = calculateLoss(currentPhi);
     const leftLoss = calculateLoss(currentPhi - stepSize);
     const rightLoss = calculateLoss(currentPhi + stepSize);
-    
+
     let newPhi = currentPhi;
     if (leftLoss < currentLoss && leftLoss < rightLoss) {
       newPhi = Math.max(0, currentPhi - stepSize);
@@ -541,22 +546,22 @@ function animateBallRolling(lossType) {
       removeEventListeners();
       return;
     }
-    
+
     // Check if the ball is stuck at the border
     if (newPhi === 0 || newPhi === 1.57) {
       stuckAtBorder = true;
     }
-    
+
     currentPhi = newPhi;
     const newLoss = calculateLoss(currentPhi);
-    
+
     updateChart(currentPhi, newLoss);
     updateUI(currentPhi);
-    
+
     step++;
     animationId = requestAnimationFrame(animate);
   }
-  
+
   animate();
 }
 
