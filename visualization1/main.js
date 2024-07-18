@@ -138,8 +138,7 @@ function setupEventListeners() {
       const phi0Value = parseFloat(this.value);
       document.getElementById('phi0Value').textContent = phi0Value.toFixed(2);
       updateAllMatrices(phi0Value,phiValue); 
-        updateChartWithPhi();    
-        updateSelectedPoints(); 
+        updateChartWithPhi();   
       });
     }
 
@@ -153,8 +152,7 @@ function setupEventListeners() {
         updateAllMatrices(phi0Value, phiValue);
         updateChartWithPhi();
         updateLossPlotm();  // Add this line 
-        updateLossPlot();  // Add this line
-        // The selected point is maintained within updateChartWithPhi
+        updateLossPlot();  // Add this line 
       });
     }
  
