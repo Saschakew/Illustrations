@@ -1054,7 +1054,7 @@ function updateStatsDisplay(stats) {
 
   updateAdditionalStatsTable('stats-epsilon-additional', stats.epsilon_additional, " Moments of structural shocks  ε", "ε");
   updateAdditionalStatsTable('stats-u-additional', stats.u_additional, "Moments of reduced form shocks u", "u");
-  updateAdditionalStatsTable('stats-e-additional', stats.e_additional, "Moments of innovatinos e", "e");
+  updateAdditionalStatsTable('stats-e-additional', stats.e_additional, "Moments of innovations e", "e");
 }
 
 function createTable(data, title, symbol) {
