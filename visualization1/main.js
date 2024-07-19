@@ -470,7 +470,6 @@ function updateAllCharts() {
   updateLossPlotm();
   updateLossPlot();
 }
-
 function animateBallRolling(lossType) {
   const startPhi = parseFloat(document.getElementById('phi').value);
   let currentPhi = startPhi;
@@ -501,7 +500,7 @@ function animateBallRolling(lossType) {
   function stopAnimation() {
     isAnimating = false;
     cancelAnimationFrame(animationId);
-    removeEventListeners()
+    removeEventListeners();
     console.log("Animation stopped by user input");
   }
 
@@ -541,8 +540,7 @@ function animateBallRolling(lossType) {
       newPhi = Math.min(1.57, currentPhi + stepSize);
     } else {
       console.log("Optima reached");
-      removeEventListeners();
-      return;
+      stuckAtBorder = true; // Mark as stuck at border to ensure final update
     }
 
     // Check if the ball is stuck at the border
@@ -553,8 +551,11 @@ function animateBallRolling(lossType) {
     currentPhi = newPhi;
     const newLoss = calculateLoss(currentPhi);
 
-    updateChart(currentPhi, newLoss);
-    updateUI(currentPhi);
+    // Update the chart and UI every 5th step or on the last step
+    if (step % 5 === 0 || step === maxSteps - 1 || stuckAtBorder) {
+      updateChart(currentPhi, newLoss);
+      updateUI(currentPhi);
+    }
 
     step++;
     animationId = requestAnimationFrame(animate);
@@ -562,7 +563,6 @@ function animateBallRolling(lossType) {
 
   animate();
 }
-
 function handleChartClick(event, elements, chart) {
   console.log('Chart clicked');
   if (elements.length > 0) {
