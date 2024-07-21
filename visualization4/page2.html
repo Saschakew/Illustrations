@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VDNR1PZVLE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-VDNR1PZVLE');
+</script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Understanding Non-Gaussian SVAR: An Interactive Guide</title>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Non-Gaussian SVAR",
+      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.", 
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      } 
+    }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LearningResource",
+        "name": "Reduced and Structural Form Shocks in Non-Gaussian SVAR",
+        "description": "This page explores the relationship between reduced form shocks and structural shocks in our Non-Gaussian SVAR model.",
+        "learningResourceType": "Interactive Simulation",
+        "educationalLevel": "Graduate",
+        "isPartOf": {
+          "@type": "Course",
+          "name": "Non-Gaussian SVAR Analysis"
+        },
+        "teaches": [
+          {
+            "@type": "DefinedTerm",
+            "name": "Reduced Form Shocks",
+            "description": "Observable shocks in a SVAR model"
+          },
+          {
+            "@type": "DefinedTerm",
+            "name": "Structural Shocks",
+            "description": "Underlying economic shocks in a SVAR model"
+          }
+        ],
+        "interactivityType": "active"
+      }
+      </script>
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\$', '\\$']]
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            console.log('MathJax initial typesetting complete');
+            // Notify that MathJax is ready
+            document.dispatchEvent(new Event('MathJaxReady'));
+          });
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/core-js-bundle/minified.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
+
+</head>
+<body  class="page2">
+  <header>
+    <h1>Proxy Exogeneity Test</h1>
+  </header>
+
+  <main>
+    <div class="menu-bar">
+      <button id="menu-toggle" aria-label="Toggle menu">☰</button>
+    </div><nav>
+      <h3 id="table-of-content">Table of Contents</h3>
+      <ul>
+      <li><a href="index.html" >SVAR</a></li>
+      <li><a href="page2.html" class="active">Exogenous Proxy</a></li>
+      <li><a href="page3.html">Endogenous Proxy</a></li>
+      <li><a href="page4.html">Strong Exogeneity</a></li>
+      <li><a href="page5.html">Exogeneity Test</a></li>
+      <li><a href="page6.html">Application</a></li>
+      </ul>
+      </nav>
+
+
+      <section class="input-container">
+        <div>
+          <label for="T">T =</label>
+          <input type="number" id="T" class="T-input" value="250" min="10" max="999">
+        </div>
+        <div>
+          <label for="phi0">$\phi_0$ = </label>
+          <input type="range" id="phi0" value="0.5" min="0" max="1.57" step="0.1">
+          <div id="phi0Value">0.50</div>
+        </div>
+        <div> 
+          <input type="hidden" id="phi" min="0" max="1.57" step="0.01" value="0.">
+        
+        </div>
+        <button id="newDataBtn" class="orange-button">New Data</button>
+      </section>
+
+      <section id="introduction" class="text-container">
+        <h2>Exogenous Proxies</h2>
+        <p>This page explores ....</p>
+    </section>
+
+
+    <section id="introduction" class="text-container">
+      <h2>Exogenous Proxies</h2>
+      <div class="equation-wrapper" style="text-align: center;"> 
+        $   
+        \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
+        =  
+        \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
+        \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix} 
+        $
+        <span id="current-B0"></span> 
+        </div>
+  </section>
+
+
+
+  <section id="introduction" class="text-container">
+    <h2>Exogenous Proxies</h2>
+    <p>This page explores ....</p>
+</section>
+
+
+
+<section id="introduction" class="text-container">
+  <h2>Exogenous Proxies</h2>
+  <p>This page explores ....</p>
+</section>
+
+
+
+<section id="introduction" class="text-container">
+  <h2>Exogenous Proxies</h2>
+  <p>This page explores ....</p>
+</section>
+
+
+
+
+<section id="introduction" class="text-container">
+  <h2>Exogenous Proxies</h2>
+  <p>This page explores ....</p>
+</section>
+
+
+
+<section id="introduction" class="text-container">
+  <h2>Exogenous Proxies</h2>
+  <p>This page explores ....</p>
+</section>
+
+
+
+<section id="introduction" class="text-container">
+  <h2>Exogenous Proxies</h2>
+  <p>This page explores ....</p>
+</section>
+
+
+
+    
+
+
+
+
+
+
+
+
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <a href="https://github.com/Saschakew/Illustrations" target="_blank">Github</a>
+        <a href="https://sites.google.com/view/sascha-keweloh">Sascha Keweloh</a>
+    </div>
+</footer>
+  
+  <script  src="page2.js"></script>
+</body>
+</html>
