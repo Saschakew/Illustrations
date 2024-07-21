@@ -1,6 +1,6 @@
 // Global variables
 let charts = {};
-let epsilon1, epsilon2, u1, u2;
+let epsilon1, epsilon2, u1, u2, e1, e2;
 let selectedPointIndex = null; 
 let s;
 let T;
@@ -103,7 +103,8 @@ function setupEventListeners() {
     (value) => document.getElementById('phiValue').textContent = value.toFixed(2),
     (value) => phi = value,
     (value) =>B = getB(phi),
-    (value) => insertEqSVARe(B)
+    (value) => insertEqSVARe(B),
+    (value) => e1, e2 = getE(u1,u2,B)
   );
 
     
@@ -144,6 +145,9 @@ function generateNewData(T) {
 
   u1, u2 =  getU(epsilon1, epsilon2, B0) 
 
+  e1, e2 = getE(u1,u2,B)
+
+  
    
       
 }
