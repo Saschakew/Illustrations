@@ -114,8 +114,9 @@
           <input type="number" id="T" class="T-input" value="250" min="10" max="999">
         </div>
         <div>
-          <label for="phi0">$\phi_0$  = 0.5</label>
-          <input type="hidden" id="phi0" value="0.5" min="0" max="1.57" step="0.1">
+          <label for="phi0">$\phi_0$ = </label>
+          <input type="range" id="phi0" value="0.5" min="0" max="1.57" step="0.1">
+          <div id="phi0Value">0.50</div>
         </div>
         <div>
           <label for="phi">$\phi$  =</label>
@@ -152,21 +153,19 @@
         </div>
         </p>
         
-        <p>
-        The question is: how do we know whether we picked $\phi=\phi_0$ and whether our innovations are equal to the structural shocks?
-        </p>
-
-
-
+      
     <div class="container">
 
    
+      <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
+        <canvas id="scatterPlot1"  aria-label="Scatter plot showing structural form shocks epsilon1 and epsilon2"></canvas>
+      </section> 
 
-      <section class="chart-container" style="width: 49%; margin-right: 2%;"> 
+      <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
         <canvas id="scatterPlot2"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
       </section>
  
-      <section class="chart-container" style="width: 49%;"> 
+      <section class="chart-container" style="width: 30%;"> 
         <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2"></canvas>
       </section>
 

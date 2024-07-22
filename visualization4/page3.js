@@ -93,29 +93,51 @@ function initializeVariables() {
 function setupEventListeners() { 
    
   createEventListener('phi0', 
-    (value) => updateChartWithPhi(value),
     (value) => document.getElementById('phi0Value').textContent = value.toFixed(2),
     (value) => phi0 = value, 
+    (value) => B0 = getB(phi0),
+    (value) => [u1, u2] = getU(epsilon1,epsilon2,B0),
+    (value) => [e1, e2] = getE(u1,u2,B), 
+    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
+    (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
   );
     
   createEventListener('phi', 
-    (value) => updateChartWithPhi(value),
     (value) => document.getElementById('phiValue').textContent = value.toFixed(2),
     (value) => phi = value,
-    (value) =>B = getB(phi),
+    (value) => B = getB(phi),
     (value) => insertEqSVARe(B),
-    (value) => e1, e2 = getE(u1,u2,B)
+    (value) => [e1, e2] = getE(u1,u2,B),  
+    (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
   );
 
     
   createEventListener('T',  
     (value) => T = value,
-    (value) => generateNewData(T)
+    (value) => generateNewData(T),
+    (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "u₁", "u₂", true),
+    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
+    (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
   );
 
 
   newDataBtn.addEventListener('click', function() {
-    generateNewData(T); 
+    generateNewData(T);
+    updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "u₁", "u₂", true);
+    updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+    updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
+  })
+
+  // Highlight points in scatter 
+  const scatterPlots = ['scatterPlot1', 'scatterPlot2', 'scatterPlot3'];
+  scatterPlots.forEach((id) =>   {
+    const canvas = document.getElementById(id); 
+    canvas.addEventListener('click', function() {
+      console.log(`Canvas ${id} clicked`);
+      const chart = charts[id];
+      const elements = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+      handleChartClick(event, elements, chart);
+    }) 
   })
  
 
@@ -126,7 +148,64 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
-  
+  const chartConfig = {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Data',
+        data: [],
+        backgroundColor: 'rgba(255, 165, 0, 0.6)',
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }, {
+        label: 'Selected Point',
+        data: [],
+        backgroundColor: 'red',
+        pointRadius: 7,
+        pointHoverRadius: 9
+      }]
+    },
+    options: { 
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 1,
+      plugins: {
+        title: {
+          display: true,
+          text: '',
+          font: { size: 18 }
+        },
+        legend: { display: false }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: '',
+            font: { size: 16 }
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: '',
+            font: { size: 16 }
+          }
+        }
+      } 
+    }
+  };
+
+
+  createChart('scatterPlot1',chartConfig)  
+  createChart('scatterPlot2',chartConfig)  
+  createChart('scatterPlot3',chartConfig)  
+ 
+ 
+  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
+  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+  updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true);
+
 }
 
 
@@ -140,12 +219,12 @@ function generateNewData(T) {
   let rawEpsilon1, rawEpsilon2; 
   rawEpsilon1 = generateMixedNormalData(T, s);
   rawEpsilon2 = generateMixedNormalData(T, 0); 
-  epsilon1, epsilon2 = NormalizeData(rawEpsilon1, rawEpsilon2)
+  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2)
     
 
-  u1, u2 =  getU(epsilon1, epsilon2, B0) 
+  [u1, u2] = getU(epsilon1, epsilon2, B0)  
 
-  e1, e2 = getE(u1,u2,B)
+  [e1, e2] = getE(u1,u2,B)
 
   
    
