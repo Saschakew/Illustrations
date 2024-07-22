@@ -68,6 +68,8 @@ function generateMixedNormalData(length, s) {
       epsilon1[i] /= newVar1;
       epsilon2[i] /= newVar2;
     }
+    
+    selectedPointIndex = null;
   
     return [epsilon1, epsilon2]
   
