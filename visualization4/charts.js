@@ -369,7 +369,7 @@ function updateChartWithPhi(  ) {
       const newLoss = calculateLoss(currentPhi);
   
       // Update the chart and UI every 5th step or on the last step
-      if (step % 1 === 0 || step === maxSteps - 1 || stuckAtBorder) {
+      if (step % 2 === 0 || step === maxSteps - 1 || stuckAtBorder) {
         updateChart(currentPhi, newLoss);
         updateUI(currentPhi);
       }
