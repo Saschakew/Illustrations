@@ -148,7 +148,7 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
-  const chartConfig = {
+  const ScatterConfig = {
     type: 'scatter',
     data: {
       datasets: [{
@@ -197,9 +197,9 @@ function initializeCharts() {
   };
 
 
-  createChart('scatterPlot1',chartConfig)  
-  createChart('scatterPlot2',chartConfig)  
-  createChart('scatterPlot3',chartConfig)  
+  createChart('scatterPlot1',ScatterConfig)  
+  createChart('scatterPlot2',ScatterConfig)  
+  createChart('scatterPlot3',ScatterConfig)  
  
  
   updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
