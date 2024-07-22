@@ -1,5 +1,5 @@
-function getScatterConfig() {
-  ScatterConfig = {
+function getScatterPlotConfig() {
+  ChartConfig = {
     type: 'scatter',
     data: {
       datasets: [{
@@ -47,8 +47,69 @@ function getScatterConfig() {
     }
   };
 
-  return ScatterConfig
+  return ChartConfig
 }
+
+
+function getLossPlotConfig() {
+  ChartConfig = {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Loss',
+        data: [],
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1
+      }, {
+        label: 'Current ϕ',
+        data: [],
+        borderColor: '#ffa500',
+        backgroundColor: '#ffa500',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        showLine: false
+      }, {
+        label: 'ϕ₀',
+        data: [],
+        borderColor: 'rgb(255, 206, 86)',
+        backgroundColor: 'rgb(255, 206, 86)',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        showLine: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 1,
+      plugins: {
+        title: {
+          display: false,
+          text: 'Loss Plot'
+        }
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'ϕ'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Loss'
+          }
+        }
+      }
+    }
+  }
+
+  return ChartConfig
+}
+
+
 
 function createChart(id,chartConfig) {
   const element = document.getElementById(id);

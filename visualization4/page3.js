@@ -148,7 +148,7 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
-  const ScatterConfig = getScatterConfig()
+  const ScatterConfig = getScatterPlotConfig()
 
 
   createChart('scatterPlot1',ScatterConfig)  
