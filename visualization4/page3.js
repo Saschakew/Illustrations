@@ -100,6 +100,7 @@ function setupEventListeners() {
     (value) => [e1, e2] = getE(u1,u2,B), 
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
     
   createEventListener('phi', 
@@ -109,6 +110,7 @@ function setupEventListeners() {
     (value) => insertEqSVARe(B),
     (value) => [e1, e2] = getE(u1,u2,B),  
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
 
     
@@ -118,6 +120,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
 
 
@@ -126,6 +129,7 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "u₁", "u₂", true);
     updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
     updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
+    updateLossPlot(charts.lossplot,phi0,phi,loss34 );
   })
 
   // Highlight points in scatter 
@@ -139,6 +143,10 @@ function setupEventListeners() {
       handleChartClick(event, elements, chart);
     }) 
   })
+
+  MinDependenciesBtn .addEventListener('click', function() {
+    animateBallRolling(charts.lossplot,loss34,'min',phi,charts.scatterPlot3);
+  })
  
 
 }
@@ -148,17 +156,24 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
-  const ScatterConfig = getScatterConfig()
+  const ScatterPlotConfig = getScatterPlotConfig()
 
 
-  createChart('scatterPlot1',ScatterConfig)  
-  createChart('scatterPlot2',ScatterConfig)  
-  createChart('scatterPlot3',ScatterConfig)  
+  createChart('scatterPlot1',ScatterPlotConfig)  
+  createChart('scatterPlot2',ScatterPlotConfig)  
+  createChart('scatterPlot3',ScatterPlotConfig)  
  
  
   updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
   updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
   updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true);
+
+  
+  const LossPlotConfig = getLossPlotConfig() 
+  
+  createChart('lossplot',LossPlotConfig)  
+
+  updateLossPlot(charts.lossplot,phi0,phi,loss34)
 
 }
 
