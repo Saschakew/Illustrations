@@ -148,53 +148,7 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
-  const ScatterConfig = {
-    type: 'scatter',
-    data: {
-      datasets: [{
-        label: 'Data',
-        data: [],
-        backgroundColor: 'rgba(255, 165, 0, 0.6)',
-        pointRadius: 5,
-        pointHoverRadius: 7
-      }, {
-        label: 'Selected Point',
-        data: [],
-        backgroundColor: 'red',
-        pointRadius: 7,
-        pointHoverRadius: 9
-      }]
-    },
-    options: { 
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: 1,
-      plugins: {
-        title: {
-          display: true,
-          text: '',
-          font: { size: 18 }
-        },
-        legend: { display: false }
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: '',
-            font: { size: 16 }
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: '',
-            font: { size: 16 }
-          }
-        }
-      } 
-    }
-  };
+  const ScatterConfig = getScatterConfig()
 
 
   createChart('scatterPlot1',ScatterConfig)  
