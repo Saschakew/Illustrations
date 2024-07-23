@@ -285,8 +285,7 @@ function updateChartWithPhi(  ) {
 
 
 
-  function animateBallRolling(chart, lossFunction,lossType,phi,UpdateChart) { 
-    let currentPhi = phi;
+  function animateBallRolling(chart, lossFunction,lossType,currentPhi,UpdateChart) {  
     const stepSize = 0.01;
     const maxSteps = 100;
     let step = 0;
@@ -308,10 +307,12 @@ function updateChartWithPhi(  ) {
       document.getElementById('phiValue').textContent = phi.toFixed(2);
       B = getB(phi);
       insertEqSVARe(B); 
+      [e1, e2] = getE(u1,u2,B)  
       if  (UpdateChart) { 
-        [e1, e2] = getE(u1,u2,B)  
          updateChartScatter(UpdateChart, e1, e2, "Innovations", "e₁", "e₂", false) 
       }
+      statsE = calculateMoments(e1, e2)
+      createTableDependency(statsE)
     }
   
     function stopAnimation() {
@@ -343,7 +344,7 @@ function updateChartWithPhi(  ) {
       if (!isAnimating || step >= maxSteps || stuckAtBorder) {
         console.log(isAnimating ? (stuckAtBorder ? "Stuck at border" : "Maximum steps reached") : "Animation stopped");
         removeEventListeners();
-        return;
+        return ;
       }
   
       const currentLoss = calculateLoss(currentPhi);
@@ -371,12 +372,14 @@ function updateChartWithPhi(  ) {
       // Update the chart and UI every 5th step or on the last step
       if (step % 2 === 0 || step === maxSteps - 1 || stuckAtBorder) {
         updateChart(currentPhi, newLoss);
-        updateUI(currentPhi);
+        updateUI(currentPhi); 
+        phi = currentPhi;
       }
   
       step++;
       animationId = requestAnimationFrame(animate);
+
     }
   
-    animate();
+    animate(); 
   }

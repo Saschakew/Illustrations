@@ -12,8 +12,9 @@ function insertEqSVAR(B0){
 
    
   const b0Element = document.getElementById('current-B0'); 
-
-  b0Element.innerHTML = matrixHtml0; 
+  if (b0Element){
+   b0Element.innerHTML = matrixHtml0; 
+  }
 
    // Trigger MathJax to render the new content
    if (typeof MathJax !== 'undefined') {
@@ -36,11 +37,96 @@ function insertEqSVARe(B){
 
    
   const bElement = document.getElementById('current-B'); 
-
-  bElement.innerHTML = matrixHtml; 
-
+  if (bElement) {
+    bElement.innerHTML = matrixHtml; 
+  }
    // Trigger MathJax to render the new content
    if (typeof MathJax !== 'undefined') {
     MathJax.typeset();
   }
 }
+
+function createTable(id,HTMLInsert) {
+  const element = document.getElementById(id, );
+    if (element) {
+      element.innerHTML = HTMLInsert;
+    }
+}
+
+function createTableDependency(thisStats) {
+  HTMLInsert =   createHTMLTableDependency( thisStats, "Co-moments of innovations e ", "e");
+  createTable('stats-e',HTMLInsert)
+}
+
+// Function to update the non-Gaussianity display
+function updateNonGaussianityDisplay(thisStats) { 
+
+  const skewness1 = thisStats.mean_cubed1;
+  const skewness2 = thisStats.mean_cubed2;
+  const excessKurtosis1 = thisStats.mean_fourth1;
+  const excessKurtosis2 = thisStats.mean_fourth2; 
+
+  const displayElement = document.getElementById('current-nG');
+  if (displayElement) {
+    displayElement.innerHTML = `
+      <p>Skewness: $E[\\epsilon_{1t}^3]$ = ${skewness1.toFixed(2)}  </p>
+      <p>Excess Kurtosis: $E[\\epsilon_{1t}^4-3]$  = ${excessKurtosis1.toFixed(2)}  </p>
+    `;
+  }
+
+  // Trigger MathJax to render the new content
+  if (typeof MathJax !== 'undefined') {
+    MathJax.typesetPromise([displayElement]);
+  }
+}
+
+
+
+function createHTMLTableDependency(data, title, symbol) {
+  return `
+  <h3>${title}</h3>
+  <table class="stats-table">
+    <tr>
+      <th> </th>
+      <th>Formula</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td class="measure">Covariance</td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
+      <td  class="value">${data.covariance.toFixed(2)}</td>
+    </tr> 
+    <tr>
+      <td class="measure">Coskewness </td>
+      <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
+      <td  class="value">${data.coskewness1.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Coskewness </td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
+      <td  class="value">${data.coskewness2.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Cokurtosis </td>
+      <td class="formula">mean(${symbol}₁³ * ${symbol}₂)</td>
+      <td  class="value">${data.cokurtosis1.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Cokurtosis </td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂³)</td>
+      <td  class="value">${data.cokurtosis2.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Cokurtosis </td>
+      <td class="formula">mean(${symbol}₁² * ${symbol}₂² - 1 ) </td>
+      <td  class="value">${data.cokurtosis3.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Loss</td>
+      <td class="formula"> </td>
+      <td  class="value">${data.loss.toFixed(2)}</td>
+    </tr>
+  </table>
+  `; 
+}
+

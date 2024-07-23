@@ -5,6 +5,7 @@ let selectedPointIndex = null;
 let s;
 let T;
 let phi0;
+let phi;
 let B0,B;
 
 
@@ -75,7 +76,7 @@ function initializeUI() {
 
 
 function initializeVariables() { 
-  s = 0;
+  s =  getInputValue('sSlider');
   T= getInputValue('T');
   phi0 = getInputValue('phi0');
   phi = getInputValue('phi');
@@ -84,6 +85,9 @@ function initializeVariables() {
   insertEqSVARe(B)
 
   generateNewData(T); 
+  
+   statsEpsilon = calculateMoments(epsilon1, epsilon2);
+   updateNonGaussianityDisplay(statsEpsilon);
  
 
 }
@@ -98,6 +102,8 @@ function setupEventListeners() {
     (value) => B0 = getB(phi0),
     (value) => [u1, u2] = getU(epsilon1,epsilon2,B0),
     (value) => [e1, e2] = getE(u1,u2,B), 
+    (value) => statsE = calculateMoments(e1, e2),
+    (value) => createTableDependency(statsE),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
     (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
@@ -109,15 +115,38 @@ function setupEventListeners() {
     (value) => B = getB(phi),
     (value) => insertEqSVARe(B),
     (value) => [e1, e2] = getE(u1,u2,B),  
+    (value) => statsE = calculateMoments(e1, e2),
+    (value) => createTableDependency(statsE),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
     (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
 
-    
+       
+  createEventListener('sSlider', 
+    (value) => document.getElementById('sValue').textContent = value.toFixed(2),
+    (value) => s = value, 
+    (value) => generateNewData(T),
+    (value) => [u1, u2] = getU(epsilon1,epsilon2,B0),
+    (value) => [e1, e2] = getE(u1,u2,B),
+    (value) => [e1, e2] = getE(u1,u2,B),  
+    (value) => statsE = calculateMoments(e1, e2),
+    (value) => createTableDependency(statsE),
+     (value) => statsEpsilon = calculateMoments(epsilon1, epsilon2),
+    (value) => updateNonGaussianityDisplay(statsEpsilon),
+    (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
+    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
+    (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
+  );
+
   createEventListener('T',  
     (value) => T = value,
     (value) => generateNewData(T),
-    (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "u₁", "u₂", true),
+    (value) => statsEpsilon = calculateMoments(epsilon1, epsilon2),
+   (value) => updateNonGaussianityDisplay(statsEpsilon),
+    (value) => statsE = calculateMoments(e1, e2),
+    (value) => createTableDependency(statsE),
+    (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
     (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
@@ -126,10 +155,14 @@ function setupEventListeners() {
 
   newDataBtn.addEventListener('click', function() {
     generateNewData(T);
-    updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "u₁", "u₂", true);
+   statsEpsilon = calculateMoments(epsilon1, epsilon2);
+    updateNonGaussianityDisplay(statsEpsilon);
+    updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true);
     updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
     updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
     updateLossPlot(charts.lossplot,phi0,phi,loss34 );
+    statsE = calculateMoments(e1, e2);
+     createTableDependency(statsE);
   })
 
   // Highlight points in scatter 
@@ -145,7 +178,7 @@ function setupEventListeners() {
   })
 
   MinDependenciesBtn .addEventListener('click', function() {
-    animateBallRolling(charts.lossplot,loss34,'min',phi,charts.scatterPlot3);
+    animateBallRolling(charts.lossplot,loss34,'min',phi,charts.scatterPlot3); 
   })
  
 
@@ -174,6 +207,10 @@ function initializeCharts() {
   createChart('lossplot',LossPlotConfig)  
 
   updateLossPlot(charts.lossplot,phi0,phi,loss34)
+
+
+  statsE = calculateMoments(e1, e2)
+  createTableDependency(statsE)
 
 }
 
