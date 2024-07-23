@@ -106,7 +106,6 @@ function setupEventListeners() {
     (value) => createTableDependency(statsE),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
     
   createEventListener('phi', 
@@ -136,7 +135,6 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
 
   createEventListener('T',  
@@ -149,7 +147,6 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
 
 
@@ -189,17 +186,18 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
-  const ScatterPlotConfig = getScatterPlotConfig()
+  const ScatterConfig = getScatterPlotConfig()
 
 
-  createChart('scatterPlot1',ScatterPlotConfig)  
-  createChart('scatterPlot2',ScatterPlotConfig)  
-  createChart('scatterPlot3',ScatterPlotConfig)  
+  createChart('scatterPlot1',ScatterConfig)  
+  createChart('scatterPlot2',ScatterConfig)  
+  createChart('scatterPlot3',ScatterConfig)  
  
  
   updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
   updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
   updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true);
+
 
   
   const LossPlotConfig = getLossPlotConfig() 
