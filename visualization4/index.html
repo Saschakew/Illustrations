@@ -108,13 +108,14 @@
       <h3 id="table-of-content">Table of Contents</h3>
       <ul>
       <li><a href="index.html" class="active">SVAR</a></li>
-      <li><a href="page2.html">Exogenous Proxy</a></li>
-      <li><a href="page3.html">Endogenous Proxy</a></li>
-      <li><a href="page4.html">Strong Exogeneity</a></li>
-      <li><a href="page5.html">Exogeneity Test</a></li>
-      <li><a href="page6.html">Application</a></li>
+      <li><a href="page2.html">Proxies</a></li> 
+      <li><a href="page3.html">Strong Exogeneity</a></li>
+      <li><a href="page4.html">Exogeneity Test</a></li>
+      <li><a href="page5.html">Application</a></li>
       </ul>
       </nav>
+
+      
  
       <section id="introduction" class="text-container">
         <h2>Introduction</h2>
@@ -168,6 +169,83 @@
     </section>
 
  
+
+    <section class="input-container">
+      <div>
+        <label for="T">T =</label>
+        <input type="number" id="T" class="T-input" value="250" min="10" max="999">
+      </div>
+      <div>
+        <label for="phi0">$\phi_0$ = </label>
+        <input type="range" id="phi0" value="0.5" min="0" max="1.57" step="0.1">
+        <div id="phi0Value">0.50</div>
+      </div>
+      <div>
+        <label for="phi">$\phi$  =</label>
+        <input type="range" id="phi" min="0" max="1.57" step="0.01" value="0">
+        <div id="phiValue">0.00</div>
+      </div> 
+      <button id="newDataBtn" class="orange-button">New Data</button>
+    </section>
+
+
+
+    <section id="interactive-simulation" class="text-container">
+      <h3>Interactive Simulation</h3>
+      
+      <p>
+      Move the $\phi$ slider above to see how $B(\phi)$ leads to different innovations $e_t$ equal to rotations of $u_t$:
+      <div class="equation-wrapper" style="text-align: center;"> 
+      $   
+      \begin{bmatrix} e_{1,t} \\ e_{2,t} \end{bmatrix} 
+      =  
+      \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
+      \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
+      $
+      <span id="current-B"></span> 
+      <span id="current-nG"></span>
+      </div>
+      </p>
+      
+    
+  <div class="container">
+
+ 
+    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
+      <canvas id="scatterPlot1"  aria-label="Scatter plot showing structural form shocks epsilon1 and epsilon2"></canvas>
+    </section> 
+
+    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
+      <canvas id="scatterPlot2"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
+    </section>
+
+    <section class="chart-container" style="width: 30%;"> 
+      <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2"></canvas>
+    </section>
+
+  </div>
+  </section>
+
+
+
+  <section id="interactive-loss" class="text-container">
+    <h3>Interactive Loss Calculation</h3> 
+
+<div class="container">
+<div class="button-container">
+<button id="MinDependenciesBtn" class="orange-button">Minimize Dependencies</button>
+</div>
+<div class="chart-wrapper">
+<section class="chart-container">
+  <canvas id="lossplot"  aria-label="Plot of dependencies"></canvas>
+</section> 
+<div class="stats-tables-container">
+  <div id="stats-e" class="stats-container"></div>
+</div>
+</div>
+</div>
+</section>
+
 
     <div class="text-container" id="next-steps">
       <h3>Next Steps</h3>

@@ -17,6 +17,16 @@ function loss34(u1, u2, phi) {
     return out;
   }
 
+function lossCov(u1, u2, phi) {  
+    B = getB(phi) 
+
+    const [e1, e2] = getE(u1,u2,B)
+
+    const out = calculateMoments(e1, e2).covariance
+
+    return out;
+}
+
 function calculateMoments(data1, data2) {
     if (!Array.isArray(data1) || !Array.isArray(data2) || data1.length !== data2.length || data1.length === 0) {
         throw new Error("Input must be non-empty arrays of equal length");

@@ -122,6 +122,88 @@ function createChart(id,chartConfig) {
   }
 }
  
+function updateLossPlot(chart,phi0,phi,lossFunction) { 
+
+  if (!chart) return; 
+ 
+    const xValues = Array.from({length: 159}, (_, i) => i * 0.01);
+    const yValues = xValues.map(x => lossFunction(u1, u2, x));
+
+    chart.data.labels = xValues.map(x => x.toFixed(2));
+    chart.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
+
+    // Update the current phi point
+    const currentLoss = lossFunction(e1, e2, phi);
+    chart.data.datasets[1].data = [{
+      x: phi,
+      y: currentLoss
+    }];
+
+    // Update the phi0 point
+    const phi0Loss = lossFunction(u1, u2, phi0);
+    const yMin = Math.min(0,...chart.data.datasets[0].data.map(point => point.y));
+    const yMax = Math.max(0.5,...chart.data.datasets[0].data.map(point => point.y));
+
+ 
+    chart.data.datasets[2] = {
+      type: 'line',
+      label: 'φ₀',
+      data: [
+        { x: phi0, y: yMin },
+        { x: phi0, y: yMax }
+      ],
+      borderColor: '#ffa500',
+      borderWidth: 2,
+      pointRadius: 0,
+      animation: false
+    };
+
+    chart.options.annotation = {
+      annotations: [{
+        type: 'line',
+        mode: 'vertical',
+        scaleID: 'x',
+        value: phi0,
+        borderColor: '#ffa500',
+        borderWidth: 2,
+        label: {
+          content: 'φ₀',
+          enabled: false,
+          position: 'top'
+        }
+      }]
+    };
+
+    chart.options.scales.x = {
+      type: 'linear',
+      position: 'bottom',
+      title: {
+        display: true,
+        text: 'φ'
+      },
+      min: 0,
+      max: 1.57,
+      ticks: {
+        callback: function(value) {
+          return value.toFixed(2);
+        },
+        maxTicksLimit: 10
+      }
+    };
+    
+    chart.options.scales.y = {
+      title: {
+        display: true,
+        text: 'Loss'
+      },
+      min: 0,
+      max: Math.max(0.5, ...yValues, currentLoss, phi0Loss)
+    };
+
+    chart.update();
+
+ 
+}
 
 function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate = false) {
    
@@ -178,6 +260,10 @@ function updateChartWithPhi(  ) {
     if (charts.scatterPlot1) highlightPoint(charts.scatterPlot1, index);
     if (charts.scatterPlot2) highlightPoint(charts.scatterPlot2, index);
     if (charts.scatterPlot3) highlightPoint(charts.scatterPlot3, index);
+    if (charts.scatterPlotZ1Eps1) highlightPoint(charts.scatterPlotZ1Eps1, index); 
+    if (charts.scatterPlotZ1Eps2) highlightPoint(charts.scatterPlotZ1Eps2, index);
+    if (charts.scatterPlotZ1E1) highlightPoint(charts.scatterPlotZ1E1, index); 
+    if (charts.scatterPlotZ1E2) highlightPoint(charts.scatterPlotZ1E2, index);
   }
     // Add this function to highlight a specific point
   function highlightPoint(chart, index) {
@@ -200,7 +286,7 @@ function updateChartWithPhi(  ) {
 
 
 
-  function animateBallRolling(chart, lossFunction,lossType,currentPhi,UpdateChart) {  
+  function animateBallRolling(chart, lossFunction,lossType,currentPhi,callbacks = []) {  
     const stepSize = 0.01;
     const maxSteps = 100;
     let step = 0;
@@ -218,16 +304,9 @@ function updateChartWithPhi(  ) {
     }
   
     function updateUI(phi) {
-      document.getElementById('phi').value = phi.toFixed(2);
-      document.getElementById('phiValue').textContent = phi.toFixed(2);
-      B = getB(phi);
-      insertEqSVARe(B); 
-      [e1, e2] = getE(u1,u2,B)  
-      if  (UpdateChart) { 
-         updateChartScatter(UpdateChart, e1, e2, "Innovations", "e₁", "e₂", false) 
-      }
-      statsE = calculateMoments(e1, e2)
-      createTableDependency(statsE)
+      callbacks.forEach(callback => callback(phi));
+
+
     }
   
     function stopAnimation() {

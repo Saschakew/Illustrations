@@ -175,8 +175,7 @@ a {
   box-sizing: border-box;
   border: 1px solid #ffa500;
   padding: 15px;
-}
-
+} 
 .input-container > div {
   display: flex;
   align-items: center;

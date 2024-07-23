@@ -58,6 +58,11 @@ function createTableDependency(thisStats) {
   createTable('stats-e',HTMLInsert)
 }
 
+function createTableCovariance(thisStats) {
+  HTMLInsert =   createHTMLTableCovariance( thisStats, "Co-moments of innovations e ", "e");
+  createTable('stats-e',HTMLInsert)
+}
+
 // Function to update the non-Gaussianity display
 function updateNonGaussianityDisplay(thisStats) { 
 
@@ -130,3 +135,20 @@ function createHTMLTableDependency(data, title, symbol) {
   `; 
 }
 
+function createHTMLTableCovariance(data, title, symbol) {
+  return `
+  <h3>${title}</h3>
+  <table class="stats-table">
+    <tr>
+      <th> </th>
+      <th>Formula</th>
+      <th>Value</th>
+    </tr>
+    <tr>
+      <td class="measure">Covariance</td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
+      <td  class="value">${data.covariance.toFixed(2)}</td>
+    </tr>  
+  </table>
+  `; 
+}

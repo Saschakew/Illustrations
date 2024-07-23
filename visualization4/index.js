@@ -1,9 +1,12 @@
 // Global variables
 let charts = {};
-let epsilon1, epsilon2, u1, u2;
+let epsilon1, epsilon2, u1, u2, e1, e2;
+let selectedPointIndex = null; 
 let s;
 let T;
 let phi0;
+let phi;
+let B0,B;
 
 
 // Function to load a script
@@ -73,7 +76,15 @@ function initializeUI() {
 
 
 function initializeVariables() { 
+  s =  0;
+  T= getInputValue('T');
+  phi0 = getInputValue('phi0');
+  phi = getInputValue('phi');
+  B0 = getB(phi0);
+  B = getB(phi);
+  insertEqSVARe(B)
 
+  generateNewData(T); 
  
 
 }
@@ -81,6 +92,80 @@ function initializeVariables() {
 
 // Event Listeners Setup
 function setupEventListeners() { 
+ 
+  createEventListener('phi0', 
+    (value) => document.getElementById('phi0Value').textContent = value.toFixed(2),
+    (value) => phi0 = value, 
+    (value) => B0 = getB(phi0),
+    (value) => [u1, u2] = getU(epsilon1,epsilon2,B0),
+    (value) => [e1, e2] = getE(u1,u2,B), 
+    (value) => statsE = calculateMoments(e1, e2),
+    (value) => createTableCovariance(statsE),
+    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
+    (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov),
+  );
+    
+  createEventListener('phi', 
+    (value) => document.getElementById('phiValue').textContent = value.toFixed(2),
+    (value) => phi = value,
+    (value) => B = getB(phi),
+    (value) => insertEqSVARe(B),
+    (value) => [e1, e2] = getE(u1,u2,B),  
+    (value) => statsE = calculateMoments(e1, e2),
+    (value) => createTableCovariance(statsE),
+    (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov),
+  );
+
+       
+ 
+
+  createEventListener('T',  
+    (value) => T = value,
+    (value) => generateNewData(T), 
+    (value) => statsE = calculateMoments(e1, e2),
+    (value) => createTableCovariance(statsE),
+    (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
+    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
+    (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov),
+  );
+
+
+  newDataBtn.addEventListener('click', function() {
+    generateNewData(T); 
+    updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true);
+    updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+    updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
+    updateLossPlot(charts.lossplot,phi0,phi,lossCov );
+    statsE = calculateMoments(e1, e2);
+    createTableCovariance(statsE);
+  })
+
+  // Highlight points in scatter 
+  const scatterPlots = ['scatterPlot1', 'scatterPlot2', 'scatterPlot3'];
+  scatterPlots.forEach((id) =>   {
+    const canvas = document.getElementById(id); 
+    canvas.addEventListener('click', function() {
+      console.log(`Canvas ${id} clicked`);
+      const chart = charts[id];
+      const elements = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+      handleChartClick(event, elements, chart);
+    }) 
+  })
+
+  const callbacks = [
+    function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
+    function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
+    function(phi) { B = getB(phi); insertEqSVARe(B); },
+    function(phi) { [e1, e2] = getE(u1, u2, B); },
+    function(phi) { updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", false); },
+    function(phi) { statsE = calculateMoments(e1, e2); createTableCovariance(statsE)  } 
+  ];
+  MinDependenciesBtn .addEventListener('click', function() {
+    animateBallRolling(charts.lossplot,lossCov,'min',phi,callbacks); 
+  })
  
  
 }
@@ -90,7 +175,30 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
+  const ScatterConfig = getScatterPlotConfig()
+
+
+  createChart('scatterPlot1',ScatterConfig)  
+  createChart('scatterPlot2',ScatterConfig)  
+  createChart('scatterPlot3',ScatterConfig)  
+ 
+ 
+  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
+  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+  updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true);
+
+
   
+  const LossPlotConfig = getLossPlotConfig() 
+  
+  createChart('lossplot',LossPlotConfig)  
+
+  updateLossPlot(charts.lossplot,phi0,phi,lossCov)
+
+
+  statsE = calculateMoments(e1, e2)
+  createTableCovariance(statsE)
+
 }
 
 
@@ -101,7 +209,16 @@ function initializeCharts() {
  
 function generateNewData(T) {  
 
- 
+  let rawEpsilon1, rawEpsilon2; 
+  rawEpsilon1 = generateMixedNormalData(T, s);
+  rawEpsilon2 = generateMixedNormalData(T, 0); 
+  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2)
+    
+
+  [u1, u2] = getU(epsilon1, epsilon2, B0)  
+
+  [e1, e2] = getE(u1,u2,B)
+
 }
 
 

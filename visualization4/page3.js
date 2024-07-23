@@ -106,6 +106,7 @@ function setupEventListeners() {
     (value) => createTableDependency(statsE),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
     
   createEventListener('phi', 
@@ -135,6 +136,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
 
   createEventListener('T',  
@@ -147,6 +149,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
   );
 
 
@@ -174,8 +177,16 @@ function setupEventListeners() {
     }) 
   })
 
+  const callbacks = [
+    function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
+    function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
+    function(phi) { B = getB(phi); insertEqSVARe(B); },
+    function(phi) { [e1, e2] = getE(u1, u2, B); },
+    function(phi) { updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", false); },
+    function(phi) { statsE = calculateMoments(e1, e2); createTableDependency(statsE)  } 
+  ];
   MinDependenciesBtn .addEventListener('click', function() {
-    animateBallRolling(charts.lossplot,loss34,'min',phi,charts.scatterPlot3); 
+    animateBallRolling(charts.lossplot,loss34,'min',phi,callbacks); 
   })
  
 
