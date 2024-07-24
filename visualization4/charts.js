@@ -206,20 +206,24 @@ function updateLossPlot(chart,phi0,phi,lossFunction) {
 }
 
 function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate = false) {
-   
-
   if (!chart) return; 
-  
-  
-  const newData = xData.map((x, i) => ({x: x, y: yData[i]}    ));
-  
+
+  const newData = xData.map((x, i) => ({ x: x, y: yData[i] }));
 
   chart.data.datasets[0].data = newData;
   
   // The selected point will be updated in highlightPointOnBothCharts
   chart.data.datasets[1].data = [];
 
-  chart.options.plugins.title.text = title;
+  // Calculate covariance
+  const meanX = xData.reduce((sum, x) => sum + x, 0) / xData.length;
+  const meanY = yData.reduce((sum, y) => sum + y, 0) / yData.length;
+  const covariance = xData.reduce((sum, x, i) => sum + (x - meanX) * (yData[i] - meanY), 0) / (xData.length - 1);
+
+  // Append covariance to the title
+  const updatedTitle = `${title} (Covariance: ${covariance.toFixed(2)})`;
+
+  chart.options.plugins.title.text = updatedTitle;
   chart.options.scales.x.title.text = xLabel;
   chart.options.scales.y.title.text = yLabel;
 
