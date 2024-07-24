@@ -218,7 +218,7 @@ function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate 
   // Calculate covariance
   const meanX = xData.reduce((sum, x) => sum + x, 0) / xData.length;
   const meanY = yData.reduce((sum, y) => sum + y, 0) / yData.length;
-  const covariance = xData.reduce((sum, x, i) => sum + (x - meanX) * (yData[i] - meanY), 0) / (xData.length - 1);
+  const meanProduct = xData.reduce((sum, x, i) => sum + (x - meanX) * (yData[i] - meanY), 0) / (xData.length - 1);
 
   // Append covariance to the title
   const updatedTitle = `${title} E[${xLabel} ${yLabel}] = ${meanProduct.toFixed(2)}`;
