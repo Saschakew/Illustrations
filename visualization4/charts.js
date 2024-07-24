@@ -221,7 +221,7 @@ function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate 
   const covariance = xData.reduce((sum, x, i) => sum + (x - meanX) * (yData[i] - meanY), 0) / (xData.length - 1);
 
   // Append covariance to the title
-  const updatedTitle = `${title} (Covariance: ${covariance.toFixed(2)})`;
+  const updatedTitle = `${title} E[${xLabel} ${yLabel}] = ${meanProduct.toFixed(2)}`;
 
   chart.options.plugins.title.text = updatedTitle;
   chart.options.scales.x.title.text = xLabel;
