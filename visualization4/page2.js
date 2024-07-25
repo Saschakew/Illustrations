@@ -9,6 +9,7 @@ let phi0;
 let phi;
 let B0,B;
 let gamma1, gamma2;
+let color1, color2, color3;
 
 // Function to load a script
 function loadScript(src) {
@@ -71,10 +72,15 @@ function initializeApp() {
 function initializeUI() {
   setupStickyInputContainer();
   setupNavigationMenu();
+
+  color1 =  'rgb(75, 192, 192)';
+  color2 =  'rgb(41, 128, 185)';
+  color3 =  'rgb(255, 177, 153)';
 }
 
 
 
+        color: 'rgb(75, 192, 192)'
 function initializeVariables() { 
   s =  0;
   T= getInputValue('T');
@@ -103,13 +109,35 @@ function setupEventListeners() {
     (value) => phi = value,
     (value) => B = getB(phi),
     (value) => insertEqSVARe(B),
-    (value) => [e1, e2] = getE(u1,u2,B),   
-    (value) => statsZE = calculateMoments(z1, e2),
-    (value) => createTableZCovariance(statsZE),
+    (value) => [e1, e2] = getE(u1,u2,B),
+    (value) =>statsZE1 = calculateMoments(z1, e2),
+    (value) =>statsZE2 = calculateMoments(z2, e2),
+    (value) =>createTableZCovariance(statsZE1),
+    (value) =>createTableZ2Covariance(statsZE1,statsZE2),  
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
-    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
+    (value) =>  updateLossPlot(OnlyPoint=true,charts.lossplot,phi0,phi,lossZ1,'none',u1, u2,z1,z2),
+    (value) =>updateLossPlots(OnlyPoint=true,charts.lossplot2,phi0,phi, [
+      {
+        lossFunction: lossZ1,
+        extraArgs: [u1, u2,z1,z2 ],
+        label: 'Loss Function 1',
+        color: color1
+      },
+      {
+        lossFunction: lossZ2,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 2',
+        color: color2
+      },
+      {
+        lossFunction: lossZ12,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 3',
+        color: color3
+      },
+    ] ,'none'  ),
   );
 
        
@@ -117,16 +145,38 @@ function setupEventListeners() {
 
   createEventListener('T',  
     (value) => T = value,
-    (value) => generateNewData(T), 
-    (value) => statsZE = calculateMoments(z1, e2),
-    (value) => createTableZCovariance(statsZE),
+    (value) => generateNewData(T),
+    (value) =>statsZE1 = calculateMoments(z1, e2),
+    (value) =>statsZE2 = calculateMoments(z2, e2),
+    (value) =>createTableZCovariance(statsZE1),
+    (value) =>createTableZ2Covariance(statsZE1,statsZE2),  
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true),
-    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
+    (value) =>  updateLossPlot(OnlyPoint=false,charts.lossplot,phi0,phi,lossZ1,'',u1, u2,z1,z2),
+    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
+      {
+        lossFunction: lossZ1,
+        extraArgs: [u1, u2,z1,z2 ],
+        label: 'Loss Function 1',
+        color: color1
+      },
+      {
+        lossFunction: lossZ2,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 2',
+        color: color2
+      },
+      {
+        lossFunction: lossZ12,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 3',
+        color: color3
+      },
+    ]  ,''  ),
  
   );
 
@@ -139,37 +189,103 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true);
     updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true);
     updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true);
-    updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2);
-    statsZE = calculateMoments(z1, e2);
-    createTableZCovariance(statsZE);
+    updateLossPlot(OnlyPoint=false,charts.lossplot,phi0,phi,lossZ1,'',u1, u2,z1,z2);
+    statsZE1 = calculateMoments(z1, e2);
+    statsZE2 = calculateMoments(z2, e2);
+    createTableZCovariance(statsZE1);
+    createTableZ2Covariance(statsZE1,statsZE2);
+    updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
+      {
+        lossFunction: lossZ1,
+        extraArgs: [u1, u2,z1,z2 ],
+        label: 'Loss Function 1',
+        color: color1
+      },
+      {
+        lossFunction: lossZ2,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 2',
+        color: color2
+      },
+      {
+        lossFunction: lossZ12,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 3',
+        color: color3
+      },
+    ]  ,''  );
   })
 
   createEventListener('gamma1', 
     (value) => document.getElementById('gamma1Value').textContent = value.toFixed(2),
     (value) => gamma1 = value, 
     (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + eta1[i]),
-    (value) => statsZE = calculateMoments(z1, e2),
-    (value) => createTableZCovariance(statsZE),
+    (value) =>statsZE1 = calculateMoments(z1, e2),
+    (value) =>statsZE2 = calculateMoments(z2, e2),
+    (value) =>createTableZCovariance(statsZE1),
+    (value) =>createTableZ2Covariance(statsZE1,statsZE2),  
     (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),  
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
     (value) => insertEqZ(gamma1, gamma2),
-    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
+    (value) =>  updateLossPlot(OnlyPoint=false,charts.lossplot,phi0,phi,lossZ1,'',u1, u2,z1,z2),  
+    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
+      {
+        lossFunction: lossZ1,
+        extraArgs: [u1, u2,z1,z2 ],
+        label: 'Loss Function 1',
+        color: color1
+      },
+      {
+        lossFunction: lossZ2,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 2',
+        color: color2
+      },
+      {
+        lossFunction: lossZ12,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 3',
+        color: color3
+      },
+    ]  ,''  ),
   );
 
   createEventListener('gamma2', 
     (value) => document.getElementById('gamma2Value').textContent = value.toFixed(2),
     (value) => gamma2 = value, 
     (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + eta1[i]),
-    (value) => statsZE = calculateMoments(z1, e2),
-    (value) => createTableZCovariance(statsZE),
+    (value) =>statsZE1 = calculateMoments(z1, e2),
+    (value) =>statsZE2 = calculateMoments(z2, e2),
+    (value) =>createTableZCovariance(statsZE1),
+    (value) =>createTableZ2Covariance(statsZE1,statsZE2),  
     (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true), 
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
     (value) => insertEqZ(gamma1, gamma2),
-    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
+    (value) =>  updateLossPlot(OnlyPoint=false,charts.lossplot,phi0,phi,lossZ1,'',u1, u2,z1,z2),
+    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
+      {
+        lossFunction: lossZ1,
+        extraArgs: [u1, u2,z1,z2 ],
+        label: 'Loss Function 1',
+        color: color1
+      },
+      {
+        lossFunction: lossZ2,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 2',
+        color: color2
+      },
+      {
+        lossFunction: lossZ12,
+        extraArgs: [u1, u2,z1,z2],
+        label: 'Loss Function 3',
+        color: color3
+      },
+    ]  ,''  ),
   );
  
     // Highlight points in scatter 
@@ -193,10 +309,76 @@ function setupEventListeners() {
       function(phi) { updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", false); }, 
       function(phi) { updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true); }, 
       function(phi) { updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true); }, 
-      function(phi) { statsZE = calculateMoments(z1, e2); createTableZCovariance(statsZE)  } 
+      function(phi) {
+        statsZE1 = calculateMoments(z1, e2);
+        statsZE2 = calculateMoments(z2, e2);
+        createTableZCovariance(statsZE1);
+        createTableZ2Covariance(statsZE1,statsZE2);  } ,   
+      function(phi) { updateLossPlot(OnlyPoint=true,charts.lossplot,phi0,phi,lossZ1,'none',u1, u2,z1,z2)  },   
+      function(phi) { updateLossPlots(OnlyPoint=true,charts.lossplot2,phi0,phi, [
+        {
+          lossFunction: lossZ1,
+          extraArgs: [u1, u2,z1,z2 ],
+          label: 'Loss Function 1',
+          color: color1
+        },
+        {
+          lossFunction: lossZ2,
+          extraArgs: [u1, u2,z1,z2],
+          label: 'Loss Function 2',
+          color: color2
+        },
+        {
+          lossFunction: lossZ12,
+          extraArgs: [u1, u2,z1,z2],
+          label: 'Loss Function 3',
+          color: color3
+        },
+      ] ,'none'  )   }, 
     ];
     MinDependenciesBtn .addEventListener('click', function() {
       animateBallRolling(charts.lossplot,lossZ1,'min',phi,callbacks,u1,u2,z1,z2); 
+    })
+
+
+    const callbacks2 = [
+      function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
+      function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
+      function(phi) { B = getB(phi); insertEqSVARe(B); },
+      function(phi) { [e1, e2] = getE(u1, u2, B); },
+      function(phi) { updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", false); }, 
+      function(phi) { updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true); }, 
+      function(phi) { updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true); }, 
+      function(phi) { statsZE = calculateMoments(z1, e2); createTableZCovariance(statsZE)  } , 
+      function(phi) { 
+        statsZE1 = calculateMoments(z1, e2);
+        statsZE2 = calculateMoments(z2, e2);
+        createTableZCovariance(statsZE1);
+        createTableZ2Covariance(statsZE1,statsZE2);  } ,   
+      function(phi) { updateLossPlot(OnlyPoint=true,charts.lossplot,phi0,phi,lossZ1,'none',u1, u2,z1,z2)  },  
+      function(phi) { updateLossPlots(OnlyPoint=true,charts.lossplot2,phi0,phi, [
+        {
+          lossFunction: lossZ1,
+          extraArgs: [u1, u2,z1,z2 ],
+          label: 'Loss Function 1',
+          color: color1
+        },
+        {
+          lossFunction: lossZ2,
+          extraArgs: [u1, u2,z1,z2],
+          label: 'Loss Function 2',
+          color: color2
+        },
+        {
+          lossFunction: lossZ12,
+          extraArgs: [u1, u2,z1,z2],
+          label: 'Loss Function 3',
+          color: color3
+        },
+      ] ,'none'  )   }, 
+    ];
+    MinDependenciesBtn2.addEventListener('click', function() {
+      animateBallRolling(charts.lossplot2,lossZ12,'min',phi,callbacks2,u1,u2,z1,z2); 
     })
 }
 
@@ -232,10 +414,39 @@ function initializeCharts() {
   
   createChart('lossplot',LossPlotConfig)  
 
-  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2)
+  updateLossPlot(OnlyPoint=false,charts.lossplot,phi0,phi,lossZ1,'',u1, u2,z1,z2)
+
+
+
   
-  statsZE = calculateMoments(z1, e2)
-  createTableZCovariance(statsZE)
+  createChart('lossplot2',LossPlotConfig)  
+
+  updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
+    {
+      lossFunction: lossZ1,
+      extraArgs: [u1, u2,z1,z2 ],
+      label: 'Loss Function 1',
+      color: color1
+    },
+    {
+      lossFunction: lossZ2,
+      extraArgs: [u1, u2,z1,z2],
+      label: 'Loss Function 2',
+      color: color2
+    },
+    {
+      lossFunction: lossZ12,
+      extraArgs: [u1, u2,z1,z2],
+      label: 'Loss Function 3',
+      color: color3
+    },
+  ]   ,''  );
+  
+  statsZE1 = calculateMoments(z1, e2)
+  statsZE2 = calculateMoments(z2, e2)
+  createTableZCovariance(statsZE1)
+  createTableZ2Covariance(statsZE1,statsZE2)
+
 }
 
 
@@ -256,7 +467,7 @@ function generateNewData(T) {
   eta1 = generateMixedNormalData(T, 0); 
   z1 =  eta1.map((eta, i) => gamma1 * epsilon1[i] + gamma2 * epsilon2[i] + eta ); 
   eta2 = generateMixedNormalData(T, 0); 
-  z2 = eta1.map((eta, i) => 1 * epsilon1[i]   + eta ); 
+  z2 = eta2.map((eta, i) => 1 * epsilon1[i]   + eta ); 
    
 }
 

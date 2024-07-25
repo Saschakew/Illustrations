@@ -85,8 +85,29 @@ function createTableCovariance(thisStats) {
   createTable('stats-e',HTMLInsert)
 }
 function createTableZCovariance(thisStats) {
-  HTMLInsert =   createHTMLTableZCovariance( thisStats, "Loss based on exogenous proxy", "z", "e");
+  HTMLInsert =   createHTMLTableZCovariance( thisStats, "Loss based on   proxy", "z", "e");
   createTable('stats-ze',HTMLInsert)
+}
+
+function createTableZ2Covariance(statsZE1,statsZE2) {
+  HTMLInsert =   `
+  <h3>Loss based on   proxy</h3>
+  <table class="stats-table"> 
+    <tr>
+      <td class="measure">Loss z₁:</td>
+      <td class="formula">mean(z₁  * e₂)^2 =  ${Math.pow(statsZE1.covariance, 2).toFixed(2)}</td>
+    </tr>  
+    <tr>
+      <td class="measure">Loss z₂:</td>
+      <td class="formula">mean(z₂  * e₂)^2 =  ${Math.pow(statsZE2.covariance, 2).toFixed(2)}</td>
+    </tr>   
+    <tr>
+      <td class="measure">Loss sum:</td>
+      <td class="formula">mean(z₂  * e₂)^2 =  ${(Math.pow(statsZE1.covariance, 2)+ Math.pow(statsZE2.covariance, 2)).toFixed(2)}</td>
+    </tr>  
+  </table>
+  `; 
+  createTable('stats-ze2',HTMLInsert)
 }
 
 // Function to update the non-Gaussianity display

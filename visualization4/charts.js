@@ -122,30 +122,174 @@ function createChart(id,chartConfig) {
   }
 }
  
-function updateLossPlot(chart,phi0,phi,lossFunction,...args) { 
+function updateLossPlots(OnlyPoint, chart,phi0,phi,lossFunctions,animate ) { 
 
   if (!chart) return; 
  
-    const xValues = Array.from({length: 159}, (_, i) => i * 0.01);
-    const yValues = xValues.map(x => lossFunction(...args, x));
-    const yValues2 = xValues.map(x => lossZ2(...args, x));
+  if (OnlyPoint) {
+    // Update only the current phi point for each loss function
+    lossFunctions.forEach((lossObj, index) => {
+      const { lossFunction, extraArgs = [], label, color } = lossObj;
+
+      // Calculate the current loss for the new phi
+      const currentLoss = lossFunction(...extraArgs, phi);
+
+      // Find the corresponding scatter dataset (current phi point)
+      const scatterDatasetIndex = chart.data.datasets.findIndex(dataset => 
+        dataset.type === 'scatter' && dataset.label === `Current φ (${label || `Loss ${index + 1}`})`
+      );
+
+      if (scatterDatasetIndex !== -1) {
+        // Update the existing scatter dataset
+        chart.data.datasets[scatterDatasetIndex].data = [{x: phi, y: currentLoss}];
+      } else {
+        // If the scatter dataset doesn't exist, create a new one
+        chart.data.datasets.push({
+          type: 'scatter',
+          label: `Current φ (${label || `Loss ${index + 1}`})`,
+          data: [{x: phi, y: currentLoss}],
+          backgroundColor: color || `color${index + 1}`,
+          borderColor: '#ffa500',
+          backgroundColor: '#ffa500',
+          pointRadius: 6,
+          pointHoverRadius: 8,
+        });
+      }
+    });
+ 
+  } else{ 
+    const xValues = Array.from({length: 236}, (_, i) => i * 0.01);
+      // Clear existing datasets
+    chart.data.datasets = [];
+
+    // Add a dataset for each loss function
+    lossFunctions.forEach((lossObj, index) => { 
+      const { lossFunction, extraArgs = [], label, color } = lossObj;
+      const yValues = xValues.map(x => lossFunction(...extraArgs,   x));
+
+      chart.data.datasets.push({
+        label: label || `Loss ${index + 1}`,
+        data: xValues.map((x, i) => ({x: x, y: yValues[i]})),
+        borderColor: color ||color,
+        fill: false
+      });
+
+      // Add current phi point for each loss function
+      const currentLoss = lossFunction(...extraArgs,  phi);
+      chart.data.datasets.push({
+        type: 'scatter',
+        label: `Current φ (${label || `Loss ${index + 1}`})`,
+        data: [{x: phi, y: currentLoss}],
+        backgroundColor: '#ffa500' || '#ffa500',
+        borderColor: '#ffa500',
+        backgroundColor: '#ffa500',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+      });
+    });
 
     chart.data.labels = xValues.map(x => x.toFixed(2));
-    chart.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
-     
-    // Update the current phi point
+
+    // Update the phi0 line
+    const yMin = Math.min(0, ...chart.data.datasets.flatMap(dataset => dataset.data.map(point => point.y)));
+    const yMax = Math.max(0.5, ...chart.data.datasets.flatMap(dataset => dataset.data.map(point => point.y)));
+
+    chart.data.datasets.push({
+      type: 'line',
+      label: 'φ₀',
+      data: [
+        { x: phi0, y: yMin },
+        { x: phi0, y: yMax }
+      ],
+      borderColor: '#ffa500',
+      borderWidth: 2,
+      pointRadius: 0,
+      animation: false
+    });
+
+    
+    chart.options.annotation = {
+      annotations: [{
+        type: 'line',
+        mode: 'vertical',
+        scaleID: 'x',
+        value: phi0,
+        borderColor: '#ffa500',
+        borderWidth: 2,
+        label: {
+          content: 'φ₀',
+          enabled: false, 
+        }
+      }]
+    };
+    
+    chart.options.scales.x = {
+      type: 'linear',
+      position: 'bottom',
+      title: {
+        display: true,
+        text: 'φ'
+      },
+      min: 0,
+      max: 2.35,
+      ticks: {
+        callback: function(value) {
+          return value.toFixed(2);
+        },
+        maxTicksLimit: 10
+      }
+    };
+    
+    chart.options.scales.y = {
+      title: {
+        display: true,
+        text: 'Loss'
+      },
+      min: 0,
+      max: Math.max(0.5,  ...chart.data.datasets.flatMap(dataset => dataset.data.map(point => point.y)))
+    };
+      
+  }
+
+
+  chart.update(animate);
+}
+
+ 
+
+function updateLossPlot(OnlyPoint,chart,phi0,phi,lossFunction,animate,...args) {
+
+  if (!chart) return;
+  
+  if (OnlyPoint == true) {
+      // Update the current phi point
     const currentLoss = lossFunction(...args, phi);
     chart.data.datasets[1].data = [{
       x: phi,
       y: currentLoss
     }];
+  } else {
+    // Update the current phi point
+  const currentLoss = lossFunction(...args, phi);
+  chart.data.datasets[1].data = [{
+    x: phi,
+    y: currentLoss
+  }];
 
+    const xValues = Array.from({length: 236}, (_, i) => i * 0.01);
+    const yValues = xValues.map(x => lossFunction(...args, x));
+    
+    chart.data.labels = xValues.map(x => x.toFixed(2));
+    chart.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
+    
+
+    
     // Update the phi0 point
     const phi0Loss = lossFunction(...args, phi0);
     const yMin = Math.min(0,...chart.data.datasets[0].data.map(point => point.y));
     const yMax = Math.max(0.5,...chart.data.datasets[0].data.map(point => point.y));
-
- 
+    
+    
     chart.data.datasets[2] = {
       type: 'line',
       label: 'φ₀',
@@ -158,7 +302,7 @@ function updateLossPlot(chart,phi0,phi,lossFunction,...args) {
       pointRadius: 0,
       animation: false
     };
-
+    
     chart.options.annotation = {
       annotations: [{
         type: 'line',
@@ -174,7 +318,7 @@ function updateLossPlot(chart,phi0,phi,lossFunction,...args) {
         }
       }]
     };
-
+    
     chart.options.scales.x = {
       type: 'linear',
       position: 'bottom',
@@ -183,7 +327,7 @@ function updateLossPlot(chart,phi0,phi,lossFunction,...args) {
         text: 'φ'
       },
       min: 0,
-      max: 1.57,
+      max: 2.35,
       ticks: {
         callback: function(value) {
           return value.toFixed(2);
@@ -198,13 +342,12 @@ function updateLossPlot(chart,phi0,phi,lossFunction,...args) {
         text: 'Loss'
       },
       min: 0,
-      max: Math.max(0.5, ...yValues, currentLoss, phi0Loss)
+      max: Math.max(0.5,  ...chart.data.datasets.flatMap(dataset => dataset.data.map(point => point.y)))
     };
-
-    chart.update();
-
- 
-}
+  }
+  
+  chart.update(animate);
+  }
 
 function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate = false) {
   if (!chart) return; 
@@ -291,32 +434,31 @@ function updateChartWithPhi(  ) {
 
 
 
-  function animateBallRolling(chart, lossFunction,lossType,currentPhi,callbacks = [],...args) {  
+  function animateBallRolling(chart, lossFunction, lossType, currentPhi, callbacks = [], ...args) {
     const stepSize = 0.01;
-    const maxSteps = 100;
+    const maxSteps = 300;
     let step = 0;
-    let animationId;
     let isAnimating = true;
     let stuckAtBorder = false;
+    const delayBetweenSteps = 25; // milliseconds
+    let timeoutId;
   
     function calculateLoss(phi) {
-      return lossType === 'min' ? lossFunction( ...args, phi) : -lossFunction( ...args, phi);
+      return lossType === 'min' ? lossFunction(...args, phi) : -lossFunction(...args, phi);
     }
   
-    function updateChart(phi, loss) { 
-      chart.data.datasets[1].data = [{ x: phi, y: Math.abs(loss) }];
-      chart.update('none');
+    function updateChart(phi, loss) {
+      //chart.data.datasets[1].data = [{ x: phi, y: Math.abs(loss) }];
+      //chart.update('none');
     }
   
     function updateUI(phi) {
       callbacks.forEach(callback => callback(phi));
-
-
     }
   
     function stopAnimation() {
       isAnimating = false;
-      cancelAnimationFrame(animationId);
+      clearTimeout(timeoutId);
       removeEventListeners();
       console.log("Animation stopped by user input");
     }
@@ -333,7 +475,7 @@ function updateChartWithPhi(  ) {
       const inputs = document.querySelectorAll('input, button');
       inputs.forEach(input => {
         input.removeEventListener('click', stopAnimation);
-        input.addEventListener('touchstart', stopAnimation);
+        input.removeEventListener('touchstart', stopAnimation);
       });
     }
   
@@ -343,7 +485,7 @@ function updateChartWithPhi(  ) {
       if (!isAnimating || step >= maxSteps || stuckAtBorder) {
         console.log(isAnimating ? (stuckAtBorder ? "Stuck at border" : "Maximum steps reached") : "Animation stopped");
         removeEventListeners();
-        return ;
+        return;
       }
   
       const currentLoss = calculateLoss(currentPhi);
@@ -354,32 +496,30 @@ function updateChartWithPhi(  ) {
       if (leftLoss < currentLoss && leftLoss < rightLoss) {
         newPhi = Math.max(0, currentPhi - stepSize);
       } else if (rightLoss < currentLoss && rightLoss < leftLoss) {
-        newPhi = Math.min(1.57, currentPhi + stepSize);
+        newPhi = Math.min(2.35, currentPhi + stepSize);
       } else {
         console.log("Optima reached");
-        stuckAtBorder = true; // Mark as stuck at border to ensure final update
+        stuckAtBorder = true;
       }
   
       // Check if the ball is stuck at the border
-      if (newPhi === 0 || newPhi === 1.57) {
+      if (newPhi === 0 || newPhi === 2.35) {
         stuckAtBorder = true;
       }
   
       currentPhi = newPhi;
       const newLoss = calculateLoss(currentPhi);
   
-      // Update the chart and UI every 5th step or on the last step
-      if (step % 2 === 0 || step === maxSteps - 1 || stuckAtBorder) {
-        updateChart(currentPhi, newLoss);
-        updateUI(currentPhi); 
-        phi = currentPhi;
-      }
+      // Update the chart and UI every step
+      updateChart(currentPhi, newLoss);
+      updateUI(currentPhi);
   
       step++;
-      animationId = requestAnimationFrame(animate);
-
+  
+      // Schedule the next step
+      timeoutId = setTimeout(animate, delayBetweenSteps);
     }
   
-    animate(); 
+    animate();
   }
 

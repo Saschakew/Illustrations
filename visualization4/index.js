@@ -103,7 +103,7 @@ function setupEventListeners() {
     (value) => createTableCovariance(statsE),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov,'',u1,u2),
   );
     
   createEventListener('phi', 
@@ -115,7 +115,7 @@ function setupEventListeners() {
     (value) => statsE = calculateMoments(e1, e2),
     (value) => createTableCovariance(statsE),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov,'none',u1,u2),
   );
 
        
@@ -138,7 +138,7 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true);
     updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
     updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
-    updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2);
+    updateLossPlot(charts.lossplot,phi0,phi,lossCov,'',u1,u2);
     statsE = calculateMoments(e1, e2);
     createTableCovariance(statsE);
   })
@@ -155,16 +155,19 @@ function setupEventListeners() {
     }) 
   })
 
+ 
+
   const callbacks = [
     function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
     function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
     function(phi) { B = getB(phi); insertEqSVARe(B); },
     function(phi) { [e1, e2] = getE(u1, u2, B); },
     function(phi) { updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", false); },
-    function(phi) { statsE = calculateMoments(e1, e2); createTableCovariance(statsE)  } 
+    function(phi) { statsE = calculateMoments(e1, e2); createTableCovariance(statsE)  } ,   
+    function(phi) { updateLossPlot(OnlyPoint=true,charts.lossplot,phi0,phi,lossCov,'none',u1, u2 )  },    
   ];
   MinDependenciesBtn .addEventListener('click', function() {
-    animateBallRolling(charts.lossplot,lossCov,'min',phi,callbacks); 
+    animateBallRolling(charts.lossplot,lossCov,'min',phi,callbacks,u1,u2 ); 
   })
  
  
@@ -193,7 +196,7 @@ function initializeCharts() {
   
   createChart('lossplot',LossPlotConfig)  
 
-  updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2)
+  updateLossPlot(OnlyPoint=false,charts.lossplot,phi0,phi,lossCov,'',u1,u2)
 
 
   statsE = calculateMoments(e1, e2)

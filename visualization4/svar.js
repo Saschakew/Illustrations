@@ -56,7 +56,21 @@ function lossZ1(u1, u2,z1,z2, phi) {
   
     return out;
   }
+  function lossZ12(u1, u2,z1,z2, phi) {  
+    B = getB(phi) 
 
+    const [e1, e2] = getE(u1,u2,B)
+
+    const n = u1.length;
+    const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
+ 
+    const meanProduct1 = mean(e2.map((d1, i) => d1 * z1[i])); 
+    const meanProduct2 = mean(e2.map((d1, i) => d1 * z2[i])); 
+
+    const out = meanProduct1 * meanProduct1  + meanProduct2 * meanProduct2
+  
+    return out;
+  }
 function calculateMoments(data1, data2) {
     if (!Array.isArray(data1) || !Array.isArray(data2) || data1.length !== data2.length || data1.length === 0) {
         throw new Error("Input must be non-empty arrays of equal length");
