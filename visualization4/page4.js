@@ -381,8 +381,8 @@ function setupEventListeners() {
         [e1, e2] = getE(u1, u2, B); 
       }, 
       function(phi) { 
-       updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true);
-       updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true);
+       updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", false);
+       updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", false);
       },
       function(phi) { 
         statsZE = calculateMoments(z1, e2); 
