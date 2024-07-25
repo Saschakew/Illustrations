@@ -141,6 +141,11 @@
             <input type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
             <div id="gamma2Value">0.00</div>
           </div>  
+          <div>
+            <label for="gamma3">$\gamma_3$  =</label>
+            <input type="range" id="gamma3" min="0" max="5.0" step="0.01" value="1">
+            <div id="gamma3Value">1.00</div>
+          </div>  
           <button id="newDataBtn" class="orange-button">New Data</button>
         </div>
       </section>
@@ -176,16 +181,13 @@
 
    
 <section id="interactive-simulation" class="text-container"> 
-  <div class="container"> 
-    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
-      <canvas id="scatterPlot1"  aria-label="Scatter plot showing structural form shocks epsilon1 and epsilon2"></canvas>
-    </section> 
+  <div class="container">  
 
-    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
+    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
       <canvas id="scatterPlotZ1Eps1"  aria-label="...."></canvas>
     </section>
   
-  <section class="chart-container" style="width: 30%;"> 
+  <section class="chart-container" style="width: 49%;"> 
       <canvas id="scatterPlotZ1Eps2" aria-label="...."></canvas>
     </section> 
   </div>
@@ -193,16 +195,13 @@
 
 
 <section id="interactive-simulation" class="text-container"> 
-<div class="container"> 
-  <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
-    <canvas id="scatterPlot3"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
-  </section>
+<div class="container">  
 
-    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
+    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
       <canvas id="scatterPlotZ1E1"  aria-label="...."></canvas>
     </section>
   
-  <section class="chart-container" style="width: 30%;"> 
+  <section class="chart-container" style="width: 49%;"> 
       <canvas id="scatterPlotZ1E2" aria-label="...."></canvas>
     </section> 
   </div>
@@ -236,7 +235,7 @@
 <button id="MinDependenciesBtn2" class="orange-button">Minimize Dependencies</button>
 </div>
 <div class="chart-wrapper">
-<section class="chart-container">
+<section class="chart-loss-container">
 <canvas id="lossplot2"  aria-label="Plot of dependencies"></canvas>
 </section>   
 <div class="stats-tables-container">

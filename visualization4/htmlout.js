@@ -46,12 +46,12 @@ function insertEqSVARe(B){
   }
 }
 
-function insertEqZ(gamma1, gamma2){
+function insertEqZ(gamma1, gamma2, gamma3){
   const matrixHtml = ` 
   $$
       z_t
        =   
-    ${gamma1.toFixed(2)} \\epsilon_{1,t} + ${gamma2.toFixed(2)} \\epsilon_{2,t} + \\eta_t
+    ${gamma1.toFixed(2)} \\epsilon_{1,t} + ${gamma2.toFixed(2)} \\epsilon_{2,t} + ${gamma3.toFixed(2)} \\eta_t
   $$ `;
 
  
