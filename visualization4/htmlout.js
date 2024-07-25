@@ -46,6 +46,28 @@ function insertEqSVARe(B){
   }
 }
 
+function insertEqZ(gamma1, gamma2){
+  const matrixHtml = ` 
+  $$
+      z_t
+       =   
+    ${gamma1.toFixed(2)} \\epsilon_{1,t} + ${gamma2.toFixed(2)} \\epsilon_{2,t} + \\eta_t
+  $$ `;
+
+ 
+const bElement = document.getElementById('current-z'); 
+if (bElement) {
+  bElement.innerHTML = matrixHtml; 
+}
+ // Trigger MathJax to render the new content
+ if (typeof MathJax !== 'undefined') {
+  MathJax.typeset();
+}
+}
+
+
+
+
 function createTable(id,HTMLInsert) {
   const element = document.getElementById(id, );
     if (element) {
@@ -59,8 +81,12 @@ function createTableDependency(thisStats) {
 }
 
 function createTableCovariance(thisStats) {
-  HTMLInsert =   createHTMLTableCovariance( thisStats, "Co-moments of innovations e ", "e");
+  HTMLInsert =   createHTMLTableCovariance( thisStats, "Loss based on uncorrelated shocks", "e");
   createTable('stats-e',HTMLInsert)
+}
+function createTableZCovariance(thisStats) {
+  HTMLInsert =   createHTMLTableZCovariance( thisStats, "Loss based on exogenous proxy", "z", "e");
+  createTable('stats-ze',HTMLInsert)
 }
 
 // Function to update the non-Gaussianity display
@@ -138,17 +164,23 @@ function createHTMLTableDependency(data, title, symbol) {
 function createHTMLTableCovariance(data, title, symbol) {
   return `
   <h3>${title}</h3>
-  <table class="stats-table">
+  <table class="stats-table"> 
     <tr>
-      <th> </th>
-      <th>Formula</th>
-      <th>Value</th>
-    </tr>
-    <tr>
-      <td class="measure">Covariance</td>
-      <td class="formula">mean(${symbol}₁ * ${symbol}₂)</td>
-      <td  class="value">${data.covariance.toFixed(2)}</td>
+      <td class="measure">Loss:</td>
+      <td class="formula">mean(${symbol}₁ * ${symbol}₂)^2 =  ${Math.pow(data.covariance, 2).toFixed(2)}</td>
     </tr>  
   </table>
   `; 
 }
+function createHTMLTableZCovariance(data, title, symbol1, symbol2) {
+  return `
+  <h3>${title}</h3>
+  <table class="stats-table"> 
+    <tr>
+      <td class="measure">Loss:</td>
+      <td class="formula">mean(${symbol1}  * ${symbol2}₂)^2 =  ${Math.pow(data.covariance, 2).toFixed(2)}</td>
+    </tr>  
+  </table>
+  `; 
+}
+ 

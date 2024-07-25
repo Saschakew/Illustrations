@@ -152,15 +152,16 @@
 
 
     <section id="introduction" class="text-container">
-      <h2>Exogenous Proxies</h2>
+      <h2>Proxy SVAR </h2>
       <div class="equation-wrapper" style="text-align: center;"> 
         $   
         \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
         =  
-        \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
+        \begin{bmatrix} \cos(\phi_0) & \sin(\phi_0) \\ -\sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
         \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix} 
         $
-        <span id="current-B0"></span> 
+        <span id="current-B"></span> 
+        <span id="current-z"></span> 
         </div>
   </section>
 
@@ -222,26 +223,23 @@
 
 
 
-<section id="introduction" class="text-container">
-  <h2>Exogenous Proxies</h2>
-  <p>This page explores ....</p>
+<section id="interactive-loss" class="text-container">
+  <h3>Interactive Loss Calculation</h3> 
+
+<div class="container">
+<div class="button-container">
+<button id="MinDependenciesBtn" class="orange-button">Minimize Dependencies</button>
+</div>
+<div class="chart-wrapper">
+<section class="chart-container">
+<canvas id="lossplot"  aria-label="Plot of dependencies"></canvas>
+</section>  
+<div class="stats-tables-container">
+  <div id="stats-ze" class="stats-container"></div>
+</div>
+</div>
+</div>
 </section>
-
-
-
-<section id="introduction" class="text-container">
-  <h2>Exogenous Proxies</h2>
-  <p>This page explores ....</p>
-</section>
-
-
-
-<section id="introduction" class="text-container">
-  <h2>Exogenous Proxies</h2>
-  <p>This page explores ....</p>
-</section>
-
-
 
     
 

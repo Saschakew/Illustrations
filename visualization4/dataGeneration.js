@@ -77,14 +77,17 @@ function generateMixedNormalData(length, s) {
   
 
 
-function getU(epsilon1, epsilon2, B) {
-  u1 = epsilon1.map((e1, i) => B[0][0] * e1 + B[0][1] * epsilon2[i]);
-  u2 = epsilon1.map((e1, i) => B[1][0] * e1 + B[1][1] * epsilon2[i]);
+function getU(epsilon1, epsilon2, Bthis) {
+//  console.log( Bthis);
+//  console.log( epsilon1); 
+  u1 = epsilon1.map((d, i) => Bthis[0][0] * d + Bthis[0][1] * epsilon2[i]);
+  u2 = epsilon1.map((d, i) => Bthis[1][0] * d + Bthis[1][1] * epsilon2[i]);
+ // console.log(u1);
   return  [u1, u2] ;
 }
 
-function getE(u1, u2, B) {  
-  A = math.inv(B); 
+function getE(u1, u2, Bthis) {  
+  A = math.inv(Bthis); 
   e1 = u1.map((u1, i) => A[0][0] * u1 + A[0][1] * u2[i]);
   e2 = u1.map((u1, i) => A[1][0] * u1 + A[1][1] * u2[i]);
   return  [e1, e2] ;

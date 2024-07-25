@@ -87,6 +87,7 @@ function initializeVariables() {
   
   gamma1 = getInputValue('gamma1');
   gamma2 = getInputValue('gamma2');
+  insertEqZ(gamma1, gamma2)
 
   generateNewData(T); 
  
@@ -103,9 +104,12 @@ function setupEventListeners() {
     (value) => B = getB(phi),
     (value) => insertEqSVARe(B),
     (value) => [e1, e2] = getE(u1,u2,B),   
+    (value) => statsZE = calculateMoments(z1, e2),
+    (value) => createTableZCovariance(statsZE),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
+    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
   );
 
        
@@ -114,12 +118,15 @@ function setupEventListeners() {
   createEventListener('T',  
     (value) => T = value,
     (value) => generateNewData(T), 
+    (value) => statsZE = calculateMoments(z1, e2),
+    (value) => createTableZCovariance(statsZE),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true),
+    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
  
   );
 
@@ -132,26 +139,37 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true);
     updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true);
     updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true);
+    updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2);
+    statsZE = calculateMoments(z1, e2);
+    createTableZCovariance(statsZE);
   })
 
   createEventListener('gamma1', 
     (value) => document.getElementById('gamma1Value').textContent = value.toFixed(2),
     (value) => gamma1 = value, 
     (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + eta1[i]),
+    (value) => statsZE = calculateMoments(z1, e2),
+    (value) => createTableZCovariance(statsZE),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),  
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
+    (value) => insertEqZ(gamma1, gamma2),
+    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
   );
 
   createEventListener('gamma2', 
     (value) => document.getElementById('gamma2Value').textContent = value.toFixed(2),
     (value) => gamma2 = value, 
     (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + eta1[i]),
+    (value) => statsZE = calculateMoments(z1, e2),
+    (value) => createTableZCovariance(statsZE),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true), 
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
+    (value) => insertEqZ(gamma1, gamma2),
+    (value) =>  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2),
   );
  
     // Highlight points in scatter 
@@ -165,6 +183,20 @@ function setupEventListeners() {
         const elements = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
         handleChartClick(event, elements, chart);
       }) 
+    })
+
+    const callbacks = [
+      function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
+      function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
+      function(phi) { B = getB(phi); insertEqSVARe(B); },
+      function(phi) { [e1, e2] = getE(u1, u2, B); },
+      function(phi) { updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", false); }, 
+      function(phi) { updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true); }, 
+      function(phi) { updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true); }, 
+      function(phi) { statsZE = calculateMoments(z1, e2); createTableZCovariance(statsZE)  } 
+    ];
+    MinDependenciesBtn .addEventListener('click', function() {
+      animateBallRolling(charts.lossplot,lossZ1,'min',phi,callbacks,u1,u2,z1,z2); 
     })
 }
 
@@ -195,13 +227,20 @@ function initializeCharts() {
     
   updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true);
   updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true);
+
+  const LossPlotConfig = getLossPlotConfig() 
   
+  createChart('lossplot',LossPlotConfig)  
+
+  updateLossPlot(charts.lossplot,phi0,phi,lossZ1,u1, u2,z1,z2)
+  
+  statsZE = calculateMoments(z1, e2)
+  createTableZCovariance(statsZE)
 }
 
 
 
  
-  
 
  
 function generateNewData(T) {  
@@ -209,17 +248,15 @@ function generateNewData(T) {
   let rawEpsilon1, rawEpsilon2; 
   rawEpsilon1 = generateMixedNormalData(T, s);
   rawEpsilon2 = generateMixedNormalData(T, 0); 
-  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2)
-    
-
-  [u1, u2] = getU(epsilon1, epsilon2, B0)  
-
-  [e1, e2] = getE(u1,u2,B)
+  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2) ;
+  
+  [u1, u2] = getU(epsilon1, epsilon2, B0)   ; 
+  [e1, e2] = getE(u1,u2,B); 
 
   eta1 = generateMixedNormalData(T, 0); 
-  z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + eta1[i]); 
+  z1 =  eta1.map((eta, i) => gamma1 * epsilon1[i] + gamma2 * epsilon2[i] + eta ); 
   eta2 = generateMixedNormalData(T, 0); 
-  z2 = epsilon1.map((e1, i) => 1 * e1 + eta2[i]);
+  z2 = eta1.map((eta, i) => 1 * epsilon1[i]   + eta ); 
    
 }
 

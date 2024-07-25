@@ -27,6 +27,36 @@ function lossCov(u1, u2, phi) {
     return out;
 }
 
+function lossZ1(u1, u2,z1,z2, phi) {  
+    B = getB(phi) 
+
+    const [e1, e2] = getE(u1,u2,B)
+
+    const n = u1.length;
+    const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
+ 
+    const meanProduct = mean(e2.map((d1, i) => d1 * z1[i])); 
+
+    const out = meanProduct * meanProduct 
+  
+    return out;
+  }
+
+  function lossZ2(u1, u2,z1,z2, phi) {  
+    B = getB(phi) 
+
+    const [e1, e2] = getE(u1,u2,B)
+
+    const n = u1.length;
+    const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
+ 
+    const meanProduct = mean(e2.map((d1, i) => d1 * z2[i])); 
+
+    const out = meanProduct * meanProduct 
+  
+    return out;
+  }
+
 function calculateMoments(data1, data2) {
     if (!Array.isArray(data1) || !Array.isArray(data2) || data1.length !== data2.length || data1.length === 0) {
         throw new Error("Input must be non-empty arrays of equal length");

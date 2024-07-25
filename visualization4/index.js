@@ -103,7 +103,7 @@ function setupEventListeners() {
     (value) => createTableCovariance(statsE),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2),
   );
     
   createEventListener('phi', 
@@ -115,7 +115,7 @@ function setupEventListeners() {
     (value) => statsE = calculateMoments(e1, e2),
     (value) => createTableCovariance(statsE),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2),
   );
 
        
@@ -129,7 +129,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2),
   );
 
 
@@ -138,7 +138,7 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true);
     updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
     updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
-    updateLossPlot(charts.lossplot,phi0,phi,lossCov );
+    updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2);
     statsE = calculateMoments(e1, e2);
     createTableCovariance(statsE);
   })
@@ -193,7 +193,7 @@ function initializeCharts() {
   
   createChart('lossplot',LossPlotConfig)  
 
-  updateLossPlot(charts.lossplot,phi0,phi,lossCov)
+  updateLossPlot(charts.lossplot,phi0,phi,lossCov,u1,u2)
 
 
   statsE = calculateMoments(e1, e2)
@@ -212,9 +212,8 @@ function generateNewData(T) {
   let rawEpsilon1, rawEpsilon2; 
   rawEpsilon1 = generateMixedNormalData(T, s);
   rawEpsilon2 = generateMixedNormalData(T, 0); 
-  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2)
-    
-
+  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2);
+  
   [u1, u2] = getU(epsilon1, epsilon2, B0)  
 
   [e1, e2] = getE(u1,u2,B)

@@ -122,25 +122,26 @@ function createChart(id,chartConfig) {
   }
 }
  
-function updateLossPlot(chart,phi0,phi,lossFunction) { 
+function updateLossPlot(chart,phi0,phi,lossFunction,...args) { 
 
   if (!chart) return; 
  
     const xValues = Array.from({length: 159}, (_, i) => i * 0.01);
-    const yValues = xValues.map(x => lossFunction(u1, u2, x));
+    const yValues = xValues.map(x => lossFunction(...args, x));
+    const yValues2 = xValues.map(x => lossZ2(...args, x));
 
     chart.data.labels = xValues.map(x => x.toFixed(2));
     chart.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
-
+     
     // Update the current phi point
-    const currentLoss = lossFunction(e1, e2, phi);
+    const currentLoss = lossFunction(...args, phi);
     chart.data.datasets[1].data = [{
       x: phi,
       y: currentLoss
     }];
 
     // Update the phi0 point
-    const phi0Loss = lossFunction(u1, u2, phi0);
+    const phi0Loss = lossFunction(...args, phi0);
     const yMin = Math.min(0,...chart.data.datasets[0].data.map(point => point.y));
     const yMax = Math.max(0.5,...chart.data.datasets[0].data.map(point => point.y));
 
@@ -290,7 +291,7 @@ function updateChartWithPhi(  ) {
 
 
 
-  function animateBallRolling(chart, lossFunction,lossType,currentPhi,callbacks = []) {  
+  function animateBallRolling(chart, lossFunction,lossType,currentPhi,callbacks = [],...args) {  
     const stepSize = 0.01;
     const maxSteps = 100;
     let step = 0;
@@ -299,7 +300,7 @@ function updateChartWithPhi(  ) {
     let stuckAtBorder = false;
   
     function calculateLoss(phi) {
-      return lossType === 'min' ? lossFunction(u1, u2, phi) : -lossFunction(u1, u2, phi);
+      return lossType === 'min' ? lossFunction( ...args, phi) : -lossFunction( ...args, phi);
     }
   
     function updateChart(phi, loss) { 

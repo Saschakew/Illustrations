@@ -106,7 +106,7 @@ function setupEventListeners() {
     (value) => createTableDependency(statsE),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34,u1,u2),
   );
     
   createEventListener('phi', 
@@ -118,7 +118,7 @@ function setupEventListeners() {
     (value) => statsE = calculateMoments(e1, e2),
     (value) => createTableDependency(statsE),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34,u1,u2),
   );
 
        
@@ -136,7 +136,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34,u1,u2),
   );
 
   createEventListener('T',  
@@ -149,7 +149,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true),
     (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
     (value) => updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true),
-    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34),
+    (value) => updateLossPlot(charts.lossplot,phi0,phi,loss34,u1,u2),
   );
 
 
@@ -160,7 +160,7 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true);
     updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
     updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
-    updateLossPlot(charts.lossplot,phi0,phi,loss34 );
+    updateLossPlot(charts.lossplot,phi0,phi,loss34 ,u1,u2);
     statsE = calculateMoments(e1, e2);
      createTableDependency(statsE);
   })
@@ -215,7 +215,7 @@ function initializeCharts() {
   
   createChart('lossplot',LossPlotConfig)  
 
-  updateLossPlot(charts.lossplot,phi0,phi,loss34)
+  updateLossPlot(charts.lossplot,phi0,phi,loss34,u1,u2)
 
 
   statsE = calculateMoments(e1, e2)
