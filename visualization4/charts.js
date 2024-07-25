@@ -421,7 +421,7 @@ function updateChartWithPhi(  ) {
     let step = 0;
     let isAnimating = true;
     let stuckAtBorder = false;
-    const delayBetweenSteps = 25; // milliseconds
+    const delayBetweenSteps = 0; // milliseconds
     let timeoutId;
     let currentPhi = initialPhi;
 
@@ -501,7 +501,7 @@ function updateChartWithPhi(  ) {
             currentPhi = newPhi;
 
             // Update the chart and UI every 5 step 
-            if (step % 2 === 0) {
+            if (step % 3 === 0) {
                 updateUI(currentPhi);
             } 
 

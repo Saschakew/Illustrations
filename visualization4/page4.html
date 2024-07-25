@@ -103,9 +103,9 @@
       <h3 id="table-of-content">Table of Contents</h3>
       <ul>
       <li><a href="index.html" >SVAR</a></li>
-      <li><a href="page2.html" class="active">Proxies</a></li>
-      <li><a href="page3.html">Exogeneity Test 1</a></li>
-      <li><a href="page4.html">Exogeneity Test 2</a></li>
+      <li><a href="page2.html" >Proxies</a></li>
+      <li><a href="page3.html" > Exogeneity Test 1</a></li>
+      <li><a href="page4.html" class="active">Exogeneity Test 2</a></li>
       <li><a href="page5.html">Application</a></li>
       </ul>
       </ul>
@@ -127,6 +127,11 @@
             <label for="phi">$\phi$  =</label>
             <input type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
             <div id="phiValue">0.00</div>
+          </div>  
+          <div>
+            <label for="s">$s$  =</label>
+            <input type="range" id="s" min="-5" max="5" step="0.01" value="0">
+            <div id="sValue">0.00</div>
           </div>  
         </div> 
         
@@ -221,29 +226,29 @@
 
 
 
-<section id="interactive-loss" class="text-container">
-  <h3>Interactive Loss Calculation</h3> 
-
-<div class="container">
-<div class="button-container">
-<button id="MinDependenciesBtn" class="orange-button">Minimize Dependencies</button>
-</div>
-<div class="chart-wrapper">
-  <section class="chart-loss-container">
-<canvas id="lossplot"  aria-label="Plot of dependencies"></canvas>
-</section>  
-<div class="stats-tables-container">
-  <div id="stats-ze" class="stats-container"></div>
-</div>
-</div>
-</div>
-</section>
+ 
 
     
 
 
 
- 
+<section id="interactive-loss" class="text-container">
+  <h3>Interactive Loss Calculation</h3> 
+
+<div class="container">
+<div class="button-container">
+<button id="MinDependenciesBtn2" class="orange-button">Minimize Dependencies</button>
+</div>
+<div class="chart-wrapper">
+<section class="chart-loss-container">
+<canvas id="lossplot2"  aria-label="Plot of dependencies"></canvas>
+</section>   
+<div class="stats-tables-container">
+  <div id="stats-ze2" class="stats-container"></div>
+</div>
+</div>
+</div>
+</section>
 
 
 
@@ -257,6 +262,6 @@
     </div>
 </footer>
   
-  <script  src="page2.js"></script>
+  <script  src="page4.js"></script>
 </body>
 </html>
