@@ -104,8 +104,8 @@
       <ul>
       <li><a href="index.html" >SVAR</a></li>
       <li><a href="page2.html" class="active">Proxies</a></li>
-      <li><a href="page3.html">Strong Exogeneity</a></li>
-      <li><a href="page4.html">Exogeneity Test</a></li>
+      <li><a href="page3.html">Exogeneity Test 1</a></li>
+      <li><a href="page4.html">Exogeneity Test 2</a></li>
       <li><a href="page5.html">Application</a></li>
       </ul>
       </ul>
@@ -177,11 +177,15 @@
    
 <section id="interactive-simulation" class="text-container"> 
   <div class="container"> 
-    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
+    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
+      <canvas id="scatterPlot1"  aria-label="Scatter plot showing structural form shocks epsilon1 and epsilon2"></canvas>
+    </section> 
+
+    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
       <canvas id="scatterPlotZ1Eps1"  aria-label="...."></canvas>
     </section>
   
-  <section class="chart-container" style="width: 49%;"> 
+  <section class="chart-container" style="width: 30%;"> 
       <canvas id="scatterPlotZ1Eps2" aria-label="...."></canvas>
     </section> 
   </div>
@@ -190,28 +194,23 @@
 
 <section id="interactive-simulation" class="text-container"> 
 <div class="container"> 
-  <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-    <canvas id="scatterPlot2"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
+  <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
+    <canvas id="scatterPlot3"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
   </section>
 
-  <section class="chart-container" style="width: 49%;"> 
-    <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2"></canvas>
-  </section> 
-</div>  
-</section>
-
-
-<section id="interactive-simulation" class="text-container"> 
-  <div class="container"> 
-    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
+    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
       <canvas id="scatterPlotZ1E1"  aria-label="...."></canvas>
     </section>
   
-  <section class="chart-container" style="width: 49%;"> 
+  <section class="chart-container" style="width: 30%;"> 
       <canvas id="scatterPlotZ1E2" aria-label="...."></canvas>
     </section> 
   </div>
+  
+</div>  
 </section>
+
+ 
 
 
 

@@ -251,7 +251,7 @@ function updateLossPlots(OnlyPoint, chart,phi0,phi,lossFunctions,animate ) {
       
   }
 
-
+  
   chart.update(animate);
 }
 
@@ -447,10 +447,7 @@ function updateChartWithPhi(  ) {
       return lossType === 'min' ? lossFunction(...args, phi) : -lossFunction(...args, phi);
     }
   
-    function updateChart(phi, loss) {
-      //chart.data.datasets[1].data = [{ x: phi, y: Math.abs(loss) }];
-      //chart.update('none');
-    }
+    
   
     function updateUI(phi) {
       callbacks.forEach(callback => callback(phi));
@@ -510,8 +507,7 @@ function updateChartWithPhi(  ) {
       currentPhi = newPhi;
       const newLoss = calculateLoss(currentPhi);
   
-      // Update the chart and UI every step
-      updateChart(currentPhi, newLoss);
+      // Update the chart and UI every step 
       updateUI(currentPhi);
   
       step++;
