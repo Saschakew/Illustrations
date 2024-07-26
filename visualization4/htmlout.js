@@ -49,13 +49,37 @@ function insertEqSVARe(B){
 function insertEqZ(gamma1, gamma2, gamma3){
   const matrixHtml = ` 
   $$
-      z_t
+      z_{t}
        =   
     ${gamma1.toFixed(2)} \\epsilon_{1,t} + ${gamma2.toFixed(2)} \\epsilon_{2,t} + ${gamma3.toFixed(2)} \\eta_t
   $$ `;
 
  
 const bElement = document.getElementById('current-z'); 
+if (bElement) {
+  bElement.innerHTML = matrixHtml; 
+}
+ // Trigger MathJax to render the new content
+ if (typeof MathJax !== 'undefined') {
+  MathJax.typeset();
+}
+}
+
+function insertEqNG(){ 
+
+  const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / T;
+  const skewness1 = mean(epsilon1.map(d => d * d *d));
+  const skewness2= mean(epsilon2.map(d => d * d * d));
+  const excessKurtosis1= mean(epsilon1.map(d => d * d * d * d)) - 3;
+  const excessKurtosis2= mean(epsilon2.map(d => d * d * d * d)) - 3;
+
+  const matrixHtml = `
+      <p>Skewness: $E[\\epsilon_{1t}^3]$ = ${skewness1.toFixed(2)}  and $E[\\epsilon_{2t}^3]$ = ${skewness2.toFixed(2)} </p>
+      <p>Excess Kurtosis: $E[\\epsilon_{1t}^4-3]$  = ${excessKurtosis1.toFixed(2)} and  $E[\\epsilon_{21t}^4-3]$  = ${excessKurtosis2.toFixed(2)}  </p>
+    `;
+
+ 
+const bElement = document.getElementById('current-nG'); 
 if (bElement) {
   bElement.innerHTML = matrixHtml; 
 }
@@ -118,28 +142,7 @@ function createTableZ2Covariance(u1, u2, z1, z2, phi ) {
   createTable('stats-ze2',HTMLInsert)
 }
 
-// Function to update the non-Gaussianity display
-function updateNonGaussianityDisplay(thisStats) { 
-
-  const skewness1 = thisStats.mean_cubed1;
-  const skewness2 = thisStats.mean_cubed2;
-  const excessKurtosis1 = thisStats.mean_fourth1;
-  const excessKurtosis2 = thisStats.mean_fourth2; 
-
-  const displayElement = document.getElementById('current-nG');
-  if (displayElement) {
-    displayElement.innerHTML = `
-      <p>Skewness: $E[\\epsilon_{1t}^3]$ = ${skewness1.toFixed(2)}  </p>
-      <p>Excess Kurtosis: $E[\\epsilon_{1t}^4-3]$  = ${excessKurtosis1.toFixed(2)}  </p>
-    `;
-  }
-
-  // Trigger MathJax to render the new content
-  if (typeof MathJax !== 'undefined') {
-    MathJax.typesetPromise([displayElement]);
-  }
-}
-
+ 
 
 
 function createHTMLTableDependency(data, title, symbol) {

@@ -89,15 +89,18 @@ function initializeVariables() {
   phi = getInputValue('phi');
   B0 = getB(phi0);
   B = getB(phi);
-  insertEqSVARe(B)
 
   
   gamma1 = getInputValue('gamma1');
   gamma2 = getInputValue('gamma2');
   gamma3 = getInputValue('gamma3');
-  insertEqZ(gamma1, gamma2, gamma3)
 
   generateNewData(T); 
+ 
+  insertEqZ(gamma1, gamma2, gamma3); 
+  insertEqSVARe(B);
+  insertEqNG(); 
+  
  
 
 }
@@ -110,6 +113,7 @@ function setupEventListeners() {
     (value) => document.getElementById('s1Value').textContent = value.toFixed(2),
     (value) => s1 = value, 
     (value) => generateNewData(T),
+    (value) =>  insertEqNG(),
     (value) =>statsZE1 = calculateMoments(z1, e2),
     (value) =>statsZE2 = calculateMoments(z2, e2),
     (value) =>createTableZCovariance(statsZE1),
@@ -155,6 +159,7 @@ function setupEventListeners() {
     (value) => document.getElementById('s2Value').textContent = value.toFixed(2),
     (value) => s2 = value, 
     (value) => generateNewData(T),
+    (value) =>  insertEqNG(),
     (value) =>statsZE1 = calculateMoments(z1, e2),
     (value) =>statsZE2 = calculateMoments(z2, e2),
     (value) =>createTableZCovariance(statsZE1),
@@ -245,6 +250,7 @@ function setupEventListeners() {
   createEventListener('T',  
     (value) => T = value,
     (value) => generateNewData(T),
+    (value) =>  insertEqNG(),
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi),
@@ -287,6 +293,7 @@ function setupEventListeners() {
 
   newDataBtn.addEventListener('click', function() {
     generateNewData(T);   
+    insertEqNG();
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
     updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true);
