@@ -3,7 +3,7 @@ let charts = {};
 let epsilon1, epsilon2, u1, u2, e1, e2;
 let z1, z2, eta1, eta2;
 let selectedPointIndex = null; 
-let s;
+let s1, s2;
 let T;
 let phi0;
 let phi;
@@ -80,10 +80,10 @@ function initializeUI() {
 }
 
 
-
-        color: 'rgb(75, 192, 192)'
+ 
 function initializeVariables() { 
-  s =  getInputValue('s');
+  s1 =  getInputValue('s1');
+  s2 =  getInputValue('s2');
   T= getInputValue('T');
   phi0 = getInputValue('phi0');
   phi = getInputValue('phi');
@@ -106,9 +106,54 @@ function initializeVariables() {
 // Event Listeners Setup
 function setupEventListeners() {  
   
-  createEventListener('s', 
-    (value) => document.getElementById('sValue').textContent = value.toFixed(2),
-    (value) => s = value, 
+  createEventListener('s1', 
+    (value) => document.getElementById('s1Value').textContent = value.toFixed(2),
+    (value) => s1 = value, 
+    (value) => generateNewData(T),
+    (value) =>statsZE1 = calculateMoments(z1, e2),
+    (value) =>statsZE2 = calculateMoments(z2, e2),
+    (value) =>createTableZCovariance(statsZE1),
+    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi),
+    (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true),
+    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
+      {
+        lossFunction: lossZ1,
+        extraArgs: [u1, u2,z1,z2 ,W],
+        label: 'Loss Function 1',
+        color: color1,
+        lineStyle: 'solid'  
+      },
+      {
+        lossFunction: lossZ2,
+        extraArgs: [u1, u2,z1,z2,W],
+        label: 'Loss Function 2',
+        color: color2,
+        lineStyle: 'solid'  
+      },
+      {
+        lossFunction: lossZ12,
+        extraArgs: [u1, u2,z1,z2,W],
+        label: 'Loss Function 3',
+        color: color3,
+        lineStyle: 'solid'  
+      },
+      {
+        lossFunction: () => 2.706 / T,  
+        extraArgs: [],
+        label: 'Critical Value',
+        color: 'black',  
+        lineStyle: 'dash'  
+      },
+    ]  ,''  ),
+  );
+
+  
+  createEventListener('s2', 
+    (value) => document.getElementById('s2Value').textContent = value.toFixed(2),
+    (value) => s2 = value, 
     (value) => generateNewData(T),
     (value) =>statsZE1 = calculateMoments(z1, e2),
     (value) =>statsZE2 = calculateMoments(z2, e2),
@@ -593,14 +638,13 @@ function initializeCharts() {
 function generateNewData(T) {  
 
   let rawEpsilon1, rawEpsilon2; 
-  rawEpsilon1 = generateMixedNormalData(T,  s);
-  rawEpsilon2 = generateMixedNormalData(T, 0); 
+  rawEpsilon1 = generateMixedNormalData(T,  s1);
+  rawEpsilon2 = generateMixedNormalData(T, s2); 
   [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2) ;
   
   [u1, u2] = getU(epsilon1, epsilon2, B0)   ; 
   [e1, e2] = getE(u1,u2,B); 
-
-  console.log(gamma1);
+ 
 
   eta1 = generateMixedNormalData(T, 0); 
   z1 =  eta1.map((eta, i) => gamma1 * epsilon1[i] + gamma2 * epsilon2[i] + gamma3* eta );  
