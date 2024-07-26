@@ -1,12 +1,12 @@
 
 function generateMixedNormalData(length, s) {
     return Array.from({length}, () => {
-      if (Math.random() < 0.9) {
+      if (Math.random() < 0.8) {
         // 90% standard normal
-        return normalRandom() - 0.1*s;
+        return normalRandom() - 0.2*s;
       } else {
         // 10% normal with mean s and variance 1
-        return normalRandom() + s - 0.1*s;
+        return normalRandom() + s - 0.2*s;
       }
     });
   }

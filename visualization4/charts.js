@@ -58,7 +58,10 @@ function getLossPlotConfig() {
       datasets: [{
         data: [],
         borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
+        borderWidth: 1,  // Thinner line
+        tension: 0.1,
+        pointRadius: 0,  // Remove dots
+        pointHoverRadius: 0  // Remove hover effect
       }, {
         data: [],
         borderColor: '#ffa500',
@@ -101,6 +104,14 @@ function getLossPlotConfig() {
             text: 'Loss'
           }
         }
+      },
+      elements: {
+        line: {
+          borderWidth: 2  // Set all lines to be thin by default
+        },
+        point: {
+          radius: 0  // Remove all points by default
+        }
       }
     }
   }
@@ -127,30 +138,31 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
   if (OnlyPoint) {
     // Update only the current phi point for each loss function
     lossFunctions.forEach((lossObj, index) => {
-      const { lossFunction, extraArgs = [], color } = lossObj;
+      const { lossFunction, extraArgs = [], label, color } = lossObj;
+      if (label !== 'Critical Value') {
+        // Calculate the current loss for the new phi
+        const currentLoss = lossFunction(...extraArgs, phi);
 
-      // Calculate the current loss for the new phi
-      const currentLoss = lossFunction(...extraArgs, phi);
+        // Find the corresponding scatter dataset (current phi point)
+        const scatterDatasetIndex = chart.data.datasets.findIndex(dataset => 
+          dataset.type === 'scatter' && dataset.id === `current_phi_${index}`
+        );
 
-      // Find the corresponding scatter dataset (current phi point)
-      const scatterDatasetIndex = chart.data.datasets.findIndex(dataset => 
-        dataset.type === 'scatter' && dataset.id === `current_phi_${index}`
-      );
-
-      if (scatterDatasetIndex !== -1) {
-        // Update the existing scatter dataset
-        chart.data.datasets[scatterDatasetIndex].data = [{x: phi, y: currentLoss}];
-      } else {
-        // If the scatter dataset doesn't exist, create a new one
-        chart.data.datasets.push({
-          type: 'scatter',
-          id: `current_phi_${index}`,
-          data: [{x: phi, y: currentLoss}],
-          backgroundColor: color || `color${index + 1}`,
-          borderColor: '#ffa500',
-          pointRadius: 6,
-          pointHoverRadius: 8,
-        });
+        if (scatterDatasetIndex !== -1) {
+          // Update the existing scatter dataset
+          chart.data.datasets[scatterDatasetIndex].data = [{x: phi, y: currentLoss}];
+        } else {
+          // If the scatter dataset doesn't exist, create a new one
+          chart.data.datasets.push({
+            type: 'scatter',
+            id: `current_phi_${index}`,
+            data: [{x: phi, y: currentLoss}],
+            backgroundColor: color || `color${index + 1}`,
+            borderColor: '#ffa500',
+            pointRadius: 6,
+            pointHoverRadius: 8,
+          });
+        }
       }
     });
   } else {
@@ -160,26 +172,41 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
 
     // Add a dataset for each loss function
     lossFunctions.forEach((lossObj, index) => {
-      const { lossFunction, extraArgs = [], color } = lossObj;
+      const { lossFunction, extraArgs = [], label, color, lineStyle } = lossObj;
       const yValues = xValues.map(x => lossFunction(...extraArgs, x));
-
-      chart.data.datasets.push({
+    
+      let datasetConfig = {
         data: xValues.map((x, i) => ({x: x, y: yValues[i]})),
         borderColor: color || `color${index + 1}`,
-        fill: false
-      });
-
-      // Add current phi point for each loss function
-      const currentLoss = lossFunction(...extraArgs, phi);
-      chart.data.datasets.push({
-        type: 'scatter',
-        id: `current_phi_${index}`,
-        data: [{x: phi, y: currentLoss}],
-        backgroundColor: '#ffa500',
-        borderColor: '#ffa500',
-        pointRadius: 6,
-        pointHoverRadius: 8,
-      });
+        fill: false,
+        borderWidth: 2,  // Ensure thin lines
+        pointRadius: 0,  // Remove points
+        pointHoverRadius: 0  // Remove hover effect
+      };
+    
+      // Add line style
+      if (lineStyle === 'dash') {
+        datasetConfig.borderDash = [5, 5];  // Creates a dashed line
+      } else if (lineStyle === 'dot') {
+        datasetConfig.borderDash = [2, 2];  // Creates a dotted line
+      }
+      // You can add more line styles as needed
+    
+      chart.data.datasets.push(datasetConfig);
+    
+      if (label !== 'Critical Value') {
+        // Add current phi point for each loss function
+        const currentLoss = lossFunction(...extraArgs, phi);
+        chart.data.datasets.push({
+          type: 'scatter',
+          id: `current_phi_${index}`,
+          data: [{x: phi, y: currentLoss}],
+          backgroundColor: '#ffa500',
+          borderColor: '#ffa500',
+          pointRadius: 4,
+          pointHoverRadius: 6
+        });
+      }
     });
 
     chart.data.labels = xValues.map(x => x.toFixed(2));

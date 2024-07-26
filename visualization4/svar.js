@@ -27,7 +27,7 @@ function lossCov(u1, u2, phi) {
     return out;
 }
 
-function lossZ1(u1, u2,z1,z2, phi) {  
+function lossZ1(u1, u2,z1,z2,W,  phi) {  
     B = getB(phi) 
 
     const [e1, e2] = getE(u1,u2,B)
@@ -37,12 +37,12 @@ function lossZ1(u1, u2,z1,z2, phi) {
  
     const meanProduct = mean(e2.map((d1, i) => d1 * z1[i])); 
 
-    const out = meanProduct * meanProduct 
+    const out = W[0][0] * meanProduct * meanProduct 
   
     return out;
   }
 
-  function lossZ2(u1, u2,z1,z2, phi) {  
+  function lossZ2(u1, u2,z1,z2,W,  phi) {  
     B = getB(phi) 
 
     const [e1, e2] = getE(u1,u2,B)
@@ -52,24 +52,58 @@ function lossZ1(u1, u2,z1,z2, phi) {
  
     const meanProduct = mean(e2.map((d1, i) => d1 * z2[i])); 
 
-    const out = meanProduct * meanProduct 
+    const out = W[1][1] *  meanProduct * meanProduct 
   
     return out;
   }
-  function lossZ12(u1, u2,z1,z2, phi) {  
-    B = getB(phi) 
-
-    const [e1, e2] = getE(u1,u2,B)
-
+  function lossZ12(u1, u2, z1, z2,W, phi) { 
+    const B = getB(phi);
+    const [e1, e2] = getE(u1, u2, B);
+  
     const n = u1.length;
     const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
- 
-    const meanProduct1 = mean(e2.map((d1, i) => d1 * z1[i])); 
-    const meanProduct2 = mean(e2.map((d1, i) => d1 * z2[i])); 
-
-    const out = meanProduct1 * meanProduct1  + meanProduct2 * meanProduct2
   
-    return out;
+    // Calculate e2*z1 and e2*z2
+    const e2z1 = e2.map((e2i, i) => e2i * z1[i]);
+    const e2z2 = e2.map((e2i, i) => e2i * z2[i]);
+   
+    const SInverse = W; 
+  
+    // Calculate [e2*z1, e2*z2]' W [e2*z1, e2*z2]
+    const meanProduct1 = mean(e2z1);
+    const meanProduct2 = mean(e2z2);
+  
+    const result = 
+      SInverse[0][0] * meanProduct1 * meanProduct1 +
+      (SInverse[0][1] + SInverse[1][0]) * meanProduct1 * meanProduct2 +
+      SInverse[1][1] * meanProduct2 * meanProduct2;
+  
+    return result;
+  }
+
+  function getW(  epsilon2, z1, z2) {  
+  
+    const n = epsilon2.length;
+    const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
+  
+    // Calculate e2*z1 and e2*z2
+    const e2z1 = epsilon2.map((e2i, i) => e2i * z1[i]);
+    const e2z2 = epsilon2.map((e2i, i) => e2i * z2[i]);
+  
+    // Calculate the variance-covariance matrix S
+    const meanE2z1Squared = mean(e2z1.map(val => val * val));
+    const meanE2z2Squared = mean(e2z2.map(val => val * val));
+    const meanE2z1E2z2 = mean(e2z1.map((val, i) => val * e2z2[i]));
+  
+    const S = [
+      [meanE2z1Squared, meanE2z1E2z2],
+      [meanE2z1E2z2, meanE2z2Squared]
+    ];
+  
+    // Calculate S^(-1) 
+    const W = math.inv(S);
+
+    return W
   }
 function calculateMoments(data1, data2) {
     if (!Array.isArray(data1) || !Array.isArray(data2) || data1.length !== data2.length || data1.length === 0) {
