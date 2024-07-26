@@ -73,6 +73,7 @@ function initializeApp() {
 function initializeUI() {
   setupStickyInputContainer();
   setupNavigationMenu();
+  setupInputContentWrapper();
 
   color1 =  'rgb(75, 192, 192)';
   color2 =  'rgb(41, 128, 185)';

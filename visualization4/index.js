@@ -71,6 +71,7 @@ function initializeApp() {
 function initializeUI() {
   setupStickyInputContainer();
   setupNavigationMenu();
+  setupInputContentWrapper();
 }
 
 

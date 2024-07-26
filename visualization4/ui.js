@@ -7,7 +7,7 @@ function setupStickyInputContainer() {
   
     if (inputContainer) {
       const inputContainerTop = inputContainer.offsetTop;
-      const paddingTop = 15; // Account for the existing padding-top
+      const paddingTop = 0; // Account for the existing padding-top
     
       function handleScroll() {
         if (window.pageYOffset > inputContainerTop - paddingTop) {
@@ -27,30 +27,36 @@ function setupStickyInputContainer() {
 }
 
   
-  
-  
-  
-  function setupNavigationMenu() {
-     // Setup navigation menu toggle
-  document.getElementById('menu-toggle').addEventListener('click', function() {
-    document.querySelector('nav').classList.toggle('expanded');
-  });
+function setupInputContentWrapper() {
+  const inputToggle = document.getElementById('input-toggle');
+  const inputContentWrapper = document.querySelector('.input-content-wrapper');
+  const nav = document.querySelector('nav');
 
-  // Setup navigation links
-  document.querySelectorAll('nav ul li a').forEach(link => {
-    link.addEventListener('click', function(e) {
-      const href = this.getAttribute('href');
-      if (href.startsWith('#')) {
-        e.preventDefault();
-        document.querySelectorAll('.page').forEach(page => {
-          page.style.display = 'none';
-        });
-        const activePage = document.querySelector(href);
-        if (activePage) {
-          activePage.style.display = 'block';
-        }
+  if (inputToggle && inputContentWrapper) {
+    inputToggle.addEventListener('click', function() {
+      if (nav.classList.contains('expanded')) {
+        nav.classList.remove('expanded');
       }
-      // If it's not a hash link, let the browser handle navigation
+      inputContentWrapper.classList.toggle('expanded');
     });
-  });
+  } else {
+    console.log('Input toggle or wrapper not found. Expand/collapse functionality not applied.');
+  }
+}
+
+function setupNavigationMenu() {
+  const menuToggle = document.getElementById('menu-toggle');
+  const nav = document.querySelector('nav');
+  const inputContentWrapper = document.querySelector('.input-content-wrapper');
+
+  if (menuToggle && nav) {
+    menuToggle.addEventListener('click', function() {
+      if (inputContentWrapper.classList.contains('expanded')) {
+        inputContentWrapper.classList.remove('expanded');
+      }
+      nav.classList.toggle('expanded');
+    });
+  } else {
+    console.log('Menu toggle or nav not found. Expand/collapse functionality not applied.');
+  }
 }

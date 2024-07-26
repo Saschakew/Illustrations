@@ -100,61 +100,89 @@
  
   <main>
 
+   
 
-    <section class="input-container">
-
-      <div class="menu-bar">
-        <button id="menu-toggle" aria-label="Toggle menu">
-            <span class="icon">☰</span>
-            <span class="text">Menu</span>
-        </button>
-        <button id="input-toggle" aria-label="Toggle input">
-            <span class="icon">⚙</span>
-            <span class="text">Input</span>
-        </button>
-      </div>
-      <nav>
-        <ul>
-        <li><a href="index.html" class="active">SVAR</a></li>
-        <li><a href="page2.html">Proxies</a></li> 
-        <li><a href="page3.html">Exogeneity Test   </a></li>
-        <li><a href="page4.html" >Strong Exogeneity Test  </a></li>
-        <li><a href="page5.html" >Application</a></li>
-        </ul>
-      </nav>
-
-        
-      <div class="input-content-wrapper">
-
-
-        <div class="input-content"  >
-
-          <div style="padding: 0px;">
-            <label for="T">T =</label>
-            <input type="number" id="T" class="T-input" value="250" min="10" max="999">
-          </div>
-          
-          <div style="padding: 0px;">
-            <label for="phi0">$\phi_0$ = </label>
-            <input type="range" id="phi0" value="0.5" min="0" max="2.35" step="0.1">
-            <div id="phi0Value">0.50</div>
-          </div>
-          
-          <div style="padding: 0px;">
-            <label for="phi">$\phi$  =</label>
-            <input type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
-            <div id="phiValue">0.00</div>
-          </div>  
-            
-          <div style="padding: 0px;">
-            <button id="newDataBtn" class="orange-button">New Data</button>
-          </div>
-         </div>
-        </div>
-      </div>
       
-    </section>
 
+      <section class="input-container">
+
+        <div class="menu-bar">
+          <button id="menu-toggle" aria-label="Toggle menu">
+              <span class="icon">☰</span>
+              <span class="text">Menu</span>
+          </button>
+          <button id="input-toggle" aria-label="Toggle input">
+              <span class="icon">⚙</span>
+              <span class="text">Input</span>
+          </button>
+        </div>
+        <nav>
+          <ul>
+          <li><a href="index.html" >SVAR</a></li>
+          <li><a href="page2.html">Proxies</a></li> 
+          <li><a href="page3.html">Exogeneity Test   </a></li>
+          <li><a href="page4.html">Strong Exogeneity Test  </a></li>
+          <li><a href="page5.html" class="active">Application</a></li>
+          </ul>
+        </nav>
+
+          
+        <div class="input-content-wrapper">
+
+
+          <div class="input-content"  >
+
+            <div style="padding: 0px;">
+              <label for="T">T =</label>
+              <input type="number" id="T" class="T-input" value="250" min="10" max="999">
+            </div>
+
+          
+            
+            <div style="padding: 0px;">
+              <label for="phi">$\phi$  =</label>
+              <input type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
+              <div id="phisValue">0.00</div>
+            </div>  
+             
+
+            <div style="padding: 0px;">
+              <label for="s1">$s_1$  =</label>
+              <input type="range" id="s1" min="-5" max="5" step="0.01" value="0">
+              <div id="s1Value">0.00</div>
+            </div>  
+            
+            <div style="padding: 0px;">
+              <label for="s2">$s_2$  =</label>
+              <input type="range" id="s2" min="-5" max="5" step="0.01" value="0">
+              <div id="s2Value">0.00</div>
+            </div>   
+           
+            <div style="padding: 0px;">
+              <label for="gamma1">$\gamma_1$  =</label>
+              <input type="range" id="gamma1" min="0" max="5.0" step="0.01" value="1">
+              <div id="gamma1Value">1.00</div>
+            </div> 
+            
+            <div style="padding: 0px;">
+              <label for="gamma2">$\gamma_2$  =</label>
+              <input type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
+              <div id="gamma2Value">0.00</div>
+            </div>  
+            
+            <div style="padding: 0px;">
+              <label for="gamma3">$\gamma_3$  =</label>
+              <input type="range" id="gamma3" min="0" max="5.0" step="0.01" value="1">
+              <div id="gamma3Value">1.00</div>
+            </div>  
+            
+            <div style="padding: 0px;">
+            <button id="newDataBtn" class="orange-button">New Data</button>
+           </div>
+          </div>
+        </div>
+        
+      </section>
       
  
       <section id="introduction" class="text-container">
@@ -210,45 +238,10 @@
 
  
 
- 
 
-
-    <section id="interactive-simulation" class="text-container">
-      <h3>Interactive Simulation</h3>
-      
-      <p>
-      Move the $\phi$ slider above to see how $B(\phi)$ leads to different innovations $e_t$ equal to rotations of $u_t$:
-      <div class="equation-wrapper" style="text-align: center;"> 
-      $   
-      \begin{bmatrix} e_{1,t} \\ e_{2,t} \end{bmatrix} 
-      =  
-      \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
-      \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
-      $
-      <span id="current-B"></span> 
-      <span id="current-nG"></span>
-      </div>
-      </p>
       
     
-  <div class="container">
-
- 
-    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
-      <canvas id="scatterPlot1"  aria-label="Scatter plot showing structural form shocks epsilon1 and epsilon2"></canvas>
-    </section> 
-
-    <section class="chart-container" style="width: 30%; margin-right: 1%;"> 
-      <canvas id="scatterPlot2"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
-    </section>
-
-    <section class="chart-container" style="width: 30%;"> 
-      <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2"></canvas>
-    </section>
-
-  </div>
-  </section>
-
+  
 
 
 
@@ -271,6 +264,6 @@
     </div>
 </footer>
   
-  <script src="index.js"></script>
+  <script src="page5.js"></script>
 </body>
 </html>
