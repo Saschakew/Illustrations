@@ -210,13 +210,6 @@ a {
   white-space: nowrap;
 }
 
-.input-content input[type="number"] {
-  width: 50px;
-}
-
-.input-content input[type="range"] {
-  width: 120px;
-}
 
  
 
@@ -234,6 +227,11 @@ a {
   max-width: 1200px;
 }
 
+
+.input-content input[type="number"] {
+  width: 50px;
+}
+
 /* Form Element Styles */
 input[type="number"], input[type="range"] {
   margin: 0 10px;
@@ -244,7 +242,7 @@ input[type="number"], input[type="range"] {
 
 input[type="range"] {
   -webkit-appearance: none;
-  width: 100px;
+  width: 80px;
   height: 10px;
   background: #fff;
   outline: none;
@@ -518,6 +516,13 @@ a:hover {
     display: flex;
   }
 
+  
+  
+  .input-content input[type="range"] {
+    width: 80px;
+  }
+
+  
   .input-content-wrapper {
     padding: 0;
     max-height: 0;
@@ -544,7 +549,6 @@ a:hover {
   }
 
   .input-content > div {
-    width: 100%;
     margin-bottom: 5px; 
     justify-content: center;
     align-items: center;
