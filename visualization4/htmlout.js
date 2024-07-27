@@ -119,19 +119,19 @@ function createTableZ2Covariance(u1, u2, z1, z2, phi, color1, color2, color3) {
   loss2 = lossZ2(u1, u2, z1, z2, W, phi);
   loss3 = lossZ12(u1, u2, z1, z2, W, phi); 
   HTMLInsert = `
-  <h3> Loss  based on proxy</h3>
+  <h3> Loss  based on proxies</h3>
   <table class="stats-table"> 
     <tr>
       <td class="measure"><span style="color: ${color1};">Loss z₁:</span> </td>
-      <td class="formula">mean(z₁ * e₂)^2 = ${loss1.toFixed(3)}</td>
+      <td class="formula">  ${loss1.toFixed(3)}</td>
     </tr>  
     <tr>
       <td class="measure"><span style="color: ${color2};">Loss z₂:</span></td>
-      <td class="formula">mean(z₂ * e₂)^2 = ${loss2.toFixed(3)}</td>
+      <td class="formula">  ${loss2.toFixed(3)}</td>
     </tr>   
     <tr>
       <td class="measure"><span style="color: ${color3};">Loss sum:</span> </td>
-      <td class="formula">... = ${loss3.toFixed(3)}</td>
+      <td class="formula">  ${loss3.toFixed(3)}</td>
     </tr>  
     <tr>
       <td class="measure">Critical value:</td>
@@ -199,7 +199,7 @@ function createHTMLTableCovariance(data, title, symbol) {
   <table class="stats-table"> 
     <tr>
       <td class="measure">Loss:</td>
-      <td class="formula">mean(${symbol}₁ * ${symbol}₂)^2 =  ${Math.pow(data.covariance, 2).toFixed(2)}</td>
+      <td class="formula">   ${Math.pow(data.covariance, 2).toFixed(2)}</td>
     </tr>  
   </table>
   `; 
@@ -209,8 +209,8 @@ function createHTMLTableZCovariance(data, title, symbol1, symbol2) {
   <h3>${title}</h3>
   <table class="stats-table"> 
     <tr>
-      <td class="measure">Loss:</td>
-      <td class="formula">mean(${symbol1}  * ${symbol2}₂)^2 =  ${Math.pow(data.covariance, 2).toFixed(2)}</td>
+      <td class="measure">Loss z₁:</td>
+      <td class="formula">  ${Math.pow(data.covariance, 2).toFixed(2)}</td>
     </tr>  
   </table>
   `; 
