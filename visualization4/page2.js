@@ -142,6 +142,34 @@ function setupEventListeners() {
   );
 
 
+  createEventListener('phi', 
+    (value) => document.getElementById('phiValue').textContent = value.toFixed(2),
+    (value) => phi = value,
+    (value) => B = getB(phi),
+    (value) => insertEqSVARe(B),
+    (value) => [e1, e2] = getE(u1,u2,B),
+    (value) =>statsZE1 = calculateMoments(z1, e2), 
+    (value) =>createTableZCovariance(statsZE1), 
+    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
+    (value) =>  updateLossPlots(
+      false, // OnlyPoint
+      charts.lossplot,
+      phi0,
+      phi, 
+      [
+        {
+          lossFunction: lossZ1,
+          extraArgs: [u1, u2,z1,z2 ,W],
+          label: 'Loss Function 1',
+          color: color1,
+          lineStyle: 'solid'  
+        } 
+      ],
+      'none'
+    ), 
+  );
+  
   newDataBtn.addEventListener('click', function() {
     generateNewData(T);   
     updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true);

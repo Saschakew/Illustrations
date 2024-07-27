@@ -118,7 +118,7 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2),
     (value) =>statsZE2 = calculateMoments(z2, e2),
     (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi),
+    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
@@ -164,7 +164,7 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2),
     (value) =>statsZE2 = calculateMoments(z2, e2),
     (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi),
+    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
@@ -210,7 +210,7 @@ function setupEventListeners() {
     (value) => [e1, e2] = getE(u1,u2,B),
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi), 
+    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3), 
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true),
     (value) =>updateLossPlots(OnlyPoint=true,charts.lossplot2,phi0,phi, [
@@ -255,7 +255,7 @@ function setupEventListeners() {
     (value) =>  insertEqNG(),
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi),
+    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
@@ -302,7 +302,7 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true);
     statsZE1 = calculateMoments(z1, e2); 
     createTableZCovariance(statsZE1);
-    createTableZ2Covariance(u1, u2, z1, z2, phi);
+    createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
     updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
       {
         lossFunction: lossZ1,
@@ -342,7 +342,7 @@ function setupEventListeners() {
     (value) => z2 = z1.map((z, i) => z * z), 
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi),
+    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
@@ -387,7 +387,7 @@ function setupEventListeners() {
     (value) => z2 = z1.map((z, i) => z * z), 
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi),
+    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
@@ -465,7 +465,7 @@ function setupEventListeners() {
       function(phi) { 
         statsZE1 = calculateMoments(z1, e2); 
         createTableZCovariance(statsZE1);
-        createTableZ2Covariance(u1, u2, z1, z2, phi);
+        createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
       },
       function(phi) { 
         updateLossPlots(
@@ -590,7 +590,7 @@ function initializeCharts() {
   
   statsZE1 = calculateMoments(z1, e2); 
   createTableZCovariance(statsZE1);
-  createTableZ2Covariance(u1, u2, z1, z2, phi);
+  createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
 
 }
 

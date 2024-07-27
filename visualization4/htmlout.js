@@ -113,33 +113,33 @@ function createTableZCovariance(thisStats) {
   createTable('stats-ze',HTMLInsert)
 }
 
-function createTableZ2Covariance(u1, u2, z1, z2, phi ) {
+function createTableZ2Covariance(u1, u2, z1, z2, phi, color1, color2, color3) {
 
-  loss1 = lossZ1(u1, u2, z1, z2,W, phi);
-  loss2 = lossZ2(u1, u2, z1, z2,W, phi);
-  loss3 = lossZ12(u1, u2, z1, z2, W,phi); 
-  HTMLInsert =   `
-  <h3>Loss based on   proxy</h3>
+  loss1 = lossZ1(u1, u2, z1, z2, W, phi);
+  loss2 = lossZ2(u1, u2, z1, z2, W, phi);
+  loss3 = lossZ12(u1, u2, z1, z2, W, phi); 
+  HTMLInsert = `
+  <h3> Loss  based on proxy</h3>
   <table class="stats-table"> 
     <tr>
-      <td class="measure">Loss z₁:</td>
-      <td class="formula">mean(z₁  * e₂)^2 =  ${loss1.toFixed(3)}</td>
+      <td class="measure"><span style="color: ${color1};">Loss z₁:</span> </td>
+      <td class="formula">mean(z₁ * e₂)^2 = ${loss1.toFixed(3)}</td>
     </tr>  
     <tr>
-      <td class="measure">Loss z₂:</td>
-      <td class="formula">mean(z₂  * e₂)^2 =  ${loss2.toFixed(3)}</td>
+      <td class="measure"><span style="color: ${color2};">Loss z₂:</span></td>
+      <td class="formula">mean(z₂ * e₂)^2 = ${loss2.toFixed(3)}</td>
     </tr>   
     <tr>
-      <td class="measure">Loss sum:</td>
-      <td class="formula">... =  ${loss3.toFixed(3)}</td>
+      <td class="measure"><span style="color: ${color3};">Loss sum:</span> </td>
+      <td class="formula">... = ${loss3.toFixed(3)}</td>
     </tr>  
     <tr>
       <td class="measure">Critical value:</td>
-      <td class="formula"> chisquare(1) =  ${(2.706 / T).toFixed(3)}</td>
+      <td class="formula">chisquare(1) = ${(2.706 / T).toFixed(3)}</td>
     </tr>  
   </table>
   `; 
-  createTable('stats-ze2',HTMLInsert)
+  createTable('stats-ze2', HTMLInsert)
 }
 
  
