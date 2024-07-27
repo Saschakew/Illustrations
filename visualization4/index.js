@@ -79,7 +79,7 @@ function initializeUI() {
 function initializeVariables() { 
   s =  0;
   T= getInputValue('T');
-  phi0 = getInputValue('phi0');
+  phi0 = 0.5;
   phi = getInputValue('phi');
   B0 = getB(phi0);
   B = getB(phi);
@@ -121,6 +121,7 @@ function setupEventListeners() {
  
 
   createEventListener('T',  
+    (value) => document.getElementById('TValue').textContent = value.toFixed(0),
     (value) => T = value,
     (value) => generateNewData(T), 
     (value) => statsE = calculateMoments(e1, e2),

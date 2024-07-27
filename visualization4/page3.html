@@ -128,44 +128,35 @@
 
           
           <div style="padding: 0px;">
-            <label for="T">T =</label>
-            <input type="number" id="T" class="T-input" value="250" min="10" max="999">
+            <label class="InputLabel" for="T"  >$T $ =</label>
+            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999"   >
+            <div class="InputValue" id="TValue"  >250</div>
           </div>
-          
+        
+
           <div style="padding: 0px;">
-            <label for="phi0">$\phi_0$ = </label>
-            <input type="hidden" id="phi0" value="0.5" min="0" max="2.35" step="0.1">
-            <div id="phi0Value">0.50</div>
-          </div>
-          
-          <div style="padding: 0px;">
-            <label for="phi">$\phi$  =</label>
-            <input type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
-            <div id="phiValue">0.00</div>
-          </div>  
-          
-          <div style="padding: 0px;">
-            <label for="gamma1">$\gamma_1$  =</label>
-            <input type="range" id="gamma1" min="0" max="5.0" step="0.01" value="1">
-            <div id="gamma1Value">1.00</div>
+            <label  class="InputLabel" for="phi" >$\phi$  =</label>
+            <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0"  >
+            <div class="InputValue" id="phiValue"     >0.00</div>
           </div> 
-          
+           
+       
           <div style="padding: 0px;">
-            <label for="gamma2">$\gamma_2$  =</label>
-            <input type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
-            <div id="gamma2Value">0.00</div>
+            <label  class="InputLabel" for="gamma1">$\gamma_1$  =</label>
+            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="1">
+            <div class="InputValue" id="gamma1Value">1.00</div>
+          </div> 
+          <div style="padding: 0px;">
+            <label  class="InputLabel" for="gamma2">$\gamma_2$  =</label>
+            <input class="InputRange" type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
+            <div class="InputValue" id="gamma2Value">0.00</div>
           </div>  
-          
+ 
+
           <div style="padding: 0px;">
-            <label for="gamma3">$\gamma_3$  =</label>
-            <input type="range" id="gamma3" min="0" max="5.0" step="0.01" value="1">
-            <div id="gamma3Value">1.00</div>
-          </div>
-          
-          <div style="padding: 0px;">  
           <button id="newDataBtn" class="orange-button">New Data</button>
-        </div>
-         </div>
+          </div> 
+           
         </div>
       </div>
       

@@ -210,8 +210,16 @@ a {
   white-space: nowrap;
 }
 
+.InputLabel,
+.InputRange,
+.InputValue {
+  margin: 0px !important;
+}
 
- 
+.InputLabel, 
+.InputValue {
+  padding: 0px !important;
+} 
 
 .input-content button {
   flex: 0 0 auto;
@@ -565,12 +573,12 @@ a:hover {
     display: block;
   }
   .chart-container {
-    min-width:240px  !important;
+    min-width:200px  !important;
     margin: 0 !important;
   }
 
   .chart-loss-container {
-    width:100% !important;
+    width:90% !important;
     margin: 0 !important;
   }
 
