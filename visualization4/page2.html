@@ -13,60 +13,7 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Understanding Non-Gaussian SVAR: An Interactive Guide</title>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": "Non-Gaussian SVAR",
-      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.", 
-      "author": {
-        "@type": "Person",
-        "name": "Sascha Keweloh",
-        "jobTitle": "Postdoc",
-        "affiliation": {
-          "@type": "Organization",
-          "name": "TU Dortmund University"
-        },
-        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "TU Dortmund University",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
-        }
-      } 
-    }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "LearningResource",
-        "name": "Reduced and Structural Form Shocks in Non-Gaussian SVAR",
-        "description": "This page explores the relationship between reduced form shocks and structural shocks in our Non-Gaussian SVAR model.",
-        "learningResourceType": "Interactive Simulation",
-        "educationalLevel": "Graduate",
-        "isPartOf": {
-          "@type": "Course",
-          "name": "Non-Gaussian SVAR Analysis"
-        },
-        "teaches": [
-          {
-            "@type": "DefinedTerm",
-            "name": "Reduced Form Shocks",
-            "description": "Observable shocks in a SVAR model"
-          },
-          {
-            "@type": "DefinedTerm",
-            "name": "Structural Shocks",
-            "description": "Underlying economic shocks in a SVAR model"
-          }
-        ],
-        "interactivityType": "active"
-      }
-      </script>
+  <title>Proxy SVAR Exogeneity Test</title>
 
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -114,8 +61,7 @@
         <li><a href="index.html" >SVAR</a></li>
         <li><a href="page2.html" class="active">Proxies</a></li> 
         <li><a href="page3.html">Exogeneity Test   </a></li>
-        <li><a href="page4.html" >Strong Exogeneity Test  </a></li>
-        <li><a href="page5.html" >Application</a></li>
+        <li><a href="page4.html" >Strong Exogeneity Test  </a></li> 
         </ul>
       </nav>
 
@@ -166,57 +112,93 @@
 
       <section id="introduction" class="text-container">
         <h2>Proxies</h2>
-        <p>This page explores ....</p>
+        <p>This page illustrates how proxy variables allow to identify the SVAR. 
+          Moreover, it shows how endogenous proxy variables affect the estimation and lead to biased estimates.</p>
+
+        <div class="assumption-box">
+          <h5>Definition: Proxy</h5>
+          <p> A proxy variable $z_t$ for a target shock $\epsilon_{it}$ is a variable that is: </p> 
+         
+          <ol>
+            <li> Relevant: Correlated with the target shock $\epsilon_{it}$ </li>
+            <li> Exogenous: Uncorrelated with all other structural shocks $\epsilon_{jt}$ for $j \neq i$. </li>
+          </ol> 
+        </div> 
+ 
     </section>
 
 
     <section id="introduction" class="text-container">
       <h2>Proxy SVAR </h2>
+      <p>Let's fix the rotation at $\phi_0 = 0.5$
+        such that the reduced form shocks are equal to one specific rotation of the structural shocks:</p>
       <div class="equation-wrapper" style="text-align: center;"> 
         $   
         \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
         =  
-        \begin{bmatrix} \cos(\phi_0) & \sin(\phi_0) \\ -\sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+        \begin{bmatrix} 0.88 & -0.48 \\ 0.48 & 0.88 \end{bmatrix}
         \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix} 
-        $
+        $ 
+      </div>
+
+        <p> ...innovations....$e_t(B(\phi))=B(\phi)^{-1} u_t$ ....</p>
+        <div class="equation-wrapper" style="text-align: center;"> 
         <span id="current-B"></span> 
+      </div>
+
+
+        <p>Additionally, consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by  $
+          z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
+          $, such that $\gamma_1$ governs the strenght or relevance of the proxy and 
+          $\gamma_2$ the exogeneity of the proxy. </p>
+        </p>
+        <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-z"></span> 
         </div>
+
   </section>
 
 
-
-  <section id="introduction" class="text-container">
-    <h2>Exogenous Proxies</h2>
-    <p>This page explores ....</p>
-</section>
-
+ 
 
 
    
 <section id="interactive-simulation" class="text-container"> 
-  <div class="container">  
-
-    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-      <canvas id="scatterPlotZ1Eps1"  aria-label="...."></canvas>
-    </section>
   
-  <section class="chart-container" style="width: 49%;"> 
-      <canvas id="scatterPlotZ1Eps2" aria-label="...."></canvas>
+  <h2>Proxy relevance and exogeneity</h2>
+  
+  
+  <p>The following two plots show the proxy against the target shock $\epsilon_{1t}$ and against the non-target 
+    shock $\epsilon_{2t}$. 
+    The left plot illustrates the relevance of the proxy by the correlation with the target shock.
+    The right plot shows the exogeneity of the proxy which should be uncorrelated with the non-target shock.
+  </p>
+
+  
+  <div class="container">   
+    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
+      <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of proxy and structural target shock."></canvas>
     </section> 
-  </div>
-</section>
+    <section class="chart-container" style="width: 49%;"> 
+      <canvas id="scatterPlotZ1Eps2" aria-label="Scatter plot of proxy and non-target shock."></canvas>
+    </section> 
+  </div> 
 
-
-<section id="interactive-simulation" class="text-container"> 
-<div class="container">  
-
-    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-      <canvas id="scatterPlotZ1E1"  aria-label="...."></canvas>
-    </section>
   
-  <section class="chart-container" style="width: 49%;"> 
-      <canvas id="scatterPlotZ1E2" aria-label="...."></canvas>
+  <p>In practice, the structural shocks are of course not observable. However, for a given rotation $\phi$, we can 
+     compute the innovations  $e_t(B(\phi))=B(\phi)^{-1} u_t$. 
+     For the correct rotation $\phi=\phi_0$, the proxy $z_t$ and the non-target innovation $e_{2t}$ should be uncorrelated.
+    Therefore, we can use the correlation between the proxy and the non-target innovation to find the correct rotation $\phi_0$.
+    The following two plots illustrate the correlation between the proxy and the innovations for the target and non-target shock.
+
+  </p>
+
+  <div class="container">   
+    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
+      <canvas id="scatterPlotZ1E1"  aria-label="Scatter plot of proxy and innovation target. "></canvas>
+    </section> 
+    <section class="chart-container" style="width: 49%;"> 
+      <canvas id="scatterPlotZ1E2" aria-label="Scatter plot of proxy and innovation non-target  "></canvas>
     </section> 
   </div>
   
@@ -227,16 +209,20 @@
 
 
 
-<section id="introduction" class="text-container">
-  <h2>Exogenous Proxies</h2>
-  <p>This page explores ....</p>
-</section>
-
-
-
 
 <section id="interactive-loss" class="text-container">
   <h3>Interactive Loss Calculation</h3> 
+  
+  <p>The following plot shows the loss equal to the covariance of the proxy and non-target innovation $e_{2t}$ for different $\phi$ values.
+  </p>
+
+  <div class="equation-wrapper" style="text-align: center;"> 
+    $   
+    loss() = ....
+    $ 
+  </div>
+
+
 
 <div class="container">
 <div class="button-container">
@@ -244,7 +230,7 @@
 </div>
 <div class="chart-wrapper">
   <section class="chart-loss-container">
-<canvas id="lossplot"  aria-label="Plot of dependencies"></canvas>
+<canvas id="lossplot"  aria-label="Plot of proxy exogeneity for different phi."></canvas>
 </section>  
 
   </div>

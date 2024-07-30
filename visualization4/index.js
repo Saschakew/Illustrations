@@ -72,6 +72,7 @@ function initializeUI() {
   setupStickyInputContainer();
   setupNavigationMenu();
   setupInputContentWrapper();
+  setupInfoIcons();
 }
 
 
@@ -83,7 +84,8 @@ function initializeVariables() {
   phi = getInputValue('phi');
   B0 = getB(phi0);
   B = getB(phi);
-  insertEqSVARe(B)
+  insertEqSVAR(B0);
+  insertEqSVARe(B);
 
   generateNewData(T); 
  
@@ -98,6 +100,7 @@ function setupEventListeners() {
     (value) => document.getElementById('phi0Value').textContent = value.toFixed(2),
     (value) => phi0 = value, 
     (value) => B0 = getB(phi0),
+    (value) => insertEqSVAR(B0),
     (value) => [u1, u2] = getU(epsilon1,epsilon2,B0),
     (value) => [e1, e2] = getE(u1,u2,B), 
     (value) => statsE = calculateMoments(e1, e2),
@@ -173,9 +176,9 @@ function initializeCharts() {
   createChart('scatterPlot3',ScatterConfig)  
  
  
-  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
-  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
-  updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true);
+  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks: ", "ε₁", "ε₂", true);
+  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks: ", "u₁", "u₂", true);
+  updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations: ", "e₁", "e₂", true);
 
 
 

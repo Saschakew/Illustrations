@@ -74,6 +74,7 @@ function initializeUI() {
   setupStickyInputContainer();
   setupNavigationMenu();
   setupInputContentWrapper();
+  setupInfoIcons();
 
   color1 =  'rgb(75, 192, 192)';
   color2 =  'rgb(41, 128, 185)';
@@ -540,15 +541,15 @@ function initializeCharts() {
   createChart('scatterPlotZ1Eps1',ScatterConfig)  
   createChart('scatterPlotZ1Eps2',ScatterConfig)  
     
-  updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true);
-  updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true);
+  updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "Exogeneity z₁:", "z₁", "ε₂", true);
+  updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "Exogeneity z₂:", "z₂", "ε₂", true);
 
   
   createChart('scatterPlotZ1E1',ScatterConfig)  
   createChart('scatterPlotZ1E2',ScatterConfig)  
     
-  updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true);
-  updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true);
+  updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true);
+  updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true);
 
   
 

@@ -74,6 +74,7 @@ function initializeUI() {
   setupStickyInputContainer();
   setupNavigationMenu();
   setupInputContentWrapper();
+  setupInfoIcons();
 
   color1 =  'rgb(75, 192, 192)';
   color2 =  'rgb(41, 128, 185)';
@@ -230,6 +231,21 @@ function setupEventListeners() {
   );
  
 
+     
+
+    // Highlight points in scatter 
+    const scatterPlots = [   
+      'scatterPlotZ1Eps1', 'scatterPlotZ1Eps2', 'scatterPlotZ1E1', 'scatterPlotZ1E2'];
+    scatterPlots.forEach((id) =>   {
+      const canvas = document.getElementById(id); 
+      canvas.addEventListener('click', function() {
+        console.log(`Canvas ${id} clicked`);
+        const chart = charts[id];
+        const elements = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+        handleChartClick(event, elements, chart);
+      }) 
+    })
+    
 
     const callbacks = [
       function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
@@ -302,15 +318,15 @@ function initializeCharts() {
   createChart('scatterPlotZ1Eps1',ScatterConfig) ; 
   createChart('scatterPlotZ1Eps2',ScatterConfig) ; 
     
-  updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true);
-  updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true);
+  updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true);
+  updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true);
 
   
   createChart('scatterPlotZ1E1',ScatterConfig)  ;
   createChart('scatterPlotZ1E2',ScatterConfig)  ;
     
-  updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true);
-  updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true);
+  updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true);
+  updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true);
 
  
   const LossPlotConfig = getLossPlotConfig(); 

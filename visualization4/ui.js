@@ -60,3 +60,58 @@ function setupNavigationMenu() {
     console.log('Menu toggle or nav not found. Expand/collapse functionality not applied.');
   }
 }
+
+function createPopup(icon, className) {
+  const content = icon.getAttribute(className === 'info-popup' ? 'data-info' : 'data-ref');
+  
+  // Remove any existing pop-ups
+  const existingPopup = document.querySelector('.info-popup');
+  if (existingPopup) {
+    existingPopup.remove();
+  }
+  
+  // Create and position the pop-up
+  const popup = document.createElement('div');
+  popup.className = className;
+  popup.innerHTML = content;
+  document.body.appendChild(popup);
+  
+  const iconRect = icon.getBoundingClientRect();
+  popup.style.left = `${iconRect.left + window.scrollX}px`;
+  popup.style.top = `${iconRect.bottom + window.scrollY + 5}px`;
+  popup.style.display = 'block';
+  
+  // Ensure the popup doesn't go off-screen
+  const popupRect = popup.getBoundingClientRect();
+  if (popupRect.right > window.innerWidth) {
+    popup.style.left = `${window.innerWidth - popupRect.width - 10}px`;
+  }
+  
+  // Process LaTeX in the popup
+  MathJax.typesetPromise([popup]).then(() => {
+    // Reposition after typesetting (LaTeX rendering might change size)
+    const newPopupRect = popup.getBoundingClientRect();
+    if (newPopupRect.right > window.innerWidth) {
+      popup.style.left = `${window.innerWidth - newPopupRect.width - 10}px`;
+    }
+  });
+  
+  // Close the pop-up when clicking outside
+  document.addEventListener('click', function closePopup(event) {
+    if (!popup.contains(event.target) && event.target !== icon) {
+      popup.remove();
+      document.removeEventListener('click', closePopup);
+    }
+  });
+}
+
+// Add event listeners for info and ref icons
+function setupInfoIcons() {
+  document.querySelectorAll('.info-icon').forEach(icon => {
+    icon.addEventListener('click', function(e) {
+      createPopup(this, 'info-popup');
+      e.stopPropagation();
+    });
+  });
+    
+} 

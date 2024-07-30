@@ -13,63 +13,7 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Understanding Non-Gaussian SVAR: An Interactive Guide</title>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": "Non-Gaussian SVAR",
-      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.", 
-      "author": {
-        "@type": "Person",
-        "name": "Sascha Keweloh",
-        "jobTitle": "Postdoc",
-        "affiliation": {
-          "@type": "Organization",
-          "name": "TU Dortmund University"
-        },
-        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "TU Dortmund University",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
-        }
-      } 
-    }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Course",
-        "name": "Non-Gaussian SVAR Analysis",
-        "description": "An interactive course on Non-Gaussian Structural Vector Autoregression models and identification techniques.",
-        "provider": {
-          "@type": "Person",
-          "name": "Sascha Keweloh",
-          "url": "https://sites.google.com/view/sascha-keweloh"
-        },
-        "hasCourseInstance": {
-          "@type": "CourseInstance",
-          "courseMode": "online"
-        },
-        "about": [
-          {
-            "@type": "Thing",
-            "name": "Structural Vector Autoregression",
-            "description": "A multivariate time series model used in econometrics and economic analysis."
-          },
-          {
-            "@type": "Thing",
-            "name": "Non-Gaussian Analysis",
-            "description": "Statistical methods for analyzing data that does not follow a normal distribution."
-          }
-        ]
-      }
-      </script>
+  <title>Proxy SVAR Exogeneity Test</title>
 
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -118,8 +62,7 @@
         <li><a href="index.html" class="active">SVAR</a></li>
         <li><a href="page2.html">Proxies</a></li> 
         <li><a href="page3.html">Exogeneity Test   </a></li>
-        <li><a href="page4.html" >Strong Exogeneity Test  </a></li>
-        <li><a href="page5.html" >Application</a></li>
+        <li><a href="page4.html" >Strong Exogeneity Test  </a></li> 
         </ul>
       </nav>
 
@@ -163,25 +106,20 @@
  
       <section id="introduction" class="text-container">
         <h2>Introduction</h2>
-        <p>Welcome to an <interactive class=""></interactive></p>  
+        <p>Proxy variables are among the most popular tools to identify Structural Vector Autoregression (SVAR) models. 
+            This short interactive guide illustrates how endogenous proxy variables lead to biased SVAR estimates and 
+            it illustrates the test for proxy exogeneity in Bruns and Keweloh (2024).</p>  
     </section>
 
       <section id="svar-model" class="text-container"> 
         <h3>The SVAR Model</h3>
-        <p>In a structural vector autoregression (SVAR) a vector of time series $ y_t = [y_{1,t},...,y_{n,t}]'$ 
-          is explained by its own past and a vector of independent<span class="info-icon" data-info="The underlying idea of the independence assumption is 
-          that a given structural shock shall contain no information on another structural shock. 
-          Note that there is a debate on whether the appropriate assumption to model this dependency 
-          structure is to assume uncorrelated, mean independent, or independent shocks, see, e.g., section 3.1 in <a href='https://www.researchgate.net/publication/369476699_Uncertain_Short-Run_Restrictions_and_Statistically_Identified_Structural_Vector_Autoregressions' target='_blank'>Keweloh (2023)</a>.">i</span> 
-          structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$
+        <p>In a SVAR a vector of time series $ y_t = [y_{1,t},...,y_{n,t}]'$ 
+          is explained by its own past and a vector of structural shocks $\epsilon_t =[\epsilon_{1,t},...,\epsilon_{n,t}]'$ using
           <div class="equation-wrapper" style="text-align: center;"> 
           $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t$$  $$ \quad u_t =B_0 \epsilon_t.  $$</p>
           </div>
-        
-       
-
         <p>
-          The following assumptions allow for a simple visualization of the identification method.
+          The following assumptions allow an easy visualization of the identification problem.
         </p>
   
       </section>
@@ -210,18 +148,88 @@
             \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix}  $$</p> 
         </div> 
      
-    </section>
+        <p>Finally, let's assume that the matrix $B_0$ is orthogonal.<span class="info-icon" data-info="If $B_0$ where not orthogonal, 
+          we could always transform the SVAR such that $B_0$ is orthogonal, see, e.g., section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>. Note that this transformation involves transforming the shocks into uncorrelated shocks, which motivates the transformation of the data on the next page.">i</span>
+          Without the orthogonality assumption the matrix $B_0$ contains four unknown parameters. However, an orthogonal matrix $B_0$ essentially 
+          only depends on a single unknown parameter, which simplifies the visualizations.</p>
+        <div class="assumption-box">
+          <h5>Assumption 3: Orthogonal $B_0$</h5>
+          <p>The matrix $B_0$ is orthogonal and can be written as:
+          $
+          B_0 = B(\phi_0) = \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+          $ 
+          where $\phi_0$ is the unknown rotation angle.
+          </p> 
+          </div> 
+      </section>
+
+      
 
  
-
+      <section  id="shock-relationship" class="text-container">
+        <h3>The Relationship Between Reduced and Structural Form Shocks</h3>
+              
+        <p>In the simplified SVAR model, the reduced form shocks $u_t$ can 
+          be thought of a rotation with angle $\phi_0$<span class="info-icon" data-info="To be precise, we can transform $\phi_0$ using $\phi_0 * (180 / π)$ to get the angle in degree. ">i</span> of the structural form shocks $\epsilon_t$:
+          <div class="equation-wrapper" style="text-align: center;"> 
+          $   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
+          =  
+          \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+          \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix} 
+          $
+          <span id="current-B0"></span>
+          </div>
+          </p>
+      </section>
  
+
+      
+    <section id="identification-challenge" class="text-container">
+      <h3>Structural shocks and Innovations</h3>
+      
+     In a given application, we neither know the rotation matrix $B(\phi_0)$ nor do we observe the structural shocks $\epsilon_t$.
+      Instead, we only observe the reduced form shocks $u_t$.<span class="info-icon" data-info="In practice we only observe the macroeconomic 
+      variables $y_t$ and need to estimate the VAR to get the reduced form shocks $u_t$. However, with the simplifying no-lags assumption it holds that $u_t=y_t$.">i</span> 
+      Consequently, the question is how can we identify $B(\phi_0)$ and recover the structural shocks $\epsilon_t$ from the reduced form shocks $u_t$?
+      </p>   
+      
+      <p>
+      We can always choose an angle $\phi$, calculate $B(\phi)$:
+      <div class="equation-wrapper" style="text-align: center;"> 
+      $
+      B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}
+      $
+      </div>
+      and get the corresponding innovations:   
+      <div class="equation-wrapper" style="text-align: center;"> 
+      $
+      e_t(B(\phi)) = B(\phi)^{-1} u_t 
+      $
+      </div>
+      These innovations represent the shocks that would yield $u_t$ if the true angle of the data-generating process $\phi_0$ were equal to the chosen angle $\phi$.
+      Specifically, for $\phi=\phi_0$ we get $e_t(B(\phi_0)) = \epsilon_t$.
+      </p>
+      </section>
+
+
 
 
     <section id="interactive-simulation" class="text-container">
       <h3>Interactive Simulation</h3>
       
       <p>
-      Move the $\phi$ slider above to see how $B(\phi)$ leads to different innovations $e_t$ equal to rotations of $u_t$:
+      Move the $\phi_0$ and $\phi$ slider   to see how $B_0(\phi_0)$ and $B(\phi)$ rotate the reduced form shocks $u_t$ and innovations $e_t$. 
+      </p>
+
+      <p>
+      Note that all rotations $\phi$ lead to uncorrelated innovations. 
+      Therefore, the assumption of unccorelated shocks can not be used to identify the SVAR.
+      Meaning the assumption of uncorrelated shocks is not sufficient to use the reduced form 
+      shocksto recover the rotation $\phi_0$ and the structural shocks $\epsilon_t$.
+    </p>
+
+
+
       <div class="equation-wrapper" style="text-align: center;"> 
       $   
       \begin{bmatrix} e_{1,t} \\ e_{2,t} \end{bmatrix} 
@@ -232,7 +240,6 @@
       <span id="current-B"></span> 
       <span id="current-nG"></span>
       </div>
-      </p>
       
     
   <div class="container">
@@ -261,7 +268,7 @@
     <div class="text-container" id="next-steps">
       <h3>Next Steps</h3>
       <p>
-        The <a href="page2.html">next</a> page illustrates ...
+        The <a href="page2.html">next</a> page illustrates how a proxy allows to identify the SVAR.
       </p>
       
     </div>

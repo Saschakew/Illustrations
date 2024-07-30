@@ -13,60 +13,9 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Understanding Non-Gaussian SVAR: An Interactive Guide</title>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": "Non-Gaussian SVAR",
-      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.", 
-      "author": {
-        "@type": "Person",
-        "name": "Sascha Keweloh",
-        "jobTitle": "Postdoc",
-        "affiliation": {
-          "@type": "Organization",
-          "name": "TU Dortmund University"
-        },
-        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "TU Dortmund University",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
-        }
-      } 
-    }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "LearningResource",
-        "name": "Reduced and Structural Form Shocks in Non-Gaussian SVAR",
-        "description": "This page explores the relationship between reduced form shocks and structural shocks in our Non-Gaussian SVAR model.",
-        "learningResourceType": "Interactive Simulation",
-        "educationalLevel": "Graduate",
-        "isPartOf": {
-          "@type": "Course",
-          "name": "Non-Gaussian SVAR Analysis"
-        },
-        "teaches": [
-          {
-            "@type": "DefinedTerm",
-            "name": "Reduced Form Shocks",
-            "description": "Observable shocks in a SVAR model"
-          },
-          {
-            "@type": "DefinedTerm",
-            "name": "Structural Shocks",
-            "description": "Underlying economic shocks in a SVAR model"
-          }
-        ],
-        "interactivityType": "active"
-      }
-      </script>
+  <title>Proxy SVAR Exogeneity Test</title>
+  
+ 
 
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -91,7 +40,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
 
 </head>
-<body  class="page2">
+<body  class="page4">
   <header>
     <h1>Proxy Exogeneity Test</h1>
   </header>
@@ -115,8 +64,7 @@
         <li><a href="index.html" >SVAR</a></li>
         <li><a href="page2.html">Proxies</a></li> 
         <li><a href="page3.html">Exogeneity Test   </a></li>
-        <li><a href="page4.html" class="active">Strong Exogeneity Test</a></li>
-        <li><a href="page5.html" >Application</a></li>
+        <li><a href="page4.html" class="active">Strong Exogeneity Test</a></li> 
         </ul>
       </nav>
 
@@ -177,7 +125,7 @@
   
 
       <section id="introduction" class="text-container">
-        <h2>Proxies</h2>
+        <h2>Testing for Strong Exogeneity in Proxy-Vars</h2>
         <p>This page explores ....</p>
     </section>
 
@@ -188,7 +136,7 @@
         $   
         \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
         =  
-        \begin{bmatrix} \cos(\phi_0) & \sin(\phi_0) \\ -\sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
+        \begin{bmatrix} 0.88 & -0.48 \\ 0.48 & 0.88 \end{bmatrix}
         \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix} 
         $
         <span id="current-B"></span> 

@@ -13,60 +13,7 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Understanding Non-Gaussian SVAR: An Interactive Guide</title>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": "Non-Gaussian SVAR",
-      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.", 
-      "author": {
-        "@type": "Person",
-        "name": "Sascha Keweloh",
-        "jobTitle": "Postdoc",
-        "affiliation": {
-          "@type": "Organization",
-          "name": "TU Dortmund University"
-        },
-        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "TU Dortmund University",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
-        }
-      } 
-    }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "LearningResource",
-        "name": "Reduced and Structural Form Shocks in Non-Gaussian SVAR",
-        "description": "This page explores the relationship between reduced form shocks and structural shocks in our Non-Gaussian SVAR model.",
-        "learningResourceType": "Interactive Simulation",
-        "educationalLevel": "Graduate",
-        "isPartOf": {
-          "@type": "Course",
-          "name": "Non-Gaussian SVAR Analysis"
-        },
-        "teaches": [
-          {
-            "@type": "DefinedTerm",
-            "name": "Reduced Form Shocks",
-            "description": "Observable shocks in a SVAR model"
-          },
-          {
-            "@type": "DefinedTerm",
-            "name": "Structural Shocks",
-            "description": "Underlying economic shocks in a SVAR model"
-          }
-        ],
-        "interactivityType": "active"
-      }
-      </script>
+  <title>Proxy SVAR Exogeneity Test</title>
 
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -91,7 +38,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
 
 </head>
-<body  class="page2">
+<body  class="page3">
   <header>
     <h1>Proxy Exogeneity Test</h1>
   </header>
@@ -115,8 +62,7 @@
         <li><a href="index.html" >SVAR</a></li>
         <li><a href="page2.html">Proxies</a></li> 
         <li><a href="page3.html" class="active">Exogeneity Test   </a></li>
-        <li><a href="page4.html" >Strong Exogeneity Test  </a></li>
-        <li><a href="page5.html" >Application</a></li>
+        <li><a href="page4.html" >Strong Exogeneity Test  </a></li> 
         </ul>
       </nav>
 
@@ -171,58 +117,70 @@
 
      
       <section id="introduction" class="text-container">
-        <h2>Proxies</h2>
-        <p>This page explores ....</p>
+        <h2>Proxy exogeneity test</h2>
+        <p>This page shows how the proxy exogeneity assumption can be tested if two proxies are available.</p>
     </section>
 
 
+   
     <section id="introduction" class="text-container">
       <h2>Proxy SVAR </h2>
-      <div class="equation-wrapper" style="text-align: center;"> 
-        $   
-        \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
-        =  
-        \begin{bmatrix} \cos(\phi_0) & \sin(\phi_0) \\ -\sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
-        \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix} 
-        $
-        <span id="current-B"></span> 
+
+      <p> Consider a proxy SVAR with two proxies for the target shock $\epsilon_{1t}$.</p>
+     
+        <p>The first proxy $z_{ t}$ is given by  $
+          z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
+          $, such that $\gamma_1$ governs the strenght or relevance of the proxy and 
+          $\gamma_2$ the exogeneity of the proxy. </p>
+        </p>
+        <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-z"></span> 
         </div>
+
+        <p>The second proxy $z_{2t}$ is given by </p>
+        </p>
+        <div class="equation-wrapper" style="text-align: center;">  
+        $ 
+        z_{2t} = \epsilon_{1 t} +   \eta_{ t}.
+        $
+        </div>
+
   </section>
 
-
-
-  <section id="introduction" class="text-container">
-    <h2>Exogenous Proxies</h2>
-    <p>This page explores ....</p>
-</section>
+ 
 
 
 
    
 <section id="interactive-simulation" class="text-container"> 
+<h2> ....</h2>
+
+  <p>The following two plots show the covariance of the proxies with the non-target shock $\epsilon_{2t}$.</p>
+
   <div class="container">  
 
     <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-      <canvas id="scatterPlotZ1Eps1"  aria-label="...."></canvas>
+      <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of the first proxy and structural non-target shock."></canvas>
     </section>
   
   <section class="chart-container" style="width: 49%;"> 
-      <canvas id="scatterPlotZ1Eps2" aria-label="...."></canvas>
+      <canvas id="scatterPlotZ1Eps2" aria-label="Scatter plot of the second proxy and structural non-target shock."></canvas>
     </section> 
   </div>
-</section>
 
+ <p>
+  The following two plots show the covariance of the proxies with the non-target innovation $e_{2t}$.
+ </p>
 
-<section id="interactive-simulation" class="text-container"> 
+ 
 <div class="container">  
 
     <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-      <canvas id="scatterPlotZ1E1"  aria-label="...."></canvas>
+      <canvas id="scatterPlotZ1E1"  aria-label="Scatter plot of the first proxy and non-target innovations."></canvas>
     </section>
   
   <section class="chart-container" style="width: 49%;"> 
-      <canvas id="scatterPlotZ1E2" aria-label="...."></canvas>
+      <canvas id="scatterPlotZ1E2" aria-label="Scatter plot of the second proxy and non-target innovations."></canvas>
     </section> 
   </div>
   
@@ -233,16 +191,6 @@
 
 
 
-<section id="introduction" class="text-container">
-  <h2>Exogenous Proxies</h2>
-  <p>This page explores ....</p>
-</section>
-
-
-
-
- 
-
     
 
 
@@ -250,22 +198,50 @@
 <section id="interactive-loss" class="text-container">
   <h3>Interactive Loss Calculation</h3> 
 
-<div class="container">
-<div class="button-container">
-<button id="MinDependenciesBtn2" class="orange-button">Estimate</button>
-</div>
-<div class="chart-wrapper">
-<section class="chart-loss-container">
-<canvas id="lossplot2"  aria-label="Plot of dependencies"></canvas>
-</section>   
-<div class="equation-wrapper">
-  <div class="stats-tables-container">
-    <div id="stats-ze2" class="stats-container"></div>
+  <p>The following plot shows three different loss functions for the proxy SVAR model. </p>
+    <ul>
+      <li> The loss corresponding to the first proxy: Loss $z_1$ 
+        <div class="equation-wrapper" style="text-align: center;"> 
+          $   
+          loss() = ....
+          $ 
+        </div>
+      </li>
+      <li> The loss corresponding to the second proxy: Loss $z_2$ 
+        <div class="equation-wrapper" style="text-align: center;"> 
+          $   
+          loss() = ....
+          $ 
+        </div></li>
+      <li> The loss corresponding to both proxies jointly: Loss sum 
+        <div class="equation-wrapper" style="text-align: center;"> 
+          $   
+          loss() = ....
+          $ 
+        </div></li>
+    </ul> 
+
+ 
+
+    
+    
+
+  <div class="container">
+    <div class="button-container">
+      <button id="MinDependenciesBtn2" class="orange-button">Estimate</button>
+    </div>
+    <div class="chart-wrapper">
+      <section class="chart-loss-container">
+        <canvas id="lossplot2"  aria-label="Plot of dependencies"></canvas>
+      </section>   
+      <div class="equation-wrapper">
+        <div class="stats-tables-container">
+          <div id="stats-ze2" class="stats-container"></div>
+      </div>
+      </div>
+    </div>
   </div>
-  </div>
-  </div>
-  </div>
-  </section>
+</section>
 
 
 

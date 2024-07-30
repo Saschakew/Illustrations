@@ -135,10 +135,20 @@ function createTableZ2Covariance(u1, u2, z1, z2, phi, color1, color2, color3) {
     </tr>  
     <tr>
       <td class="measure">Critical value:</td>
-      <td class="formula">chisquare(1) = ${(2.706 / T).toFixed(3)}</td>
+      <td class="formula"> ${(2.706 / T).toFixed(3)}</td>
     </tr>  
   </table>
   `; 
+
+  if (loss3 > 2.706 / T) {
+    HTMLInsert += `
+    <p>Reject  null  at 10%.</p>
+    `
+  } else {
+    HTMLInsert += `
+    <p>Not reject null  at  10%.</p>
+    `
+  }
   createTable('stats-ze2', HTMLInsert)
 }
 
