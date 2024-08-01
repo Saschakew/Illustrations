@@ -91,13 +91,13 @@ function initializeVariables() {
   phi = getInputValue('phi');
   B0 = getB(phi0);
   B = getB(phi);
-  insertEqSVARe(B)
+  insertEqSVARe(B);
 
   
   gamma1 = getInputValue('gamma1');
   gamma2 = getInputValue('gamma2');
   gamma3= 1;
-  insertEqZ(gamma1, gamma2, gamma3)
+  insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}');
 
   generateNewData(T); 
  
@@ -184,7 +184,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),  
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
-    (value) => insertEqZ(gamma1, gamma2, gamma3),
+    (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}'),
     (value) => updateLossPlots(
       false, // OnlyPoint
       charts.lossplot,
@@ -211,7 +211,7 @@ function setupEventListeners() {
     (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true), 
     (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
     (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
-    (value) => insertEqZ(gamma1, gamma2, gamma3),
+    (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}'),
     (value) =>   updateLossPlots(
       false, // OnlyPoint
       charts.lossplot,

@@ -46,16 +46,18 @@ function insertEqSVARe(B){
   }
 }
 
-function insertEqZ(gamma1, gamma2, gamma3){
+ 
+
+function insertEqZ2(rho1, rho2, id, zname,etaname){
   const matrixHtml = ` 
   $$
-      z_{t}
+      ${zname}
        =   
-    ${gamma1.toFixed(2)} \\epsilon_{1,t} + ${gamma2.toFixed(2)} \\epsilon_{2,t} + ${gamma3.toFixed(2)} \\eta_t
+    ${rho1.toFixed(2)} \\epsilon_{1,t} + ${rho2.toFixed(2)} \\epsilon_{2,t} + ${etaname} 
   $$ `;
 
  
-const bElement = document.getElementById('current-z'); 
+const bElement = document.getElementById(id); 
 if (bElement) {
   bElement.innerHTML = matrixHtml; 
 }
@@ -64,6 +66,7 @@ if (bElement) {
   MathJax.typeset();
 }
 }
+
 
 function insertEqNG(){ 
 

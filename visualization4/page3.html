@@ -97,7 +97,17 @@
             <input class="InputRange" type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
             <div class="InputValue" id="gamma2Value">0.00</div>
           </div>  
- 
+       
+          <div style="padding: 0px;">
+            <label  class="InputLabel" for="rho1">$\rho_1$  =</label>
+            <input class="InputRange" type="range" id="rho1" min="0" max="5.0" step="0.01" value="1">
+            <div class="InputValue" id="rho1Value">1.00</div>
+          </div> 
+          <div style="padding: 0px;">
+            <label  class="InputLabel" for="rho2">$\rho_2$  =</label>
+            <input class="InputRange" type="range" id="rho2" min="0" max="5.0" step="0.01" value="0">
+            <div class="InputValue" id="rho2Value">0.00</div>
+          </div>  
 
           <div style="padding: 0px;">
           <button id="newDataBtn" class="orange-button">New Data</button>
@@ -129,7 +139,7 @@
       <p> Consider a proxy SVAR with two proxies for the target shock $\epsilon_{1t}$.</p>
      
         <p>The first proxy $z_{ t}$ is given by  $
-          z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
+          z_{ 1t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ 1t}
           $, such that $\gamma_1$ governs the strenght or relevance of the proxy and 
           $\gamma_2$ the exogeneity of the proxy. </p>
         </p>
@@ -137,12 +147,13 @@
         <span id="current-z"></span> 
         </div>
 
-        <p>The second proxy $z_{2t}$ is given by </p>
+        <p>The second proxy $z_{2t}$ is given by $
+          z_{2t} = \rho_1 \epsilon_{1 t} + \rho_2  \epsilon_{2 t} + \eta_{ 2t}
+          $, such that $\rho_1$ governs the strenght or relevance of the proxy and 
+          $\rho_2$ the exogeneity of the proxy. </p>
         </p>
         <div class="equation-wrapper" style="text-align: center;">  
-        $ 
-        z_{2t} = \epsilon_{1 t} +   \eta_{ t}.
-        $
+          <span id="current-z2"></span> 
         </div>
 
   </section>
