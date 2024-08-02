@@ -2,28 +2,27 @@
 
 // UI Initialization
 function setupStickyInputContainer() {
-    // Setup sticky input container
-    const inputContainer = document.querySelector('.input-container');
+  // Setup sticky input container
+  const inputContainer = document.querySelector('.input-container');
+
+  if (inputContainer) {
+    const inputContainerTop = inputContainer.offsetTop;
+    const paddingTop = 0; // Account for the existing padding-top
   
-    if (inputContainer) {
-      const inputContainerTop = inputContainer.offsetTop;
-      const paddingTop = 0; // Account for the existing padding-top
-    
-      function handleScroll() {
-        if (window.pageYOffset > inputContainerTop - paddingTop) {
-          inputContainer.classList.add('sticky');
-          document.body.style.paddingTop = `${inputContainer.offsetHeight + paddingTop}px`;
-        } else {
-          inputContainer.classList.remove('sticky');
-          document.body.style.paddingTop = `${paddingTop}px`;
-        }
+    function handleScroll() {
+      if (window.scrollY > inputContainerTop - paddingTop) {
+        inputContainer.classList.add('sticky');
+        document.body.style.paddingTop = `${inputContainer.offsetHeight + paddingTop}px`;
+      } else {
+        inputContainer.classList.remove('sticky');
+        document.body.style.paddingTop = `${paddingTop}px`;
       }
-    
-      window.addEventListener('scroll', handleScroll);
-    } else {
-      console.log('Input container not found. Sticky functionality not applied.');
     }
   
+    window.addEventListener('scroll', handleScroll);
+  } else {
+    console.log('Input container not found. Sticky functionality not applied.');
+  }
 }
 
   

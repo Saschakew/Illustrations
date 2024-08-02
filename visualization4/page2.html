@@ -39,11 +39,15 @@
 
 </head>
 <body  class="page2">
+  <div id="loading-screen">
+    <div class="loader"></div>
+  </div>
   <header>
     <h1>Proxy Exogeneity Test</h1>
   </header>
 
   <main>
+    
     <section class="input-container">
 
       <div class="menu-bar">
@@ -72,7 +76,6 @@
         <div class="input-content"  >
 
           
-                  
           <div style="padding: 0px;">
             <label class="InputLabel" for="T"  >$T $ =</label>
             <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999"   >
@@ -103,8 +106,9 @@
           
           <div style="padding: 0px;">
           <button id="newDataBtn" class="orange-button">New Data</button>
-        </div>
          </div>
+         
+         
         </div>
       </div>
       
@@ -141,7 +145,7 @@
         $ 
       </div>
 
-        <p> ...innovations....$e_t(B(\phi))=B(\phi)^{-1} u_t$ ....</p>
+        <p> ...innovations....$$e_t(B(\phi))=B(\phi)^{-1} u_t$$ ....</p>
         <ul class="input-list">
           <li>Move the $\phi$  slider to ....</li>
         </ul>
@@ -150,9 +154,10 @@
       </div>
 
 
-        <p>Additionally, consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by  $
+        <p>Additionally, consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by 
+           $$ 
           z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
-          $, such that $\gamma_1$ governs the strenght or relevance of the proxy and 
+          $$  such that $\gamma_1$ governs the strenght or relevance of the proxy and 
           $\gamma_2$ the exogeneity of the proxy. </p>
         </p>        
         <ul class="input-list">
@@ -192,7 +197,7 @@
 
   
   <p>In practice, the structural shocks are of course not observable. However, for a given rotation $\phi$, we can 
-     compute the innovations  $e_t(B(\phi))=B(\phi)^{-1} u_t$. 
+     compute the innovations  $e_t(B(\phi)) $. 
      For the correct rotation $\phi=\phi_0$, the proxy $z_t$ and the non-target innovation $e_{2t}$ should be uncorrelated.
     Therefore, we can use the correlation between the proxy and the non-target innovation to find the correct rotation $\phi_0$.
     The following two plots illustrate the correlation between the proxy and the innovations for the target and non-target shock.
