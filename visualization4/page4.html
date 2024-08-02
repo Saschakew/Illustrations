@@ -125,22 +125,62 @@
   
 
       <section id="introduction" class="text-container">
-        <h2>Testing for Strong Exogeneity in Proxy-Vars</h2>
-        <p>This page explores ....</p>
+        <h2>Strong  Proxy Exogeneity Test</h2>
+        <p>
+          This page shows how the (strong) proxy exogeneity assumption can be tested even if only a single proxy is available.</p>
+    </section>
+
+
+
+    
+    <section id="introduction" class="text-container">
+      <h2>Proxy SVAR </h2>
+
+      <p>....</p>
+
+      
+      <div class="assumption-box">
+        <h5>Definition: Strong Exogeneity</h5>
+        <p> A proxy variable $z_t$ for a target shock $\epsilon_{it}$ is ....</p> 
+      </div> 
+
+      <p>.....</p>
     </section>
 
 
     <section id="introduction" class="text-container">
       <h2>Proxy SVAR </h2>
-      <div class="equation-wrapper" style="text-align: center;"> 
-        $   
-        \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
-        =  
-        \begin{bmatrix} 0.88 & -0.48 \\ 0.48 & 0.88 \end{bmatrix}
-        \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix} 
-        $
-        <span id="current-B"></span> 
+
+      
+      <p>Consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by  $
+        z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
+        $, such that $\gamma_1$ governs the strenght or relevance of the proxy and 
+        $\gamma_2$ the exogeneity of the proxy. </p>
+      <ul class="input-list">
+        <li>Move the $\gamma_1$ and $\gamma_2$ slider to adjust the proxy strenght and proxy exogeneity.</li>
+      </ul>
+      <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-z"></span> 
+      </div>
+
+      <p>Additionally, consider a synthetic proxy $z_{2t} = f(z_{1t})$ equal to  </p>      
+      <div class="equation-wrapper" style="text-align: center;">  
+        $ z_{2t} = z_{1t}^2 $
+      </div>
+    </section>
+        
+
+    <section id="introduction" class="text-container">
+      <h2>Strengh of synthetic proxy </h2>
+
+      <p>...explain synthetic proxy strenght....</p>
+
+
+      <p> Non-Gaussianity of shocks....</p>
+      <ul class="input-list">
+        <li>Move the $s_1$ and $s_2$ slider to adjust the non-Gaussianity of the first and second shock respectively.</li>
+      </ul>
+      <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-nG"></span> 
         </div>
   </section>
@@ -156,6 +196,11 @@
 
    
 <section id="interactive-simulation" class="text-container"> 
+<h2>....</h2>
+
+<p>The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$ with the non-target shock $\epsilon_{2t}$.</p>
+
+
   <div class="container">  
 
     <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
@@ -166,10 +211,13 @@
       <canvas id="scatterPlotZ1Eps2" aria-label="...."></canvas>
     </section> 
   </div>
-</section>
+  
+
+  <p>
+    The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$  with the non-target innovation $e_{2t}$.
+   </p>
 
 
-<section id="interactive-simulation" class="text-container"> 
 <div class="container">  
 
     <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
@@ -185,15 +233,7 @@
 </section>
 
  
-
-
-
-<section id="introduction" class="text-container">
-  <h2>Exogenous Proxies</h2>
-  <p>This page explores ....</p>
-</section>
-
-
+ 
 
 
  
@@ -204,6 +244,30 @@
 
 <section id="interactive-loss" class="text-container">
   <h3>Interactive Loss Calculation</h3> 
+
+  <p>The following plot shows three different loss functions for the proxy SVAR model. </p>
+  <ul>
+    <li> The loss corresponding to the first proxy: Loss $z_1$ 
+      <div class="equation-wrapper" style="text-align: center;"> 
+        $   
+        loss() = ....
+        $ 
+      </div>
+    </li>
+    <li> The loss corresponding to the second proxy: Loss $z_2$ 
+      <div class="equation-wrapper" style="text-align: center;"> 
+        $   
+        loss() = ....
+        $ 
+      </div></li>
+    <li> The loss corresponding to both proxies jointly: Loss sum 
+      <div class="equation-wrapper" style="text-align: center;"> 
+        $   
+        loss() = ....
+        $ 
+      </div></li>
+  </ul> 
+
 
 <div class="container">
 <div class="button-container">

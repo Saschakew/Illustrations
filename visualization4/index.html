@@ -171,6 +171,9 @@
               
         <p>In the simplified SVAR model, the reduced form shocks $u_t$ can 
           be thought of a rotation with angle $\phi_0$<span class="info-icon" data-info="To be precise, we can transform $\phi_0$ using $\phi_0 * (180 / π)$ to get the angle in degree. ">i</span> of the structural form shocks $\epsilon_t$:
+          <ul class="input-list">
+            <li>Move the $\phi_0$ slider to ....</li>
+          </ul>
           <div class="equation-wrapper" style="text-align: center;"> 
           $   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
           =  
@@ -200,15 +203,28 @@
       B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}
       $
       </div>
-      and get the corresponding innovations:   
-      <div class="equation-wrapper" style="text-align: center;"> 
-      $
+      and get the corresponding innovations  $
       e_t(B(\phi)) = B(\phi)^{-1} u_t 
-      $
+      $ 
+      such that   
+      <div class="equation-wrapper" style="text-align: center;"> 
+        $   
+        \begin{bmatrix} e_{1,t} \\ e_{2,t} \end{bmatrix} 
+        =  
+        \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
+        \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
+        $
       </div>
       These innovations represent the shocks that would yield $u_t$ if the true angle of the data-generating process $\phi_0$ were equal to the chosen angle $\phi$.
       Specifically, for $\phi=\phi_0$ we get $e_t(B(\phi_0)) = \epsilon_t$.
       </p>
+
+      <ul class="input-list">
+        <li>Move the $\phi$ slider to ....</li>
+      </ul>
+      <div class="equation-wrapper" style="text-align: center;"> 
+        <span id="current-B"></span>  
+        </div>
       </section>
 
 
@@ -217,10 +233,7 @@
     <section id="interactive-simulation" class="text-container">
       <h3>Interactive Simulation</h3>
       
-      <p>
-      Move the $\phi_0$ and $\phi$ slider   to see how $B_0(\phi_0)$ and $B(\phi)$ rotate the reduced form shocks $u_t$ and innovations $e_t$. 
-      </p>
-
+   
       <p>
       Note that all rotations $\phi$ lead to uncorrelated innovations. 
       Therefore, the assumption of unccorelated shocks can not be used to identify the SVAR.
@@ -230,16 +243,7 @@
 
 
 
-      <div class="equation-wrapper" style="text-align: center;"> 
-      $   
-      \begin{bmatrix} e_{1,t} \\ e_{2,t} \end{bmatrix} 
-      =  
-      \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
-      \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
-      $
-      <span id="current-B"></span> 
-      <span id="current-nG"></span>
-      </div>
+
       
     
   <div class="container">
