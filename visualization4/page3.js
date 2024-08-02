@@ -75,9 +75,13 @@ function initializeApp() {
     MathJax.typeset();
   }
   
-  window.addEventListener('load', () => {
+  if (document.readyState === 'complete') {
     document.getElementById('loading-screen').style.display = 'none';
-  });
+  } else {
+    window.addEventListener('load', () => {
+      document.getElementById('loading-screen').style.display = 'none';
+    });
+  }
 }
 
 
