@@ -135,7 +135,7 @@ function setupEventListeners() {
           lineStyle: 'solid'  
         } 
       ],
-      'none'
+      ''
     ), 
  
   );
@@ -172,8 +172,23 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true);
     updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true);
     updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true);
-    updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true);
-    updateLossPlot(OnlyPoint=false,charts.lossplot,phi0,phi,lossZ1,'',u1, u2,z1,z2); 
+    updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true); 
+    updateLossPlots(
+      false, // OnlyPoint
+      charts.lossplot,
+      phi0,
+      phi, 
+      [
+        {
+          lossFunction: lossZ1,
+          extraArgs: [u1, u2,z1,z2 ,W],
+          label: 'Loss Function 1',
+          color: color1,
+          lineStyle: 'solid'  
+        } 
+      ],
+      ''
+    );
   })
 
   createEventListener('gamma1', 
