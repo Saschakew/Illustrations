@@ -92,8 +92,8 @@
        
           <div style="padding: 0px;">
             <label  class="InputLabel" for="gamma1">$\gamma_1$  =</label>
-            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="1">
-            <div class="InputValue" id="gamma1Value">1.00</div>
+            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="2">
+            <div class="InputValue" id="gamma1Value">2.00</div>
           </div> 
           <div style="padding: 0px;">
             <label  class="InputLabel" for="gamma2">$\gamma_2$  =</label>
@@ -222,17 +222,18 @@
 
 
 <section id="interactive-loss" class="text-container">
-  <h3>Interactive Loss Calculation</h3> 
+  <h3>Interactive Loss Illustration</h3> 
   
   <p>The following plot shows the loss equal to the covariance of the proxy and non-target innovation $e_{2t}$ for different $\phi$ values.
   </p>
 
-  <div class="equation-wrapper" style="text-align: center;"> 
+  <div class="equation-wrapper" style="text-align: center; border-color: rgb(75, 192, 192); color: rgb(75, 192, 192);"> 
     $   
-    loss() = ....
+    loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_t e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_t e_{2t}(\phi) \end{bmatrix}'
     $ 
   </div>
 
+  <p> The weighting matrix $W$...</p>
 
 
 <div class="container">

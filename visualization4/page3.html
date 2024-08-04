@@ -92,8 +92,8 @@
        
           <div style="padding: 0px;">
             <label  class="InputLabel" for="gamma1">$\gamma_1$  =</label>
-            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="1">
-            <div class="InputValue" id="gamma1Value">1.00</div>
+            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="2">
+            <div class="InputValue" id="gamma1Value">2.00</div>
           </div> 
           <div style="padding: 0px;">
             <label  class="InputLabel" for="gamma2">$\gamma_2$  =</label>
@@ -103,8 +103,8 @@
        
           <div style="padding: 0px;">
             <label  class="InputLabel" for="rho1">$\rho_1$  =</label>
-            <input class="InputRange" type="range" id="rho1" min="0" max="5.0" step="0.01" value="1">
-            <div class="InputValue" id="rho1Value">1.00</div>
+            <input class="InputRange" type="range" id="rho1" min="0" max="5.0" step="0.01" value="2">
+            <div class="InputValue" id="rho1Value">2.00</div>
           </div> 
           <div style="padding: 0px;">
             <label  class="InputLabel" for="rho2">$\rho_2$  =</label>
@@ -168,6 +168,15 @@
   </section>
 
  
+  <section id="introduction" class="text-container">
+    <h2> Proxy Exogeneity Test</h2>
+    <p>
+      .....</p>
+
+      <div class="equation-wrapper" style="text-align: center;">  
+        $ H_0: ....$
+      </div>
+  </section>
 
 
 
@@ -221,27 +230,31 @@
   <p>The following plot shows three different loss functions for the proxy SVAR model. </p>
     <ul>
       <li> The loss corresponding to the first proxy: Loss $z_1$ 
-        <div class="equation-wrapper" style="text-align: center;"> 
+        <div class="equation-wrapper" style="text-align: center; border-color: rgb(75, 192, 192); color: rgb(75, 192, 192);"> 
           $   
-          loss() = ....
+          loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix}'
           $ 
-        </div>
+        </div> 
       </li>
       <li> The loss corresponding to the second proxy: Loss $z_2$ 
-        <div class="equation-wrapper" style="text-align: center;"> 
+        
+        <div class="equation-wrapper" style="text-align: center; border-color: rgb(41, 128, 185); color: rgb(41, 128, 185);"> 
           $   
-          loss() = ....
+          loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
           $ 
-        </div></li>
+        </div> 
+      </li>
       <li> The loss corresponding to both proxies jointly: Loss sum 
-        <div class="equation-wrapper" style="text-align: center;"> 
+        <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
           $   
-          loss() = ....
+          loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
           $ 
-        </div></li>
+        </div> 
+      </li>
     </ul> 
 
  
+    <p>Test.....</p>
 
     
     

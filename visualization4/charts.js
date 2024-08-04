@@ -7,11 +7,12 @@ function getScatterPlotConfig() {
         data: [],
         backgroundColor: 'rgba(255, 165, 0, 0.6)',
         pointRadius: 5,
-        pointHoverRadius: 7
+        pointHoverRadius: 7,
+        pointHoverBackgroundColor: 'rgba(255, 165, 0, 0.8)',
       }, {
         label: 'Selected Point',
         data: [],
-        backgroundColor: 'red',
+        backgroundColor: 'rgb(155, 89, 182)',
         pointRadius: 7,
         pointHoverRadius: 9
       }]
@@ -26,7 +27,10 @@ function getScatterPlotConfig() {
           text: '',
           font: { size: 18 }
         },
-        legend: { display: false }
+        legend: { display: false },
+        tooltip: {
+          enabled: false  // This disables the tooltip (hover effect)
+        }
       },
       scales: {
         x: {
