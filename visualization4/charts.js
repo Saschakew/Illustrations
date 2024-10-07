@@ -280,76 +280,85 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
 function updateLossPlot(OnlyPoint, chart, phi0, phi, lossFunction, animate, ...args) {
   if (!chart) return;
   
-  const updateChart = () => {
-    if (OnlyPoint) {
-      // Update only the current phi point
-      const currentLoss = lossFunction(...args, phi);
-      chart.data.datasets[1].data = [{x: phi, y: currentLoss}];
-    } else {
-      // Full update
-      const xValues = Array.from({length: 118}, (_, i) => i * 0.02); // Reduced number of points
-      const yValues = xValues.map(x => lossFunction(...args, x));
-      
-      chart.data.labels = xValues.map(x => x.toFixed(2));
-      chart.data.datasets[0].data = xValues.map((x, i) => ({x, y: yValues[i]}));
-      
-      // Update current phi point
-      const currentLoss = lossFunction(...args, phi);
-      chart.data.datasets[1].data = [{x: phi, y: currentLoss}];
-      
-      // Update phi0 line
-      const yMin = Math.min(0, ...yValues);
-      const yMax = Math.max(0.5, ...yValues);
-      chart.data.datasets[2] = {
+  if (OnlyPoint == true) {
+    // Update the current phi point
+    const currentLoss = lossFunction(...args, phi);
+    chart.data.datasets[1].data = [{
+      x: phi,
+      y: currentLoss
+    }];
+  } else {
+    // Update the current phi point
+    const currentLoss = lossFunction(...args, phi);
+    chart.data.datasets[1].data = [{
+      x: phi,
+      y: currentLoss
+    }];
+
+    const xValues = Array.from({length: 236}, (_, i) => i * 0.01);
+    const yValues = xValues.map(x => lossFunction(...args, x));
+    
+    chart.data.labels = xValues.map(x => x.toFixed(2));
+    chart.data.datasets[0].data = xValues.map((x, i) => ({x: x, y: yValues[i]}));
+    
+    // Update the phi0 point 
+    const yMin = Math.min(0, ...chart.data.datasets[0].data.map(point => point.y));
+    const yMax = Math.max(0.5, ...chart.data.datasets[0].data.map(point => point.y));
+    
+    chart.data.datasets[2] = {
+      type: 'line',
+      data: [
+        { x: phi0, y: yMin },
+        { x: phi0, y: yMax }
+      ],
+      borderColor: '#ffa500',
+      borderWidth: 2,
+      pointRadius: 0,
+      animation: false
+    };
+    
+    chart.options.annotation = {
+      annotations: [{
         type: 'line',
-        data: [{x: phi0, y: yMin}, {x: phi0, y: yMax}],
+        mode: 'vertical',
+        scaleID: 'x',
+        value: phi0,
         borderColor: '#ffa500',
         borderWidth: 2,
-        pointRadius: 0,
-        animation: false
-      };
-      
-      // Update chart options
-      Object.assign(chart.options, {
-        animation: animate ? {duration: 150, easing: 'easeOutQuad'} : false,
-        annotation: {
-          annotations: [{
-            type: 'line',
-            mode: 'vertical',
-            scaleID: 'x',
-            value: phi0,
-            borderColor: '#ffa500',
-            borderWidth: 2,
-            label: {enabled: false}
-          }]
-        },
-        scales: {
-          x: {
-            type: 'linear',
-            position: 'bottom',
-            title: {display: true, text: 'φ'},
-            min: 0,
-            max: 2.35,
-            ticks: {
-              callback: value => value.toFixed(2),
-              maxTicksLimit: 10
-            }
-          },
-          y: {
-            title: {display: true, text: 'Loss'},
-            min: 0,
-            max: Math.max(0.5, yMax)
-          }
+        label: {
+          enabled: false
         }
-      });
-    }
-  };
-
-  // Use requestAnimationFrame for smoother updates
-  requestAnimationFrame(() => {
-    updateChart();
-    chart.update(animate ? 'active' : 'none');
-  });
+      }]
+    };
+    
+    chart.options.scales.x = {
+      type: 'linear',
+      position: 'bottom',
+      title: {
+        display: true,
+        text: 'φ'
+      },
+      min: 0,
+      max: 2.35,
+      ticks: {
+        callback: function(value) {
+          return value.toFixed(2);
+        },
+        maxTicksLimit: 10
+      }
+    };
+    
+    chart.options.scales.y = {
+      title: {
+        display: true,
+        text: 'Loss'
+      },
+      min: 0,
+      max: Math.max(0.5, ...chart.data.datasets.flatMap(dataset => dataset.data.map(point => point.y)))
+    };
+  }
+  
+  chart.update(animate);
 }
 
 function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate = false) {
