@@ -228,7 +228,7 @@ function setupEventListeners() {
           lineStyle: 'solid'  
         } 
       ],
-      'none'
+      ''
     ),    
   );
 
@@ -255,7 +255,7 @@ function setupEventListeners() {
           lineStyle: 'solid'  
         } 
       ],
-      'none'
+      ''
     ), 
   );
  
