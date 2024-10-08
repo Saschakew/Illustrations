@@ -25,7 +25,67 @@ function setupStickyInputContainer() {
   }
 }
 
-  
+function positionPopup(popup, popupContent) {
+  const inputContainer = document.querySelector('.input-container');
+  const inputContainerRect = inputContainer.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const popupHeight = popupContent.offsetHeight;
+
+  let topPosition = Math.max(inputContainerRect.bottom + 10, (viewportHeight - popupHeight) / 2);
+  topPosition = Math.min(topPosition, viewportHeight - popupHeight - 10);
+
+  popupContent.style.top = `${topPosition}px`;
+  popupContent.style.transform = 'translateX(-50%)';
+}
+
+function setupPopup(popupIds) {
+  popupIds.forEach(id => {
+    const label = document.getElementById(`${id}-label`);
+    const popup = document.getElementById(`${id}-popup`);
+    const closeBtn = popup.querySelector('.close');
+    const popupContent = popup.querySelector('.popup-content');
+
+    // Ensure popup is hidden on page load
+    popup.style.display = 'none';
+
+    label.addEventListener('click', function(event) {
+      event.preventDefault();
+      popup.style.display = 'block';
+      positionPopup(popup, popupContent);
+    });
+
+    closeBtn.addEventListener('click', function() {
+      popup.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+      if (event.target == popup) {
+        popup.style.display = 'none';
+      }
+    });
+  });
+
+  window.addEventListener('resize', function() {
+    popupIds.forEach(id => {
+      const popup = document.getElementById(`${id}-popup`);
+      const popupContent = popup.querySelector('.popup-content');
+      if (popup.style.display === 'block') {
+        positionPopup(popup, popupContent);
+      }
+    });
+  });
+
+  window.addEventListener('scroll', function() {
+    popupIds.forEach(id => {
+      const popup = document.getElementById(`${id}-popup`);
+      const popupContent = popup.querySelector('.popup-content');
+      if (popup.style.display === 'block') {
+        positionPopup(popup, popupContent);
+      }
+    });
+  });
+}
+
 function setupInputContentWrapper() {
   const inputToggle = document.getElementById('input-toggle');
   const inputContentWrapper = document.querySelector('.input-content-wrapper');

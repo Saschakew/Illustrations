@@ -171,6 +171,9 @@ function setupEventListeners() {
 
  
 
+  // Setup popups for all input labels
+  const popupIds = ['T', 'phi', 'phi0'];
+  setupPopup(popupIds)  
  
  
  

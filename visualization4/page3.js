@@ -350,7 +350,7 @@ function setupEventListeners() {
    
   
   createEventListener('rho1', 
-    (value) => document.getElementById('gamma1Value').textContent = value.toFixed(2),
+    (value) => document.getElementById('rho1Value').textContent = value.toFixed(2),
     (value) => rho1 = value,  
     (value) => z2 =  eta2.map((eta, i) => rho1 * epsilon1[i] + rho2 * epsilon2[i] + 1* eta),
     (value) =>statsZE1 = calculateMoments(z1, e2), 
@@ -533,6 +533,11 @@ function setupEventListeners() {
             // Implement any error handling or user notification here
         }
     });
+
+  // Setup popups for all input labels
+  const popupIds = ['T', 'phi', 'gamma1', 'gamma2',  'rho1', 'rho2'];
+  setupPopup(popupIds)  
+  
 }
 
 

@@ -542,6 +542,14 @@ function setupEventListeners() {
             // Implement any error handling or user notification here
         }
     });
+
+
+
+  // Setup popups for all input labels
+  const popupIds = ['T', 'phi', 's1', 's2', 'gamma1', 'gamma2'];
+  setupPopup(popupIds)  
+
+
 }
 
 

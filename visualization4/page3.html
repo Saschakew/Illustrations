@@ -76,44 +76,63 @@
         <div class="input-content"  >
 
           
-          <div style="padding: 0px;">
-            <label class="InputLabel" for="T"  >$T $ =</label>
-            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999"   >
-            <div class="InputValue" id="TValue"  >250</div>
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span> 
+                <span class="InputValue" id="TValue"> 250</span>
+               </label> 
+            </div>
+            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999">
           </div>
-        
 
-          <div style="padding: 0px;">
-            <label  class="InputLabel" for="phi" >$\phi$  =</label>
-            <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0"  >
-            <div class="InputValue" id="phiValue"     >0.00</div>
-          </div> 
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span>
+                <span class="InputValue" id="phiValue">  0.00</span>
+              </label> 
+            </div>
+            <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
+          </div>
            
        
-          <div style="padding: 0px;">
-            <label  class="InputLabel" for="gamma1">$\gamma_1$  =</label>
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="gamma1" id="gamma1-label" title="Click for more information"><span>$\gamma_1 = $</span>
+                <span class="InputValue" id="gamma1Value">  2.00</span>
+              </label> 
+            </div>
             <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="2">
-            <div class="InputValue" id="gamma1Value">2.00</div>
-          </div> 
-          <div style="padding: 0px;">
-            <label  class="InputLabel" for="gamma2">$\gamma_2$  =</label>
-            <input class="InputRange" type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
-            <div class="InputValue" id="gamma2Value">0.00</div>
-          </div>  
-       
-          <div style="padding: 0px;">
-            <label  class="InputLabel" for="rho1">$\rho_1$  =</label>
-            <input class="InputRange" type="range" id="rho1" min="0" max="5.0" step="0.01" value="2">
-            <div class="InputValue" id="rho1Value">2.00</div>
-          </div> 
-          <div style="padding: 0px;">
-            <label  class="InputLabel" for="rho2">$\rho_2$  =</label>
-            <input class="InputRange" type="range" id="rho2" min="0" max="5.0" step="0.01" value="0">
-            <div class="InputValue" id="rho2Value">0.00</div>
-          </div>  
+          </div>
 
-          <div style="padding: 0px;">
-          <button id="newDataBtn" class="orange-button">New Data</button>
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="gamma2" id="gamma2-label" title="Click for more information"><span>$\gamma_2 = $</span>
+                <span class="InputValue" id="gamma2Value">  0.00</span>
+              </label> 
+            </div>
+            <input class="InputRange" type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
+          </div>
+       
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="rho1" id="rho1-label" title="Click for more information"><span>$\rho_1 = $</span>
+                <span class="InputValue" id="rho1Value">  2.00</span>
+              </label> 
+            </div>
+            <input class="InputRange" type="range" id="rho1" min="0" max="5.0" step="0.01" value="2">
+          </div>
+
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="rho2" id="rho2-label" title="Click for more information"><span>$\rho_2 = $</span>
+                <span class="InputValue" id="rho2Value">  0.00</span>
+              </label> 
+            </div>
+            <input class="InputRange" type="range" id="rho2" min="0" max="5.0" step="0.01" value="0">
+          </div>
+
+          <div class="input-wrapper"> 
+            <button id="newDataBtn" class="orange-button">New Data</button>
           </div> 
            
         </div>
@@ -121,7 +140,56 @@
       
     </section>
 
-
+    <div class="popup-container">
+      <div id="T-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Sample Size (T)</h3>
+          <p>T represents the sample size or the number of observations in your dataset. A larger sample size generally provides more accurate estimates and increases the power of statistical tests.</p>
+        </div>
+      </div>
+    
+      <div id="phi-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Phi (φ)</h3>
+          <p>Phi represents a parameter in the model. It can affect the relationship between variables or the strength of certain effects in the system.</p>
+        </div>
+      </div>
+    
+    
+      <div id="rho1-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Rho 2 (...)</h3>
+          <p>...</p>
+        </div>
+      </div>
+    
+      <div id="rho2-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Rho 2 (...)</h3>
+          <p>...</p>
+        </div>
+      </div>
+    
+      <div id="gamma1-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Gamma 1 (γ1)</h3>
+          <p>Gamma 1 governs the strength or relevance of the proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
+        </div>
+      </div>
+    
+      <div id="gamma2-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Gamma 2 (γ2)</h3>
+          <p>Gamma 2 affects the exogeneity of the proxy. A value closer to zero indicates a more exogenous proxy, while larger values suggest potential endogeneity issues.</p>
+        </div>
+      </div>
+    </div>
 
  
 

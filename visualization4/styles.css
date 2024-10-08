@@ -122,39 +122,8 @@ a {
   max-width: 750px;
 }
 
-.info-icon {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  background-color: #ffa500;
-  color: white;
-  border-radius: 50%;
-  text-align: center;
-  line-height: 20px;
-  font-style: italic;
-  cursor: pointer; 
-  font-size: 20px;
-  transition: background-color 0.3s;
-}
+ 
 
-.info-icon:hover {
-  background-color: #ff8c00;
-}
-
-.info-popup {
-  display: none;
-  position: absolute;
-  background-color: #fff;
-  border: 1px solid #ffa500;
-  padding: 12px;
-  border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  z-index: 1000;
-  max-width: 300px;
-  font-size: 14px;
-  line-height: 1.4;
-  color: #333;
-} 
 
 
 
@@ -238,13 +207,11 @@ a {
 }
 
 .InputLabel,
-.InputRange,
-.InputValue {
+.InputRange  {
   margin: 0px !important;
 }
 
-.InputLabel, 
-.InputValue {
+.InputLabel  {
   padding: 0px !important;
 } 
 
@@ -321,13 +288,6 @@ button {
 
  
 
-/* Specific Input Styles */
-.T-input {
-  width: 50px;
-  margin-left: 0;
-  padding: 5px;
-  font-size: 14px;
-}
 
  
 
@@ -669,4 +629,92 @@ a:hover {
   nav ul li a {
     font-size: 1.2em;
   }
+}
+
+.popup {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  backdrop-filter: blur(5px);
+}
+
+.popup-content {
+  background-color: #f8f8f8;
+  padding: 20px;
+  border: 1px solid #ffa500;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.popup-content h3 {
+  color: #333;
+  margin-top: 0;
+  font-size: 1.2em;
+}
+
+.popup-content p {
+  color: #666;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close:hover,
+.close:focus {
+  color: #ffa500;
+  text-decoration: none;
+}
+
+.InputLabel {
+  cursor: help;
+}
+
+.InputLabel:hover {
+  color: #ff8c00;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.label-value-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.InputLabel {
+  margin-right: 5px;
+}
+ 
+
+.InputRange {
+  width: 100%;
 }
