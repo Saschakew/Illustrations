@@ -133,11 +133,11 @@ function createTableZ2Covariance(u1, u2, z1, z2, phi, color1, color2, color3) {
       <td class="formula">  ${loss2.toFixed(3)}</td>
     </tr>   
     <tr>
-      <td class="measure"><span style="color: ${color3};">Loss sum:</span> </td>
+      <td class="measure"><span style="color: ${color3};">Loss:</span> </td>
       <td class="formula">  ${loss3.toFixed(3)}</td>
     </tr>  
     <tr>
-      <td class="measure">Critical value:</td>
+      <td class="measure">Critical value (10%):</td>
       <td class="formula"> ${(2.706 / T).toFixed(3)}</td>
     </tr>  
   </table>
@@ -145,11 +145,11 @@ function createTableZ2Covariance(u1, u2, z1, z2, phi, color1, color2, color3) {
 
   if (loss3 > 2.706 / T) {
     HTMLInsert += `
-    <p>Reject  null  at 10%.</p>
+    <p>Reject  null  at 10% level.</p>
     `
   } else {
     HTMLInsert += `
-    <p>Not reject null  at  10%.</p>
+    <p>Not reject null  at  10% level.</p>
     `
   }
   createTable('stats-ze2', HTMLInsert)

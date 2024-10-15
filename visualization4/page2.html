@@ -79,10 +79,10 @@
           <div class="input-wrapper">
             <div class="label-value-wrapper">
               <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span> 
-                <span class="InputValue" id="TValue"> 250</span>
+                <span class="InputValue" id="TValue"> 500</span>
                </label> 
             </div>
-            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999">
+            <input class="InputRange" type="range" id="T" step="1" value="500" min="250" max="999">
           </div>
 
           <div class="input-wrapper">
@@ -128,16 +128,22 @@
       <div id="T-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Sample Size (T)</h3>
-          <p>T represents the sample size or the number of observations in your dataset. A larger sample size generally provides more accurate estimates and increases the power of statistical tests.</p>
+          <h3>Sample Size: $T$</h3>
+          <p>T represents the sample size or the number of observations in the dataset.</p>
         </div>
       </div>
-    
+
+
+      
       <div id="phi-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Phi (φ)</h3>
-          <p>Phi represents a parameter in the model. It can affect the relationship between variables or the strength of certain effects in the system.</p>
+          <h3>Rotation angle: $\phi$</h3>
+          <p>In the bivairate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced form shocks $u_t$   
+            are a rotation with an angle of   $\phi_0  (180 / π)$   degree of the structural form shocks $\epsilon_t$. 
+            On this page the rotation is fixed at $\phi_0=0.5$.
+            The rotation   $\phi $ allows to calculate the innovations $e_t(B(\phi)) = B(\phi)^{-1} u_t$ as a rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.
+        </p>
         </div>
       </div>
     
@@ -146,16 +152,16 @@
       <div id="gamma1-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Gamma 1 (γ1)</h3>
-          <p>Gamma 1 governs the strength or relevance of the proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
+          <h3>Proxy strenght: $\gamma_1$</h3>
+          <p>The parameter  $\gamma_1$ governs the strength or relevance of the proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
         </div>
       </div>
     
       <div id="gamma2-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Gamma 2 (γ2)</h3>
-          <p>Gamma 2 affects the exogeneity of the proxy. A value closer to zero indicates a more exogenous proxy, while larger values suggest potential endogeneity issues.</p>
+          <h3>Proxy exogeneity:  $\gamma_2$</h3>
+          <p>The parameter  $\gamma_2$ governs the exogeneity of the proxy. A value of zero indicates an exogenous proxy, while larger values lead to an endogenous proxy.</p>
         </div>
       </div>
     </div>
@@ -193,23 +199,27 @@
         $ 
       </div>
 
-        <p> ...innovations....$$e_t(B(\phi))=B(\phi)^{-1} u_t$$ ....</p>
+        <p> The innovations $e_t(B(\phi))$ are given by the rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.</p>
         <ul class="input-list">
-          <li>Move the $\phi$  slider to ....</li>
+          <li> 
+          Move the $\phi$ slider to adjust the angle of the rotation. Observe how the different rotations lead to different 
+          correlations between the proxy and the innovation $e_{t}$ in the plots below.
+         </li>
         </ul>
         <div class="equation-wrapper" style="text-align: center;"> 
         <span id="current-B"></span> 
       </div>
 
 
-        <p>Additionally, consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by 
+        <p>Consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by 
            $$ 
           z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
           $$  such that $\gamma_1$ governs the strenght or relevance of the proxy and 
           $\gamma_2$ the exogeneity of the proxy. </p>
         </p>        
         <ul class="input-list">
-          <li>Move the $\gamma_1$ and $\gamma_2$ slider to adjust the proxy   strenght and   proxy exogeneity.</li>
+          <li>Move the $\gamma_1$ and $\gamma_2$ slider to adjust the proxy   strenght and   proxy exogeneity. 
+            Observe how the proxy strenght and exogeneity affect the correlation of the proxy and the structural shocks $\epsilon_t$ and the innovations $e_{t}$ in the plots below. </li>
         </ul>
         <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-z"></span> 
@@ -233,7 +243,10 @@
     The right plot shows the exogeneity of the proxy which should be uncorrelated with the non-target shock.
   </p>
 
-  
+  <ul class="input-list">
+    <li>Move the $\gamma_1$ and observe how proxy strength affects the correlation of the proxy with the target shock $\epsilon_{1t}$. </li>
+    <li>Move the $\gamma_2$ and observe how proxy exogeneity affects the correlation of the proxy with the non-target shock $\epsilon_{2t}$. </li>
+  </ul>
   <div class="container">   
     <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
       <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of proxy and structural target shock."></canvas>
@@ -251,6 +264,12 @@
     The following two plots illustrate the correlation between the proxy and the innovations for the target and non-target shock.
 
   </p>
+
+  <ul class="input-list">
+    <li>Move the $\phi$ slider to adjust the rotation. Observe how the correlation between the proxy and the non-target innovation changes. 
+       If the proxy is relevant and exogenous, the correlation of the proxy and the non-target innovation $e_2$ should be zero at $\phi=\phi_0=0.5$.
+       For different values of $\phi$  the proxy and the non-target innovation $e_2$ will be correlated. </li>
+  </ul>
 
   <div class="container">   
     <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
@@ -281,8 +300,16 @@
     $ 
   </div>
 
-  <p> The weighting matrix $W$...</p>
+  <p> The loss uses the asymptotically efficient weighting matrix $W=S^{-1}$ where $S$ is the variance covariance matrix of the moment conditions.   </p>
 
+  <ul class="input-list">
+    <li>Hit "Estimate" to find the $\phi$ that minimizes the loss.  </li>
+    <li>Observe how the loss depends on the proxy strenght $\gamma_1$. A low relevance leads to a flat loss and a high relevance to a peaked loss. </li>
+    <li>Observe how the minima of the loss depends on the proxy exogeneity $\gamma_2$. The orange line indicates the rotation angle of the DGP, $\phi_0=0.5$.
+       For an exogenous proxy, $\gamma_2=0$, the loss is minimized at $\phi=\phi_0$. 
+      For an endogenous proxy, $\gamma_2 \neq 0$, the loss is minimized at a value of $\phi$ different from $\phi_0$.
+      This illustrates how   proxy endogeneity leads to biased estimates of the SVAR. </li>
+  </ul>
 
 <div class="container">
 <div class="button-container">
@@ -302,7 +329,13 @@
     
 
 
-
+  <div class="text-container" id="next-steps">
+    <h3>Next steps</h3>
+    <p>
+      The <a href="page3.html">next</a> page illustrates how the proxy exogeneity assumption can be tested if two proxies are available.
+    </p>
+    
+  </div>
  
 
 

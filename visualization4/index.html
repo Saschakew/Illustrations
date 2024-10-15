@@ -90,6 +90,15 @@
 
           <div class="input-wrapper">
             <div class="label-value-wrapper">
+              <label class="InputLabel" for="phi0" id="phi0-label" title="Click for more information"><span>$\phi_0 = $ </span>
+                <span class="InputValue" id="phi0Value">  0.00</span>
+              </label> 
+            </div>
+            <input class="InputRange" type="range" id="phi0" min="0" max="2.35" step="0.01" value="0">
+          </div>
+
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
               <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span>
                 <span class="InputValue" id="phiValue">  0.00</span>
               </label> 
@@ -97,14 +106,6 @@
             <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
           </div>
            
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="phi0" id="phi0-label" title="Click for more information"><span>$\phi = $ </span>
-                <span class="InputValue" id="phi0Value">  0.00</span>
-              </label> 
-            </div>
-            <input class="InputRange" type="range" id="phi0" min="0" max="2.35" step="0.01" value="0">
-          </div>
            
     
 
@@ -121,24 +122,28 @@
       <div id="T-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Sample Size (T)</h3>
-          <p>T represents the sample size or the number of observations in your dataset. A larger sample size generally provides more accurate estimates and increases the power of statistical tests.</p>
+          <h3>Sample Size: $T$</h3>
+          <p>T represents the sample size or the number of observations in the dataset.</p>
         </div>
       </div>
     
-      <div id="phi-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Phi (φ)</h3>
-          <p>Phi represents a parameter in the model. It can affect the relationship between variables or the strength of certain effects in the system.</p>
-        </div>
-      </div>
-      
       <div id="phi0-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Phi0 (φ)</h3>
-          <p>Phi represents .........</p>
+          <h3>Rotation angle: $\phi_0$</h3>
+          <p>In the bivairate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced form shocks $u_t$   
+          are a rotation with an angle of   $\phi_0  (180 / π)$   degree of the structural form shocks $\epsilon_t$.
+        </div>
+      </div>
+      
+      <div id="phi-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Rotation angle: $\phi$</h3>
+          <p>In the bivairate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced form shocks $u_t$   
+            are a rotation with an angle of   $\phi_0  (180 / π)$   degree of the structural form shocks $\epsilon_t$. 
+          The rotation   $\phi $ allows to calculate the innovations $e_t(B(\phi)) = B(\phi)^{-1} u_t$ as a rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.
+        </p>
         </div>
       </div>
  
@@ -155,8 +160,19 @@
             it illustrates the test for proxy exogeneity in Bruns and Keweloh (2024).</p>  
       </section>
 
+      <section id="structure" class="text-container">
+        <h3>The structure of the guide</h3>
+        <p>The guide is structured as follows:</p>
+        <ul  >
+          <li>The <a href="index.html">first</a> page introduces the SVAR model and the identification problem.</li>
+          <li>The <a href="page2.html">second</a> page illustrates how a proxy allows to identify the SVAR.</li>
+          <li>The <a href="page3.html">third</a> page illustrates how the proxy exogeneity assumption can be tested if two proxies are available.</li>
+          <li>The <a href="page4.html">fourth</a> page introduces the test for proxy exogeneity in Bruns and Keweloh (2024).</li>
+        </ul>
+      </section>
+
       <section id="svar-model" class="text-container"> 
-        <h3>The SVAR Model</h3>
+        <h3>The SVAR model</h3>
         <p>In a SVAR a vector of time series 
           $$ y_t = [y_{1t},...,y_{nt}]'$$
           is explained by its own past and a vector of structural shocks 
@@ -173,7 +189,7 @@
 
       
     <section id="assumptions" class="text-container"> 
-      <h3>Simplifying Assumptions</h3>
+      <h3>Simplifying assumptions</h3>
       <p>The VAR(p) $$ y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t   $$  can be estimated by OLS. To simplify, consider an SVAR(0) such that the 
         reduced form shocks $u_t$ can be thought of as observable random variables equal to an unknown linear combination $B_0$ of unknown structural form shocks $\epsilon_t$.  
       </p>
@@ -214,12 +230,12 @@
 
  
       <section  id="shock-relationship" class="text-container">
-        <h3>The Relationship Between Reduced and Structural Form Shocks</h3>
+        <h3>The relationship between reduced and structural form shocks</h3>
               
         <p>In the simplified SVAR model, the reduced form shocks $u_t$ can 
-          be thought of a rotation with angle $\phi_0$<span class="info-icon" data-info="To be precise, we can transform $\phi_0$ using $\phi_0 * (180 / π)$ to get the angle in degree. ">i</span> of the structural form shocks $\epsilon_t$:
+          be thought of a rotation with an angle of  $\phi_0  (180 / π)$ degree of the structural form shocks $\epsilon_t$:
           <ul class="input-list">
-            <li>Move the $\phi_0$ slider to ....</li>
+            <li>Move the $\phi_0$ slider to adjust the angle of the rotation and observe how the reduced form shocks $u_t$ change in the interactive simulation at the bottom of the page.</li>
           </ul>
           <div class="equation-wrapper" style="text-align: center;"> 
           $   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
@@ -235,12 +251,12 @@
 
       
     <section id="identification-challenge" class="text-container">
-      <h3>Structural shocks and Innovations</h3>
+      <h3>Structural shocks and innovations</h3>
 
        
      In a given application, we neither know the rotation matrix $B(\phi_0)$ nor do we observe the structural shocks $\epsilon_t$.
-      Instead, we only observe the reduced form shocks $u_t$.<span class="info-icon" data-info="In practice we only observe the macroeconomic 
-      variables $y_t$ and need to estimate the VAR to get the reduced form shocks $u_t$. However, with the simplifying no-lags assumption it holds that $u_t=y_t$.">i</span> 
+      Instead, we only observe the reduced form shocks $u_t$  (in practice we only observe the macroeconomic 
+      variables $y_t$ and need to estimate the VAR to get the reduced form shocks $u_t$. However, with the simplifying no-lags assumption it holds that $u_t=y_t$).  
       Consequently, the question is how can we identify $B(\phi_0)$ and recover the structural shocks $\epsilon_t$ from the reduced form shocks $u_t$?
        
       
@@ -269,7 +285,7 @@
       Specifically, for $\phi=\phi_0$ we get $e_t(B(\phi_0)) = \epsilon_t$.</p>
 
       <ul class="input-list">
-        <li>Move the $\phi$ slider to ....</li>
+        <li>Move the $\phi$ slider to adjust the angle of the rotation and observe how the innovations $e_t(B(\phi))$ change in the interactive simulation at the bottom of the page.</li>
       </ul>
       <div class="equation-wrapper" style="text-align: center;"> 
         <span id="current-B"></span>  
@@ -280,7 +296,7 @@
 
 
     <section id="interactive-simulation" class="text-container">
-      <h3>Interactive Simulation</h3>
+      <h3>Interactive simulation</h3>
       
    
       <p>
@@ -319,7 +335,7 @@
 
 
     <div class="text-container" id="next-steps">
-      <h3>Next Steps</h3>
+      <h3>Next steps</h3>
       <p>
         The <a href="page2.html">next</a> page illustrates how a proxy allows to identify the SVAR.
       </p>

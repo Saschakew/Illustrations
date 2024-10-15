@@ -79,10 +79,10 @@
           <div class="input-wrapper">
             <div class="label-value-wrapper">
               <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span> 
-                <span class="InputValue" id="TValue"> 250</span>
+                <span class="InputValue" id="TValue"> 500</span>
                </label> 
             </div>
-            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999">
+            <input class="InputRange" type="range" id="T" step="1" value="500" min="250" max="999">
           </div>
 
           <div class="input-wrapper">
@@ -144,51 +144,63 @@
       <div id="T-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Sample Size (T)</h3>
-          <p>T represents the sample size or the number of observations in your dataset. A larger sample size generally provides more accurate estimates and increases the power of statistical tests.</p>
+          <h3>Sample Size: $T$</h3>
+          <p>T represents the sample size or the number of observations in the dataset.</p>
         </div>
       </div>
-    
+
+
+      
       <div id="phi-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Phi (φ)</h3>
-          <p>Phi represents a parameter in the model. It can affect the relationship between variables or the strength of certain effects in the system.</p>
+          <h3>Rotation angle: $\phi$</h3>
+          <p>In the bivairate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced form shocks $u_t$   
+            are a rotation with an angle of   $\phi_0  (180 / π)$   degree of the structural form shocks $\epsilon_t$. 
+            On this page the rotation is fixed at $\phi_0=0.5$.
+            The rotation   $\phi $ allows to calculate the innovations $e_t(B(\phi)) = B(\phi)^{-1} u_t$ as a rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.
+        </p>
         </div>
       </div>
     
-    
-      <div id="rho1-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Rho 2 (...)</h3>
-          <p>...</p>
-        </div>
-      </div>
-    
-      <div id="rho2-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Rho 2 (...)</h3>
-          <p>...</p>
-        </div>
-      </div>
+  
     
       <div id="gamma1-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Gamma 1 (γ1)</h3>
-          <p>Gamma 1 governs the strength or relevance of the proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
+          <h3>Proxy strenght: $\gamma_1$</h3>
+          <p>The parameter  $\gamma_1$ governs the strength or relevance of the first proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
         </div>
       </div>
     
       <div id="gamma2-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Gamma 2 (γ2)</h3>
-          <p>Gamma 2 affects the exogeneity of the proxy. A value closer to zero indicates a more exogenous proxy, while larger values suggest potential endogeneity issues.</p>
+          <h3>Proxy exogeneity:  $\gamma_2$</h3>
+          <p>The parameter  $\gamma_2$ governs the exogeneity of the first proxy. A value of zero indicates an exogenous proxy, while larger values lead to an endogenous proxy.</p>
         </div>
       </div>
+    </div>
+
+    
+    
+      <div id="rho1-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Proxy strenght: $\rho_1$</h3>
+          <p>The parameter  $\rho_1$ governs the strength or relevance of the second proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
+           </div>
+      </div>
+    
+      <div id="rho2-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Proxy strenght: $\rho_2$</h3>
+          <p>The parameter  $\rho_2$ governs the strength or relevance of the second proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
+       </div>
+      </div>
+    
+    
     </div>
 
  
@@ -199,7 +211,10 @@
      
       <section id="introduction" class="text-container">
         <h2>Proxy exogeneity test</h2>
-        <p>This page shows how the proxy exogeneity assumption can be tested if two proxies are available.</p>
+        <p>This page shows how the proxy exogeneity assumption can be tested if two proxies are available. 
+           The exogeneity test using two proxies is well known in the literature.
+            The <a href="page4.html">next</a> page introduces the exogeneity test in Bruns and Keweloh (2024) using only one proxy.
+        </p>
     </section>
 
 
@@ -235,54 +250,84 @@
 
   </section>
 
+  
+   
+<section id="interactive-simulation" class="text-container"> 
+  <h2>Proxy relevance and exogeneity</h2>
+  
+    <p>The following two plots show the covariance of the proxies with the non-target shock $\epsilon_{2t}$.</p>
+  
+    <ul class="input-list">
+      <li>Move the $\gamma_2$ and $\rho_2$ sliders to adjust the exogeneity of $z_1$ and $z_2$. 
+        Observe how the covariance of the proxies with the non-target shock $\epsilon_{2}$ changes. </li>
+    </ul>
+    <div class="container">  
+  
+      <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
+        <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of the first proxy and structural non-target shock."></canvas>
+      </section>
+    
+    <section class="chart-container" style="width: 49%;"> 
+        <canvas id="scatterPlotZ1Eps2" aria-label="Scatter plot of the second proxy and structural non-target shock."></canvas>
+      </section> 
+    </div>
+  
+   <p>
+    The following two plots show the covariance of the proxies with the non-target innovation $e_{2t}$.
+   </p>
+
+   <ul class="input-list">
+    <li> Move the $\phi$ slider to adjust the rotation. 
+      Observe how the covariance of the proxies with the non-target innovation $e_{2t}$ changes.
+      If the proxies are relevant and exogenous, the correlation of the proxies and the non-target innovation $e_2$ should be zero at $\phi=\phi_0=0.5$.
+       For different values of $\phi$  the proxies and the non-target innovation $e_2$ will be correlated.
+       </li>
+   </ul>
+  
+   
+  <div class="container">  
+  
+      <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
+        <canvas id="scatterPlotZ1E1"  aria-label="Scatter plot of the first proxy and non-target innovations."></canvas>
+      </section>
+    
+    <section class="chart-container" style="width: 49%;"> 
+        <canvas id="scatterPlotZ1E2" aria-label="Scatter plot of the second proxy and non-target innovations."></canvas>
+      </section> 
+    </div>
+    
+  </div>  
+  </section>
  
   <section id="introduction" class="text-container">
-    <h2> Proxy Exogeneity Test</h2>
-    <p>
-      .....</p>
+    <h2> Proxy Exogeneity Test</h2> 
+    <p> Intuition: If both proxies are exogenous, the correlation of both proxies with the non-target shock should be zero at the same rotation angle $\phi$. 
+      If at least one proxy is endogenous, the correlation of the proxy with the non-target shock will be different from zero at the same rotation angle $\phi$. 
+    We can use this intuition to construct a joint proxy exogeneity test based on a J-test, see  Hansen (1982).</p>
 
+
+    <p>  Define the loss measuring the correlation of the proxies with the non-target shock at a given rotation angle $\phi$:</p>
+    <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
+      $   
+      loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
+      $ 
+    </div> 
+    where $W$ is the asymptotic efficient weighting matrix.
+    
+    <p>Under the null hypothesis of two exogenous proxies   </p>
       <div class="equation-wrapper" style="text-align: center;">  
-        $ H_0: ....$
+        $ H_0: E[z_{1t} e_{2t}(\phi_0)] = E[z_{2t} e_{2t}(\phi_0)] = 0 $
       </div>
+    <p> the J-test statistic  $ J = T \cdot loss(\hat{\phi})$  where $\hat{\phi}$ is the value minimizing the loss function follows a Chi-Squared distribution with $J \sim \chi^2(r-q)$ where $r=2$ is equal to the number of moment conditions and 
+      $q=1$ is equal to the number of free parameters in $\phi$. </p>
+
+      <p> Consequently, the null hypothesis of two exogenous proxies can be rejected at a significance level of $\alpha$ if $J$ exceeds the critical value of
+         the Chi-Squared distribution with $r-q$ degrees of freedom at the $\alpha$ quantile.
+      </p>
   </section>
 
 
 
-   
-<section id="interactive-simulation" class="text-container"> 
-<h2> ....</h2>
-
-  <p>The following two plots show the covariance of the proxies with the non-target shock $\epsilon_{2t}$.</p>
-
-  <div class="container">  
-
-    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-      <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of the first proxy and structural non-target shock."></canvas>
-    </section>
-  
-  <section class="chart-container" style="width: 49%;"> 
-      <canvas id="scatterPlotZ1Eps2" aria-label="Scatter plot of the second proxy and structural non-target shock."></canvas>
-    </section> 
-  </div>
-
- <p>
-  The following two plots show the covariance of the proxies with the non-target innovation $e_{2t}$.
- </p>
-
- 
-<div class="container">  
-
-    <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-      <canvas id="scatterPlotZ1E1"  aria-label="Scatter plot of the first proxy and non-target innovations."></canvas>
-    </section>
-  
-  <section class="chart-container" style="width: 49%;"> 
-      <canvas id="scatterPlotZ1E2" aria-label="Scatter plot of the second proxy and non-target innovations."></canvas>
-    </section> 
-  </div>
-  
-</div>  
-</section>
 
  
 
@@ -295,24 +340,24 @@
 <section id="interactive-loss" class="text-container">
   <h3>Interactive Loss Calculation</h3> 
 
-  <p>The following plot shows three different loss functions for the proxy SVAR model. </p>
+  <p>The following plot shows three different loss functions based on the proxy variables $z_1$ and $z_2$. </p>
     <ul>
-      <li> The loss corresponding to the first proxy: Loss $z_1$ 
+      <li> The first loss corresponds to the correlation of the first proxy $z_1$ with the non-target innovation $e_{2t}$:  
         <div class="equation-wrapper" style="text-align: center; border-color: rgb(75, 192, 192); color: rgb(75, 192, 192);"> 
           $   
-          loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix}'
+          loss_{z_1}(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix}'
           $ 
         </div> 
       </li>
-      <li> The loss corresponding to the second proxy: Loss $z_2$ 
+      <li> The second loss corresponds to the correlation of the second proxy $z_2$ with the non-target innovation $e_{2t}$:  
         
         <div class="equation-wrapper" style="text-align: center; border-color: rgb(41, 128, 185); color: rgb(41, 128, 185);"> 
           $   
-          loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
+          loss_{z_2}(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
           $ 
         </div> 
       </li>
-      <li> The loss corresponding to both proxies jointly: Loss sum 
+      <li> The third loss is the joint loss function and corresponds to the weighteds sum of the correlations of both proxies $z_1$ and $z_2$ with the non-target innovation $e_{2t}$:  
         <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
           $   
           loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
@@ -322,8 +367,21 @@
     </ul> 
 
  
-    <p>Test.....</p>
+    <p>
+      If both proxies are exogenous, all loss functions should (asymptotically) exibit a minimum at the same rotation angle $\phi$.
+      Additionally, the loss of the third loss function measuring the weighted sum of the correlations of both proxies with the non-target innovation $e_{2t}$ should 
+      be smaller than the critical value of the Chi-Squared distribution.
+    </p>
 
+    <ul class="input-list">
+      <li>Hit "Estimate" to find the $\phi$ that minimizes the joint loss function.  </li> 
+      <li>Move the $\gamma_2$ and $\rho_2$ sliders to adjust exogeneity of the first and second proxy.
+          Observe how the minima of the loss functions change.
+          For example, an endogenous proxy $z_1$ leads 
+          to a minima of the loss function $loss_{z_1}$ at a value of $\phi$ different from the DGP, $\phi_0$. 
+          In this case, the minimum of the loss joint loss function $loss(\phi)$ is moves above the critical value of the Chi-Squared distribution and indicates that the null hypothesis of both proxies being exogenous can be rejected.
+ 
+        </ul>
     
     
 
@@ -345,6 +403,15 @@
 </section>
 
 
+
+
+<div class="text-container" id="next-steps">
+  <h3>Next steps</h3>
+  <p>
+    The <a href="page4.html">next</a> page introduces the test for proxy exogeneity in Bruns and Keweloh (2024) using only a single proxy variable.
+  </p>
+  
+</div>
 
 
   </main>
