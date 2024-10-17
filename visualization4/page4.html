@@ -210,13 +210,16 @@
       <section id="introduction" class="text-container">
         <h2>Strong  Proxy Exogeneity Test</h2>
         <p>
-          This page illustrates the (strong) proxy exogeneity test in Bruns and Keweloh (2024).
+          This page illustrates the proxy exogeneity test in Bruns and Keweloh (2024).
           While the proxy exogeneity test from the  <a href="page3.html">previous</a> always requires two proxies, 
           the test on this page allows to test the proxy exogeneity of a single proxy.
         </p>
 
         <p>
-          ...Note on deviations from Bruns and Keweloh (2024):...
+         Note that for illustration purposes, this page slightly deviates from the setup in Bruns and Keweloh (2024).
+         This page uses a test is build on moment conditions around the correlation of the proxy and the innovations $e_t(\phi) = B(\phi)^{-1} u_t$.
+         In Bruns and Keweloh (2024), the test does not require to compute innovations and it is build on moment conditions  
+         closely related to the the proxy SVAR estimator, $\hat{\beta} = \frac{1/T \sum_{t=1}^{T} u_t z_t }{1/T \sum_{t=1}^{T} u_{1t} z_t} $.
         </p>
     </section>
 
@@ -226,15 +229,49 @@
     <section id="introduction" class="text-container">
       <h2>Proxy SVAR </h2>
 
-      <p>....</p>
+      <p>If only a single proxy variable is avaiable, the identifying assumption of an exogenous proxy, meaning a proxy which is uncorrelated
+        with the non-target shock such that $E[\epsilon_{2t} z_t]=0$, cannot be tested without further assumptions.
+        Instead, most applications using proxy variables rely on economic arguments to justify the exogeneity condition. 
+        Bruns and Keweloh (2024), argue that these  economic arguments typically imply a stronger form of exogeneity.
+      </p>
 
       
       <div class="assumption-box">
         <h5>Definition: Strong Exogeneity</h5>
-        <p> A proxy variable $z_t$ for a target shock $\epsilon_{it}$ is ....</p> 
+        <p> A proxy variable $z_t$ for a target shock $\epsilon_{1t}$ is strongly exogenous 
+          if it contains no information on the expected value of the non-target shock, i.e.,
+          $E[\epsilon_{2t} | z_t]=0$.
+        </p> 
       </div> 
 
-      <p>.....</p>
+      <p>Without further assumptions, the exogeneity assumption $E[\epsilon_{2t}  z_t]=0$ cannot be tested. However, the 
+        strong exogeneity assumption $E[\epsilon_{2t} | z_t]=0$ is a stronger assumption and can be tested.
+        Before introducing the strong exogeneity test, it is important to discuss whether the strong exogeneity assumptions 
+        is a reasonable economic assumption and what are the economic consequences of rejecting the strong exogeneity?
+      </p>
+
+      <p>
+        Intuivily, the econmic reasoning used to justify the exogeneity of a proxy typically relies on the argument,
+        that the proxy is a function of the target shock and not affected by the non-target shock. For example, consider the tax 
+        proxy in Mertens and Ravn (2014), constructed as a series of tax shocks based on narrative documents.
+        Intuitvely, if the proxy is equal to
+        a series of tax shocks not containing information on the expected value of
+        other non-target shocks, then the tax proxy contains no information on the expected
+        value of other non-target shocks. Consequently, the economic reasoning used to justify the exogeneity of the tax proxy
+        infact justifies the strong exogeneity assumption and rejecting the strong exogeneity assumption idicates 
+        evidence against the economic reasoning used to justify the exogeneity of the proxy.
+      </p>
+
+      <p>
+        The strong proxy exogeneity test in Bruns and Keweloh (2024) is based on a simple idea. 
+        If a proxy $z_t$ is strongly exogenous, i.e. $E[\epsilon_{2t} | z_t]=0$, we can generate additional 
+        synthetic proxies $z_{2t} = h(z_t)$ as functions of the original proxy. Strong exogeneity immediatly implies
+        that the synthetic proxy $z_{2t}$ is exogenous, i.e. $E[\epsilon_{2t}  z_{2t}]=0$. 
+        Consequently, the original proxy and the synthetic proxy should provide a system of two exogenous proxies and 
+        we can apply the proxy exogeneity test described in the  <a href="page3.html">previous</a> page. 
+        The only difference is that the second proxy is now a synthetic proxy and generated based on the first proxy.
+      </p>
+ 
     </section>
 
 
@@ -253,33 +290,36 @@
         <span id="current-z"></span> 
       </div>
 
-      <p>Additionally, consider a synthetic proxy $z_{2t} = f(z_{1t})$ equal to  </p>      
+      <p>Consider a simple synthetic proxy $z_{2t} =  z_{1t}^2 $ equal to the square of the original proxy.</p>      
       <div class="equation-wrapper" style="text-align: center;">  
         $ z_{2t} = z_{1t}^2 $
       </div>
 
-      <p> The strenght of the proxy .... </p>
+      <p> 
+        It is easy to see that the synthetic proxy $z_{2t}$ is exogenous, i.e. $E[\epsilon_{2t}  z_{2t}]=0$, if   the original proxy $z_{1t}$ is exogenous, i.e. if $\gamma_2=0$.
+        However, as seen on the <a href="page3.html">previous</a> page, the exogeneity test only has power if both proxies are relevant. 
+        Consequently, the strong exogeneity test only has power if the synthetic proxy $z_{2t}$ is relevant.
+        For a linear proxy $z_{1t}$, relevancy of the synthetic proxy $z_{2t}$ depends on the non-Gaussianity of the shocks.  
+        Specifically, a skewed target shock leads to a relevant synthetic proxy $z_{2t}$.
+      </p>
+      <div class="equation-wrapper" style="text-align: center;">  
+        $E[\epsilon_{1t}  z_{2t}] = E[\epsilon_{1t}  z_{1t}^2] 
+         = E[\epsilon_{1t} ( \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t})^2 ] = \gamma_1 E[\epsilon_{1t}^3] $
+      </div> 
 
-    </section>
-
-    
-
-        
-
-    <section id="introduction" class="text-container">
-      <h2>Strengh of synthetic proxy </h2>
-
-      <p>...explain synthetic proxy strenght....</p>
-
-
-      <p> Non-Gaussianity of shocks....</p>
       <ul class="input-list">
         <li>Move the $s_1$ and $s_2$ slider to adjust the non-Gaussianity of the first and second shock respectively.</li>
       </ul>
       <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-nG"></span> 
         </div>
-  </section>
+    </section>
+
+    
+
+        
+
+ 
 
 
   <section id="interactive-simulation" class="text-container"> 
