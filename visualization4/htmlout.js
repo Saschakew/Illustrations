@@ -1,6 +1,5 @@
 function insertEqSVAR(B0){
     const matrixHtml0 = ` 
-    $$
         \\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix} 
          =  
       \\begin{bmatrix} 
@@ -8,7 +7,7 @@ function insertEqSVAR(B0){
   ${B0[1][0].toFixed(2)} & ${B0[1][1].toFixed(2)} 
   \\end{bmatrix} 
     \\begin{bmatrix} \\epsilon_{1,t}   \\\\ \\epsilon_{2,t}  \\end{bmatrix}
-         $$ `;
+          `;
 
    
   const b0Element = document.getElementById('current-B0'); 
@@ -16,81 +15,114 @@ function insertEqSVAR(B0){
    b0Element.innerHTML = matrixHtml0; 
   }
 
-   // Trigger MathJax to render the new content
-   if (typeof MathJax !== 'undefined') {
-    MathJax.typeset();
+  if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
+    const output = MathJax.tex2svg(matrixHtml, {display: true});
+    bElement.innerHTML = '';
+    bElement.appendChild(output);
+  } else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+    bElement.innerHTML = `$$${matrixHtml}$$`;
+    MathJax.typesetPromise([bElement]);
   }
 }
 
-function insertEqSVARe(B){
-    A = math.inv(B);
-    const matrixHtml = ` 
-    $$
+const insertEqSVARe = (() => {
+  const bElement = document.getElementById('current-B');
+  const matrixTemplate = (a00, a01, a10, a11) => ` 
         \\begin{bmatrix} e_{1,t}   \\\\ e_{2,t}  \\end{bmatrix} 
          =  
       \\begin{bmatrix} 
-  ${A[0][0].toFixed(2)} & ${A[0][1].toFixed(2)} \\\\ 
-  ${A[1][0].toFixed(2)} & ${A[1][1].toFixed(2)} 
+  ${a00} & ${a01} \\\\ 
+  ${a10} & ${a11} 
   \\end{bmatrix} 
     \\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix}
-         $$ `;
+          `;
 
-   
-  const bElement = document.getElementById('current-B'); 
-  if (bElement) {
+  return (B) => {
+    if (!bElement) return;
+    
+    const A = math.inv(B);
+    const matrixHtml = matrixTemplate(
+      A[0][0].toFixed(2),
+      A[0][1].toFixed(2),
+      A[1][0].toFixed(2),
+      A[1][1].toFixed(2)
+    );
+
     bElement.innerHTML = matrixHtml; 
-  }
-   // Trigger MathJax to render the new content
-   if (typeof MathJax !== 'undefined') {
-    MathJax.typeset();
-  }
-}
+
+    if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
+      const output = MathJax.tex2svg(matrixHtml, {display: true});
+      bElement.innerHTML = '';
+      bElement.appendChild(output);
+    } else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+      bElement.innerHTML = `$$${matrixHtml}$$`;
+      MathJax.typesetPromise([bElement]);
+    }
+  };
+})();
 
  
 
 function insertEqZ2(rho1, rho2, id, zname,etaname){
   const matrixHtml = ` 
-  $$
       ${zname}
        =   
     ${rho1.toFixed(2)} \\epsilon_{1,t} + ${rho2.toFixed(2)} \\epsilon_{2,t} + ${etaname} 
-  $$ `;
+   `;
 
  
 const bElement = document.getElementById(id); 
 if (bElement) {
   bElement.innerHTML = matrixHtml; 
 }
- // Trigger MathJax to render the new content
- if (typeof MathJax !== 'undefined') {
-  MathJax.typeset();
+if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
+  const output = MathJax.tex2svg(matrixHtml, {display: true});
+  bElement.innerHTML = '';
+  bElement.appendChild(output);
+} else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+  bElement.innerHTML = `$$${matrixHtml}$$`;
+  MathJax.typesetPromise([bElement]);
 }
 }
 
 
-function insertEqNG(){ 
+const insertEqNG = (() => {
+  const bElement = document.getElementById('current-nG');
+  
+  const calculateMoments = (arr) => {
+    const mean = arr.reduce((sum, val) => sum + val, 0) / arr.length;
+    const skewness = arr.reduce((sum, val) => sum + Math.pow(val, 3), 0) / arr.length;
+    const kurtosis = arr.reduce((sum, val) => sum + Math.pow(val, 4), 0) / arr.length - 3;
+    return { skewness, kurtosis };
+  };
 
-  const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / T;
-  const skewness1 = mean(epsilon1.map(d => d * d *d));
-  const skewness2= mean(epsilon2.map(d => d * d * d));
-  const excessKurtosis1= mean(epsilon1.map(d => d * d * d * d)) - 3;
-  const excessKurtosis2= mean(epsilon2.map(d => d * d * d * d)) - 3;
+  const createLatexString = (moments1, moments2) => `
+    \\begin{align*}
+    &\\text{Skewness: } E[\\epsilon_{1t}^3] = ${moments1.skewness.toFixed(2)} \\text{ and } E[\\epsilon_{2t}^3] = ${moments2.skewness.toFixed(2)} \\\\
+    &\\text{Excess Kurtosis: } E[\\epsilon_{1t}^4-3] = ${moments1.kurtosis.toFixed(2)} \\text{ and } E[\\epsilon_{2t}^4-3] = ${moments2.kurtosis.toFixed(2)}
+    \\end{align*}
+  `;
 
-  const matrixHtml = `
-      <p>Skewness: $E[\\epsilon_{1t}^3]$ = ${skewness1.toFixed(2)}  and $E[\\epsilon_{2t}^3]$ = ${skewness2.toFixed(2)} </p>
-      <p>Excess Kurtosis: $E[\\epsilon_{1t}^4-3]$  = ${excessKurtosis1.toFixed(2)} and  $E[\\epsilon_{21t}^4-3]$  = ${excessKurtosis2.toFixed(2)}  </p>
-    `;
+  return () => {
+    if (!bElement) return;
 
- 
-const bElement = document.getElementById('current-nG'); 
-if (bElement) {
-  bElement.innerHTML = matrixHtml; 
-}
- // Trigger MathJax to render the new content
- if (typeof MathJax !== 'undefined') {
-  MathJax.typeset();
-}
-}
+    const moments1 = calculateMoments(epsilon1);
+    const moments2 = calculateMoments(epsilon2);
+    const latexString = createLatexString(moments1, moments2);
+
+    if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
+      const output = MathJax.tex2svg(latexString, {display: true});
+      bElement.innerHTML = '';
+      bElement.appendChild(output);
+    } else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+      bElement.innerHTML = `$$${latexString}$$`;
+      MathJax.typesetPromise([bElement]);
+    } else {
+      bElement.innerHTML = latexString;
+    }
+  };
+})();
+
 
 
 
@@ -229,3 +261,5 @@ function createHTMLTableZCovariance(data, title, symbol1, symbol2) {
   `; 
 }
  
+
+

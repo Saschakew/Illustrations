@@ -69,10 +69,10 @@ function initializeApp() {
    
   // Set up event listeners
   setupEventListeners();
-  
+
   // Typeset MathJax content
-  if (typeof MathJax !== 'undefined' && MathJax.typeset) {
-    MathJax.typeset();
+  if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+    MathJax.typesetPromise();
   }
   
   if (document.readyState === 'complete') {
@@ -95,6 +95,11 @@ function initializeUI() {
   color1 =  'rgb(75, 192, 192)';
   color2 =  'rgb(41, 128, 185)';
   color3 =  'rgb(255, 177, 153)';
+
+  
+  // Setup popups for all input labels
+  const popupIds = ['T', 'phi', 'gamma1', 'gamma2',  'rho1', 'rho2'];
+  setupPopup(popupIds)  
 }
 
 
@@ -534,9 +539,6 @@ function setupEventListeners() {
         }
     });
 
-  // Setup popups for all input labels
-  const popupIds = ['T', 'phi', 'gamma1', 'gamma2',  'rho1', 'rho2'];
-  setupPopup(popupIds)  
   
 }
 

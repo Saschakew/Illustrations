@@ -79,7 +79,10 @@
   <script>
     MathJax = {
       tex: {
-        inlineMath: [['$', '$'], ['\\$', '\\$']]
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
       },
       startup: {
         pageReady: () => {
@@ -92,7 +95,7 @@
       }
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script"></script>
   <script src="https://cdn.jsdelivr.net/npm/core-js-bundle/minified.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
 

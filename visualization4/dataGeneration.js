@@ -77,18 +77,29 @@ function generateMixedNormalData(length, s) {
   
 
 
-function getU(epsilon1, epsilon2, Bthis) {
-//  console.log( Bthis);
-//  console.log( epsilon1); 
-  u1 = epsilon1.map((d, i) => Bthis[0][0] * d + Bthis[0][1] * epsilon2[i]);
-  u2 = epsilon1.map((d, i) => Bthis[1][0] * d + Bthis[1][1] * epsilon2[i]);
- // console.log(u1);
-  return  [u1, u2] ;
-}
+  function getU(epsilon1, epsilon2, Bthis) {
+    const [b00, b01, b10, b11] = [Bthis[0][0], Bthis[0][1], Bthis[1][0], Bthis[1][1]];
+    const u1 = new Array(epsilon1.length);
+    const u2 = new Array(epsilon1.length);
+  
+    for (let i = 0; i < epsilon1.length; i++) {
+      u1[i] = b00 * epsilon1[i] + b01 * epsilon2[i];
+      u2[i] = b10 * epsilon1[i] + b11 * epsilon2[i];
+    }
+  
+    return [u1, u2];
+  }
 
-function getE(u1, u2, Bthis) {  
-  A = math.inv(Bthis); 
-  e1 = u1.map((u1, i) => A[0][0] * u1 + A[0][1] * u2[i]);
-  e2 = u1.map((u1, i) => A[1][0] * u1 + A[1][1] * u2[i]);
-  return  [e1, e2] ;
+function getE(u1, u2, Bthis) {
+  const A = math.inv(Bthis);
+  const [a00, a01, a10, a11] = [A[0][0], A[0][1], A[1][0], A[1][1]];
+  const e1 = new Array(u1.length);
+  const e2 = new Array(u1.length);
+
+  for (let i = 0; i < u1.length; i++) {
+    e1[i] = a00 * u1[i] + a01 * u2[i];
+    e2[i] = a10 * u1[i] + a11 * u2[i];
+  }
+
+  return [e1, e2];
 }

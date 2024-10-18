@@ -65,10 +65,10 @@ function initializeApp() {
    
   // Set up event listeners
   setupEventListeners();
-  
+   
   // Typeset MathJax content
-  if (typeof MathJax !== 'undefined' && MathJax.typeset) {
-    MathJax.typeset();
+  if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+    MathJax.typesetPromise();
   }
   
   if (document.readyState === 'complete') {
@@ -86,6 +86,10 @@ function initializeUI() {
   setupNavigationMenu();
   setupInputContentWrapper();
   setupInfoIcons();
+  
+  // Setup popups for all input labels
+  const popupIds = ['T', 'phi', 'phi0'];
+  setupPopup(popupIds)  
 }
 
 
@@ -171,9 +175,6 @@ function setupEventListeners() {
 
  
 
-  // Setup popups for all input labels
-  const popupIds = ['T', 'phi', 'phi0'];
-  setupPopup(popupIds)  
  
  
  
@@ -213,9 +214,9 @@ function generateNewData(T) {
   rawEpsilon2 = generateMixedNormalData(T, 0); 
   [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2);
   
-  [u1, u2] = getU(epsilon1, epsilon2, B0)  
+  [u1, u2] = getU(epsilon1, epsilon2, B0)  ;
 
-  [e1, e2] = getE(u1,u2,B)
+  [e1, e2] = getE(u1,u2,B);
 
 }
 
