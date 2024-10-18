@@ -131,10 +131,10 @@ function setupEventListeners() {
     (value) => document.getElementById('TValue').textContent = value.toFixed(0),
     (value) => T = value,
     (value) => generateNewData(T), 
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true),
     (value) => updateLossPlots(
       false, // OnlyPoint
       charts.lossplot,
@@ -161,8 +161,8 @@ function setupEventListeners() {
     (value) => B = getB(phi),
     (value) => insertEqSVARe(B),
     (value) => [e1, e2] = getE(u1,u2,B), 
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
+    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
     (value) =>  updateLossPlots(
       false, // OnlyPoint
       charts.lossplot,
@@ -183,10 +183,10 @@ function setupEventListeners() {
 
   newDataBtn.addEventListener('click', function() {
     generateNewData(T);   
-    updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true);
-    updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true);
-    updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true);
-    updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true); 
+    updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true);
+    updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true);
+    updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true);
+    updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true); 
     updateLossPlots(
       false, // OnlyPoint
       charts.lossplot,
@@ -209,10 +209,10 @@ function setupEventListeners() {
     (value) => document.getElementById('gamma1Value').textContent = value.toFixed(2),
     (value) => gamma1 = value, 
     (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + gamma3 * eta1[i]), 
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),  
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
+    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true),  
+    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
     (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}'),
     (value) => updateLossPlots(
       false, // OnlyPoint
@@ -236,10 +236,10 @@ function setupEventListeners() {
     (value) => document.getElementById('gamma2Value').textContent = value.toFixed(2),
     (value) => gamma2 = value, 
     (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + gamma3 * eta1[i]), 
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "z1 eps1", "z₁", "ε₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true), 
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", true), 
+    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true), 
+    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
+    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
     (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}'),
     (value) =>   updateLossPlots(
       false, // OnlyPoint
@@ -287,10 +287,10 @@ function setupEventListeners() {
         [e1, e2] = getE(u1, u2, B); 
       }, 
       function(phi) { 
-        updateChartScatter(charts.scatterPlotZ1E1, z1, e1, "z1 e1", "z₁", "e₁", false); 
+        updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", false); 
       },
       function(phi) { 
-        updateChartScatter(charts.scatterPlotZ1E2, z1, e2, "z1 e2", "z₁", "e₂", false); 
+        updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", false); 
       }, 
       function(phi) { 
         updateLossPlots(

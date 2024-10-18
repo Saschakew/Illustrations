@@ -140,8 +140,8 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
     (value) =>updateLossPlots(OnlyPoint=true,charts.lossplot2,phi0,phi, [
       {
         lossFunction: lossZ1,
@@ -184,10 +184,10 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity z₁:", "z₁", "ε₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Exogeneity z₂:", "z₂", "ε₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
     (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
       {
         lossFunction: lossZ1,
@@ -223,10 +223,10 @@ function setupEventListeners() {
 
   newDataBtn.addEventListener('click', function() {
     generateNewData(T);   
-    updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true),
-    updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true),
-    updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true);
-    updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true);
+    updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity z₁:", "z₁", "ε₂", true),
+    updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Exogeneity z₂:", "z₂", "ε₂", true),
+    updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true);
+    updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true);
     statsZE1 = calculateMoments(z1, e2); 
     createTableZCovariance(statsZE1);
     createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
@@ -269,8 +269,8 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),  
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true), 
+    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity z₁:", "z₁", "ε₂", true), 
+    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
     (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{1t}','\\eta_{1t}'), 
     (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
       {
@@ -311,8 +311,8 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),  
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "z1 eps2", "z₁", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", true), 
+    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity z₁:", "z₁", "ε₂", true), 
+    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true), 
     (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{1t}','\\eta_{1t}'), 
     (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
       {
@@ -356,8 +356,8 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Exogeneity z₂:", "z₂", "ε₂", true), 
+    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
     (value) => insertEqZ2(rho1, rho2, 'current-z2', 'z_{2t}','\\eta_{2t}'), 
     (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
       {
@@ -398,8 +398,8 @@ function setupEventListeners() {
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "z2 eps2", "z₂", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2,  "Exogeneity z₂:", "z₂", "ε₂", true), 
+    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
     (value) => insertEqZ2(rho1, rho2, 'current-z2', 'z_{2t}','\\eta_{2t}'), 
     (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
       {
@@ -436,7 +436,7 @@ function setupEventListeners() {
 
     // Highlight points in scatter 
     const scatterPlots = [   
-      'scatterPlotZ1Eps1', 'scatterPlotZ1Eps2', 'scatterPlotZ1E1', 'scatterPlotZ1E2'];
+      'scatterPlotZ1Eps2', 'scatterPlotZ2Eps2', 'scatterPlotZ1E1', 'scatterPlotZ1E2'];
     scatterPlots.forEach((id) =>   {
       const canvas = document.getElementById(id); 
       canvas.addEventListener('click', function() {
@@ -460,8 +460,8 @@ function setupEventListeners() {
         [e1, e2] = getE(u1, u2, B); 
       }, 
       function(phi) { 
-       updateChartScatter(charts.scatterPlotZ1E1, z1, e2, "z1 e1", "z₁", "e₂", false);
-       updateChartScatter(charts.scatterPlotZ1E2, z2, e2, "z2 e2", "z₂", "e₂", false);
+       updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", false);
+       updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", false);
       },
       function(phi) { 
         statsZE = calculateMoments(z1, e2); 
@@ -547,11 +547,11 @@ function setupEventListeners() {
 function initializeCharts() {
   const ScatterConfig = getScatterPlotConfig()
  
-  createChart('scatterPlotZ1Eps1',ScatterConfig)  
   createChart('scatterPlotZ1Eps2',ScatterConfig)  
+  createChart('scatterPlotZ2Eps2',ScatterConfig)  
     
-  updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon2, "Exogeneity z₁:", "z₁", "ε₂", true);
-  updateChartScatter(charts.scatterPlotZ1Eps2, z2, epsilon2, "Exogeneity z₂:", "z₂", "ε₂", true);
+  updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity z₁:", "z₁", "ε₂", true);
+  updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Exogeneity z₂:", "z₂", "ε₂", true);
 
   
   createChart('scatterPlotZ1E1',ScatterConfig)  

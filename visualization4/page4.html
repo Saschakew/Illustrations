@@ -116,10 +116,10 @@
           <div class="input-wrapper">
             <div class="label-value-wrapper">
               <label class="InputLabel" for="gamma1" id="gamma1-label" title="Click for more information"><span>$\gamma_1 = $</span>
-                <span class="InputValue" id="gamma1Value">  2.00</span>
+                <span class="InputValue" id="gamma1Value">  3.00</span>
               </label> 
             </div>
-            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="2">
+            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="3">
           </div>
 
           <div class="input-wrapper">
@@ -323,20 +323,48 @@
 
 
   <section id="interactive-simulation" class="text-container"> 
-    <h2>....</h2>
+    <h2>Proxy relevance and exogeneity</h2>
+  
+     
     
-    <p>The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$ with the non-target shock $\epsilon_{2t}$.</p>
+    <p>The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$ with the target shock $\epsilon_{2t}$.</p>
     
-    
+
+    <ul class="input-list">
+      <li>Move the $\gamma_1$  sliders to adjust the relevance of $z_1$.   </li>
+        <li>Move the $s_1$ slider to adjust the non-Gaussianity of the target shock. 
+          Observe how the relevance of the synthetic proxy $z_2$ changes. </li>
+    </ul>
+  
       <div class="container">  
-    
         <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
-          <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of the first proxy and structural non-target shock."></canvas>
+          <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of the first proxy and structural target shock."></canvas>
         </section>
       
       <section class="chart-container" style="width: 49%;"> 
-          <canvas id="scatterPlotZ1Eps2"  aria-label="Scatter plot of the synthetic proxy and structural non-target shock."></canvas>
-        </section> 
+          <canvas id="scatterPlotZ2Eps1"  aria-label="Scatter plot of the synthetic proxy and structural target shock."></canvas>
+      </section> 
+    </div>
+
+    
+    <p>The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$ with the non-target shock $\epsilon_{2t}$.</p>
+    
+
+      
+    <ul class="input-list">
+      <li>Move the $\gamma_2$  sliders to adjust the exogeneity of $z_1$.   </li>
+        <li>Move the $s_2$ slider to adjust the non-Gaussianity of the target and non-target shocks. 
+          Observe how the exogeneity of the synthetic proxy $z_2$ changes. </li>
+    </ul>
+    
+    <div class="container">  
+        <section class="chart-container" style="width: 49%; margin-right: 1%;"> 
+          <canvas id="scatterPlotZ1Eps2"  aria-label="Scatter plot of the first proxy and structural non-target shock."></canvas>
+        </section>
+      
+      <section class="chart-container" style="width: 49%;"> 
+          <canvas id="scatterPlotZ2Eps2"  aria-label="Scatter plot of the synthetic proxy and structural non-target shock."></canvas>
+      </section> 
       </div>
       
     
@@ -344,6 +372,13 @@
         The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$  with the non-target innovation $e_{2t}$.
        </p>
     
+       <ul class="input-list">
+        <li> Move the $\phi$ slider to adjust the rotation. 
+          Observe how the covariance of the proxies with the non-target innovation $e_{2t}$ changes.
+          If the proxies are relevant and exogenous, the correlation of the proxies and the non-target innovation $e_2$ should be zero at $\phi=\phi_0=0.5$.
+           For different values of $\phi$  the proxies and the non-target innovation $e_2$ will be correlated.
+           </li>
+       </ul>
     
     <div class="container">  
     
@@ -365,16 +400,34 @@
 
 
 
-
-  <section id="introduction" class="text-container">
-    <h2> Proxy Exogeneity Test</h2>
-    <p>
-      .....</p>
-
-      <div class="equation-wrapper" style="text-align: center;">  
-        $ H_0: ....$
-      </div>
-  </section>
+ 
+    <section id="introduction" class="text-container">
+      <h2> Strong Proxy Exogeneity Test</h2> 
+      <p> If the original proxy $z_1$ is strongly exogenous, the correlation of the original proxy with the non-target innovation $e_2$ as well as the 
+        correlation of the synthetic proxy $z_2$ with the non-target innovation $e_2$ should be zero at the same rotation angle $\phi$.  
+        If one of both correlations differs from zero, the proxy is not strongly exogenous. 
+      We can use this intuition to construct a strong proxy exogeneity test based on a J-test, see  Hansen (1982).</p>
+  
+  
+      <p>  Define the loss measuring the correlation of the original and syntehtic proxies with the non-target shock at a given rotation angle $\phi$:</p>
+      <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
+        $   
+        loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
+        $ 
+      </div> 
+      where $W$ is the asymptotic efficient weighting matrix.
+      
+      <p>Under the null hypothesis of strong proxy exogeneity   </p>
+        <div class="equation-wrapper" style="text-align: center;">  
+          $ H_0: E[z_{1t} e_{2t}(\phi_0)] = E[z_{2t} e_{2t}(\phi_0)] = 0 $
+        </div>
+      <p> the J-test statistic  $ J = T \cdot loss(\hat{\phi})$  where $\hat{\phi}$ is the value minimizing the loss function follows a Chi-Squared distribution with $J \sim \chi^2(r-q)$ where $r=2$ is equal to the number of moment conditions and 
+        $q=1$ is equal to the number of free parameters in $\phi$. </p>
+  
+        <p> Consequently, the null hypothesis of strong proxy exogeneity can be rejected at a significance level of $\alpha$ if $J$ exceeds the critical value of
+           the Chi-Squared distribution with $r-q$ degrees of freedom at the $\alpha$ quantile.
+        </p>
+    </section>
 
 
    
@@ -390,33 +443,60 @@
 <section id="interactive-loss" class="text-container">
   <h3>Interactive Loss Calculation</h3> 
 
-  <p>The following plot shows three different loss functions for the proxy SVAR model. </p>
-  <ul>
-    <li> The loss corresponding to the first proxy: Loss $z_1$ 
-      <div class="equation-wrapper" style="text-align: center; border-color: rgb(75, 192, 192); color: rgb(75, 192, 192);"> 
-        $   
-        loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix}'
-        $ 
-      </div> 
-    </li>
-    <li> The loss corresponding to the synthetic proxy: Loss $z_2$ 
-      
-      <div class="equation-wrapper" style="text-align: center; border-color: rgb(41, 128, 185); color: rgb(41, 128, 185);"> 
-        $   
-        loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
-        $ 
-      </div> 
-    </li>
-    <li> The loss corresponding to the original and synthetic proxy jointly: Loss sum 
-      <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
-        $   
-        loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
-        $ 
-      </div> 
-    </li>
-  </ul> 
+  <p>The following plot shows three different loss functions based on the original proxy   $z_1$ and the syntehtic proxy $z_2$. </p>
+    <ul>
+      <li> The first loss corresponds to the correlation of the original proxy $z_1$ with the non-target innovation $e_{2t}$:  
+        <div class="equation-wrapper" style="text-align: center; border-color: rgb(75, 192, 192); color: rgb(75, 192, 192);"> 
+          $   
+          loss_{z_1}(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix}'
+          $ 
+        </div> 
+      </li>
+      <li> The second loss corresponds to the correlation of the syntehtic proxy $z_2$ with the non-target innovation $e_{2t}$:  
+        
+        <div class="equation-wrapper" style="text-align: center; border-color: rgb(41, 128, 185); color: rgb(41, 128, 185);"> 
+          $   
+          loss_{z_2}(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
+          $ 
+        </div> 
+      </li>
+      <li> The third loss is the joint loss function and corresponds to the weighteds sum of the correlations of the original proxy $z_1$ and the synthetic proxy $z_2$ with the non-target innovation $e_{2t}$:  
+        <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
+          $   
+          loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
+          $ 
+        </div> 
+      </li>
+    </ul> 
 
-  <p>Test.....</p>
+ 
+    <p>
+      If the original proxy $z_1$ is strongly  exogenous, all loss functions should (asymptotically) exibit a minimum at the same rotation angle $\phi$.
+      Additionally, the loss of the third loss function measuring the weighted sum of the correlations of the original and synthetic proxy with the non-target innovation $e_{2t}$ should 
+      be smaller than the critical value of the Chi-Squared distribution.
+    </p>
+
+    <ul class="input-list">
+      <li>Hit "Estimate" to find the $\phi$ that minimizes the joint loss function.  </li> 
+  
+          <li>
+            Keep the original proxy valid, i.e. $\gamma_1 \neq 0$ and $\gamma_2 = 0$, and adjust 
+            the non-Gaussianity of the target shock by moving the $s_1$ slider.
+            Observe how the synthetic proxy $z_2$ becomes relevant and the loss function $loss_{z_2}(\phi)$ starts to 
+            show a unique minimum.
+          </li>
+
+          <li>
+            Move the $\gamma_2$ slider to adjust the exogeneity of the proxy.
+            Observe how the minimum of the loss function $loss_{z_1}(\phi)$ moves away from $\phi=\phi_0=0.5$ and 
+            how the minimum of the joint loss function $loss(\phi)$ moves above the critical value of the Chi-Squared distribution.
+            </li>
+
+            <li>Move the $s_1$ and $s_2$ slider back to zero to generate an exogenous but irrelevant syntehtic proxy. 
+              Observe how the exogeneity test looses its ability to detect endogeneity if the synthetic proxy is irrelevant.
+            </li>
+        </ul>
+    
 
 
 <div class="container">
@@ -436,6 +516,22 @@
 </div>
 </section>
 
+
+
+<section id="introduction" class="text-container">
+  <h2>More Resources</h2>
+
+  <ul> 
+    <li>Find the full paper at <a href="....">....</a>.</li>
+    <li>Find all replication codes for the paper at <a href="....">....</a>.</li>
+    <li>Access the code of this interactive illustration at <a href="....">....</a>.</li>
+    <li>Find more interactive illustrations at <a href="https://sites.google.com/view/sascha-keweloh/dashboards">....</a>.</li>
+  </ul>
+ 
+ 
+
+ 
+</section>
 
 
 
