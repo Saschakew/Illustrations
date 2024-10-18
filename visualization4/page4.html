@@ -14,7 +14,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proxy SVAR Exogeneity Test</title>
-  
+    <meta name="description" content="Interactive guide on Proxy SVAR Exogeneity Testing, including strong exogeneity tests and visualizations of proxy relevance and exogeneity.">
+  <meta name="keywords" content="SVAR, proxy variables, exogeneity test, econometrics, structural vector autoregression">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Strong Proxy Exogeneity Test",
+      "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      } 
+    }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Strong Proxy Exogeneity Test",
+        "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+        "provider": {
+          "@type": "Person",
+          "name": "Sascha Keweloh",
+          "url": "https://sites.google.com/view/sascha-keweloh"
+        },
+        "hasCourseInstance": {
+          "@type": "CourseInstance",
+          "courseMode": "online"
+        },
+        "about": [
+          {
+            "@type": "Thing",
+            "name": "Structural Vector Autoregression",
+            "description": "A multivariate time series model used in econometrics and economic analysis."
+          },
+          {
+            "@type": "Thing",
+            "name": "Strong Proxy Exogeneity Test",
+            "description": "A statistical test for the exogeneity of proxy variables in a SVAR model."
+          }
+        ]
+      }
+      </script>
  
 
   <link rel="stylesheet" href="styles.css">
@@ -72,7 +130,7 @@
       </nav>
 
         
-      <div class="input-content-wrapper">
+      <div class="input-content-wrapper expanded">
 
 
         <div class="input-content"  >
@@ -169,7 +227,7 @@
       <div id="gamma1-popup" class="popup">
         <div class="popup-content">
           <span class="close">&times;</span>
-          <h3>Proxy strenght: $\gamma_1$</h3>
+          <h3>Proxy strength: $\gamma_1$</h3>
           <p>The parameter  $\gamma_1$ governs the strength or relevance of the first proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
         </div>
       </div>
@@ -226,8 +284,8 @@
 
 
     
-    <section id="introduction" class="text-container">
-      <h2>Proxy SVAR </h2>
+    <section id="Strong-exogeneity" class="text-container">
+      <h2>Strong proxy exogeneity</h2>
 
       <p>If only a single proxy variable is avaiable, the identifying assumption of an exogenous proxy, meaning a proxy which is uncorrelated
         with the non-target shock such that $E[\epsilon_{2t} z_t]=0$, cannot be tested without further assumptions.
@@ -275,16 +333,16 @@
     </section>
 
 
-    <section id="introduction" class="text-container">
+    <section id="strong-proxy-svar" class="text-container">
       <h2>Proxy SVAR </h2>
 
       
       <p>Consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by  $
         z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
-        $, such that $\gamma_1$ governs the strenght or relevance of the proxy and 
+        $, such that $\gamma_1$ governs the strength or relevance of the proxy and 
         $\gamma_2$ the exogeneity of the proxy. </p>
       <ul class="input-list">
-        <li>Move the $\gamma_1$ and $\gamma_2$ slider to adjust the proxy strenght and proxy exogeneity.</li>
+        <li>Move the $\gamma_1$ and $\gamma_2$ slider to adjust the proxy strength and proxy exogeneity.</li>
       </ul>
       <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-z"></span> 

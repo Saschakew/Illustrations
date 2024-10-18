@@ -14,8 +14,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proxy SVAR Exogeneity Test</title>
+  <meta name="description" content="Interactive guide on Proxy SVAR Exogeneity Testing, including strong exogeneity tests and visualizations of proxy relevance and exogeneity.">
+  <meta name="keywords" content="SVAR, proxy variables, exogeneity test, econometrics, structural vector autoregression">
 
-  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Strong Proxy Exogeneity Test",
+      "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      } 
+    }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Strong Proxy Exogeneity Test",
+        "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+        "provider": {
+          "@type": "Person",
+          "name": "Sascha Keweloh",
+          "url": "https://sites.google.com/view/sascha-keweloh"
+        },
+        "hasCourseInstance": {
+          "@type": "CourseInstance",
+          "courseMode": "online"
+        },
+        "about": [
+          {
+            "@type": "Thing",
+            "name": "Structural Vector Autoregression",
+            "description": "A multivariate time series model used in econometrics and economic analysis."
+          },
+          {
+            "@type": "Thing",
+            "name": "Strong Proxy Exogeneity Test",
+            "description": "A statistical test for the exogeneity of proxy variables in a SVAR model."
+          }
+        ]
+      }
+      </script>
+
+  <link rel="stylesheet" href="styles.css">     
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <script>
     MathJax = {
@@ -37,6 +96,7 @@
   <script src="https://cdn.jsdelivr.net/npm/core-js-bundle/minified.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
 
+  
   <body  class="index">
     <div id="loading-screen">
       <div class="loader"></div>
@@ -73,7 +133,7 @@
       </nav>
 
         
-      <div class="input-content-wrapper">
+      <div class="input-content-wrapper expanded">
 
 
         <div class="input-content"  >

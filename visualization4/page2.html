@@ -14,6 +14,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proxy SVAR Exogeneity Test</title>
+  <meta name="description" content="Interactive guide on Proxy SVAR Exogeneity Testing, including strong exogeneity tests and visualizations of proxy relevance and exogeneity.">
+  <meta name="keywords" content="SVAR, proxy variables, exogeneity test, econometrics, structural vector autoregression">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Strong Proxy Exogeneity Test",
+      "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      } 
+    }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Strong Proxy Exogeneity Test",
+        "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+        "provider": {
+          "@type": "Person",
+          "name": "Sascha Keweloh",
+          "url": "https://sites.google.com/view/sascha-keweloh"
+        },
+        "hasCourseInstance": {
+          "@type": "CourseInstance",
+          "courseMode": "online"
+        },
+        "about": [
+          {
+            "@type": "Thing",
+            "name": "Structural Vector Autoregression",
+            "description": "A multivariate time series model used in econometrics and economic analysis."
+          },
+          {
+            "@type": "Thing",
+            "name": "Strong Proxy Exogeneity Test",
+            "description": "A statistical test for the exogeneity of proxy variables in a SVAR model."
+          }
+        ]
+      }
+      </script>
 
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
@@ -70,7 +129,7 @@
       </nav>
 
         
-      <div class="input-content-wrapper">
+      <div class="input-content-wrapper expanded">
 
 
         <div class="input-content"  >
@@ -186,7 +245,7 @@
     </section>
 
 
-    <section id="introduction" class="text-container">
+    <section id="proxy-svar" class="text-container">
       <h2>Proxy SVAR </h2>
       <p>Let's fix the rotation at $\phi_0 = 0.5$
         such that the reduced form shocks are equal to one specific rotation of the structural shocks:</p>
@@ -199,11 +258,10 @@
         $ 
       </div>
 
-        <p> The innovations $e_t(B(\phi))$ are given by the rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.</p>
+        <p>The innovations $e_t(B(\phi))$ are given by rotating the reduced form shocks $u_t$ with an angle of $\phi (180 / \pi)$ degrees.        </p>
         <ul class="input-list">
           <li> 
-          Move the $\phi$ slider to adjust the angle of the rotation. Observe how the different rotations lead to different 
-          correlations between the proxy and the innovation $e_{t}$ in the plots below.
+            Move the $\phi$ slider to adjust the angle of rotation. Observe how different rotations lead to different correlations between the proxy and the innovations $e_{t}$ in the plots below.
          </li>
         </ul>
         <div class="equation-wrapper" style="text-align: center;"> 
@@ -218,8 +276,7 @@
           $\gamma_2$ the exogeneity of the proxy. </p>
         </p>        
         <ul class="input-list">
-          <li>Move the $\gamma_1$ and $\gamma_2$ slider to adjust the proxy   strenght and   proxy exogeneity. 
-            Observe how the proxy strenght and exogeneity affect the correlation of the proxy and the structural shocks $\epsilon_t$ and the innovations $e_{t}$ in the plots below. </li>
+          <li>Move the $\gamma_1$ and $\gamma_2$ sliders to adjust the proxy strength and proxy exogeneity. Observe how these changes affect the correlation of the proxy with the structural shocks $\epsilon_t$ and the innovations $e_{t}$ in the plots below. </li>
         </ul>
         <div class="equation-wrapper" style="text-align: center;">  
         <span id="current-z"></span> 
@@ -257,12 +314,11 @@
   </div> 
 
   
-  <p>In practice, the structural shocks are of course not observable. However, for a given rotation $\phi$, we can 
-     compute the innovations  $e_t(B(\phi)) $. 
-     For the correct rotation $\phi=\phi_0$, the proxy $z_t$ and the non-target innovation $e_{2t}$ should be uncorrelated.
-    Therefore, we can use the correlation between the proxy and the non-target innovation to find the correct rotation $\phi_0$.
-    The following two plots illustrate the correlation between the proxy and the innovations for the target and non-target shock.
-
+  <p>In practice, the structural shocks are not observable. 
+    However, for a given rotation $\phi$, we can compute the innovations $e_t(B(\phi))$. 
+    For the correct rotation $\phi=\phi_0$, the proxy $z_t$ and the non-target innovation $e_{2t}$ should be uncorrelated. 
+    Therefore, we can use this correlation to find the correct rotation $\phi_0$. 
+    The following two plots illustrate the correlation between the proxy and the innovations for both the target and non-target shocks.
   </p>
 
   <ul class="input-list">
@@ -304,7 +360,7 @@
 
   <ul class="input-list">
     <li>Hit "Estimate" to find the $\phi$ that minimizes the loss.  </li>
-    <li>Observe how the loss depends on the proxy strenght $\gamma_1$. A low relevance leads to a flat loss and a high relevance to a peaked loss. </li>
+    <li>Observe how the loss depends on the proxy strength $\gamma_1$. A low relevance leads to a flat loss and a high relevance to a peaked loss. </li>
     <li>Observe how the minima of the loss depends on the proxy exogeneity $\gamma_2$. The orange line indicates the rotation angle of the DGP, $\phi_0=0.5$.
        For an exogenous proxy, $\gamma_2=0$, the loss is minimized at $\phi=\phi_0$. 
       For an endogenous proxy, $\gamma_2 \neq 0$, the loss is minimized at a value of $\phi$ different from $\phi_0$.
