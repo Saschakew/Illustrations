@@ -110,8 +110,7 @@ function initializeVariables() {
   phi0 = 0.5;
   phi = getInputValue('phi');
   B0 = getB(phi0);
-  B = getB(phi);
-  insertEqSVARe(B);
+  B = getB(phi); 
 
   
   gamma1 = getInputValue('gamma1');
@@ -139,8 +138,7 @@ function setupEventListeners() {
   createEventListener('phi', 
     (value) => document.getElementById('phiValue').textContent = value.toFixed(2),
     (value) => phi = value,
-    (value) => B = getB(phi),
-    (value) => insertEqSVARe(B),
+    (value) => B = getB(phi), 
     (value) => [e1, e2] = getE(u1,u2,B),
     (value) =>statsZE1 = calculateMoments(z1, e2), 
     (value) =>createTableZCovariance(statsZE1),
@@ -458,8 +456,7 @@ function setupEventListeners() {
       function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
       function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
       function(phi) { 
-        B = getB(phi); 
-        insertEqSVARe(B); 
+        B = getB(phi);  
       },
       function(phi) { 
         [e1, e2] = getE(u1, u2, B); 
