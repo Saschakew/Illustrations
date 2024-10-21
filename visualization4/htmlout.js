@@ -1,41 +1,87 @@
-function insertEqSVAR(B0){
-    const matrixHtml0 = ` 
-        \\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix} 
-         =  
-      \\begin{bmatrix} 
-  ${B0[0][0].toFixed(2)} & ${B0[0][1].toFixed(2)} \\\\ 
-  ${B0[1][0].toFixed(2)} & ${B0[1][1].toFixed(2)} 
-  \\end{bmatrix} 
-    \\begin{bmatrix} \\epsilon_{1,t}   \\\\ \\epsilon_{2,t}  \\end{bmatrix}
-          `;
+const insertEqSVAR = (() => {
+  const b0Element = document.getElementById('current-B0');
+  let previousMatrixHtml = '';
 
-   
-  const b0Element = document.getElementById('current-B0'); 
-  if (b0Element){
-   b0Element.innerHTML = matrixHtml0; 
-  }
+  const matrixTemplate = (b00, b01, b10, b11) => `
+    \\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix} 
+     =  
+  \\begin{bmatrix} 
+${b00} & ${b01} \\\\ 
+${b10} & ${b11} 
+\\end{bmatrix} 
+\\begin{bmatrix} \\epsilon_{1,t}   \\\\ \\epsilon_{2,t}  \\end{bmatrix}
+      `;
 
-  if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
-    const output = MathJax.tex2svg(matrixHtml, {display: true});
-    bElement.innerHTML = '';
-    bElement.appendChild(output);
-  } else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-    bElement.innerHTML = `$$${matrixHtml}$$`;
-    MathJax.typesetPromise([bElement]);
-  }
-}
+  const renderMathJax = (matrixHtml) => {
+    if (typeof MathJax === 'undefined') {
+      b0Element.textContent = matrixHtml;
+      return;
+    }
+
+    if (MathJax.tex2svg) {
+      const output = MathJax.tex2svg(matrixHtml, {display: true});
+      b0Element.innerHTML = '';
+      b0Element.appendChild(output);
+    } else if (MathJax.typesetPromise) {
+      b0Element.innerHTML = `$$${matrixHtml}$$`;
+      MathJax.typesetPromise([b0Element]).catch(console.error);
+    } else {
+      b0Element.textContent = matrixHtml;
+    }
+  };
+
+  return (B0) => {
+    if (!b0Element) return;
+    
+    const matrixHtml = matrixTemplate(
+      B0[0][0].toFixed(2),
+      B0[0][1].toFixed(2),
+      B0[1][0].toFixed(2),
+      B0[1][1].toFixed(2)
+    );
+
+    if (matrixHtml === previousMatrixHtml) return;
+    previousMatrixHtml = matrixHtml;
+
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame(() => renderMathJax(matrixHtml));
+    } else {
+      renderMathJax(matrixHtml);
+    }
+  };
+})();
 
 const insertEqSVARe = (() => {
   const bElement = document.getElementById('current-B');
-  const matrixTemplate = (a00, a01, a10, a11) => ` 
-        \\begin{bmatrix} e_{1,t}   \\\\ e_{2,t}  \\end{bmatrix} 
-         =  
-      \\begin{bmatrix} 
-  ${a00} & ${a01} \\\\ 
-  ${a10} & ${a11} 
-  \\end{bmatrix} 
-    \\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix}
-          `;
+  let previousMatrixHtml = '';
+
+  const matrixTemplate = (a00, a01, a10, a11) => `
+    \\begin{bmatrix} e_{1,t}   \\\\ e_{2,t}  \\end{bmatrix} 
+     =  
+  \\begin{bmatrix} 
+${a00} & ${a01} \\\\ 
+${a10} & ${a11} 
+\\end{bmatrix} 
+\\begin{bmatrix} u_{1,t}   \\\\ u_{2,t}  \\end{bmatrix}
+      `;
+
+  const renderMathJax = (matrixHtml) => {
+    if (typeof MathJax === 'undefined') {
+      bElement.textContent = matrixHtml;
+      return;
+    }
+
+    if (MathJax.tex2svg) {
+      const output = MathJax.tex2svg(matrixHtml, {display: true});
+      bElement.innerHTML = '';
+      bElement.appendChild(output);
+    } else if (MathJax.typesetPromise) {
+      bElement.innerHTML = `$$${matrixHtml}$$`;
+      MathJax.typesetPromise([bElement]).catch(console.error);
+    } else {
+      bElement.textContent = matrixHtml;
+    }
+  };
 
   return (B) => {
     if (!bElement) return;
@@ -48,52 +94,79 @@ const insertEqSVARe = (() => {
       A[1][1].toFixed(2)
     );
 
-    bElement.innerHTML = matrixHtml; 
+    if (matrixHtml === previousMatrixHtml) return;
+    previousMatrixHtml = matrixHtml;
 
-    if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
-      const output = MathJax.tex2svg(matrixHtml, {display: true});
-      bElement.innerHTML = '';
-      bElement.appendChild(output);
-    } else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-      bElement.innerHTML = `$$${matrixHtml}$$`;
-      MathJax.typesetPromise([bElement]);
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame(() => renderMathJax(matrixHtml));
+    } else {
+      renderMathJax(matrixHtml);
     }
   };
 })();
 
- 
+const insertEqZ2 = (() => {
+  const elements = {};
+  const previousMatrixHtml = {};
 
-function insertEqZ2(rho1, rho2, id, zname,etaname){
-  const matrixHtml = ` 
-      ${zname}
-       =   
-    ${rho1.toFixed(2)} \\epsilon_{1,t} + ${rho2.toFixed(2)} \\epsilon_{2,t} + ${etaname} 
-   `;
+  const createMatrixHtml = (rho1, rho2, zname, etaname) => `
+    ${zname} = ${rho1.toFixed(2)} \\epsilon_{1,t} + ${rho2.toFixed(2)} \\epsilon_{2,t} + ${etaname}
+  `;
 
- 
-const bElement = document.getElementById(id); 
-if (bElement) {
-  bElement.innerHTML = matrixHtml; 
-}
-if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
-  const output = MathJax.tex2svg(matrixHtml, {display: true});
-  bElement.innerHTML = '';
-  bElement.appendChild(output);
-} else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-  bElement.innerHTML = `$$${matrixHtml}$$`;
-  MathJax.typesetPromise([bElement]);
-}
-}
+  const renderMathJax = (element, matrixHtml) => {
+    if (typeof MathJax === 'undefined') {
+      element.textContent = matrixHtml;
+      return;
+    }
 
+    if (MathJax.tex2svg) {
+      const output = MathJax.tex2svg(matrixHtml, {display: true});
+      element.innerHTML = '';
+      element.appendChild(output);
+    } else if (MathJax.typesetPromise) {
+      element.innerHTML = `$$${matrixHtml}$$`;
+      MathJax.typesetPromise([element]).catch(console.error);
+    } else {
+      element.textContent = matrixHtml;
+    }
+  };
+
+  return (rho1, rho2, id, zname, etaname) => {
+    if (!elements[id]) {
+      elements[id] = document.getElementById(id);
+      if (!elements[id]) return;
+    }
+
+    const matrixHtml = createMatrixHtml(rho1, rho2, zname, etaname);
+
+    if (matrixHtml === previousMatrixHtml[id]) return;
+    previousMatrixHtml[id] = matrixHtml;
+
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame(() => renderMathJax(elements[id], matrixHtml));
+    } else {
+      renderMathJax(elements[id], matrixHtml);
+    }
+  };
+})();
 
 const insertEqNG = (() => {
   const bElement = document.getElementById('current-nG');
+  let previousLatex = '';
   
   const calculateMoments = (arr) => {
-    const mean = arr.reduce((sum, val) => sum + val, 0) / arr.length;
-    const skewness = arr.reduce((sum, val) => sum + Math.pow(val, 3), 0) / arr.length;
-    const kurtosis = arr.reduce((sum, val) => sum + Math.pow(val, 4), 0) / arr.length - 3;
-    return { skewness, kurtosis };
+    let sum3 = 0, sum4 = 0;
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+      const val = arr[i];
+      const val2 = val * val;
+      sum3 += val2 * val;
+      sum4 += val2 * val2;
+    }
+    return { 
+      skewness: sum3 / len, 
+      kurtosis: sum4 / len - 3 
+    };
   };
 
   const createLatexString = (moments1, moments2) => `
@@ -103,6 +176,24 @@ const insertEqNG = (() => {
     \\end{align*}
   `;
 
+  const renderMathJax = (latexString) => {
+    if (typeof MathJax === 'undefined') {
+      bElement.textContent = latexString;
+      return;
+    }
+
+    if (MathJax.tex2svg) {
+      const output = MathJax.tex2svg(latexString, {display: true});
+      bElement.innerHTML = '';
+      bElement.appendChild(output);
+    } else if (MathJax.typesetPromise) {
+      bElement.innerHTML = `$$${latexString}$$`;
+      MathJax.typesetPromise([bElement]).catch(console.error);
+    } else {
+      bElement.textContent = latexString;
+    }
+  };
+
   return () => {
     if (!bElement) return;
 
@@ -110,22 +201,16 @@ const insertEqNG = (() => {
     const moments2 = calculateMoments(epsilon2);
     const latexString = createLatexString(moments1, moments2);
 
-    if (typeof MathJax !== 'undefined' && MathJax.tex2svg) {
-      const output = MathJax.tex2svg(latexString, {display: true});
-      bElement.innerHTML = '';
-      bElement.appendChild(output);
-    } else if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-      bElement.innerHTML = `$$${latexString}$$`;
-      MathJax.typesetPromise([bElement]);
+    if (latexString === previousLatex) return;
+    previousLatex = latexString;
+
+    if (window.requestAnimationFrame) {
+      window.requestAnimationFrame(() => renderMathJax(latexString));
     } else {
-      bElement.innerHTML = latexString;
+      renderMathJax(latexString);
     }
   };
 })();
-
-
-
-
 
 function createTable(id,HTMLInsert) {
   const element = document.getElementById(id, );
@@ -261,5 +346,6 @@ function createHTMLTableZCovariance(data, title, symbol1, symbol2) {
   `; 
 }
  
+
 
 
