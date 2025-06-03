@@ -1,0 +1,546 @@
+/* SVAR Visualizer Styling Guidelines */
+
+/* Base Styles */
+body {
+    font-family: 'Lato', 'Roboto', 'Open Sans', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333333;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+    padding: 0 20px;
+}
+
+/* Navigation Bar */
+#main-nav {
+    background: #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.07);
+    border-bottom: 3px solid #2ecc71;
+    font-size: 1.08em;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+#main-nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+#main-nav li {
+    margin: 0 1.2em;
+    position: relative;
+}
+#main-nav a {
+    display: block;
+    color: #fff;
+    padding: 1em 0.6em;
+    border-radius: 4px 4px 0 0;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+}
+#main-nav a:hover,
+#main-nav a.active {
+    background: #2ecc71;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(46, 204, 113, 0.11);
+    text-decoration: none;
+}
+@media (max-width: 700px) {
+    #main-nav ul {
+        flex-direction: column;
+    }
+    #main-nav li {
+        margin: 0.2em 0;
+    }
+    #main-nav a {
+        padding: 0.8em 1em;
+        border-radius: 4px;
+    }
+}
+
+/* Header */
+header {
+    background: #3498db; /* Primary color */
+    color: #ffffff;
+    padding: 1rem 0;
+    text-align: center;
+    border-bottom: #2ecc71 3px solid; /* Secondary color for accent */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+}
+
+section {
+    background: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Consistent heading system */
+section h2 {
+    color: #3498db; /* Primary color */
+    margin-top: 0;
+    margin-bottom: 1em;
+    border-bottom: 2px solid #eeeeee;
+    padding-bottom: 0.5em;
+    font-size: 1.8em;
+}
+
+section h3 {
+    color: #3498db; /* Same as h2 for consistency */
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+    font-size: 1.5em;
+}
+
+section h4 {
+    color: #3498db; /* Same as h2 for consistency */
+    margin-top: 1.2em;
+    margin-bottom: 0.8em;
+    font-size: 1.3em;
+}
+
+section h5 {
+    color: #3498db; /* Same as h2 for consistency */
+    margin-top: 1em;
+    margin-bottom: 0.7em;
+    font-size: 1.1em;
+}
+
+p {
+    margin-bottom: 1.2em; /* More space after paragraphs */
+    text-align: justify;
+}
+
+/* General link styling */
+a {
+    color: #3498db; /* Primary color for links */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #2980b9; /* Darker shade on hover */
+}
+
+/* Code Blocks */
+pre {
+    background: #2d2d2d; /* Dark background for code */
+    color: #f8f8f2;     /* Light text for code */
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+code {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Graph Containers */
+.graph-container {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+canvas {
+    max-width: 100%;
+    /* height: auto; /* Removed as specific canvases will get their own height */
+}
+
+#dataChartWrapper, .chart-wrapper {
+    width: 100%;
+    max-width: 800px;
+    height: 400px;
+    margin: 20px auto; /* Added top/bottom margin */
+    background: none;
+    position: relative;
+}
+
+#dataChartWrapper canvas, .chart-wrapper canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    margin-top: 0;
+    background: none;
+}
+
+/* #dataChart specific styles are now covered by #dataChartWrapper canvas */
+
+/* Unified Math Equation Styling */
+.latex-display, .latex-equation-centered {
+    display: block;
+    text-align: center;
+    margin: 1.5em auto;
+    font-size: 1.1em;
+    overflow-x: auto; /* For very long equations */
+}
+
+/* All equations get the same styling for consistency */
+.latex-display {
+    padding: 1.2em;
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.latex-display:hover {
+    background-color: #f0f4f8;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Ensure all KaTeX math is consistent size */
+.katex {
+    font-size: 1.1em !important;
+}
+
+/* Inline math styling */
+p .katex {
+    vertical-align: middle;
+    font-size: 1.05em;
+}
+
+/* Equation definition list styling */
+.equation-definition {
+    background-color: #f8f9fa;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+    padding: 1em 1em 1em 2em;
+    margin: 1.5em 0;
+    list-style-type: none;
+}
+
+.equation-definition li {
+    margin-bottom: 0.8em;
+    line-height: 1.6;
+}
+
+.equation-definition li:last-child {
+    margin-bottom: 0;
+}
+
+.controls-container {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between label, slider, and value */
+    padding: 15px;
+    background-color: #fdfdfd;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 25px;
+}
+
+.controls-container label {
+    font-weight: bold;
+    color: #333;
+}
+
+#lag-slider {
+    flex-grow: 1;
+    max-width: 400px; /* Prevent slider from becoming too wide */
+    cursor: pointer;
+}
+
+/* Basic styling for range input - can be customized further */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.9;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 5px;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #3498db; /* Primary color for thumb */
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #3498db;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+#lag-slider-value {
+    font-weight: bold;
+    color: #3498db; /* Primary color */
+    min-width: 60px; /* Ensure space for 'XX lags' */
+    text-align: left;
+}
+
+/* Ensure KaTeX rendered math is not too small */
+.katex {
+    font-size: 1.1em !important; /* Adjust if needed, !important to override KaTeX default */
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #333333;
+    color: #ffffff;
+    margin-top: 30px;
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+/* Links */
+a {
+    color: #3498db; /* Primary color */
+    text-decoration: none;
+}
+
+a:hover {
+    color: #2980b9; /* Darker shade of primary */
+    text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+    padding-left: 20px;
+}
+
+/* Tables for VAR results */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-size: 0.9em;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f2f2f2; /* Light grey for header */
+    color: #333;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Zebra striping for rows */
+}
+
+/* Error messages */
+.error {
+    color: red;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid red;
+    background-color: #ffebeb;
+    margin-bottom: 15px;
+}
+
+/* Controls for VAR (e.g., lag slider) */
+.controls-container {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.controls-container label {
+    font-weight: bold;
+}
+
+.controls-container input[type="range"] {
+    flex-grow: 1;
+    max-width: 300px;
+}
+
+.controls-container #lag-slider-value {
+    font-weight: bold;
+    min-width: 20px; /* Ensure space for two digits */
+    text-align: right;
+}
+
+/* Unified Chart Styling */
+.chart-container {
+    width: 800px;
+    height: 450px;
+    max-width: 100%;
+    margin: 25px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.chart-container:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Specific adjustments for time series charts */
+.time-series-chart-container {
+    height: 480px; /* Taller to accommodate rotated x-axis labels */
+}
+
+/* Scatter Chart Specific Styling */
+.scatter-chart-container {
+    height: 500px; /* Taller for scatter plots */
+}
+
+/* VAR Estimation Results Styling */
+#var-equation-i-results, #var-equation-r_t-results {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+#var-equation-i-results h5, #var-equation-sp500_returns-results h5 {
+    color: #3498db;
+    font-size: 1.3em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.var-stats {
+    background-color: white;
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3498db;
+}
+
+.var-equation-representation {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.var-stats p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.var-stats strong {
+    color: #2c3e50;
+}
+
+.a-matrices-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.a-matrix {
+    flex: 1 1 280px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 15px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.a-matrix:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.a-matrix h6 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #3498db;
+    font-weight: 600;
+}
+
+.matrix-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.matrix-table th, .matrix-table td {
+    padding: 6px 10px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+}
+
+.matrix-table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+}
+
+.matrix-toggle {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.toggle-matrices-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.toggle-matrices-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
