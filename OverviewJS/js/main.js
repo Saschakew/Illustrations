@@ -4,6 +4,28 @@ let fullLoadedData = null; // Store loaded data globally
 const varNames = ['i', 'r_t']; // Define globally for this module
 let lagSlider, lagValueDisplay, varOrderDisplay; // Keep these for VAR estimation section
 
+// Function to ensure VAR results are available, calculating with defaults if needed
+window.ensureVARResultsAvailable = async function(defaultLags = DEFAULT_VAR_LAGS) {
+    console.log('ensureVARResultsAvailable called.');
+    if (window.currentVarResults && window.currentVarResults.residuals && 
+        window.currentVarResults.residuals.u_i_t && window.currentVarResults.residuals.u_s_t && 
+        !window.currentVarResults.error) {
+        console.log('VAR results already available and valid.');
+        return true; // Results are already available and seem valid
+    }
+
+    console.log('VAR results not available or invalid, attempting to calculate with default lags.');
+    if (!fullLoadedData) {
+        console.error('Cannot ensure VAR results: Main data (fullLoadedData) not loaded.');
+        // Optionally, try to load data here if your app structure supports it, or just return false.
+        // For now, assume data should have been loaded at app start.
+        window.currentVarResults = { error: 'Main data not loaded. Cannot perform VAR calculation.' };
+        return false;
+    }
+
+    return await performVARCalculation(fullLoadedData, defaultLags);
+};
+
 // KaTeX rendering options
 const katexOptions = {
     delimiters: [
@@ -88,6 +110,17 @@ function initializeSection(sectionName) {
 
     if (sectionName === 'data_overview') {
         initializeDataOverviewSection();
+    } else if (sectionName === 'svar_identification_problem') {
+        console.log('Attempting to initialize svar_identification_problem section specific scripts.');
+        // Delay slightly to ensure scripts loaded via innerHTML have executed
+        setTimeout(() => {
+            if (typeof window.initializeRotationExplorer === 'function') {
+                console.log('Calling window.initializeRotationExplorer for svar_identification_problem section (after timeout).');
+                window.initializeRotationExplorer();
+            } else {
+                console.warn('window.initializeRotationExplorer is still not defined after timeout. Check script loading and errors in svar_rotation_explorer.js.');
+            }
+        }, 0);
     } else if (sectionName === 'var_estimation') {
         if (fullLoadedData) {
             initializeSvarMethods(fullLoadedData); // Pass the globally loaded data
@@ -213,6 +246,49 @@ function initializeSvarMethods(loadedData) {
     console.log('VAR estimation initialized with default lags.');
 }
 
+const DEFAULT_VAR_LAGS = 1; // Default lags for background calculation
+
+async function performVARCalculation(data, numLags) {
+    console.log(`Performing VAR(${numLags}) calculation...`);
+    if (!data || !data.i || !data.r_t) {
+        console.error("Data for VAR calculation is missing or incomplete.");
+        window.currentVarResults = null; // Clear any stale results
+        return false;
+    }
+    if (typeof SvarAlgorithms === 'undefined' || !SvarAlgorithms.estimateVAREquationByEquation) {
+        console.error('SvarAlgorithms.estimateVAREquationByEquation is not available for VAR calculation.');
+        window.currentVarResults = null;
+        return false;
+    }
+
+    try {
+        const varResults = SvarAlgorithms.estimateVAREquationByEquation(data, varNames, numLags);
+
+        if (!varResults || varResults.error) {
+            console.error('VAR calculation failed:', varResults ? varResults.error : 'Unknown error');
+            window.currentVarResults = { error: (varResults && varResults.error) ? varResults.error : 'Unknown calculation error' };
+            return false;
+        }
+
+        // Store results globally
+        window.currentVarResults = {
+            equation_i: varResults['i'],
+            equation_s: varResults['r_t'], // 'r_t' from data maps to 's_t' in SVAR context
+            residuals: {
+                u_i_t: (varResults['i'] && varResults['i'].residuals) ? varResults['i'].residuals : null,
+                u_s_t: (varResults['r_t'] && varResults['r_t'].residuals) ? varResults['r_t'].residuals : null
+            },
+            numLags: numLags // Store the number of lags used
+        };
+        console.log('performVARCalculation: window.currentVarResults populated:', JSON.parse(JSON.stringify(window.currentVarResults)));
+        return true; // Indicate success
+    } catch (error) {
+        console.error(`Error during performVARCalculation for VAR(${numLags}):`, error);
+        window.currentVarResults = { error: `Exception during calculation: ${error.message}` };
+        return false;
+    }
+}
+
 async function runAndDisplayVAR(currentData, numLags) {
     console.log(`Running VAR(${numLags}) estimation...`);
     if (!currentData || !currentData.i || !currentData.r_t) {
@@ -235,26 +311,31 @@ async function runAndDisplayVAR(currentData, numLags) {
         return;
     }
 
-    try {
-        const varResults = SvarAlgorithms.estimateVAREquationByEquation(currentData, varNames, numLags);
+    const calculationSuccess = await performVARCalculation(currentData, numLags);
 
-        if (!varResults || varResults.error) {
-            console.error('VAR estimation failed:', varResults ? varResults.error : 'Unknown error from SvarAlgorithms.estimateVAREquationByEquation');
-            const resultsDivI = document.getElementById('var-equation-i-results');
-            const resultsDivR = document.getElementById('var-equation-r_t-results');
-            const errorMessage = `<p class="error-message">Error during VAR estimation: ${varResults && varResults.error ? varResults.error : 'Unknown error'}</p>`;
-            if(resultsDivI) resultsDivI.innerHTML = errorMessage;
-            if(resultsDivR) resultsDivR.innerHTML = errorMessage;
-            // Clear scatter plot canvas on error
-            const scatterCanvas = document.getElementById('residualScatterChart');
-            if (scatterCanvas) {
-                const ctx = scatterCanvas.getContext('2d');
-                ctx.clearRect(0, 0, scatterCanvas.width, scatterCanvas.height);
-            }
-            return; // Stop if estimation itself failed
+    if (!calculationSuccess || !window.currentVarResults || window.currentVarResults.error) {
+        console.error('VAR estimation failed or produced an error, cannot display results.');
+        const resultsDivI = document.getElementById('var-equation-i-results');
+        const resultsDivR = document.getElementById('var-equation-r_t-results');
+        const errorMessage = `<p class="error-message">Error during VAR estimation: ${window.currentVarResults && window.currentVarResults.error ? window.currentVarResults.error : 'Calculation failed or no results'}</p>`;
+        if(resultsDivI) resultsDivI.innerHTML = errorMessage;
+        if(resultsDivR) resultsDivR.innerHTML = errorMessage;
+        // Clear scatter plot canvas on error
+        const scatterCanvas = document.getElementById('residualScatterChart');
+        if (scatterCanvas) {
+            const ctx = scatterCanvas.getContext('2d');
+            ctx.clearRect(0, 0, scatterCanvas.width, scatterCanvas.height);
         }
-        
-        // Display results for 'i' equation
+        return; // Stop if estimation itself failed or had errors
+    }
+
+    // At this point, window.currentVarResults is populated and valid
+    const varResults = { // Reconstruct varResults for local use in display functions
+        'i': window.currentVarResults.equation_i,
+        'r_t': window.currentVarResults.equation_s
+    };
+
+    // Display results for 'i' equation
         if (varResults['i'] && !varResults['i'].error) {
             displayVarEquationResults('i', varResults['i'], currentData, numLags);
         } else {
@@ -293,13 +374,8 @@ async function runAndDisplayVAR(currentData, numLags) {
         }
         console.log(`VAR(${numLags}) estimation displayed.`);
 
-    } catch (error) {
-        console.error(`Error during VAR(${numLags}) estimation or display:`, error);
-        const resultsDivI = document.getElementById('var-equation-i-results');
-        const resultsDivR = document.getElementById('var-equation-r_t-results');
-        if(resultsDivI) resultsDivI.innerHTML = `<p class="error-message">Error running VAR for Interest Rate: ${error.message}</p>`;
-        if(resultsDivR) resultsDivR.innerHTML = `<p class="error-message">Error running VAR for S&P 500 Returns: ${error.message}</p>`;
-    }
+    // The try-catch for performVARCalculation is inside that function.
+    // runAndDisplayVAR now focuses on UI updates based on window.currentVarResults.
 }
 
 function displayVarEquationResults(depVarName, olsResult, fullData, numLags) {

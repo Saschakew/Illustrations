@@ -1,0 +1,89 @@
+<!-- SVAR (identification problem) section -->
+<section id="svar-identification-problem">
+    <h2>SVAR (identification problem)</h2>
+    <p>A Structural Vector Autoregression (SVAR) model aims to capture the contemporaneous relationships between variables, in addition to their dynamic interplay over time. The general form of an SVAR(p) model is given by:</p>
+    \[ Y_t = C + A_1 Y_{t-1} + A_2 Y_{t-2} + \cdots + A_p Y_{t-p} + B_0 \varepsilon_t \]
+    <p>Where:</p>
+    <ul>
+        <li>\( Y_t \) is a (k x 1) vector of k endogenous variables at time t.</li>
+        <li>\( C \) is a (k x 1) vector of constants (intercepts).</li>
+        <li>\( A_i \) are (k x k) coefficient matrices for lags i = 1, ..., p.</li>
+        <li>\( \varepsilon_t \) is a (k x 1) vector of structural shocks at time t. These shocks are assumed to be uncorrelated with each other and have unit variance, i.e., \( E[\varepsilon_t \varepsilon_t'] = I \), where I is the identity matrix.</li>
+        <li>\( B_0 \) is a (k x k) matrix that captures the contemporaneous impact of the structural shocks \( \varepsilon_t \) on the endogenous variables \( Y_t \). This matrix is crucial for identifying the structural relationships.</li>
+    </ul>
+
+    <h4>Equation-by-Equation Representation</h4>
+    <p>Let's make this concrete with an example from our application involving interest rates and stock returns. Consider a bivariate SVAR(1) model (k=2, p=1). Let the vector of endogenous variables be \( Y_t = \begin{pmatrix} i_t \\ s_t \end{pmatrix} \), where \(i_t\) is the interest rate and \(s_t\) is the stock return at time t. The other components are the constant vector \( C = \begin{pmatrix} c_i \\ c_s \end{pmatrix} \), the lag coefficient matrix \( A_1 = \begin{pmatrix} a_{i,i}^{(1)} & a_{i,s}^{(1)} \\ a_{s,i}^{(1)} & a_{s,s}^{(1)} \end{pmatrix} \), the contemporaneous impact matrix \( B_0 = \begin{pmatrix} b_{i,i}^{(0)} & b_{i,s}^{(0)} \\ b_{s,i}^{(0)} & b_{s,s}^{(0)} \end{pmatrix} \), and the vector of structural shocks \( \varepsilon_t = \begin{pmatrix} \varepsilon_{i,t} \\ \varepsilon_{s,t} \end{pmatrix} \). These shocks, \(\varepsilon_{i,t}\) (the 'interest rate shock') and \(\varepsilon_{s,t}\) (the 'stock return shock'), are assumed to be uncorrelated and have unit variance. The model in matrix form is:</p>
+    \[ \begin{pmatrix} i_t \\ s_t \end{pmatrix} = \begin{pmatrix} c_i \\ c_s \end{pmatrix} + \begin{pmatrix} a_{i,i}^{(1)} & a_{i,s}^{(1)} \\ a_{s,i}^{(1)} & a_{s,s}^{(1)} \end{pmatrix} \begin{pmatrix} i_{t-1} \\ s_{t-1} \end{pmatrix} + \begin{pmatrix} b_{i,i}^{(0)} & b_{i,s}^{(0)} \\ b_{s,i}^{(0)} & b_{s,s}^{(0)} \end{pmatrix} \begin{pmatrix} \varepsilon_{i,t} \\ \varepsilon_{s,t} \end{pmatrix} \]
+    <p>Expanding this equation by equation, we get the structural equations for the interest rate and stock return:</p>
+    <p>Equation for Interest Rate (\(i_t\)):
+    \[ i_t = c_i + a_{i,i}^{(1)} i_{t-1} + a_{i,s}^{(1)} s_{t-1} + b_{i,i}^{(0)} \varepsilon_{i,t} + b_{i,s}^{(0)} \varepsilon_{s,t} \]
+    Equation for Stock Return (\(s_t\)):
+    \[ s_t = c_s + a_{s,i}^{(1)} i_{t-1} + a_{s,s}^{(1)} s_{t-1} + b_{s,i}^{(0)} \varepsilon_{i,t} + b_{s,s}^{(0)} \varepsilon_{s,t} \]</p>
+    <p>As seen in this example, each equation (for the interest rate \(i_t\) and the stock return \(s_t\)) generally includes both structural shocks (\(\varepsilon_{i,t}\) and \(\varepsilon_{s,t}\)). This means, for instance, that an unexpected change in the 'interest rate shock' (\(\varepsilon_{i,t}\)) can contemporaneously affect both interest rates (via \(b_{i,i}^{(0)}\)) and stock returns (via \(b_{s,i}^{(0)}\)), and similarly, an unexpected change in the 'stock return shock' (\(\varepsilon_{s,t}\)) can affect interest rates (via \(b_{i,s}^{(0)}\)) and stock returns (via \(b_{s,s}^{(0)}\)). This contemporaneous interaction, captured by the \(B_0\) matrix, is a key feature of SVAR models.</p>
+
+    <h4>Reduced-Form vs. Structural Shocks</h4>
+    <p>The SVAR model as written above is in its structural form. To estimate the model, we often start by estimating its reduced form. The reduced-form VAR is given by:</p>
+    \[ Y_t = C + A_1 Y_{t-1} + A_2 Y_{t-2} + \cdots + A_p Y_{t-p} + u_t \]
+    <p>Here, \( u_t \) is a (k x 1) vector of reduced-form residuals (or shocks). These residuals can be estimated by applying Ordinary Least Squares (OLS) to each equation of the VAR separately, as each equation in the reduced form has only its own error term \(u_{i,t}\) and predetermined variables (lags of Y) on the right-hand side.</p>
+    <p>The relationship between the reduced-form shocks \( u_t \) and the structural shocks \( \varepsilon_t \) is given by:</p>
+    \[ u_t = B_0 \varepsilon_t \]
+    <p>Using our bivariate example with \( u_t = \begin{pmatrix} u_{i,t} \\ u_{s,t} \end{pmatrix} \), \( B_0 = \begin{pmatrix} b_{i,i}^{(0)} & b_{i,s}^{(0)} \\ b_{s,i}^{(0)} & b_{s,s}^{(0)} \end{pmatrix} \), and \( \varepsilon_t = \begin{pmatrix} \varepsilon_{i,t} \\ \varepsilon_{s,t} \end{pmatrix} \), we can write this equation by equation:</p>
+    <p>\[ u_{i,t} = b_{i,i}^{(0)} \varepsilon_{i,t} + b_{i,s}^{(0)} \varepsilon_{s,t} \]
+    \[ u_{s,t} = b_{s,i}^{(0)} \varepsilon_{i,t} + b_{s,s}^{(0)} \varepsilon_{s,t} \]</p>
+    <p>This shows that each reduced-form shock (which we can estimate from the VAR) is a linear combination of the underlying, unobserved structural shocks. For example, the reduced-form shock to the interest rate equation, \(u_{i,t}\), is composed of the true 'interest rate shock' \(\varepsilon_{i,t}\) (scaled by \(b_{i,i}^{(0)}\)) and the true 'stock return shock' \(\varepsilon_{s,t}\) (scaled by \(b_{i,s}^{(0)}\)).</p>
+    <p>The covariance matrix of the reduced-form residuals, \( \Sigma_u = E[u_t u_t'] \), can be related to the structural parameters as follows:</p>
+    \[ \Sigma_u = E[(B_0 \varepsilon_t)(B_0 \varepsilon_t)'] = B_0 E[\varepsilon_t \varepsilon_t'] B_0' = B_0 I B_0' = B_0 B_0' \]
+    <p>So, \( \Sigma_u = B_0 B_0' \).</p>
+
+    <h4>The Identification Problem</h4>
+    <p>While the reduced-form parameters (C, A<sub>1</sub>, ..., A<sub>p</sub>, and \( \Sigma_u \)) can be consistently estimated using OLS, the structural parameters, particularly the matrix \( B_0 \) (and consequently the structural shocks \( \varepsilon_t = B_0^{-1} u_t \)), are not directly estimable without further assumptions. This is known as the <strong>identification problem</strong>.</p>
+    <p>The equation \( \Sigma_u = B_0 B_0' \) provides \( k(k+1)/2 \) unique equations (since \( \Sigma_u \) is symmetric). However, the matrix \( B_0 \) has \( k^2 \) unknown elements. For the system to be exactly identified, we need to impose \( k^2 - k(k+1)/2 = k(k-1)/2 \) restrictions on the elements of \( B_0 \). These restrictions must come from economic theory or other external information.</p>
+    <p>In the bivariate SVAR example (k=2), \( \Sigma_u \) provides \( 2(2+1)/2 = 3 \) equations. The matrix \( B_0 \) has \( 2^2 = 4 \) elements. Thus, we need \( 4 - 3 = 1 \) restriction to identify \( B_0 \). Common identification schemes include recursive identification (Cholesky decomposition), short-run restrictions, or long-run restrictions.</p>
+    <p>If we try to estimate the structural equations (e.g., \( i_t = c_i + a_{i,i}^{(1)} i_{t-1} + a_{i,s}^{(1)} s_{t-1} + b_{i,i}^{(0)} \varepsilon_{i,t} + b_{i,s}^{(0)} \varepsilon_{s,t} \)) directly using OLS, we face a problem. OLS regression of \(i_t\) on lagged variables and some shock term can only identify the effect of *one* composite shock term for that equation. It cannot disentangle the separate effects of \(\varepsilon_{i,t}\) and \(\varepsilon_{s,t}\) without further information or restrictions that allow us to express one in terms of the other, or set one of the \(b^{(0)}\) coefficients to zero, for example.</p>
+<h4>Cholesky Decomposition and Orthogonal Rotations for Identification</h4>
+    <p>One common method to achieve exact identification in an SVAR is by using the <strong>Cholesky decomposition</strong>. Given the estimated covariance matrix of reduced-form residuals, \( \hat{\Sigma}_u \), we can find a unique lower triangular matrix, let's call it \( B_{chol} \), such that \( \hat{\Sigma}_u = B_{chol} B_{chol}' \). This \( B_{chol} \) can serve as our \( B_0 \) matrix.</p>
+    <p>If we define structural shocks as \( e_t^{(chol)} = B_{chol}^{-1} u_t \), these shocks will be, by construction, uncorrelated and have unit variance (if \( B_{chol} \) is scaled appropriately, or we can just focus on them being orthogonal):
+    \[ E[e_t^{(chol)} (e_t^{(chol)})'] = E[B_{chol}^{-1} u_t u_t' (B_{chol}^{-1})'] = B_{chol}^{-1} E[u_t u_t'] (B_{chol}^{-1})' = B_{chol}^{-1} \hat{\Sigma}_u (B_{chol}^{-1})' = B_{chol}^{-1} (B_{chol} B_{chol}') (B_{chol}^{-1})' = I \]
+    This imposes a recursive structure on the contemporaneous relationships: the first shock in the ordering, let's call it \(e_{1,t}^{(chol)}\), affects all variables contemporaneously; the second shock in the ordering, \(e_{2,t}^{(chol)}\), affects all variables except the first one in the ordering (as per the Cholesky structure), and so on. The ordering of variables in \(Y_t\) (e.g., whether \(i_t\) or \(s_t\) is the first variable) thus matters for the economic interpretation of \(B_{chol}\) and the resulting identified shocks (e.g., \(e_{i,t}^{(chol)}\) and \(e_{s,t}^{(chol)}\)).</p>
+    <p>However, the Cholesky decomposition provides only one possible identification. Any matrix \( B = B_{chol} O \), where \( O \) is an <strong>orthogonal matrix</strong> (i.e., \( OO' = O'O = I \)), will also satisfy the condition \( BB' = \Sigma_u \):
+    \[ BB' = (B_{chol}O)(B_{chol}O)' = B_{chol}O O' B_{chol}' = B_{chol} I B_{chol}' = B_{chol} B_{chol}' = \hat{\Sigma}_u \]
+    This means there are infinitely many ways to identify the structural shocks, each corresponding to a different rotation matrix \(O\). For a bivariate model (k=2), a general 2D rotation matrix is given by:
+    \[ O(\theta) = \begin{pmatrix} \cos(\theta) & -\sin(\theta) \\ \sin(\theta) & \cos(\theta) \end{pmatrix} \]
+    where \(\theta\) is the rotation angle. Each choice of \(\theta\) (and thus \(O\)) implies a different set of \(k(k-1)/2 = 1\) restriction needed for identification, and a different economic interpretation. The selection of the appropriate \(O\) (or the specific restrictions) must be guided by economic theory.</p>
+
+    <h5>Interactive Exploration of Rotations</h5>
+    <p>The visualization below allows you to explore how different rotation angles \(\theta\) affect the identified structural shocks \(e_t = (B_{chol}O(\theta))^{-1} u_t\). The original reduced-form residuals \(u_t\) are taken from the VAR estimation. Observe how the scatter plot of \(e_t\) changes and remains uncorrelated, even as the underlying \(B_0\) matrix (and thus the interpretation of shocks) changes.</p>
+    
+    <div class="controls-container">
+        <label for="rotation-angle-slider">Rotation Angle \(\theta\) (degrees): </label>
+        <input type="range" id="rotation-angle-slider" name="rotation-angle-slider" min="-90" max="90" value="0" step="1">
+        <span id="rotation-angle-value">0</span>°
+    </div>
+
+    <p>Current \(B_0 = B_{chol}O(\theta)\) matrix:</p>
+    <div id="b0-matrix-display" class="latex-display"></div>
+
+    <p>Visualizations of Identified Structural Shocks:</p>
+    <div class="charts-row" style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; margin-bottom: 20px; width: 100%; max-width: 100%; box-sizing: border-box;">
+        <div style="flex: 1 1 400px; margin: 10px; max-width: calc(50% - 30px); min-width: 280px; text-align: center; box-sizing: border-box;">
+            <p style="font-weight: bold; margin-bottom: 5px;">Identified Shocks \((e_{i,t}, e_{s,t})\) at current \(\theta\)</p>
+            <div class="chart-wrapper chart-container scatter-chart-container" style="width: 100%; height: 400px; box-sizing: border-box;">
+                <canvas id="rotated-shocks-scatter-chart" style="width: 100%; height: 100%;"></canvas>
+            </div>
+        </div>
+        <div style="flex: 1 1 400px; margin: 10px; max-width: calc(50% - 30px); min-width: 280px; text-align: center; box-sizing: border-box;">
+            <p style="font-weight: bold; margin-bottom: 5px;">Corr(\(e_{i,t}, e_{s,t}\)) vs. Rotation Angle \(\theta\)</p>
+            <div class="chart-wrapper chart-container phi-correlation-chart-container" style="width: 100%; height: 400px; box-sizing: border-box;">
+                <canvas id="phi-correlation-chart" style="width: 100%; height: 100%;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <p>Decomposition of reduced-form shocks (u<sub>t</sub> = B<sub>0</sub> ε<sub>t</sub>):</p>
+    <div id="equations-display" class="equations-display">
+        <!-- This will be populated by JavaScript -->
+    </div>
+
+    <!-- svar_rotation_explorer.js is now loaded in index.html -->
+</section>

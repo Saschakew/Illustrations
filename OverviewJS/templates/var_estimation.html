@@ -3,21 +3,21 @@
     <p>A Vector Autoregression (VAR) model is a multivariate time series model where each variable is a linear function of its own past values (lags) and the past values of all other variables in the system.</p>
     <p>For a system with $K$ variables and $p$ lags, the general form of a VAR(p) model can be written as:</p>
     <div class="latex-display">
-        $Y_t = C + A_1 Y_{t-1} + A_2 Y_{t-2} + \dots + A_p Y_{t-p} + U_t$
+        $Y_t = C + A_1 Y_{t-1} + A_2 Y_{t-2} + \dots + A_p Y_{t-p} + u_t$
     </div>
     <p>Where:</p>
     <ul class="equation-definition">
         <li>$Y_t = (y_{1,t}, \dots, y_{K,t})'$ is the $K \times 1$ vector of variables at time $t$</li>
         <li>$C$ is a $K \times 1$ vector of constants</li>
         <li>$A_j$ are $K \times K$ matrices of coefficients for lag $j$</li>
-        <li>$U_t = (u_{1,t}, \dots, u_{K,t})'$ is the $K \times 1$ vector of reduced-form shocks</li>
+        <li>$u_t = (u_{1,t}, \dots, u_{K,t})'$ is the $K \times 1$ vector of reduced-form shocks (lowercase $u_t$ for vector)</li>
     </ul>
-    <p>In our specific two-variable case with Interest Rate ($i_t$) and S&P 500 Returns ($r_t$), the individual equations are:</p>
+    <p>In our specific two-variable case with Interest Rate ($i_t$) and S&P 500 Returns ($s_t$), the individual equations are:</p>
     <div class="latex-display">
-        $i_t = c_1 + \sum_{j=1}^{p} \alpha_{11,j} i_{t-j} + \sum_{j=1}^{p} \alpha_{12,j} r_{t-j} + u_{i,t}$
+        $i_t = c_i + \sum_{j=1}^{p} a_{i,i}^{(j)} i_{t-j} + \sum_{j=1}^{p} a_{i,s}^{(j)} s_{t-j} + u_{i,t}$
     </div>
     <div class="latex-display">
-        $r_t = c_2 + \sum_{j=1}^{p} \alpha_{21,j} i_{t-j} + \sum_{j=1}^{p} \alpha_{22,j} r_{t-j} + u_{r,t}$
+        $s_t = c_s + \sum_{j=1}^{p} a_{s,i}^{(j)} i_{t-j} + \sum_{j=1}^{p} a_{s,s}^{(j)} s_{t-j} + u_{s,t}$
     </div>
     <p>Each equation is estimated using Ordinary Least Squares (OLS). The results below show the estimated coefficient matrices ($\hat{A}_j$) and key statistics for each equation.</p>
     <div class="controls-container">
@@ -25,7 +25,7 @@
         <input type="range" id="lag-slider" name="lag-slider" min="1" max="24" value="12">
         <span id="lag-slider-value">12</span> lags
     </div>
-    <h3>VAR(<span id="var-order-display">12</span>) Estimation Results for Interest Rate ($i_t$) and S&P 500 Returns ($r_t$)</h3>
+    <h3>VAR(<span id="var-order-display">12</span>) Estimation Results for Interest Rate ($i_t$) and S&P 500 Returns ($s_t$)</h3>
     <h4>Equation for Interest Rate (i)</h4>
     <div id="var-equation-i-results"></div>
     <h5>Actual vs. Fitted Values for Interest Rate (i)</h5>
@@ -36,18 +36,18 @@
     <div class="chart-wrapper chart-container time-series-chart-container" id="var-i-residuals-wrapper">
         <canvas id="var-i-residuals-chart"></canvas>
     </div>
-    <h4>Equation for S&P 500 Returns ($r_t$)</h4>
+    <h4>Equation for S&P 500 Returns ($s_t$)</h4>
     <div id="var-equation-r_t-results"></div>
-    <h5>Actual vs. Fitted Values for S&P 500 Returns ($r_t$)</h5>
+    <h5>Actual vs. Fitted Values for S&P 500 Returns ($s_t$)</h5>
     <div class="chart-wrapper chart-container time-series-chart-container" id="var-r_t-actual-fitted-wrapper">
         <canvas id="var-r_t-actual-fitted-chart"></canvas>
     </div>
-    <h5>Residuals for S&P 500 Returns ($r_t$) Equation</h5>
+    <h5>Residuals for S&P 500 Returns ($s_t$) Equation</h5>
     <div class="chart-wrapper chart-container time-series-chart-container" id="var-r_t-residuals-wrapper">
         <canvas id="var-r_t-residuals-chart"></canvas>
     </div>
     <h4>Residual Correlation Analysis</h4>
-    <p>The scatter plot below shows the relationship between the residuals ($u_{i,t}$ and $u_{r,t}$) from the VAR model. This visualization helps identify potential contemporaneous correlation between the error terms, which is crucial for SVAR identification.</p>
+    <p>The scatter plot below shows the relationship between the residuals ($u_{i,t}$ and $u_{s,t}$) from the VAR model. This visualization helps identify potential contemporaneous correlation between the error terms, which is crucial for SVAR identification.</p>
     <div class="chart-wrapper chart-container scatter-chart-container">
         <canvas id="residualScatterChart"></canvas>
     </div>
