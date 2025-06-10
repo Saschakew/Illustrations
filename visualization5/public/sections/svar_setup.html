@@ -1,4 +1,76 @@
-<h2>SVAR Setup</h2>
-<p>This section explains the basic setup of a Structural VAR model.</p>
-<!-- Content, controls, and plots for SVAR Setup go here -->
-<script src="js/svar_setup.js"></script>
+
+<h2>SVAR Setup  </h2>
+
+<div id="simulation-controls" class="controls-container card mb-4">
+    <div class="card-body">
+        <div class="controls-row">
+            <div class="control-item sample-size">
+                <label for="sampleSizeSlider" class="form-label mb-0 me-2">  T = <span id="sampleSizeValue">500</span></label>
+                <input type="range" class="form-range" min="250" max="1000" id="sampleSizeSlider" value="500">
+            </div>
+            <div class="control-item phi-toggle">
+  <div class="phi-toggle-pill">
+    <span class="phi-label phi-label-left" id="phiLabel0">\(\phi_0 = 0\)</span>
+    <label class="custom-switch">
+      <input type="checkbox" id="phiSwitch" title="Switch between φ₀ = 0 and φ₀ = π/4">
+      <span class="slider"></span>
+    </label>
+    <span class="phi-label phi-label-right" id="phiLabelPi">\(\phi_0 = \pi/4\)</span>
+  </div>
+</div>
+            <div class="control-item new-sample">
+                <button id="newSampleBtn" class="btn w-100">New Sample</button>
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<div id="controls-placeholder"></div>
+
+<div class="explanation-container card">
+    <div class="card-body"> 
+        <p>This visualization  ....</p>
+        
+     
+        <p>We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The second, \(\eta_{2t}\), is from a mixture of two Normal distributions, designed to be non-Gaussian.The raw shocks \(\eta_{t}\) are first scaled by a time-varying volatility process \(\sigma_t\). For the first half of the sample, \(\sigma_t = 1\), and for the second half, \(\sigma_t = 2\). This produces scaled shocks  \(\epsilon_t = \sigma_t \eta_{t}\).  
+            The reduced-form shocks \(u_t\) are calculated as \(u_t = B_0 \epsilon_t\).
+        </p>
+        
+   
+        
+     
+        <p>
+            To allow for a simple visualization, we normalize the structural shocks such that \(E(\epsilon_t \epsilon_t') = I\) and assume that \(B_0\) is orthogonal such that it depends on a single parameter \(\phi_0\). Specifically, we use \(B_0 = B( \phi_0) \) and \( B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}
+            \).
+            Use the switch to toggle between \(\phi_0 = 0\) such that \(B_0 = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}\) and
+            \(\phi_0 = \pi/4\) such that \(B_0 = \begin{pmatrix} 1/\sqrt{2} & -1/\sqrt{2} \\ 1/\sqrt{2} & 1/\sqrt{2} \end{pmatrix}\)
+            .
+        </p>
+            
+
+        
+
+ 
+      
+         
+    </div>
+</div>
+
+<div class="plot-wrapper">
+    <div id="shocksScatterPlot" class="plot-container-individual"></div>
+    <div id="reducedShocksScatterPlot" class="plot-container-individual"></div>
+</div>
+<div>
+    <ul>
+        <li><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \(\epsilon_{1t}\) against
+            \(\epsilon_{2t}\). Observe the non-Gaussian features (especially from \(\epsilon_{2t}\), inherited from
+            \(\eta_{2t}\)).</li>
+        <li><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \(u_{1t}\) against \(u_{2t}\).
+            These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution
+            changes when you toggle \(\phi_0\), illustrating how different rotations of the structural shocks \(\epsilon_t\)
+            can produce different patterns in the observed reduced-form residuals.</li>
+    </ul>
+</div>
+
+
