@@ -1,0 +1,103 @@
+:root {
+  --color-background: #EEEEEE;
+  --color-primary: #00ADB5;
+  --color-text: #222831;
+  --color-accent: #ff7f0e;
+  --color-white: #FFFFFF;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: var(--color-background);
+    color: var(--color-text);
+}
+
+header {
+    background: var(--color-text);
+    color: var(--color-white);
+    padding: 1.5rem 0;
+    text-align: center;
+    border-bottom: 4px solid var(--color-primary);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    background: #343a40; /* Slightly lighter than header */
+    padding: 0;
+}
+
+nav a {
+    color: var(--color-background);
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    font-weight: 700;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav a:hover, nav a.active {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+main {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+section {
+    background: var(--color-white);
+    margin-bottom: 2rem;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+section h2 {
+    color: var(--color-primary);
+    font-size: 2rem;
+    border-bottom: 2px solid var(--color-background);
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+}
+
+/* Basic button style */
+.btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 700;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+.btn-primary:hover {
+    background-color: #007a7f; /* Darker teal */
+    transform: translateY(-2px);
+}
+
+.btn-accent {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+}
+
+.btn-accent:hover {
+    background-color: #e66a00; /* Darker orange */
+    transform: translateY(-2px);
+}
