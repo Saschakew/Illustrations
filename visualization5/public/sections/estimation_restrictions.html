@@ -6,7 +6,7 @@
             <!-- Phi Slider (left) -->
             <div class="control-item sample-size">
                 <label for="phiSlider_er" class="form-label mb-0 me-2">\( \phi = \)<span id="phiValue_er">0.00</span></label>
-                <input type="range" class="form-range" min="0" max="1.5708" step="0.01" id="phiSlider_er" value="0" data-id="phi-slider">
+                <input type="range" class="form-range" min="-1.5708" max="1.5708" step="0.01" id="phiSlider_er" value="0" data-id="phi-slider">
             </div>
 
             <!-- B0 Toggle (middle) -->
@@ -37,20 +37,20 @@
             We observe reduced-form shocks \(u_t\) and seek to recover the unobserved structural shocks \(\epsilon_t\). The relationship is \(\epsilon_t = B_0^{-1} u_t\), but the true matrix \(B_0\) is unknown.
         </p>
         <p>
-            Define innovations \(e_t(B) = B^{-1} u_t\). Assuming structural shocks are uncorrelated and have unit variance (\(E[\epsilon_t \epsilon_t'] = I\)), we look for a matrix \(B\) such that the sample innovations \(e_t(B)\) also satisfy this property.
-        </p>
-        <p>
+            Define innovations \(e_t(B) = B^{-1} u_t\). Assuming structural shocks are uncorrelated and have unit variance (\(E[\epsilon_t \epsilon_t'] = I\)), we look for a matrix \(B\) such that the sample innovations \(e_t(B)\) also satisfy this property. 
             The set of such matrices \(B\) can be parameterized by a single rotation angle \(\phi \in [0, \pi/2]\). 
-            Specifically, all matrices \(B(\phi) = B^{\text{Chol}} Q(\phi)\) yield innovations with unit variance and uncorrelated shocks, where \(B^{\text{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\), and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\).
-        </p>
-        <p>Use the \(\phi  \) slider to select a rotation angle  and see the corresponding matrix   \(B(\phi = \) <span id="phiValueDisplay_er">0.00</span> \( ) = \) <span id="bMatrixDisplay_er"></span>. 
+            Specifically, all matrices \(B(\phi) = B^{\text{Chol}} Q(\phi)\) yield innovations with unit variance and uncorrelated shocks, where \(B^{\text{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\), and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\). Use the \(\phi  \) slider to select a rotation angle  and see the corresponding matrix   \(B(\phi = \) <span id="phiValueDisplay_er">0.00</span> \( ) = \) <span id="bMatrixDisplay_er"></span>. 
         </p>
          
-        <p> Given the true data-generating matrix \(B_0\) (selected via the toggle), we can calculate the true rotation angle
-        \(\phi_0\). For the recursive \(B_0\) we get \(\phi_0^{\text{rec}} = 0\). For the non-recursive \(B_0\) we get \(\phi_0^{\text{non-rec}}  \approx 0.7854\).
-            The Cholesky identification imposes a recursive structure on \(B\) (e.g., its (1,2) element is zero), which uniquely determines the rotation angle as \(\phi=0\).
+        <p> 
+            Given the true data-generating matrix \(B_0\) and the sample covariance of \(u_t\), we can calculate the precise rotation angle, \(\phi_0\), that would recover the true \(B_0\) from this specific sample. This is the value highlighted on the correlation plot. Because it depends on the random sample, it will fluctuate slightly with each new draw.
+        </p>
+        <p>
+            For the current sample, the required angle for the recursive \(B_0\) is \(\phi_0^{\text{rec}} \approx \) <span id="phi_true_rec_display"></span>, and for the non-recursive \(B_0\) it is \(\phi_0^{\text{non-rec}} \approx \) <span id="phi_true_non_rec_display"></span>.
+        </p>
+        <p>
+            Separately, the Cholesky identification imposes a purely structural assumption (a recursive structure on \(B\)), which uniquely determines the rotation angle as \(\phi=0\), regardless of the sample.
             Click the button below to see the results of this estimation.
-           
         </p>
         <div class="text-center">
             <button id="estimateRecursiveBtn_er" class="btn btn-primary my-4">Estimate Recursive SVAR</button>

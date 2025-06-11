@@ -148,9 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log('Calling initSvarSetup() for svar-setup section...');
                         initSvarSetup();
                     } 
-                    else if (sectionId === 'estimation_restrictions' && typeof initEstimationRestrictions === 'function') {
+                                        else if (sectionId === 'estimation_restrictions' && typeof initEstimationRestrictions === 'function') {
                         console.log('Calling initEstimationRestrictions() for estimation-restrictions section...');
                         initEstimationRestrictions();
+                    } 
+                    else if (sectionId === 'estimation_nongaussianity' && typeof initEstimationNonGaussianity === 'function') {
+                        console.log('Calling initEstimationNonGaussianity() for estimation-nongaussianity section...');
+                        initEstimationNonGaussianity();
                     }
                     
                     // Mark this section as loaded

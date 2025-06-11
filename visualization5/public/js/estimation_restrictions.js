@@ -20,23 +20,20 @@ function initEstimationRestrictions() {
     const estimatedB_er = document.getElementById('estimatedB_er');
     const trueB0_er = document.getElementById('trueB0_er'); 
     const estimatedPhiValue_er = document.getElementById('estimatedPhiValue_er');
+    const phiTrueRecDisplay = document.getElementById('phi_true_rec_display');
+    const phiTrueNonRecDisplay = document.getElementById('phi_true_non_rec_display');
 
     // --- Constants & State ---
     const B0_REC = [[1, 0], [0.5, 1]];
-    const c_pi_4 = Math.cos(Math.PI / 4);
-    const s_pi_4 = Math.sin(Math.PI / 4);
-    // B0_NON_REC = B0_REC * Q(pi/4)
-    // B0_REC = [[1, 0], [0.5, 1]]
-    // Q(pi/4) = [[c_pi_4, -s_pi_4], [s_pi_4, c_pi_4]]
-    const B0_NON_REC = [
-        [c_pi_4, -s_pi_4],
-        [0.5 * c_pi_4 + s_pi_4, -0.5 * s_pi_4 + c_pi_4]
-    ];
+    // This now matches the definition in svar_setup.js
+    const B0_NON_REC = [[1, 0.5], [0.5, 1]];
     let isNonRecursive = false;
     let bChol, correlationCurve, phi_true;
     
     // Data variables
     let u1t = [], u2t = [], T = 0;
+    let innovationsPlotRenderedOnce = false;
+    let correlationPlotRenderedOnce = false;
 
     // --- Matrix Helper Functions (for 2x2 matrices) ---
     const matinv = ([[a, b], [c, d]]) => {
@@ -50,13 +47,50 @@ function initEstimationRestrictions() {
     };
 
     const cholesky = ([[a, b], [c, d]]) => { // for symmetric positive-definite
+        if (a <= 0) return null; // Must be positive definite
         const l11 = Math.sqrt(a);
         const l21 = b / l11;
-        const l22 = Math.sqrt(d - l21 * l21);
+        const inner = d - l21 * l21;
+        if (inner <= 0) return null;
+        const l22 = Math.sqrt(inner);
         return [[l11, 0], [l21, l22]];
+    };
+
+    const calculateB = (phi) => {
+        if (!bChol) return null;
+        const Q = [[Math.cos(phi), -Math.sin(phi)], [Math.sin(phi), Math.cos(phi)]];
+        return matmul(bChol, Q);
+    };
+
+    const matrixToLatex = (matrix) => {
+        if (!matrix || matrix.length !== 2 || matrix[0].length !== 2) {
+            return '\\begin{pmatrix} ? & ? \\\\ ? & ? \\end{pmatrix}';
+        }
+        return `\\begin{pmatrix} ${matrix[0][0].toFixed(2)} & ${matrix[0][1].toFixed(2)} \\\\ ${matrix[1][0].toFixed(2)} & ${matrix[1][1].toFixed(2)} \\end{pmatrix}`;
     };
     
     const transpose = ([[a, b], [c, d]]) => [[a, c], [b, d]];
+    
+    // Calculate the theoretical phi_0 value for a given B0 matrix
+    const calculateTruePhi = (B0) => {
+        // Calculate population covariance matrix Σ = B₀B₀'
+        const sigma_pop = matmul(B0, transpose(B0));
+        // Get Cholesky decomposition of population covariance
+        const b_chol_pop = cholesky(sigma_pop);
+        if (!b_chol_pop) {
+            console.error("Cholesky decomposition of population covariance failed.");
+            return null;
+        }
+        // Calculate Q = (B^Chol)^(-1) * B₀
+        const b_chol_pop_inv = matinv(b_chol_pop);
+        if (!b_chol_pop_inv) {
+            console.error("Cannot invert population Cholesky matrix.");
+            return null;
+        }
+        const q_true_pop = matmul(b_chol_pop_inv, B0);
+        // Extract phi_0 from Q
+        return Math.atan2(q_true_pop[1][0], q_true_pop[0][0]);
+    };
 
     // --- Plotting Helper Functions ---
     function getSquareSize(plotDivElement) {
@@ -71,76 +105,133 @@ function initEstimationRestrictions() {
 
     // --- Core Logic ---
 
-    function calculateTruePhi(B0) {
-        const sigma_pop = matmul(B0, transpose(B0));
-        const b_chol_pop = cholesky(sigma_pop);
-        const q_true_pop = matmul(matinv(b_chol_pop), B0);
-        return Math.atan2(q_true_pop[1][0], q_true_pop[0][0]);
-    }
-
-    const PHI_TRUE_REC = calculateTruePhi(B0_REC);
-    const PHI_TRUE_NON_REC = calculateTruePhi(B0_NON_REC);
-
     function generateAndProcessData() {
     // Hide previous estimation results when data is reprocessed
     if (estimationResults) estimationResults.style.display = 'none';
 
         // Check if data is available from the central data store
-        if (window.SVARData && window.SVARData.u_1t && window.SVARData.u_2t) {
+        if (window.SVARData && window.SVARData.u_1t && window.SVARData.u_2t && window.SVARData.u_1t.length > 0) {
             // Use data from central data store
             u1t = window.SVARData.u_1t;
             u2t = window.SVARData.u_2t;
             T = u1t.length;
         } 
         // Fallback to legacy data store if needed
-        else if (window.svarSetupData && window.svarSetupData.u_1t && window.svarSetupData.u_2t) {
+        else if (window.svarSetupData && window.svarSetupData.u_1t && window.svarSetupData.u_2t && window.svarSetupData.u_1t.length > 0) {
             u1t = window.svarSetupData.u_1t;
             u2t = window.svarSetupData.u_2t;
             T = u1t.length;
         } else {
-            console.error('Data from SVAR setup is not available. Please visit the SVAR Setup section first.');
+            console.error('Data from SVAR setup is not available or empty. Please visit the SVAR Setup section first.');
             return;
         }
         
         console.log(`Estimation Restrictions: Using data with length ${T}`);
 
-        isNonRecursive = b0Switch.checked;
-        phi_true = isNonRecursive ? PHI_TRUE_NON_REC : PHI_TRUE_REC;
-        
-        // Calculate sample covariance matrix of u_t
-        const mean_u1 = u1t.reduce((a, b) => a + b) / T;
-        const mean_u2 = u2t.reduce((a, b) => a + b) / T;
-        const var_u1 = u1t.map(x => (x - mean_u1) ** 2).reduce((a, b) => a + b) / T;
-        const var_u2 = u2t.map(x => (x - mean_u2) ** 2).reduce((a, b) => a + b) / T;
-        const cov_u1u2 = u1t.map((x, i) => (x - mean_u1) * (u2t[i] - mean_u2)).reduce((a, b) => a + b) / T;
-        const sigma_T = [[var_u1, cov_u1u2], [cov_u1u2, var_u2]];
+        // Check if we have enough data before calculating statistics
+        if (T <= 1) {
+            console.error('Not enough data points to calculate statistics (need at least 2)');
+            return;
+        }
 
-        bChol = cholesky(sigma_T);
+        // Calculate sample covariance matrix of u_t
+        const mean_u1 = u1t.reduce((a, b) => a + b, 0) / T;
+        const mean_u2 = u2t.reduce((a, b) => a + b, 0) / T;
+        const v_u1 = u1t.map(x => (x - mean_u1) ** 2).reduce((a, b) => a + b, 0) / (T - 1);
+        const v_u2 = u2t.map(x => (x - mean_u2) ** 2).reduce((a, b) => a + b, 0) / (T - 1);
+        const cov_u1_u2 = u1t.map((x, i) => (x - mean_u1) * (u2t[i] - mean_u2)).reduce((a, b) => a + b, 0) / (T - 1);
+        const sample_cov_matrix = [[v_u1, cov_u1_u2], [cov_u1_u2, v_u2]];
+
+        // Perform Cholesky decomposition on the sample covariance matrix
+        bChol = cholesky(sample_cov_matrix);
+        if (!bChol) {
+            console.error("Cholesky decomposition failed. The sample covariance matrix might not be positive definite.");
+            return;
+        }
+
+        // Calculate the theoretical true phi values based on population covariance
+        const phi_true_rec = calculateTruePhi(B0_REC);
+        const phi_true_non_rec = calculateTruePhi(B0_NON_REC);
         
+        // Update the UI with the theoretical values
+        if (phiTrueRecDisplay) phiTrueRecDisplay.textContent = phi_true_rec.toFixed(4);
+        if (phiTrueNonRecDisplay) phiTrueNonRecDisplay.textContent = phi_true_non_rec.toFixed(4);
+
+        // Set the phi_true for the plot based on the toggle
+        isNonRecursive = b0Switch.checked;
+        phi_true = isNonRecursive ? phi_true_non_rec : phi_true_rec;
+
         // Pre-calculate the correlation curve for the right plot
         correlationCurve = {phis: [], corrs: []};
-        for (let p = 0; p <= Math.PI / 2; p += 0.01) {
+        
+        // Check if shared innovations are available
+        let e1 = [], e2 = [];
+        let useSharedInnovations = false;
+        
+        if (window.SVARData && window.SVARData.e_1t && window.SVARData.e_1t.length === T) {
+            // Use shared innovations from SVARData
+            e1 = window.SVARData.e_1t;
+            e2 = window.SVARData.e_2t;
+            useSharedInnovations = true;
+            console.log('Estimation Restrictions: Using shared innovations from SVARData');
+        }
+        
+        for (let p = -Math.PI / 2; p <= Math.PI / 2; p += 0.01) {
             const Q = [[Math.cos(p), -Math.sin(p)], [Math.sin(p), Math.cos(p)]];
             const B = matmul(bChol, Q);
-            const B_inv = matinv(B);
-            let corr_sum = 0;
-            for (let i = 0; i < T; i++) {
-                const e1 = B_inv[0][0] * u1t[i] + B_inv[0][1] * u2t[i];
-                const e2 = B_inv[1][0] * u1t[i] + B_inv[1][1] * u2t[i];
-                corr_sum += e1 * e2;
+            
+            if (useSharedInnovations) {
+                // When using shared innovations, we need to transform them using B
+                // and then calculate correlation with the observed u1t, u2t
+                const u1_phi = [], u2_phi = [];
+                for (let i = 0; i < T; i++) {
+                    u1_phi[i] = B[0][0] * e1[i] + B[0][1] * e2[i];
+                    u2_phi[i] = B[1][0] * e1[i] + B[1][1] * e2[i];
+                }
+                
+                // Calculate correlation between transformed u1 and original u1t
+                let sum_u1u1 = 0, sum_u1sq = 0, sum_u1t_sq = 0;
+                for (let i = 0; i < T; i++) {
+                    sum_u1u1 += u1_phi[i] * u1t[i];
+                    sum_u1sq += u1_phi[i] * u1_phi[i];
+                    sum_u1t_sq += u1t[i] * u1t[i];
+                }
+                
+                const corr = sum_u1u1 / Math.sqrt(sum_u1sq * sum_u1t_sq);
+                correlationCurve.phis.push(p);
+                correlationCurve.corrs.push(Math.abs(corr));
+            } else {
+                // Traditional approach: calculate innovations for each phi
+                const B_inv = matinv(B);
+                if (!B_inv) continue;
+                
+                let corr_sum = 0;
+                for (let i = 0; i < T; i++) {
+                    const e1 = B_inv[0][0] * u1t[i] + B_inv[0][1] * u2t[i];
+                    const e2 = B_inv[1][0] * u1t[i] + B_inv[1][1] * u2t[i];
+                    corr_sum += e1 * e2;
+                }
+                correlationCurve.phis.push(p);
+                correlationCurve.corrs.push(corr_sum / T);
             }
-            correlationCurve.phis.push(p);
-            correlationCurve.corrs.push(corr_sum / T);
         }
         updatePlotsAndUI();
     }
 
     function updatePlotsAndUI() {
-        // Debug: log current phi_true and toggle state
-        console.log('[ER] updatePlotsAndUI: isNonRecursive =', isNonRecursive, ', phi_true =', phi_true, ', phi_true (deg) =', (phi_true * 180 / Math.PI).toFixed(2));
+        // If bChol is not calculated yet (e.g., due to an error in generateAndProcessData), do nothing.
+        if (!bChol) {
+            // This can happen if the sample data leads to a non-positive-definite covariance matrix.
+            return;
+        }
+
+
         const phi = parseFloat(phiSlider.value);
         phiValueDisplay.textContent = phi.toFixed(2);
         document.getElementById('phiValueDisplay_er').textContent = phi.toFixed(2);
+
+        // Get the controls container once
+        const controlsContainer = document.getElementById('estimation-controls');
 
         // Calculate B = B_chol * Q(phi)
         const Q_phi = [[Math.cos(phi), -Math.sin(phi)], [Math.sin(phi), Math.cos(phi)]];
@@ -163,18 +254,12 @@ function initEstimationRestrictions() {
         }
 
         // Left Plot: Innovations Scatter
-        const traceInnovations = {
+        const innovationsTrace = {
             x: e1t,
             y: e2t,
             mode: 'markers',
             type: 'scatter',
-            marker: {
-                size: 6,
-                color: 'rgb(252, 81, 133)', // New requested color
-                opacity: 0.7,
-                line: { width: 1, color: '#222831' } // Dark border - consistent
-            },
-            hoverinfo: 'x+y',
+            marker: { size: 6, color: 'rgb(252, 81, 133)', opacity: 0.7 },
             hovertemplate: 'e₁: %{x:.3f}<br>e₂: %{y:.3f}<extra></extra>'
         };
 
@@ -190,16 +275,16 @@ function initEstimationRestrictions() {
             plot_bgcolor: '#ffffff'    // Consistent plot area background
         };
 
-        Plotly.react(innovationsScatterPlotDiv, [traceInnovations], layoutInnovations, {responsive: true});
+        Plotly.react(innovationsScatterPlotDiv, [innovationsTrace], layoutInnovations, {responsive: true});
 
         // Right Plot: Correlation vs. Phi
-        const traceCorrelation = {
+        const correlationTrace = {
             x: correlationCurve.phis,
             y: correlationCurve.corrs,
             mode: 'lines',
             type: 'scatter',
             name: 'Sample Correlation',
-            line: { color: '#ff7f0e', width: 2 } // Accent color for the line
+            line: { color: 'rgb(252, 81, 133)', width: 2 } // Accent color for the line
         };
 
         const squareSizeCorrelation = getSquareSize(correlationPlotDiv);
@@ -218,7 +303,7 @@ function initEstimationRestrictions() {
             xaxis: {
                 title: { text: 'φ (radians)', font: { size: 14, color: '#222831' } },
                 zeroline: true, zerolinecolor: '#DDDDDD', gridcolor: '#EEEEEE',
-                range: [0, Math.PI/2]
+                range: [-Math.PI / 2, Math.PI / 2]
             },
             yaxis: {
                 title: { text: 'mean(e₁ ⋅ e₂)', font: { size: 14, color: '#222831' } },
@@ -267,7 +352,7 @@ function initEstimationRestrictions() {
             hovertemplate: 'φ: %{x:.3f}<br>Corr: %{y:.3f}<extra></extra>'
         };
 
-        Plotly.react(correlationPlotDiv, [traceCorrelation], layoutCorrelation, {responsive: true});
+        Plotly.react(correlationPlotDiv, [correlationTrace], layoutCorrelation, {responsive: true});
     }
 
     // --- Event Listeners ---
@@ -374,109 +459,91 @@ function initEstimationRestrictions() {
         });
     }
 
-    // --- Sticky Controls similar to SVAR Setup ---
-    function setupStickyControlsER() {
-        const controlsContainer = document.getElementById('estimation-controls');
-        const controlsPlaceholder = document.getElementById('controls-placeholder-er');
-        if (!controlsContainer || !controlsPlaceholder) {
-            console.error('Required elements for sticky controls not found');
-            return;
-        }
+    // --- Event Listeners ---
+    phiSlider.addEventListener('input', updatePlotsAndUI);
 
-        let controlsNaturalWidth = null;
-        let controlsHeight = null;
-        let resizeTimer = null;
-        const DEBUG = false;
+    newSampleBtn.addEventListener('click', () => {
+        generateAndProcessData();
+        updatePlotsAndUI();
+    });
 
-        function setupInitial() {
-            // Wait for MathJax to finish rendering
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise().then(() => {
-                    const rect = controlsContainer.getBoundingClientRect();
-                    controlsNaturalWidth = rect.width;
-                    controlsHeight = rect.height;
-                    if (DEBUG) console.log(`ER Controls: Natural width = ${controlsNaturalWidth}px, height = ${controlsHeight}px`);
-                    onScroll(); // Re-check scroll position after getting correct dimensions
-                }).catch(err => console.error('MathJax typeset error:', err));
-            } else {
-                const rect = controlsContainer.getBoundingClientRect();
-                controlsNaturalWidth = rect.width;
-                controlsHeight = rect.height;
-            }
-        }
-
-        function onScroll() {
-            const section = document.getElementById('estimation-restrictions');
-            if (!section || !controlsContainer || !controlsPlaceholder) return;
-            
-            const sectionRect = section.getBoundingClientRect();
-            const controlsRect = controlsContainer.getBoundingClientRect();
-            
-            // Check if we're within the section boundaries
-            const withinSection = sectionRect.top <= 0 && sectionRect.bottom > controlsHeight;
-            const sectionTopVisible = sectionRect.top <= 0;
-            const sectionBottomVisible = sectionRect.bottom > controlsHeight;
-            
-            // CASE 1: We're within the section and should stick
-            if (withinSection && sectionTopVisible && sectionBottomVisible) {
-                controlsContainer.classList.add('sticky');
-                controlsContainer.style.position = 'fixed';
-                controlsContainer.style.top = '0';
-                controlsContainer.style.left = '50%';
-                controlsContainer.style.width = `${controlsNaturalWidth}px`;
-                controlsContainer.style.transform = 'translateX(-50%)';
-                controlsPlaceholder.style.height = `${controlsHeight}px`;
-                if (DEBUG) console.log('ER State: Sticky');
-            }
-            // CASE 2: Normal flow
-            else {
-                controlsContainer.classList.remove('sticky');
-                controlsContainer.style.position = '';
-                controlsContainer.style.top = '';
-                controlsContainer.style.left = '';
-                controlsContainer.style.width = '';
-                controlsContainer.style.transform = '';
-                controlsPlaceholder.style.height = '0';
-                if (DEBUG) console.log('ER State: Normal flow');
-            }
-        }
-
-        // Initial setup with a delay to ensure everything is rendered
-        setTimeout(() => {
-            setupInitial();
-            onScroll();
-            
-            // Add scroll event listener with throttling
-            let ticking = false;
-            window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    window.requestAnimationFrame(() => {
-                        onScroll();
-                        ticking = false;
-                    });
-                    ticking = true;
+    b0Switch.addEventListener('change', () => {
+        isNonRecursive = b0Switch.checked;
+        // Notify other sections about the change
+        window.SVARData.updateData({ isNonRecursive: isNonRecursive }, 'MODEL_TYPE_CHANGED');
+        updateToggleVisual();
+        generateAndProcessData(); // Re-process data for new phi_true
+        updatePlotsAndUI();
+    });
+    
+    estimateRecursiveBtn.addEventListener('click', () => {
+        // Find the phi that maximizes the correlation
+        let maxCorr = -2;
+        let bestPhi = 0;
+        if (correlationCurve && correlationCurve.phis) {
+            correlationCurve.phis.forEach((phi, i) => {
+                if (correlationCurve.corrs[i] > maxCorr) {
+                    maxCorr = correlationCurve.corrs[i];
+                    bestPhi = phi;
                 }
             });
-            
-            // Add resize event listener with debouncing
-            window.addEventListener('resize', () => {
-                if (resizeTimer) clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(() => {
-                    setupInitial();
-                    // Additional check after a bit more time
-                    setTimeout(setupInitial, 100);
-                }, 250);
-            });
-            
-            if (DEBUG) console.log('ER Sticky controls initialized.');
-        }, 500); // Increased delay to ensure MathJax has time to render
-    }
+        }
+        
+        phiSlider.value = bestPhi;
+        updatePlotsAndUI();
+        phiSlider.dispatchEvent(new Event('input'));
 
-    // --- Initial Load ---
-    setupStickyControlsER();
+        // Show estimation results
+        if (estimationResults) {
+            const trueB0 = isNonRecursive ? B0_NON_REC : B0_REC;
+            const estimatedB = calculateB(bestPhi);
+            
+            trueB0_er.textContent = `B₀ = ${matrixToLatex(trueB0)}`;
+            estimatedB_er.textContent = `B̂(φ̂) = ${matrixToLatex(estimatedB)}`;
+            estimatedPhiValue_er.textContent = `φ̂ = ${bestPhi.toFixed(4)}`;
+            
+            estimationResults.style.display = 'block';
+            if (window.MathJax) {
+                MathJax.typesetPromise([trueB0_er, estimatedB_er]).catch(console.error);
+            }
+        }
+    });
+
+    // --- Initial Load & Setup ---
+    initializeStickyMenu('estimation-restrictions', 'estimation-controls', 'controls-placeholder-er');
     setupSwitchSync();
     updateToggleVisual(); // Set initial highlight state
+    
+    // Generate data and draw initial plots
     generateAndProcessData();
+    updatePlotsAndUI();
+
+    // Attach plot listeners now that plots exist
+    const controlsContainer = document.getElementById('estimation-controls');
+    if (innovationsScatterPlotDiv && controlsContainer && typeof controlsContainer.forceRefreshStickyMeasurements === 'function') {
+        innovationsScatterPlotDiv.on('plotly_afterplot', () => {
+            if (!innovationsPlotRenderedOnce) {
+                controlsContainer.forceRefreshStickyMeasurements();
+                innovationsPlotRenderedOnce = true;
+            }
+        });
+    }
+    if (correlationPlotDiv && controlsContainer && typeof controlsContainer.forceRefreshStickyMeasurements === 'function') {
+        correlationPlotDiv.on('plotly_afterplot', () => {
+            if (!correlationPlotRenderedOnce) {
+                controlsContainer.forceRefreshStickyMeasurements();
+                correlationPlotRenderedOnce = true;
+            }
+        });
+    }
+
+    // Attach listener for clicking on the correlation plot to update the slider
+    correlationPlotDiv.on('plotly_click', function(data) {
+        const clickedPhi = data.points[0].x;
+        phiSlider.value = clickedPhi;
+        updatePlotsAndUI(); // Update based on the new phi
+        phiSlider.dispatchEvent(new Event('input'));
+    });
 
     // Expose to global so main.js can call it after injecting section
     window.initEstimationRestrictions = initEstimationRestrictions;

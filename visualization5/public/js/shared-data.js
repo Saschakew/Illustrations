@@ -7,6 +7,9 @@ window.SVARData = {
     epsilon_1t: [],
     epsilon_2t: [],
     sigma_t: [],
+    // Raw innovations e (before scaling and normalization)
+    e_1t: [],
+    e_2t: [],
     B_0: null,
     T: 500,
     isNonRecursive: false,

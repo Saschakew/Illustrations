@@ -81,121 +81,63 @@ Key classes to be aware of:
 
 ---
 
-## 3. JavaScript: The Sticky Scrolling Feature
+## 3. JavaScript Logic: The Global `initializeStickyMenu` Function
 
-The sticky behavior is controlled by a dedicated JavaScript function. It tracks the scroll position and dynamically adds/removes the `.sticky` class to the controls container.
+The interactive sticky behavior is managed by a single, global JavaScript function: `initializeStickyMenu(sectionId, controlsContainerId, controlsPlaceholderId)`. This function is located in `public/js/menu.js`.
 
-### How It Works
+To make the menu in your new section sticky, you simply need to call this function once in your section's specific JavaScript file, providing the correct IDs for your section wrapper, controls container, and placeholder div.
 
-1.  **Initialization (`setupInitial`)**: When the page loads, the script measures and stores the natural width and height of the controls container. It also gets references to the main section wrapper and the placeholder div.
-
-2.  **Scroll Monitoring (`onScroll`)**: The script listens for the `scroll` event.
-    *   It checks if the top of the **main section wrapper** has scrolled past the top of the viewport (`sectionRect.top <= 0`).
-    *   It also checks if the bottom of the section is still visible (`sectionRect.bottom > controlsHeight`).
-
-3.  **Applying Sticky State**: If both conditions are true, it means the user is scrolling *within* the section. The script then:
-    *   Adds the `.sticky` class to the `.controls-container`.
-    *   Applies inline styles to fix its position (`position: 'fixed'`) and center it horizontally (`left: '50%', transform: 'translateX(-50%)'`).
-    *   Sets the height of the `.controls-placeholder` to be equal to the height of the menu. This pushes the content below it down, preventing a sudden jump.
-
-4.  **Removing Sticky State**: When the user scrolls out of the section, the `.sticky` class and all inline styles are removed, and the placeholder's height is reset to `0`.
-
-### Boilerplate JavaScript
-
-Copy this function into your new section's JavaScript file. Update the IDs to match the ones you defined in your HTML.
+**Example Call:**
 
 ```javascript
-function setupStickyControls_new() {
-    const DEBUG = false; // Set to true for console logs
-    const section = document.getElementById('new-section-wrapper');
-    const controlsContainer = document.getElementById('controls-container_new');
-    const controlsPlaceholder = document.getElementById('controls-placeholder_new');
-    let resizeTimer;
+// In your section's specific .js file (e.g., public/js/my_new_section.js)
+document.addEventListener('DOMContentLoaded', () => {
+    // ... other initialization code for your section ...
 
-    if (!section || !controlsContainer || !controlsPlaceholder) {
-        if (DEBUG) console.log('Sticky controls for new section: elements not found.');
+    initializeStickyMenu('my-section-wrapper-id', 'my-controls-container-id', 'my-controls-placeholder-id');
+
+    // ... other event listeners or setup for your section ...
+});
+```
+
+Or, if your section's script is loaded after the DOM is ready or has its own readiness check (like waiting for Plotly):
+
+```javascript
+function initMyNewSection() {
+    // Check if essential elements for this section are ready (e.g., Plotly, specific divs)
+    if (typeof Plotly === 'undefined' || !document.getElementById('someEssentialDiv_new')) {
+        setTimeout(initMyNewSection, 100); // Wait and retry
         return;
     }
 
-    let controlsHeight = 0;
-    let controlsNaturalWidth = 0;
+    // ... other initialization code for your section ...
 
-    function setupInitial() {
-        // Reset styles to measure natural dimensions
-        controlsContainer.classList.remove('sticky');
-        controlsContainer.style.width = '';
-        controlsContainer.style.position = '';
+    initializeStickyMenu('my-section-wrapper-id', 'my-controls-container-id', 'my-controls-placeholder-id');
 
-        controlsHeight = controlsContainer.offsetHeight;
-        controlsNaturalWidth = controlsContainer.offsetWidth;
-        
-        if (DEBUG) console.log(`New Section Initial - Height: ${controlsHeight}, Width: ${controlsNaturalWidth}`);
-    }
-
-    function onScroll() {
-        const sectionRect = section.getBoundingClientRect();
-        
-        // Condition to be sticky: top of section is off-screen, but bottom is still on-screen
-        const shouldBeSticky = sectionRect.top <= 0 && sectionRect.bottom > controlsHeight;
-
-        if (shouldBeSticky) {
-            if (!controlsContainer.classList.contains('sticky')) {
-                controlsContainer.classList.add('sticky');
-                controlsContainer.style.position = 'fixed';
-                controlsContainer.style.top = '0';
-                controlsContainer.style.left = '50%';
-                controlsContainer.style.width = `${controlsNaturalWidth}px`;
-                controlsContainer.style.transform = 'translateX(-50%)';
-                controlsPlaceholder.style.height = `${controlsHeight}px`;
-                if (DEBUG) console.log('New Section State: Sticky');
-            }
-        } else {
-            if (controlsContainer.classList.contains('sticky')) {
-                controlsContainer.classList.remove('sticky');
-                controlsContainer.style.position = '';
-                controlsContainer.style.top = '';
-                controlsContainer.style.left = '';
-                controlsContainer.style.width = '';
-                controlsContainer.style.transform = '';
-                controlsPlaceholder.style.height = '0';
-                if (DEBUG) console.log('New Section State: Normal');
-            }
-        }
-    }
-
-    // Initial setup with a delay to ensure rendering is complete
-    setTimeout(() => {
-        setupInitial();
-        onScroll();
-        
-        // Throttled scroll listener
-        let ticking = false;
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    onScroll();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        });
-        
-        // Debounced resize listener
-        window.addEventListener('resize', () => {
-            if (resizeTimer) clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                setupInitial(); // Recalculate dimensions on resize
-                onScroll();
-            }, 250);
-        });
-        
-        if (DEBUG) console.log('New Section sticky controls initialized.');
-    }, 500);
+    // ... other event listeners or setup for your section ...
 }
 
-// Don't forget to call the function!
-setupStickyControls_new();
+// Call your section's main initialization function
+initMyNewSection();
 ```
+
+### How It Works (`initializeStickyMenu`):
+
+1.  **Element Retrieval**: The function first gets references to the section, controls container, and placeholder elements using the provided IDs.
+2.  **Initial Measurement (`setupInitial`)**: 
+    *   The function ensures the controls container is in the normal document flow (not sticky or pinned) before taking measurements.
+    *   It then measures the natural width and height of the controls container and its original offset from the top of the document.
+    *   **Layout Stability**: To ensure accurate measurements, especially in sections with asynchronously loading content (like MathJax or Plotly charts), `setupInitial`:
+        *   Waits for `MathJax.typesetPromise()` to complete if MathJax is present.
+        *   Performs an additional, slightly delayed re-measurement of positions after the initial measurement. This gives other dynamic elements time to render and stabilize the layout, preventing the menu from becoming sticky too late or too early.
+3.  **Scroll Monitoring (`onScroll`)**: The script listens for `scroll` events (throttled using `requestAnimationFrame` for performance).
+4.  **Three-State Logic**: Based on the scroll position relative to the section and the controls container's height, the menu transitions between three states:
+    *   **State 1: Normal Flow**: When the menu is in its original position within the section and has not been scrolled past. The placeholder has `0` height.
+    *   **State 2: Sticky**: When the user has scrolled past the menu's original position, but the bottom of the section is still visible. The menu becomes `position: fixed`, sticks to the top of the viewport, and its original width is maintained. The placeholder's height is set to the menu's height to prevent content jump.
+    *   **State 3: Pinned**: When the user has scrolled such that the bottom of the section is about to scroll past the bottom of where the sticky menu would be. The menu becomes `position: absolute` and is pinned to the bottom of its parent section. This keeps the menu contained within its section.
+5.  **Resize Handling**: The script also listens for `resize` events (debounced) and calls `setupInitial` to recalculate dimensions and positions if the window size changes.
+
+By using this centralized `initializeStickyMenu` function, you no longer need to write custom sticky logic for each section. Just ensure your HTML structure is correct and make a single call to this function.
 
 ---
 

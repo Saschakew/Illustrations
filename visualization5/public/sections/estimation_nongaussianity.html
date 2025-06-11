@@ -1,4 +1,65 @@
-<h2>Estimation with Non-Gaussianity</h2>
-<p>This section visualizes how non-Gaussianity can be used as an alternative identification strategy.</p>
-<!-- Content, controls, and plots for Estimation with Non-Gaussianity go here -->
-<script src="js/estimation_nongaussianity.js"></script>
+<h2>Recovering Structural Shocks via Non-Gaussianity</h2>
+
+<div id="estimation-controls-eng" class="controls-container card mb-4">
+    <div class="card-body">
+        <div class="controls-row">
+            <!-- Phi Slider (left) -->
+            <div class="control-item sample-size">
+                <label for="phiSlider_eng" class="form-label mb-0 me-2">\( \phi = \)<span id="phiValue_eng">0.00</span></label>
+                <input type="range" class="form-range" min="-1.5708" max="1.5708" step="0.01" id="phiSlider_eng" value="0" data-id="phi-slider">
+            </div>
+
+            <!-- B0 Toggle (middle) -->
+            <div class="control-item phi-toggle">
+                <div class="phi-toggle-pill">
+                    <span class="phi-label phi-label-left" id="phiLabel0_eng">Recursive</span>
+                    <label class="custom-switch">
+                        <input type="checkbox" id="b0Switch_eng" title="Switch between Recursive and Non-recursive true B_0">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="phi-label phi-label-right" id="phiLabelPi_eng">Non-recursive</span>
+                </div>
+            </div>
+
+            <!-- New Sample Button (right) -->
+            <div class="control-item new-sample">
+                <button id="newSampleBtn_eng" class="btn w-100">New Sample</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="controls-placeholder-eng"></div>
+
+<div class="explanation-container card mb-4">
+    <div class="card-body">
+        <p>
+            When structural shocks \(\epsilon_t\) are non-Gaussian, we can identify the model without imposing restrictions like \(B_0\) being lower-triangular. The key idea is that rotating a non-Gaussian distribution changes its shape. We can find the correct rotation angle \(\phi\) by finding the one that makes the resulting innovations \(e_t(\phi)\) "most independent."
+        </p>
+        <p>
+            One way to measure this is to minimize an objective function based on higher-order moments. We define the objective function as \(J(\phi) = \text{mean}(e_{1t}^2 e_{2t})^2 + \text{mean}(e_{2t}^2 e_{1t})^2\). The true rotation angle \(\phi_0\) should minimize this function, driving it close to zero.
+        </p>
+        <p>Use the \(\phi\) slider to see how the innovations and the objective function change. The true data-generating matrix \(B_0\) (and thus the true \(\phi_0\)) is selected via the toggle.</p>
+        <div class="text-center">
+            <button id="estimateNonGaussianityBtn_eng" class="btn btn-primary my-4">Estimate \( \phi \) via Non-Gaussianity</button>
+            <div id="estimationResults_eng" class="mt-3" style="display: none;">
+                <p>
+                    Estimated \(\hat{\phi}\)= <span id="estimatedPhiValue_eng"></span> (minimizes \(J(\phi)\)) leads to \(\hat{B}=\) <span id="estimatedB_eng"></span> compared to the true \(B_0\)= <span id="trueB0_eng"></span>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="plot-wrapper">
+    <div id="innovationsScatterPlot_eng" class="plot-container-individual"></div>
+    <div id="objectivePlot_eng" class="plot-container-individual"></div>
+</div>
+
+<div>
+    <ul>
+        <li><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \(e_{1t}(\phi)\) vs. \(e_{2t}(\phi)\) for the currently selected \(\phi\).</li>
+        <li><strong>Right Plot (Objective Function):</strong> Shows the objective function \(J(\phi)\) across all possible values of \(\phi \in [0, \pi/2]\). A vertical line indicates the current \(\phi\), and another marks the true \(\phi_0\).</li>
+    </ul>
+</div>
+

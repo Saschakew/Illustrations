@@ -184,17 +184,28 @@ function initSvarSetup() {
     // --- Main Data Generation and Plotting Trigger ---
     function generateAndPlot() {
         console.log(`Generating data for T=${T}...`);
-        // Generate new data
+        // Generate raw structural shocks
         generateRawEpsilons();
-        normalizeEpsilons();
-        generateSigmaT(T);
+        
+        // Store raw innovations in shared data
+        window.SVARData.updateData({
+            e_1t: eta_raw_1t,
+            e_2t: eta_raw_2t
+        });
+        
+        // Generate sigma_t values
+        sigma_t_values = generateSigmaT(T);
+        
+        // Apply scaling and normalization
         applyScalingAndCalculateReducedForm();
+        
+        // Update the plot
         updatePlot();
         
-        // Notify that a new sample has been generated
+        // Notify about new sample generation
         window.SVARData.notifyUpdate('NEW_SAMPLE_GENERATED', {
             sampleSize: T,
-            timestamp: Date.now()
+            isNonRecursive: phiSwitch.checked
         });
     }
 
@@ -224,6 +235,9 @@ function initSvarSetup() {
             scaled_unnormalized_2t[i] = eta_raw_2t[i] * sigma_t_values[i];
         }
         console.log("Scaled raw shocks with sigma_t.");
+        
+        // 4. Normalize these scaled shocks to get final structural shocks (epsilon_t)
+        [epsilon_1t, epsilon_2t] = NormalizeData(scaled_unnormalized_1t, scaled_unnormalized_2t);
 
         // 5. Calculate B0 and reduced form shocks u_t (this will also update B0 display)
         console.log("Calculating B0 and reduced form shocks u_t...");
@@ -345,200 +359,6 @@ function initSvarSetup() {
         updatePlot(); // Redraw plots on resize to maintain square aspect and responsiveness
     });
 
-    // --- Sticky Controls Logic ---
-    function setupStickyControls() {
-        console.log("Setting up sticky controls...");
-        const controlsContainer = document.getElementById('simulation-controls');
-        const controlsPlaceholder = document.getElementById('controls-placeholder');
-        let initialControlsOffsetTop = 0;
-        let resizeTimer = null;
-        const DEBUG = false; // Set to true to enable debug logging
-
-        if (!controlsContainer || !controlsPlaceholder) {
-            console.error("Essential sticky control elements (controlsContainer or controlsPlaceholder) not found!");
-            return;
-        }
-
-        function setupInitialPositions() {
-            if (!controlsContainer) return;
-
-            // Store current scroll position
-            const scrollY = window.scrollY;
-            
-            // Force scroll to top temporarily to get accurate measurements
-            // This is necessary because on small screens, the page might already be scrolled
-            // when setupInitialPositions is called after a resize
-            window.scrollTo(0, 0);
-            
-            // Temporarily remove sticky classes and reset relevant inline styles
-            controlsContainer.classList.remove('sticky', 'sticky-bottom');
-            controlsContainer.style.position = '';
-            controlsContainer.style.top = '';
-            controlsContainer.style.left = '';
-            controlsContainer.style.width = '';
-            controlsContainer.style.transform = '';
-            
-            // Force a reflow to ensure the browser recalculates layout
-            void controlsContainer.offsetWidth;
-            
-            // Now get the accurate measurements in normal flow state
-            initialControlsOffsetTop = controlsContainer.offsetTop;
-            
-            // Measure and store the natural width when in normal flow
-            // This is critical to prevent width changes when scrolling
-            controlsNaturalWidth = controlsContainer.offsetWidth;
-            
-            // Reset placeholder
-            if (controlsPlaceholder) {
-                controlsPlaceholder.classList.remove('active');
-                controlsPlaceholder.style.height = '0px';
-            }
-            
-            // Restore scroll position
-            window.scrollTo(0, scrollY);
-            
-            if (DEBUG) {
-                console.log('Initial controls offsetTop:', initialControlsOffsetTop);
-                console.log('Controls natural width:', controlsNaturalWidth);
-            }
-        }
-
-        // Store the natural width of the controls container when it's in normal flow
-        // We'll measure this once during initialization and use it consistently
-        let controlsNaturalWidth = 0;
-        
-        function handleStickyScroll() {
-            if (!controlsContainer || !controlsPlaceholder) return;
-
-            const controlsHeight = controlsContainer.offsetHeight; // Get current height, might change with wrapping
-            const scrollTop = window.scrollY;
-            
-            // Get the current position of the controls container relative to the viewport
-            const controlsRect = controlsContainer.getBoundingClientRect();
-            
-            const contentSection = controlsContainer.closest('main'); 
-            if (!contentSection) {
-                console.warn("Sticky controls: 'main' content section not found. Reverting to basic sticky behavior.");
-                return; // Exit if no main content section for advanced sticky
-            }
-
-            // Get the section's position and dimensions
-            const sectionRect = contentSection.getBoundingClientRect(); // Relative to viewport
-            
-            // Check if we're within the section's vertical bounds
-            const sectionTopVisible = sectionRect.top <= 0;
-            const sectionBottomVisible = sectionRect.bottom >= window.innerHeight;
-            const withinSection = sectionTopVisible && sectionBottomVisible;
-            
-            // Check if the top of the controls is at or above the top of the viewport
-            // This ensures we only stick when the controls reach the top of the viewport
-            const controlsAtTopOfViewport = controlsRect.top <= 0;
-            
-            // Calculate the absolute positions for determining sticky states
-            const sectionAbsoluteTop = scrollTop + sectionRect.top;
-            const sectionAbsoluteBottom = sectionAbsoluteTop + contentSection.offsetHeight;
-            
-            // Check if we've scrolled past the bottom of the section
-            const pastSectionBottom = scrollTop + controlsHeight >= sectionAbsoluteBottom;
-            
-            // Check if we're at the top of the section (for unsticking when scrolling back up)
-            const atSectionTop = scrollTop <= sectionAbsoluteTop;
-            
-            if (DEBUG) {
-                console.log('Scroll position:', scrollTop);
-                console.log('Section top visible:', sectionTopVisible);
-                console.log('Section bottom visible:', sectionBottomVisible);
-                console.log('Within section:', withinSection);
-                console.log('At section top:', atSectionTop);
-                console.log('Past section bottom:', pastSectionBottom);
-                console.log('Controls at top of viewport:', controlsAtTopOfViewport);
-            }
-
-            // CASE 1: We're at the top of the section or above it - normal flow
-            if (atSectionTop || !sectionTopVisible) {
-                controlsContainer.classList.remove('sticky', 'sticky-bottom');
-                controlsContainer.style.position = ''; 
-                controlsContainer.style.top = '';
-                controlsContainer.style.left = '';
-                controlsContainer.style.width = '';
-                controlsContainer.style.transform = '';
-                controlsPlaceholder.classList.remove('active');
-                controlsPlaceholder.style.height = '0px';
-                if (DEBUG) console.log('State: Normal flow - at or above section top');
-            }
-            // CASE 2: We're scrolled past the section bottom - unstick
-            else if (!sectionBottomVisible || pastSectionBottom) {
-                controlsContainer.classList.remove('sticky', 'sticky-bottom');
-                controlsContainer.style.position = ''; 
-                controlsContainer.style.top = '';
-                controlsContainer.style.left = '';
-                controlsContainer.style.width = '';
-                controlsContainer.style.transform = '';
-                controlsPlaceholder.classList.remove('active');
-                controlsPlaceholder.style.height = '0px';
-                if (DEBUG) console.log('State: Normal flow - past section bottom');
-            }
-            // CASE 3: We're within the section and controls are at the top of viewport - stick to top
-            else if (withinSection && controlsAtTopOfViewport) {
-                controlsContainer.classList.add('sticky');
-                controlsContainer.classList.remove('sticky-bottom');
-                controlsContainer.style.position = 'fixed';
-                controlsContainer.style.top = '0px';
-                
-                // Center the controls and use the stored natural width
-                controlsContainer.style.left = '50%';
-                controlsContainer.style.width = controlsNaturalWidth + 'px';
-                controlsContainer.style.transform = 'translateX(-50%)';
-                
-                controlsPlaceholder.classList.add('active');
-                controlsPlaceholder.style.height = controlsHeight + 'px';
-                if (DEBUG) console.log('State: Sticky to top');
-            }
-            // CASE 4: Default - normal flow
-            else {
-                controlsContainer.classList.remove('sticky', 'sticky-bottom');
-                controlsContainer.style.position = ''; 
-                controlsContainer.style.top = '';
-                controlsContainer.style.left = '';
-                controlsContainer.style.width = '';
-                controlsContainer.style.transform = '';
-                controlsPlaceholder.classList.remove('active');
-                controlsPlaceholder.style.height = '0px';
-                if (DEBUG) console.log('State: Normal flow - default');
-            }
-        }
-
-        // Delay setup slightly to ensure all elements are rendered and positioned
-        setTimeout(() => {
-            setupInitialPositions();
-            handleStickyScroll(); // Initial check
-            
-            // Add scroll event listener
-            window.addEventListener('scroll', handleStickyScroll);
-            
-            // Add resize event listener with debouncing
-            window.addEventListener('resize', () => {
-                // Clear any existing timer
-                if (resizeTimer) clearTimeout(resizeTimer);
-                
-                // Set a new timer
-                resizeTimer = setTimeout(() => {
-                    if (DEBUG) console.log('Recalculating sticky controls after resize');
-                    setupInitialPositions();
-                    handleStickyScroll();
-                    
-                    // Additional check after a bit more time to ensure measurements are accurate
-                    // This helps with complex responsive layouts that might take time to settle
-                    setTimeout(() => {
-                        setupInitialPositions();
-                        handleStickyScroll();
-                    }, 100);
-                }, 250); // Wait for resize to "finish" before recalculating
-            });
-            
-            console.log('Sticky controls initialized.');
-        }, 200); // Small delay to ensure DOM is fully rendered
-    }
 
     // --- Switch Synchronization ---
     function setupSwitchSync() {
@@ -574,7 +394,7 @@ function initSvarSetup() {
     console.log("Initialising SVAR setup...");
     updateToggleVisual(); // Set initial highlight state for the toggle
     generateAndPlot(); // Generate initial data and plots
-    setupStickyControls(); // Initialize sticky controls
+    initializeStickyMenu('svar-setup', 'simulation-controls', 'controls-placeholder');
     setupSwitchSync(); // Initialize switch synchronization
     
     // Expose functions to global scope (both legacy and new system)

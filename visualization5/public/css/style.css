@@ -64,6 +64,7 @@ section {
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    position: relative; /* Required for child elements positioned absolutely relative to the section */
 }
 
 section h2 {
@@ -105,6 +106,8 @@ section h2 {
     background-color: #e66a00; /* Darker orange */
     transform: translateY(-2px);
 }
+
+/* Add any additional global styles here */
 
 /* === Loading Screen Styles === */
 /* Primary styles are inline in HTML for immediate application */
@@ -383,7 +386,7 @@ input[type=range].form-range:focus {
 
 
 /* Custom Button Style from svar_setup.html */
-#newSampleBtn, #newSampleBtn_er {
+#newSampleBtn, #newSampleBtn_er, #newSampleBtn_eng {
     background-color: var(--color-primary);
     border: 1.5px solid var(--color-primary);
     color: var(--color-white);
@@ -396,18 +399,18 @@ input[type=range].form-range:focus {
     width: 100%;
 }
 
-#newSampleBtn:hover, #newSampleBtn_er:hover {
+#newSampleBtn:hover, #newSampleBtn_er:hover, #newSampleBtn_eng:hover {
     background-color: var(--color-primary-darker);
     border-color: var(--color-primary-darker);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-#newSampleBtn:active, #newSampleBtn:focus, #newSampleBtn_er:active, #newSampleBtn_er:focus {
+#newSampleBtn:active, #newSampleBtn:focus, #newSampleBtn_er:active, #newSampleBtn_er:focus, #newSampleBtn_eng:active, #newSampleBtn_eng:focus {
     background-color: var(--color-primary-darkest);
     border-color: var(--color-primary-darkest);
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.125), 0 0 0 0.2rem rgba(var(--color-primary-rgb),.5);
 }
-#newSampleBtn:focus, #newSampleBtn_er:focus {
+#newSampleBtn:focus, #newSampleBtn_er:focus, #newSampleBtn_eng:focus {
     outline: none; 
 }
 
