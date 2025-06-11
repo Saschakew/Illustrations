@@ -130,9 +130,7 @@ initMyNewSection();
     *   **Layout Stability**: To ensure accurate measurements, especially in sections with asynchronously loading content (like MathJax or Plotly charts), `setupInitial`:
         *   Waits for `MathJax.typesetPromise()` to complete if MathJax is present.
         *   Performs an additional, slightly delayed re-measurement of positions after the initial measurement. This gives other dynamic elements time to render and stabilize the layout, preventing the menu from becoming sticky too late or too early.
-3.  **Scroll Monitoring (`handleScroll`)**: The script listens for `scroll` events. To ensure performance and prevent layout bugs, the handler is optimized in two ways:
-    *   **Throttling**: It uses `requestAnimationFrame` to ensure the logic only runs once per frame, preventing stuttering during fast scrolls.
-    *   **Read/Write Separation**: Within a single scroll event, it first *reads* all the necessary layout information (like element positions) from the DOM for all menus. Only after all reads are complete does it then *write* all the style and class changes back to the DOM. This prevents "layout thrashing" and ensures that calculations for one menu aren't based on a partially-updated state from another. This makes the system resilient to timing issues with multiple menus.
+3.  **Scroll Monitoring (`onScroll`)**: The script listens for `scroll` events (throttled using `requestAnimationFrame` for performance).
 4.  **Three-State Logic**: Based on the scroll position relative to the section and the controls container's height, the menu transitions between three states:
     *   **State 1: Normal Flow**: When the menu is in its original position within the section and has not been scrolled past. The placeholder has `0` height.
     *   **State 2: Sticky**: When the user has scrolled past the menu's original position, but the bottom of the section is still visible. The menu becomes `position: fixed`, sticks to the top of the viewport, and its original width is maintained. The placeholder's height is set to the menu's height to prevent content jump.
