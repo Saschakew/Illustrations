@@ -109,6 +109,7 @@ This document outlines the standardized architecture for the SVAR Visualizer pro
 
 1.  **Create HTML File:**
     - In `public/sections/`, create `new_section_name.html`.
+    - For guidance on creating sticky control menus, refer to the detailed instructions in `style_guide_menu.md`.
     - Include necessary control elements, ensuring they use the standard CSS classes defined in Section 3.4.
     - Add `div` elements with unique IDs to serve as plot containers.
 2.  **Create JavaScript File:**

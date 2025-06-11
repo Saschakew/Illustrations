@@ -5,7 +5,6 @@ const stickyMenuManager = {
     resizeTimer: null,
     ticking: false, // For scroll throttling
 
-    // Adds a new menu to be managed
     addMenu: function(sectionId, controlsContainerId, controlsPlaceholderId) {
         const section = document.getElementById(sectionId);
         if (!section) {
@@ -28,7 +27,8 @@ const stickyMenuManager = {
             height: 0,
             originalOffsetTop: 0,
             isPinned: false,
-            isSticky: false
+            isSticky: false,
+            sectionRect: null // To store read values
         };
 
         this.menus.push(menuState);
@@ -41,7 +41,6 @@ const stickyMenuManager = {
         }
     },
 
-    // Sets the initial dimensions and position for a menu
     setupInitial: function(menu) {
         menu.controlsContainer.classList.remove('sticky', 'pinned');
         menu.controlsContainer.style.position = '';
@@ -57,7 +56,13 @@ const stickyMenuManager = {
             menu.naturalWidth = rect.width;
             menu.height = rect.height;
             menu.originalOffsetTop = rect.top + window.scrollY;
-            this.updateMenuState(menu);
+
+            // Ensure sectionRect is populated before the first call to updateMenuState,
+            // which expects this property to be set from the read phase of a scroll event.
+            menu.sectionRect = menu.section.getBoundingClientRect();
+
+            // Pass scrollY explicitly to initial update
+            this.updateMenuState(menu, window.scrollY);
         };
 
         if (typeof MathJax !== 'undefined' && typeof MathJax.typesetPromise === 'function') {
@@ -69,11 +74,25 @@ const stickyMenuManager = {
         }
     },
 
-    // Throttled scroll handler for performance
+    // Throttled scroll handler separating DOM reads and writes.
     handleScroll: function() {
         if (!this.ticking) {
             window.requestAnimationFrame(() => {
-                this.menus.forEach(menu => this.updateMenuState(menu));
+                const currentScrollY = window.scrollY;
+
+                // --- Read Phase ---
+                this.menus.forEach(menu => {
+                    menu.sectionRect = menu.section.getBoundingClientRect();
+                    if (!menu.isSticky && !menu.isPinned) {
+                        menu.originalOffsetTop = menu.controlsContainer.getBoundingClientRect().top + currentScrollY;
+                    }
+                });
+
+                // --- Write Phase ---
+                this.menus.forEach(menu => {
+                    this.updateMenuState(menu, currentScrollY);
+                });
+
                 this.ticking = false;
             });
             this.ticking = true;
@@ -87,18 +106,9 @@ const stickyMenuManager = {
         }, 250);
     },
 
-    // The core logic to update a single menu's position
-    updateMenuState: function(menu) {
-        const currentScrollY = window.scrollY;
-        const sectionRect = menu.section.getBoundingClientRect();
-        const isAtEnd = (sectionRect.bottom - menu.height) <= 0;
-
-        // Continuously re-calculate offsetTop while the menu is in the normal document flow.
-        // This makes it resilient to layout shifts from other elements loading.
-        if (!menu.isSticky && !menu.isPinned) {
-            menu.originalOffsetTop = menu.controlsContainer.getBoundingClientRect().top + window.scrollY;
-        }
-
+    // Core logic to update a menu's state. Only performs DOM writes.
+    updateMenuState: function(menu, currentScrollY) {
+        const isAtEnd = (menu.sectionRect.bottom - menu.height) <= 0;
         const isBefore = currentScrollY < menu.originalOffsetTop;
 
         if (isAtEnd) {
@@ -115,7 +125,6 @@ const stickyMenuManager = {
             c.style.transform = 'translateX(-50%)';
             c.style.width = `${menu.naturalWidth}px`;
             menu.controlsPlaceholder.style.height = `${menu.height}px`;
-
         } else if (isBefore) {
             if (!menu.isSticky && !menu.isPinned) return;
             menu.isPinned = false;
@@ -129,7 +138,6 @@ const stickyMenuManager = {
             c.style.width = '';
             c.style.transform = '';
             menu.controlsPlaceholder.style.height = '0';
-
         } else {
             if (menu.isSticky) return;
             menu.isSticky = true;
