@@ -22,7 +22,7 @@ function initSvarSetup() {
 
     // --- Reactive Plotting Setup ---
     // Plots will now update automatically whenever the central data store changes.
-    window.SVARData.subscribe('DATA_UPDATED', (event) => {
+    window.SVARData.subscribe(window.SVARData.events.DATA_UPDATED, (event) => {
         const data = event.detail;
         console.log('[svar_setup.js] Received DATA_UPDATED event. Updating plots.');
         if (data && data.epsilon_1t && data.u_1t) {

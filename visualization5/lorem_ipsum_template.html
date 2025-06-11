@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorem Ipsum - SVAR Project Template</title>
+    <style>
+        :root {
+            --color-primary: #007bff; /* Example: Blue */
+            --color-secondary: #6c757d; /* Example: Gray */
+            --color-background: #f8f9fa; /* Light gray background */
+            --color-card-background: #ffffff; /* White for cards */
+            --color-text: #333333;
+            --color-text-light: #f8f9fa;
+            --color-border: #dee2e6;
+            --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-size-base: 1rem;
+            --line-height-base: 1.5;
+            --card-border-radius: 0.5rem;
+            --card-box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --padding-base: 1rem;
+            --padding-large: 1.5rem;
+        }
+
+        body {
+            font-family: var(--font-family-sans-serif);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-base);
+            color: var(--color-text);
+            background-color: var(--color-background);
+            margin: 0;
+            padding-top: 70px; /* Space for the fixed main navigation */
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--padding-large) 0;
+        }
+
+        /* Main Navigation */
+        .main-navigation {
+            background-color: var(--color-primary);
+            padding: 0.5rem 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center; /* Center the nav items */
+        }
+
+        .main-navigation ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .main-navigation li {
+            margin: 0 var(--padding-base);
+        }
+
+        .main-navigation a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .main-navigation a:hover,
+        .main-navigation a.active-link {
+            color: var(--color-secondary);
+            border-bottom: 2px solid var(--color-secondary);
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin-bottom: var(--padding-large);
+            padding: var(--padding-large);
+            background-color: var(--color-card-background);
+            border-radius: var(--card-border-radius);
+            box-shadow: var(--card-box-shadow);
+            border: 1px solid var(--color-border);
+        }
+
+        .content-section h2 {
+            margin-top: 0;
+            color: var(--color-primary);
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: var(--padding-base);
+        }
+
+        /* Controls Area */
+        .controls-placeholder {
+            /* This div will be used to measure scroll position for sticky menu */
+            height: 1px; /* Minimal height, doesn't affect layout */
+            margin-top: -1px; /* Counteract the height */
+        }
+        .controls-container {
+            background-color: #f1f3f5; /* Slightly different background for controls */
+            padding: var(--padding-base);
+            border-radius: var(--card-border-radius);
+            margin-bottom: var(--padding-base);
+            border: 1px solid #ced4da;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .controls-container.sticky-menu {
+            position: fixed;
+            top: 70px; /* Height of main nav */
+            left: 5%; /* Align with container margins */
+            width: 88%; /* Adjust to fit within container, considering padding */
+            max-width: calc(1200px * 0.9 - 2 * var(--padding-large)); /* Max width of container minus padding */
+            z-index: 900;
+            background-color: #e9ecef; /* Slightly darker when sticky */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border-top: none;
+            border-radius: 0 0 var(--card-border-radius) var(--card-border-radius);
+        }
+
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--padding-base);
+            align-items: center;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-item label {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+            color: var(--color-secondary);
+        }
+
+        .control-item input[type="range"] {
+            width: 150px;
+        }
+        .control-item output {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 0.25rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-text-light);
+            border-color: var(--color-primary);
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Darker blue */
+            border-color: #0056b3;
+        }
+
+        /* Explanation & Plot Containers (Shared Styling) */
+        .explanation-container, .plot-container {
+            background-color: var(--color-card-background);
+            padding: var(--padding-base);
+            border-radius: var(--card-border-radius);
+            margin-top: var(--padding-base);
+            border: 1px solid var(--color-border);
+        }
+
+        .plotly-chart-container {
+            width: 100%;
+            min-height: 300px; /* Ensure plot has some initial height */
+            background-color: #e9ecef; /* Placeholder background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-secondary);
+            border-radius: calc(var(--card-border-radius) - 1px); /* Inner radius */
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--padding-large) 0;
+            margin-top: var(--padding-large);
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 50px; /* Adjust for smaller nav */
+            }
+            .main-navigation {
+                padding: 0.25rem 0.5rem;
+            }
+            .main-navigation li {
+                margin: 0 0.5rem;
+            }
+            .controls-container.sticky-menu {
+                top: 50px; /* Adjust for smaller nav */
+                width: 90%; /* Full width on smaller screens */
+                left: 5%;
+            }
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .control-item input[type="range"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="main-nav" class="main-navigation">
+        <ul>
+            <li><a href="#section-one" class="active-link">Section One</a></li>
+            <li><a href="#section-two">Section Two</a></li>
+            <li><a href="#section-three">Section Three</a></li>
+            <li><a href="#section-four">Section Four</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content" class="container">
+
+        <section id="section-one" class="content-section">
+            <h2 id="title-section-one">Section One: Introduction</h2>
+            <div id="controls-placeholder_s1" class="controls-placeholder"></div>
+            <div id="controls-container_s1" class="controls-container">
+                <div class="controls-row">
+                    <div class="control-item">
+                        <label for="slider_s1">Parameter Alpha:</label>
+                        <input type="range" id="slider_s1" name="slider_s1" min="0" max="100" value="50">
+                        <output for="slider_s1" id="slider_s1_value">50</output>
+                    </div>
+                    <div class="control-item">
+                        <button class="btn btn-primary">Update S1</button>
+                    </div>
+                </div>
+            </div>
+            <div class="explanation-container">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+            <div class="plot-container">
+                <div id="plot_s1" class="plotly-chart-container">
+                    Placeholder for Plot S1
+                </div>
+            </div>
+        </section>
+
+        <section id="section-two" class="content-section">
+            <h2 id="title-section-two">Section Two: Detailed Analysis</h2>
+            <div id="controls-placeholder_s2" class="controls-placeholder"></div>
+            <div id="controls-container_s2" class="controls-container">
+                <div class="controls-row">
+                    <div class="control-item">
+                        <label for="slider_s2a">Parameter Beta:</label>
+                        <input type="range" id="slider_s2a" name="slider_s2a" min="-10" max="10" value="0">
+                        <output for="slider_s2a" id="slider_s2a_value">0</output>
+                    </div>
+                    <div class="control-item">
+                        <label for="slider_s2b">Parameter Gamma:</label>
+                        <input type="range" id="slider_s2b" name="slider_s2b" min="1" max="5" value="3" step="0.1">
+                        <output for="slider_s2b" id="slider_s2b_value">3.0</output>
+                    </div>
+                    <div class="control-item">
+                        <button class="btn btn-primary">Recalculate S2</button>
+                    </div>
+                </div>
+            </div>
+            <div class="explanation-container">
+                <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula. Curabitur aliquet quam id dui posuere blandit.</p>
+            </div>
+            <div class="plot-container">
+                <div id="plot_s2" class="plotly-chart-container">
+                    Placeholder for Plot S2
+                </div>
+            </div>
+        </section>
+
+        <section id="section-three" class="content-section">
+            <h2 id="title-section-three">Section Three: Further Exploration</h2>
+            <div id="controls-placeholder_s3" class="controls-placeholder"></div>
+            <div id="controls-container_s3" class="controls-container">
+                <div class="controls-row">
+                    <div class="control-item">
+                        <p>No specific controls for this section.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="explanation-container">
+                <p>Pellentesque in ipsum id orci porta dapibus. Proin eget tortor risus. Vivamus suscipit tortor eget felis porttitor volutpat. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.</p>
+            </div>
+            <div class="plot-container">
+                <div id="plot_s3" class="plotly-chart-container">
+                    Placeholder for Plot S3
+                </div>
+            </div>
+        </section>
+
+        <section id="section-four" class="content-section">
+            <h2 id="title-section-four">Section Four: Conclusion</h2>
+            <div id="controls-placeholder_s4" class="controls-placeholder"></div>
+            <div id="controls-container_s4" class="controls-container">
+                <div class="controls-row">
+                    <div class="control-item">
+                        <button class="btn btn-primary">Finalize</button>
+                    </div>
+                </div>
+            </div>
+            <div class="explanation-container">
+                <p>Nulla porttitor accumsan tincidunt. Cras ultricies ligula sed magna dictum porta. Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.</p>
+            </div>
+            <div class="plot-container">
+                <div id="plot_s4" class="plotly-chart-container">
+                    Placeholder for Plot S4
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 SVAR Project. Lorem Ipsum Template.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Smooth scrolling for navigation links
+            const navLinks = document.querySelectorAll('.main-navigation a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Calculate position considering the fixed header
+                        const headerOffset = document.querySelector('.main-navigation').offsetHeight;
+                        const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                        const offsetPosition = elementPosition - headerOffset;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Active link highlighting based on scroll position
+            const sections = document.querySelectorAll('.content-section');
+            const mainNav = document.querySelector('.main-navigation');
+            let mainNavHeight = mainNav ? mainNav.offsetHeight : 70;
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - mainNavHeight - 50; // 50px offset for earlier activation
+                    if (pageYOffset >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active-link');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active-link');
+                    }
+                });
+            });
+
+            // Update slider output values
+            const sliders = document.querySelectorAll('input[type="range"]');
+            sliders.forEach(slider => {
+                const output = document.getElementById(slider.id + '_value');
+                if (output) {
+                    output.textContent = slider.value;
+                    slider.addEventListener('input', function() {
+                        output.textContent = this.value;
+                    });
+                }
+            });
+
+            // Basic sticky menu for control containers
+            const controlContainers = document.querySelectorAll('.controls-container');
+            const mainNavHeightForSticky = mainNav ? mainNav.offsetHeight : 70;
+
+            controlContainers.forEach(container => {
+                const placeholderId = container.id.replace('controls-container_', 'controls-placeholder_');
+                const placeholder = document.getElementById(placeholderId);
+
+                if (placeholder) {
+                    const section = container.closest('.content-section');
+                    let sectionTitle = section ? section.querySelector('h2') : null;
+                    let sectionTitleHeight = sectionTitle ? sectionTitle.offsetHeight : 0;
+                    let controlsHeight = container.offsetHeight;
+
+                    window.addEventListener('scroll', () => {
+                        const placeholderTop = placeholder.getBoundingClientRect().top;
+                        const sectionBottom = section ? section.getBoundingClientRect().bottom : Infinity;
+                        
+                        // Update heights in case of reflow
+                        controlsHeight = container.offsetHeight;
+
+                        if (placeholderTop <= mainNavHeightForSticky && sectionBottom > (mainNavHeightForSticky + controlsHeight)) {
+                            container.classList.add('sticky-menu');
+                            placeholder.style.height = `${controlsHeight}px`; // Maintain space
+                            // Adjust width dynamically based on parent container
+                            let parentWidth = section.offsetWidth - (2 * parseFloat(getComputedStyle(section).paddingLeft)); // approx content width
+                            container.style.width = `${parentWidth}px`;
+                            container.style.left = `${section.getBoundingClientRect().left + parseFloat(getComputedStyle(section).paddingLeft)}px`;
+
+                        } else {
+                            container.classList.remove('sticky-menu');
+                            placeholder.style.height = '1px';
+                            container.style.width = ''; // Reset width
+                            container.style.left = ''; // Reset left
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

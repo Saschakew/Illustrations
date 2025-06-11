@@ -167,14 +167,14 @@ window.SVARPlots = {
         }
 
         const trace = this.getScatterTrace(
-            e1Data,
-            e2Data,
+            e1Data || [],
+            e2Data || [],
             this.COLORS.PRIMARY,
             'e₁(φ): %{x:.3f}<br>e₂(φ): %{y:.3f}<extra></extra>'
         );
 
         const layout = this.getStandardLayout(
-            'Innovations e(φ)',
+            'Estimated Structural Shocks \\( \\hat{\\epsilon}_t(\\phi) \\) vs True Shocks \\( \\epsilon_t \\)',
             'e₁(φ)',
             'e₂(φ)',
             plotDiv
@@ -198,9 +198,11 @@ window.SVARPlots = {
             return;
         }
 
+        const absoluteCorrs = (correlationData.corrs || []).map(Math.abs);
+
         const trace = {
-            x: correlationData.phis,
-            y: correlationData.corrs,
+            x: correlationData.phis || [],
+            y: absoluteCorrs,
             mode: 'lines',
             type: 'scatter',
             line: {
@@ -214,11 +216,14 @@ window.SVARPlots = {
         };
 
         const layout = this.getStandardLayout(
-            'Sample Correlation of Innovations',
+            'Absolute Correlation |corr(e₁, e₂)| vs. φ',
             'Rotation Angle φ (radians)',
-            'corr(e₁, e₂)',
+            '|corr(e₁, e₂)|',
             plotDiv
         );
+
+        // Set y-axis range to [0, 1]
+        layout.yaxis.range = [0, 1];
 
         // Add vertical lines for current and true phi
         layout.shapes = [
@@ -226,8 +231,8 @@ window.SVARPlots = {
                 type: 'line',
                 x0: currentPhi,
                 x1: currentPhi,
-                y0: Math.min(...correlationData.corrs),
-                y1: Math.max(...correlationData.corrs),
+                y0: 0, // Start from y=0
+                y1: 1, // End at y=1
                 line: {
                     color: this.COLORS.TEXT,
                     width: 2,
@@ -238,8 +243,8 @@ window.SVARPlots = {
                 type: 'line',
                 x0: phiTrueForPlot,
                 x1: phiTrueForPlot,
-                y0: Math.min(...correlationData.corrs),
-                y1: Math.max(...correlationData.corrs),
+                y0: 0, // Start from y=0
+                y1: 1, // End at y=1
                 line: {
                     color: this.COLORS.ACCENT,
                     width: 2.5,
@@ -251,10 +256,10 @@ window.SVARPlots = {
         // Add annotation for true phi
         layout.annotations = [{
             x: phiTrueForPlot,
-            y: Math.max(...correlationData.corrs),
+            y: 1, // Position annotation at the top of the y-axis
             xref: 'x',
             yref: 'y',
-            text: 'φ₀ (True)',
+            text: (correlationData.corrs && correlationData.corrs.length > 0 && typeof phiTrueForPlot !== 'undefined') ? 'φ₀ (True)' : 'φ₀ (N/A)',
             showarrow: true,
             arrowhead: 2,
             ax: -20,
