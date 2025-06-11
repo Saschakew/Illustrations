@@ -148,10 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log('Calling initSvarSetup() for svar-setup section...');
                         initSvarSetup();
                     } 
-                    // TODO: Add else-if blocks for other sections as they are created
-                    // else if (sectionId === 'estimation_restrictions' && typeof initEstimationRestrictions === 'function') {
-                    //     initEstimationRestrictions();
-                    // }
+                    else if (sectionId === 'estimation_restrictions' && typeof initEstimationRestrictions === 'function') {
+                        console.log('Calling initEstimationRestrictions() for estimation-restrictions section...');
+                        initEstimationRestrictions();
+                    }
                     
                     // Mark this section as loaded
                     checkAllLoaded();

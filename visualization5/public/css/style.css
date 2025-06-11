@@ -383,7 +383,7 @@ input[type=range].form-range:focus {
 
 
 /* Custom Button Style from svar_setup.html */
-#newSampleBtn {
+#newSampleBtn, #newSampleBtn_er {
     background-color: var(--color-primary);
     border: 1.5px solid var(--color-primary);
     color: var(--color-white);
@@ -396,18 +396,18 @@ input[type=range].form-range:focus {
     width: 100%;
 }
 
-#newSampleBtn:hover {
+#newSampleBtn:hover, #newSampleBtn_er:hover {
     background-color: var(--color-primary-darker);
     border-color: var(--color-primary-darker);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-#newSampleBtn:active, #newSampleBtn:focus {
+#newSampleBtn:active, #newSampleBtn:focus, #newSampleBtn_er:active, #newSampleBtn_er:focus {
     background-color: var(--color-primary-darkest);
     border-color: var(--color-primary-darkest);
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.125), 0 0 0 0.2rem rgba(var(--color-primary-rgb),.5);
 }
-#newSampleBtn:focus {
+#newSampleBtn:focus, #newSampleBtn_er:focus {
     outline: none; 
 }
 
@@ -417,6 +417,10 @@ input[type=range].form-range:focus {
     vertical-align: middle;
     font-weight: 500;
     white-space: nowrap;
+}
+
+.text-center {
+    text-align: center;
 }
 
 .custom-switch {

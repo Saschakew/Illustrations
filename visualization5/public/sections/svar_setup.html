@@ -10,12 +10,12 @@
             </div>
             <div class="control-item phi-toggle">
   <div class="phi-toggle-pill">
-    <span class="phi-label phi-label-left" id="phiLabel0">\(\phi_0 = 0\)</span>
+    <span class="phi-label phi-label-left" id="phiLabel0">Recursive</span>
     <label class="custom-switch">
-      <input type="checkbox" id="phiSwitch" title="Switch between φ₀ = 0 and φ₀ = π/4">
+      <input type="checkbox" id="phiSwitch" title="Switch between Recursive and Non-recursive models">
       <span class="slider"></span>
     </label>
-    <span class="phi-label phi-label-right" id="phiLabelPi">\(\phi_0 = \pi/4\)</span>
+    <span class="phi-label phi-label-right" id="phiLabelPi">Non-recursive</span>
   </div>
 </div>
             <div class="control-item new-sample">
@@ -33,20 +33,15 @@
         <p>This visualization  ....</p>
         
      
-        <p>We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The second, \(\eta_{2t}\), is from a mixture of two Normal distributions, designed to be non-Gaussian.The raw shocks \(\eta_{t}\) are scaled by a time-varying volatility process \(\sigma_t\). For the first half of the sample, \(\sigma_t = 1\), and for the second half, \(\sigma_t = 2\). This produces structural shocks  \(\epsilon_t = \sigma_t \eta_{t}\).  
+        <p>We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The second, \(\eta_{2t}\), is from a mixture of two Normal distributions, designed to be non-Gaussian.The raw shocks \(\eta_{t}\) are scaled by a time-varying volatility process \(\sigma_t\). For the first half of the sample, \(\sigma_t = 1\), and for the second half, \(\sigma_t = 2\). This produces structural shocks  \(\epsilon_t = \sigma_t \eta_{t}\).  We normalize the shocks to zero mean and unit variance.
             The reduced-form shocks \(u_t\) are equal to \(u_t = B_0 \epsilon_t\).
         </p>
         
    
-        
-     
-        <p>
-            To allow for a simple visualization, we normalize the structural shocks such that \(E(\epsilon_t \epsilon_t') = I\) and assume that \(B_0\) is orthogonal such that it depends on a single parameter \(\phi_0\). Specifically, we use \(B_0 = B( \phi_0) \) and \( B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}
-            \).
-            Use the switch to toggle between \(\phi_0 = 0\) such that \(B_0 = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}\) and
-            \(\phi_0 = \pi/4\) such that \(B_0 = \begin{pmatrix} 1/\sqrt{2} & -1/\sqrt{2} \\ 1/\sqrt{2} & 1/\sqrt{2} \end{pmatrix}\)
-            .
+        <p class="model-explanation">We consider two different SVAR models: A recursive model with \(B_0^{\text{rec}} = \begin{bmatrix} 1 & 0 \\ 0.5 & 1 \end{bmatrix}\) and a non-recursive model with \(B_0^{\text{non-rec}} = \begin{bmatrix} 1 & 0.5 \\ 0.5 & 1 \end{bmatrix}\).
+            Use the \(B_0\) switch to toggle between the two models.
         </p>
+         
             
 
         
@@ -68,9 +63,7 @@
             \(\eta_{2t}\)).</li>
         <li><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \(u_{1t}\) against \(u_{2t}\).
             These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution
-            changes when you toggle \(\phi_0\), illustrating how different rotations of the structural shocks \(\epsilon_t\)
+            changes when you toggle \(B_0\), illustrating how different mixtures of the structural shocks \(\epsilon_t\)
             can produce different patterns in the observed reduced-form residuals.</li>
     </ul>
 </div>
-
-

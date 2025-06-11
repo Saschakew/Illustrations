@@ -1,4 +1,7 @@
 function initSvarSetup() {
+    // We'll use the central SVARData store instead of a local object
+    // But keep the legacy object for backward compatibility
+    window.svarSetupData = {};
     console.log("Initializing SVAR setup visualization...");
 
     // Check if Plotly and the essential elements are loaded
@@ -69,24 +72,39 @@ function initSvarSetup() {
     }
 
     // --- Core Calculation Logic for B0 and Reduced Form Shocks ---
+    const B0_RECURSIVE = [[1, 0], [0.5, 1]];
+    const B0_NON_RECURSIVE = [[1, 0.5], [0.5, 1]];
+    
     function calculateReducedFormAndB0() {
-        if (!epsilon_1t || !epsilon_2t ) { // epsilon_1t, epsilon_2t are now the final structural shocks
-            console.error("Structural shocks (epsilon_1t, epsilon_2t) for B0/u_t calculation not ready.");
+        if (!epsilon_1t || !epsilon_2t || epsilon_1t.length !== T || epsilon_2t.length !== T) {
+            console.error("Structural shocks not ready or length mismatch");
             return;
         }
-        if (epsilon_1t.length !== T || epsilon_2t.length !== T) {
-            console.error(`Length mismatch for structural shocks: T=${T}, eps1=${epsilon_1t.length}, eps2=${epsilon_2t.length}.`);
-            return; 
-        }
 
-        B_0 = getB0Matrix(phi_0);
-
-        u_1t = new Array(T);
-        u_2t = new Array(T);
+        B_0 = phiSwitch.checked ? B0_NON_RECURSIVE : B0_RECURSIVE;
+        
+        u_1t = []; u_2t = [];
         for (let i = 0; i < T; i++) {
             u_1t[i] = B_0[0][0] * epsilon_1t[i] + B_0[0][1] * epsilon_2t[i];
             u_2t[i] = B_0[1][0] * epsilon_1t[i] + B_0[1][1] * epsilon_2t[i];
         }
+        
+            // Update both the legacy object and the central data store
+        window.svarSetupData.u_1t = u_1t;
+        window.svarSetupData.u_2t = u_2t;
+        window.svarSetupData.epsilon_1t = epsilon_1t;
+        window.svarSetupData.epsilon_2t = epsilon_2t;
+        window.svarSetupData.B_0 = B_0;
+        
+        // Update the central data store
+        window.SVARData.updateData({
+            u_1t: u_1t,
+            u_2t: u_2t,
+            epsilon_1t: epsilon_1t,
+            epsilon_2t: epsilon_2t,
+            B_0: B_0,
+            isNonRecursive: phiSwitch.checked
+        });
     }
 
     // --- Plotting and UI Helper Functions ---
@@ -166,11 +184,34 @@ function initSvarSetup() {
     // --- Main Data Generation and Plotting Trigger ---
     function generateAndPlot() {
         console.log(`Generating data for T=${T}...`);
+        // Generate new data
+        generateRawEpsilons();
+        normalizeEpsilons();
+        generateSigmaT(T);
+        applyScalingAndCalculateReducedForm();
+        updatePlot();
+        
+        // Notify that a new sample has been generated
+        window.SVARData.notifyUpdate('NEW_SAMPLE_GENERATED', {
+            sampleSize: T,
+            timestamp: Date.now()
+        });
+    }
+
+    function generateRawEpsilons() {
         // 1. Generate raw shock series (eta_raw)
         eta_raw_1t = generateSingleNormalSeries(T);
         const s_mixture = -5; 
         eta_raw_2t = generateMixedNormalData(T, s_mixture);
+    }
 
+    function normalizeEpsilons() {
+        // 4. Normalize these scaled shocks to get final structural shocks (epsilon_t)
+        console.log("Normalizing scaled shocks to get final epsilon_t...");
+        [epsilon_1t, epsilon_2t] = NormalizeData(eta_raw_1t, eta_raw_2t);
+    }
+
+    function applyScalingAndCalculateReducedForm() {
         // 2. Generate sigma_t values
         sigma_t_values = generateSigmaT(T);
         console.log("Generated sigma_t values. First few:", sigma_t_values.slice(0,5), "Last few:", sigma_t_values.slice(-5));
@@ -184,122 +225,56 @@ function initSvarSetup() {
         }
         console.log("Scaled raw shocks with sigma_t.");
 
-        // 4. Normalize these scaled shocks to get final structural shocks (epsilon_t)
-        console.log("Normalizing scaled shocks to get final epsilon_t...");
-        [epsilon_1t, epsilon_2t] = NormalizeData(scaled_unnormalized_1t, scaled_unnormalized_2t);
-
-        if (!epsilon_1t || !epsilon_2t || epsilon_1t.length !== T) {
-            console.error("Normalization of scaled shocks failed or returned inconsistent data. Aborting plot.");
-            Plotly.purge(document.getElementById('shocksScatterPlot'));
-            Plotly.purge(document.getElementById('reducedShocksScatterPlot'));
-            return;
-        }
-        console.log(`Final epsilon_1t mean: ${epsilon_1t.reduce((a,b)=>a+b,0)/T}, variance: ${epsilon_1t.map(x=>x*x).reduce((a,b)=>a+b,0)/T}`);
-        console.log(`Final epsilon_2t mean: ${epsilon_2t.reduce((a,b)=>a+b,0)/T}, variance: ${epsilon_2t.map(x=>x*x).reduce((a,b)=>a+b,0)/T}`);
-
         // 5. Calculate B0 and reduced form shocks u_t (this will also update B0 display)
         console.log("Calculating B0 and reduced form shocks u_t...");
         calculateReducedFormAndB0(); 
-
-        if (!u_1t || !u_2t) { 
-             console.error("calculateReducedFormAndB0 failed to produce u_t. Aborting plot.");
-             return;
-        }
-        console.log("Data generation and calculations complete. Updating plots.");
-        updatePlot();
     }
 
-    // --- Normalization Function (largely unchanged, but ensure it uses current T) ---
+    // --- Normalization Function (now only zero mean & unit variance, no decorrelation) ---
     function NormalizeData(unnormalized_scaled_shock1, unnormalized_scaled_shock2) {
         if (!unnormalized_scaled_shock1 || !unnormalized_scaled_shock2) {
             console.error("NormalizeData called with undefined raw shock arrays.");
             return [[], []];
         }
-        // Ensure data passed to NormalizeData matches current T
         if (unnormalized_scaled_shock1.length !== T || unnormalized_scaled_shock2.length !== T) {
             console.error(`Mismatch in T (${T}) and rawEta lengths (${unnormalized_scaled_shock1.length}, ${unnormalized_scaled_shock2.length}) in NormalizeData. This should not happen if generateAndPlot is structured correctly.`);
-            return [unnormalized_scaled_shock1, unnormalized_scaled_shock2]; // Return raw to avoid further issues
+            return [unnormalized_scaled_shock1, unnormalized_scaled_shock2];
         }
-
-        let mean1 = 0, mean2 = 0, cov11 = 0, cov12 = 0, cov22 = 0;
-        for (let i = 0; i < T; i++) {
-            mean1 += unnormalized_scaled_shock1[i];
-            mean2 += unnormalized_scaled_shock2[i];
-        }
-        mean1 /= T; mean2 /= T;
-
-        for (let i = 0; i < T; i++) {
-            cov11 += (unnormalized_scaled_shock1[i] - mean1) * (unnormalized_scaled_shock1[i] - mean1);
-            cov12 += (unnormalized_scaled_shock1[i] - mean1) * (unnormalized_scaled_shock2[i] - mean2);
-            cov22 += (unnormalized_scaled_shock2[i] - mean2) * (unnormalized_scaled_shock2[i] - mean2);
-        }
-
         if (T <= 1) {
             console.error("Sample size T must be greater than 1 for normalization.");
             return [unnormalized_scaled_shock1, unnormalized_scaled_shock2];
         }
-        cov11 /= (T - 1); cov12 /= (T - 1); cov22 /= (T - 1);
 
-        let L11 = Math.sqrt(cov11);
-        if (isNaN(L11) || L11 <= 1e-9) {
-            console.error('Cholesky L11 is NaN or too small. cov11:', cov11, '. Returning raw data.');
+        // Normalize shock 1
+        let mean1 = 0;
+        for (let i = 0; i < T; i++) mean1 += unnormalized_scaled_shock1[i];
+        mean1 /= T;
+        let var1 = 0;
+        for (let i = 0; i < T; i++) var1 += (unnormalized_scaled_shock1[i] - mean1) ** 2;
+        var1 /= T;
+        if (var1 <= 1e-9 || isNaN(var1)) {
+            console.error('Variance for shock 1 is too small or NaN. Returning raw data.');
             return [unnormalized_scaled_shock1, unnormalized_scaled_shock2];
         }
-        let L21 = cov12 / L11;
-        const L22_squared_val = cov22 - L21 * L21;
-        let L22;
-        if (L22_squared_val <= 1e-9) {
-            console.warn('Cholesky L22_squared_val is near zero or negative:', L22_squared_val, '. Setting L22 to a small positive.');
-            L22 = 1e-6;
-        } else {
-            L22 = Math.sqrt(L22_squared_val);
-        }
-
-        if (isNaN(L21) || isNaN(L22) || L22 <= 1e-9) {
-            console.error('Cholesky L21 or L22 is NaN or L22 too small. L21:', L21, 'L22:', L22, '. Returning raw data.');
-            return [unnormalized_scaled_shock1, unnormalized_scaled_shock2];
-        }
-
+        let std1 = Math.sqrt(var1);
         let output_shock1_normalized = new Array(T);
+        for (let i = 0; i < T; i++) output_shock1_normalized[i] = (unnormalized_scaled_shock1[i] - mean1) / std1;
+
+        // Normalize shock 2
+        let mean2 = 0;
+        for (let i = 0; i < T; i++) mean2 += unnormalized_scaled_shock2[i];
+        mean2 /= T;
+        let var2 = 0;
+        for (let i = 0; i < T; i++) var2 += (unnormalized_scaled_shock2[i] - mean2) ** 2;
+        var2 /= T;
+        if (var2 <= 1e-9 || isNaN(var2)) {
+            console.error('Variance for shock 2 is too small or NaN. Returning raw data.');
+            return [unnormalized_scaled_shock1, unnormalized_scaled_shock2];
+        }
+        let std2 = Math.sqrt(var2);
         let output_shock2_normalized = new Array(T);
-        for (let i = 0; i < T; i++) {
-            output_shock1_normalized[i] = (unnormalized_scaled_shock1[i] - mean1) / L11;
-            output_shock2_normalized[i] = ((unnormalized_scaled_shock2[i] - mean2) - L21 * output_shock1_normalized[i]) / L22;
-        }
+        for (let i = 0; i < T; i++) output_shock2_normalized[i] = (unnormalized_scaled_shock2[i] - mean2) / std2;
 
-        let newMean1 = 0, newMean2 = 0, newVar1 = 0, newVar2 = 0;
-        for (let i = 0; i < T; i++) {
-            newMean1 += output_shock1_normalized[i];
-            newMean2 += output_shock2_normalized[i];
-        }
-        newMean1 /= T; newMean2 /= T;
-
-        for (let i = 0; i < T; i++) {
-            output_shock1_normalized[i] -= newMean1;
-            output_shock2_normalized[i] -= newMean2;
-            newVar1 += output_shock1_normalized[i] * output_shock1_normalized[i];
-            newVar2 += output_shock2_normalized[i] * output_shock2_normalized[i];
-        }
-        let newVar1_val = newVar1 / T;
-        let newVar2_val = newVar2 / T;
-
-        if (newVar1_val <= 1e-9 || isNaN(newVar1_val)) {
-            console.error('Variance for output_shock1_normalized is too small or NaN. newVar1_val:', newVar1_val, '. Returning raw data.');
-            return [unnormalized_scaled_shock1, unnormalized_scaled_shock2];
-        }
-        if (newVar2_val <= 1e-9 || isNaN(newVar2_val)) {
-            console.error('Variance for output_shock2_normalized is too small or NaN. newVar2_val:', newVar2_val, '. Returning raw data.');
-            return [unnormalized_scaled_shock1, unnormalized_scaled_shock2];
-        }
-
-        newVar1 = Math.sqrt(newVar1_val);
-        newVar2 = Math.sqrt(newVar2_val);
-
-        for (let i = 0; i < T; i++) {
-            output_shock1_normalized[i] /= newVar1;
-            output_shock2_normalized[i] /= newVar2;
-        }
-        
         selectedPointIndex = null;
         return [output_shock1_normalized, output_shock2_normalized];
     }
@@ -309,10 +284,20 @@ function initSvarSetup() {
         sampleSizeValue.textContent = sampleSizeSlider.value;
     });
 
-    sampleSizeSlider.addEventListener('change', () => {
-        T = parseInt(sampleSizeSlider.value);
-        console.log(`Sample size T changed to: ${T}`);
-        generateAndPlot(); // Regenerate everything when T changes
+    sampleSizeSlider.addEventListener('change', function() {
+        T = parseInt(this.value);
+        
+        // Update the central data store with new sample size
+        window.SVARData.updateData({
+            T: T
+        });
+        
+        // Notify about sample size change
+        window.SVARData.notifyUpdate('SAMPLE_SIZE_CHANGED', {
+            sampleSize: T
+        });
+        
+        generateAndPlot();
     });
 
     newSampleBtn.addEventListener('click', () => {
@@ -332,12 +317,10 @@ function initSvarSetup() {
     }
 
     if (phiSwitch) {
-        phiSwitch.addEventListener('change', () => {
-            phi_0 = phiSwitch.checked ? Math.PI / 4 : 0;
-            console.log(`phi_0 changed to: ${phi_0.toFixed(4)}`);
-            updateToggleVisual(); // Update the visual highlight
+        phiSwitch.addEventListener('change', function() {
             calculateReducedFormAndB0();
             updatePlot();
+            updateToggleVisual();
         });
 
         phiLabel0.addEventListener('click', function() {
@@ -557,12 +540,60 @@ function initSvarSetup() {
         }, 200); // Small delay to ensure DOM is fully rendered
     }
 
+    // --- Switch Synchronization ---
+    function setupSwitchSync() {
+        // Listen for model type changes from any section
+        window.SVARData.subscribe('MODEL_TYPE_CHANGED', (event) => {
+            if (event.detail && typeof event.detail.isNonRecursive === 'boolean' && 
+                phiSwitch.checked !== event.detail.isNonRecursive) {
+                // Only update if the value is different
+                phiSwitch.checked = event.detail.isNonRecursive;
+                updateToggleVisual();
+                calculateReducedFormAndB0();
+                updatePlot();
+            }
+        });
+
+        // Broadcast model type changes
+        phiSwitch.addEventListener('change', () => {
+            // Update the central data store
+            window.SVARData.updateData({
+                isNonRecursive: phiSwitch.checked
+            });
+            
+            // Notify about the model type change
+            window.SVARData.notifyUpdate('MODEL_TYPE_CHANGED', {
+                isNonRecursive: phiSwitch.checked
+            });
+            
+            updateToggleVisual();
+        });
+    }
+
     // --- Initial Execution ---
     console.log("Initialising SVAR setup...");
     updateToggleVisual(); // Set initial highlight state for the toggle
     generateAndPlot(); // Generate initial data and plots
     setupStickyControls(); // Initialize sticky controls
-
+    setupSwitchSync(); // Initialize switch synchronization
+    
+    // Expose functions to global scope (both legacy and new system)
+    window.svarSetupData.generateAndPlot = generateAndPlot;
+    
+    // Set up listeners for data changes from other sections
+    window.SVARData.subscribe('DATA_UPDATED', (event) => {
+        // Check if we need to update our local T value
+        if (event.detail.T && event.detail.T !== T) {
+            T = event.detail.T;
+            sampleSizeInput.value = T;
+        }
+    });
+    
+    // Initialize the central data store with current values
+    window.SVARData.updateData({
+        T: T,
+        isNonRecursive: phiSwitch.checked
+    });
 
     // Loading screen is now handled at the global level in main.js
 }
