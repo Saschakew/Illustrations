@@ -1,0 +1,30 @@
+.plot-container {
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.plotly-chart {
+    width: 100%;
+    height: 100%;
+    min-height: 400px; /* Ensure plots have a minimum height */
+}
+
+.plot-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.plot-container-individual {
+    flex: 1 1 calc(50% - 1rem);
+    min-width: 300px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+    .plot-container-individual {
+        flex-basis: 100%;
+    }
+}

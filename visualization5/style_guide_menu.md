@@ -144,3 +144,16 @@ By using this centralized `initializeStickyMenu` function, you no longer need to
 ---
 
 By following these steps, you can efficiently create new, fully-featured control menus that are perfectly integrated with the existing design and functionality of the application.
+
+---
+
+## 4. Integration with Application Architecture
+
+While this guide covers the HTML, CSS, and sticky behavior of the menu, it is critical to remember that the controls within the menu are part of a larger, event-driven system.
+
+**Key Considerations:**
+
+- **Event-Driven Updates:** The controls in your menu will trigger and respond to global `DATA_UPDATED` events. This can lead to runtime errors if not handled carefully.
+- **Robustness is Essential:** Your section's JavaScript must be written defensively to avoid errors when the section is hidden or does not contain all shared controls.
+
+For detailed architectural patterns and critical best practices—including **how to prevent `TypeError` exceptions from hidden sections and missing elements**—you **must** refer to **`code_structure.md`**. That document contains the complete guidelines for writing stable and maintainable JavaScript for this project.

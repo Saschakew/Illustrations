@@ -42,10 +42,6 @@
     </p>
 </div>
 
-
-
-
-
 <!-- Matrix Display -->
 <div class="row text-center mb-4">
     <div class="col-md-4">
@@ -66,13 +62,14 @@
 <div class="row">
     <div class="col-lg-6">
         <div class="plot-container">
-            <h5 class="text-center">Estimated Structural Shocks \( \hat{\epsilon}_t(\phi) \) vs True Shocks \( \epsilon_t \)</h5>
+            <h5 class="text-center">Estimated Structural Shocks \( \hat{\epsilon}_t(\phi) \)</h5>
             <div id="innovations-scatter-plot-er" class="plotly-chart"></div>
         </div>
     </div>
     <div class="col-lg-6">
         <div class="plot-container">
             <h5 class="text-center">Correlation between Estimated Shocks</h5>
+            <p class="text-center small text-muted mb-1">True value of \( \phi \) that yields zero correlation: <strong id="phi-true-display">0.00</strong></p>
             <div id="correlation-plot-er" class="plotly-chart"></div>
         </div>
     </div>

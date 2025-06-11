@@ -165,5 +165,48 @@ window.SVARFunctions = {
             phi_true,
             correlationData: { phis, corrs }
         };
+    },
+
+    /**
+     * Calculates the estimated structural shocks for a given rotation angle.
+     * @param {number} phi - The rotation angle.
+     * @param {Array<Array<number>>} p_hat - The Cholesky factor of the covariance matrix.
+     * @param {Array<number>} u_1t - The first reduced-form shock series.
+     * @param {Array<number>} u_2t - The second reduced-form shock series.
+     * @returns {{e1_data: Array<number>, e2_data: Array<number>}} The estimated structural shocks.
+     */
+    calculateEstimatedShocks: function(phi, p_hat, u_1t, u_2t) {
+        if (!p_hat) return { e1_data: [], e2_data: [] };
+
+        const R_current = this.getB0Matrix(phi);
+        const b_hat_current = this.matmul(p_hat, R_current);
+        const b_hat_inv = this.matinv(b_hat_current);
+
+        if (!b_hat_inv) return { e1_data: [], e2_data: [] };
+
+        const e1_data = u_1t.map((u1, i) => b_hat_inv[0][0] * u1 + b_hat_inv[0][1] * u_2t[i]);
+        const e2_data = u_1t.map((u1, i) => b_hat_inv[1][0] * u1 + b_hat_inv[1][1] * u_2t[i]);
+
+        return { e1_data, e2_data };
+    },
+
+    /**
+     * Finds the optimal phi that minimizes the correlation between estimated shocks.
+     * @param {object} correlationData - An object containing arrays of phis and their corresponding correlations.
+     * @returns {number} The phi value that results in the minimum absolute correlation.
+     */
+    findBestPhi: function(correlationData) {
+        let minCorr = Infinity;
+        let bestPhi = 0;
+        if (correlationData && correlationData.phis) {
+            correlationData.phis.forEach((phi, i) => {
+                const corr = Math.abs(correlationData.corrs[i]);
+                if (corr < minCorr) {
+                    minCorr = corr;
+                    bestPhi = phi;
+                }
+            });
+        }
+        return bestPhi;
     }
 };

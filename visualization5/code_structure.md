@@ -129,3 +129,57 @@ This document outlines the standardized architecture for the SVAR Visualizer pro
 5.  **Extend Shared Modules (if necessary):**
     - If the new section requires new types of plots, add corresponding functions to `shared_plots.js`.
     - If it requires new core SVAR logic or general utility functions, add them to `shared_svar_functions.js` or `shared_general_functions.js`, respectively.
+
+## 6. Best Practices and Common Pitfalls
+
+To avoid common runtime errors and ensure the application remains stable, follow these critical best practices when developing or modifying sections.
+
+### 6.1. Always Check for Section Visibility in Event Handlers
+
+- **Problem:** The `DATA_UPDATED` event is broadcast globally to all sections. If a section is hidden (`display: none`), its JavaScript event handler will still fire. Any attempt to access or modify DOM elements within the hidden section will result in a `TypeError` (e.g., "Cannot read properties of null").
+- **Solution:** Add a guard clause at the very beginning of every `DATA_UPDATED` subscriber to check if the section is currently visible. Only proceed with UI updates if the section is visible.
+
+**Example (in a section-specific JS file like `estimation_restrictions.js`):**
+```javascript
+window.SVARData.subscribe('DATA_UPDATED', (event) => {
+    const section = document.getElementById('estimation-restrictions');
+
+    // CRITICAL: Check for visibility before doing anything else.
+    if (section.style.display === 'none' || !document.body.contains(section)) {
+        return; // Do nothing if the section is not visible or detached from the DOM.
+    }
+
+    // ... proceed with updating plots and UI elements ...
+});
+```
+This also applies to shared modules like `shared_controls.js` that operate within a section's context.
+
+### 6.2. Write Robust Shared Modules with Null Checks
+
+- **Problem:** A shared module like `shared_controls.js` is designed to work across multiple sections. However, not all sections will contain every single shared control. For example, the "Estimation" section does not have a "Sample Size" slider. Without checks, the code will throw a `TypeError` when it tries to access a `null` element.
+- **Solution:** Inside shared modules, always perform a null check on a DOM element before attempting to read its properties or update it.
+
+**Example (in `shared_controls.js`):**
+```javascript
+// Inside the DATA_UPDATED subscriber...
+
+// Sync Sample Size (T)
+// CRITICAL: Check if sampleSizeSlider exists before accessing its properties.
+if (sampleSizeSlider && data.T && sampleSizeSlider.value !== String(data.T)) {
+    sampleSizeSlider.value = data.T;
+    if (sampleSizeValue) { // Also check for the value display span
+        sampleSizeValue.textContent = data.T;
+    }
+}
+
+// Sync Model Type (Recursive/Non-recursive)
+if (phiSwitch && typeof data.isNonRecursive === 'boolean' && phiSwitch.checked !== data.isNonRecursive) {
+    phiSwitch.checked = data.isNonRecursive;
+    updateToggleVisual();
+}
+```
+
+### 6.3. Ensure HTML and JavaScript are Synchronized
+
+- **Problem:** A `TypeError` can occur if the JavaScript code attempts to access a DOM element by an ID that does not exist in the corresponding HTML file. This is often due to a typo or forgetting to add the element to the HTML.
+- **Solution:** When writing JavaScript that interacts with a specific element, always double-check the HTML file to ensure the element exists and its `id` or `class` matches the selector in the JavaScript exactly.

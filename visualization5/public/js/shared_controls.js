@@ -73,16 +73,22 @@ window.SVARControls = {
 
         // --- Data Subscription Listener for Synchronization ---
         window.SVARData.subscribe('DATA_UPDATED', (event) => {
+            // Only synchronize controls if the section is currently visible
+            if (sectionElement.style.display === 'none') {
+                return;
+            }
             const data = event.detail;
 
             // Sync Sample Size (T)
-            if (data.T && sampleSizeSlider.value !== String(data.T)) {
+            if (sampleSizeSlider && data.T && sampleSizeSlider.value !== String(data.T)) {
                 sampleSizeSlider.value = data.T;
-                sampleSizeValue.textContent = data.T;
+                if (sampleSizeValue) {
+                    sampleSizeValue.textContent = data.T;
+                }
             }
 
             // Sync Model Type (Recursive/Non-recursive)
-            if (typeof data.isNonRecursive === 'boolean' && phiSwitch.checked !== data.isNonRecursive) {
+            if (phiSwitch && typeof data.isNonRecursive === 'boolean' && phiSwitch.checked !== data.isNonRecursive) {
                 phiSwitch.checked = data.isNonRecursive;
                 updateToggleVisual();
             }
