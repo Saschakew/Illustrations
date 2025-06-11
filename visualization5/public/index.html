@@ -33,15 +33,18 @@
         </header>
         <nav>
             <a href="#svar-setup">SVAR Setup</a>
-            <a href="#estimation-restrictions">Estimation with Restrictions</a>
-            <a href="#estimation-nongaussianity">Estimation with Non-Gaussianity</a>
             <a href="#ridge-estimation">Ridge Estimation</a>
+            <a href="#estimation-restrictions">Estimation & Restrictions</a>
         </nav>
         <main>
-            <section id="svar-setup"></section>
-            <section id="estimation-restrictions"></section>
-            <section id="estimation-nongaussianity"></section>
+            <section id="svar-setup">
+                <button id="newSampleBtn" class="btn btn-secondary new-sample-btn">New Sample</button>
+                <span id="phiLabel0" class="switch-label selected phi-label-left">Recursive</span>
+                <span id="sampleSizeValue" class="fw-bold sample-size-value">500</span>
+            </section>
             <section id="ridge-estimation"></section>
+
+            <section id="estimation-restrictions" class="content-section"></section>
         </main>
     </div>
     <!-- Libraries -->
@@ -73,14 +76,19 @@
 
     <!-- General UI logic -->
     <script src="js/menu.js"></script>
+
+    <!-- Shared function libraries -->
+    <script src="js/shared_general_functions.js"></script>
+    <script src="js/shared_svar_functions.js"></script>
+    <script src="js/shared_plots.js"></script>
+    <script src="js/shared_controls.js"></script>
     
+    <!-- Main application script that orchestrates everything -->
+    <script src="js/main.js"></script>
+
     <!-- Section-specific logic -->
     <script src="js/svar_setup.js"></script>
     <script src="js/estimation_restrictions.js"></script>
-    <script src="js/estimation_nongaussianity.js"></script>
     <!-- TODO: Add other section scripts here as they are created -->
-
-    <!-- Main application script that orchestrates everything -->
-    <script src="js/main.js"></script>
 </body>
 </html>

@@ -1,83 +1,79 @@
-<h2>Recovering Structural Shocks with Identifying Restrictions</h2>
+<h2 class="text-center mb-4">Estimation and Identification with Restrictions</h2>
 
-<div id="estimation-controls" class="controls-container card mb-4">
+<!-- Interactive Controls -->
+<div id="simulation-controls" class="controls-container card mb-4">
     <div class="card-body">
         <div class="controls-row">
-            <!-- Phi Slider (left) -->
             <div class="control-item sample-size">
-                <label for="phiSlider_er" class="form-label mb-0 me-2">\( \phi = \)<span id="phiValue_er">0.00</span></label>
-                <input type="range" class="form-range" min="-1.5708" max="1.5708" step="0.01" id="phiSlider_er" value="0" data-id="phi-slider">
+                <label for="phi-slider" class="form-label mb-0 me-2"> \( \phi =\)  <span class="phi-value-display">0.00</span></label>
+                <input type="range" class="form-range" id="phi-slider" min="-1.5707" max="1.5707" step="0.01" value="0">
             </div>
-
-            <!-- B0 Toggle (middle) -->
             <div class="control-item phi-toggle">
                 <div class="phi-toggle-pill">
-                    <span class="phi-label phi-label-left" id="phiLabel0_er">Recursive</span>
+                    <span class="phi-label phi-label-left">Recursive</span>
                     <label class="custom-switch">
-                        <input type="checkbox" id="b0Switch_er" title="Switch between Recursive and Non-recursive true B_0">
+                        <input type="checkbox" id="phiSwitch" title="Switch between Recursive and Non-recursive models">
                         <span class="slider"></span>
                     </label>
-                    <span class="phi-label phi-label-right" id="phiLabelPi_er">Non-recursive</span>
+                    <span class="phi-label phi-label-right">Non-recursive</span>
                 </div>
             </div>
-
-            <!-- New Sample Button (right) -->
             <div class="control-item new-sample">
-                <button id="newSampleBtn_er" class="btn w-100">New Sample</button>
+                <button id="newSampleBtn" class="btn w-100 new-sample-btn">New Sample</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="controls-placeholder-er"></div>
+<div id="controls-placeholder"></div>
 
-<div class="explanation-container card mb-4">
-    <div class="card-body">
-        <p>
-            We observe reduced-form shocks \(u_t\) and seek to recover the unobserved structural shocks \(\epsilon_t\). The relationship is \(\epsilon_t = B_0^{-1} u_t\), but the true matrix \(B_0\) is unknown.
-        </p>
-        <p>
-            Define innovations \(e_t(B) = B^{-1} u_t\). Assuming structural shocks are uncorrelated and have unit variance (\(E[\epsilon_t \epsilon_t'] = I\)), we look for a matrix \(B\) such that the sample innovations \(e_t(B)\) also satisfy this property. 
-            The set of such matrices \(B\) can be parameterized by a single rotation angle \(\phi \in [0, \pi/2]\). 
-            Specifically, all matrices \(B(\phi) = B^{\text{Chol}} Q(\phi)\) yield innovations with unit variance and uncorrelated shocks, where \(B^{\text{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\), and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\). Use the \(\phi  \) slider to select a rotation angle  and see the corresponding matrix   \(B(\phi = \) <span id="phiValueDisplay_er">0.00</span> \( ) = \) <span id="bMatrixDisplay_er"></span>. 
-        </p>
-         
-        <p> 
-            Given the true data-generating matrix \(B_0\) and the sample covariance of \(u_t\), we can calculate the precise rotation angle, \(\phi_0\), that would recover the true \(B_0\) from this specific sample. This is the value highlighted on the correlation plot. Because it depends on the random sample, it will fluctuate slightly with each new draw.
-        </p>
-        <p>
-            For the current sample, the required angle for the recursive \(B_0\) is \(\phi_0^{\text{rec}} \approx \) <span id="phi_true_rec_display"></span>, and for the non-recursive \(B_0\) it is \(\phi_0^{\text{non-rec}} \approx \) <span id="phi_true_non_rec_display"></span>.
-        </p>
-        <p>
-            Separately, the Cholesky identification imposes a purely structural assumption (a recursive structure on \(B\)), which uniquely determines the rotation angle as \(\phi=0\), regardless of the sample.
-            Click the button below to see the results of this estimation.
-        </p>
-        <div class="text-center">
-            <button id="estimateRecursiveBtn_er" class="btn btn-primary my-4">Estimate Recursive SVAR</button>
-            <div id="estimationResults_er" class="mt-3" style="display: none;">
-                <p>
-                    Estimated \(\hat{\phi}\)= <span id="estimatedPhiValue_er"></span> leads to \(\hat{B}=\) <span id="estimatedB_er"></span> compared to the true \(B_0\)= <span id="trueB0_er"></span>.
-                </p>
-            </div>
-        </div>
-        <p>
-        <strong>Observations:</strong>
-        All \(B(\phi)\) yield uncorrelated innovations \(e_{1t}(\phi)\) and \(e_{2t}(\phi)\).
-        The recursive estimator works well when the true model is recursive.
-        The recursive estimator is biased when the true model is non-recursive.
-        The bias does not vanish with an increasing sample size.
-        </p>
+<!-- Explanation Section -->
+<div class="explanation-section mb-4">
+    <p>
+        In the SVAR model, we estimate the reduced-form shocks, \( u_t \), but we are truly interested in the underlying structural shocks, \( \epsilon_t \). The relationship is given by \( u_t = B_0 \epsilon_t \). From the data \( u_t \), we can estimate the covariance matrix \( \Sigma_u = E(u_t u_t') \). The theoretical relationship is \( \Sigma_u = B_0 B_0' \) since \( E(\epsilon_t \epsilon_t') = I \).
+    </p>
+    <p>
+        The sample covariance matrix, \( \hat{\Sigma}_u \), is our estimate of \( \Sigma_u \). We can decompose it using the Cholesky decomposition: \( \hat{\Sigma}_u = \hat{P} \hat{P}' \), where \( \hat{P} \) is a lower triangular matrix. This \( \hat{P} \) is one possible estimate for \( B_0 \).
+    </p>
+    <p>
+        However, any matrix \( \hat{B}_0 = \hat{P} R \), where \( R \) is an orthonormal rotation matrix (i.e., \( RR' = I \)), is also a valid candidate, since \( \hat{B}_0 \hat{B}_0' = \hat{P} R R' \hat{P}' = \hat{P} \hat{P}' = \hat{\Sigma}_u \). In the 2-variable case, this rotation matrix is defined by a single angle \( \phi \):
+        \[ R(\phi) = \begin{pmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{pmatrix} \]
+        Our goal is to find the correct rotation \( \phi \) that recovers the true \( B_0 \).
+    </p>
+</div>
+
+
+
+
+
+<!-- Matrix Display -->
+<div class="row text-center mb-4">
+    <div class="col-md-4">
+        <h5>Sample Covariance \( \hat{\Sigma}_u \)</h5>
+        <div id="sigma-u-hat-matrix-display" class="matrix-display"></div>
+    </div>
+    <div class="col-md-4">
+        <h5>Cholesky Factor \( \hat{P} \)</h5>
+        <div id="p-hat-matrix-display" class="matrix-display"></div>
+    </div>
+    <div class="col-md-4">
+        <h5>Estimated \( \hat{B}_0(\phi) \)</h5>
+        <div id="b-hat-matrix-display" class="matrix-display"></div>
     </div>
 </div>
 
-<div class="plot-wrapper">
-    <div id="innovationsScatterPlot_er" class="plot-container-individual"></div>
-    <div id="correlationPlot_er" class="plot-container-individual"></div>
-</div>
-
-<div>
-    <ul>
-        <li><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \(e_{1t}(\phi)\) vs. \(e_{2t}(\phi)\) for the currently selected \(\phi\).</li>
-        <li><strong>Right Plot (Sample Correlation):</strong> Shows the sample correlation, \(\text{mean}(e_{1t}(\phi) \cdot e_{2t}(\phi))\), across all possible values of \(\phi \in [0, \pi/2]\). A vertical line indicates the current \(\phi\). Another line marks \(\phi_0\) which corresponds to the true \(B_0\) which changes with the recursive vs non-recursive slider. </li>
-    </ul>
+<!-- Plots Section -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="plot-container">
+            <h5 class="text-center">Estimated Structural Shocks \( \hat{\epsilon}_t(\phi) \) vs True Shocks \( \epsilon_t \)</h5>
+            <div id="innovations-scatter-plot-er" class="plotly-chart"></div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="plot-container">
+            <h5 class="text-center">Correlation between Estimated Shocks</h5>
+            <div id="correlation-plot-er" class="plotly-chart"></div>
+        </div>
+    </div>
 </div>

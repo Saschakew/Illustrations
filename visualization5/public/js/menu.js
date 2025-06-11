@@ -1,184 +1,155 @@
-// General-purpose sticky menu initializer
-function initializeStickyMenu(sectionId, controlsContainerId, controlsPlaceholderId) {
-    const section = document.getElementById(sectionId);
-    const controlsContainer = document.getElementById(controlsContainerId);
-    const controlsPlaceholder = document.getElementById(controlsPlaceholderId);
+// Manages multiple sticky menus on the same page without conflicts.
+const stickyMenuManager = {
+    menus: [],
+    isListenerAttached: false,
+    resizeTimer: null,
+    ticking: false, // For scroll throttling
 
-    if (!section || !controlsContainer || !controlsPlaceholder) {
-        // Required elements not found
-        return;
-    }
+    // Adds a new menu to be managed
+    addMenu: function(sectionId, controlsContainerId, controlsPlaceholderId) {
+        const section = document.getElementById(sectionId);
+        if (!section) {
+            console.warn(`Sticky menu setup failed: section '${sectionId}' not found.`);
+            return;
+        }
+        const controlsContainer = section.querySelector(`#${controlsContainerId}`);
+        const controlsPlaceholder = section.querySelector(`#${controlsPlaceholderId}`);
 
-    let controlsNaturalWidth = null;
-    let controlsHeight = null;
-    let controlsOriginalDocumentOffsetTop = 0;
-    let resizeTimer = null;
-    const DEBUG = true; // Set to false in production if desired
+        if (!controlsContainer || !controlsPlaceholder) {
+            console.warn(`Sticky menu setup failed: one or more elements not found for section '${sectionId}'.`);
+            return;
+        }
 
-    function setupInitial() {
-        // Ensure controls are in normal flow before measuring
-        controlsContainer.classList.remove('sticky');
-        controlsContainer.style.position = '';
-        controlsContainer.style.top = '';
-        controlsContainer.style.left = '';
-        controlsContainer.style.width = '';
-        controlsContainer.style.transform = '';
-        controlsPlaceholder.style.height = '0';
+        const menuState = {
+            section: section,
+            controlsContainer: controlsContainer,
+            controlsPlaceholder: controlsPlaceholder,
+            naturalWidth: 0,
+            height: 0,
+            originalOffsetTop: 0,
+            isPinned: false,
+            isSticky: false
+        };
+
+        this.menus.push(menuState);
+        this.setupInitial(menuState);
+
+        if (!this.isListenerAttached) {
+            window.addEventListener('scroll', this.handleScroll.bind(this));
+            window.addEventListener('resize', this.handleResize.bind(this));
+            this.isListenerAttached = true;
+        }
+    },
+
+    // Sets the initial dimensions and position for a menu
+    setupInitial: function(menu) {
+        menu.controlsContainer.classList.remove('sticky', 'pinned');
+        menu.controlsContainer.style.position = '';
+        menu.controlsContainer.style.top = '';
+        menu.controlsContainer.style.bottom = '';
+        menu.controlsContainer.style.left = '';
+        menu.controlsContainer.style.width = '';
+        menu.controlsContainer.style.transform = '';
+        menu.controlsPlaceholder.style.height = '0';
 
         const measureAndSet = () => {
-            const rect = controlsContainer.getBoundingClientRect();
-            controlsNaturalWidth = rect.width;
-            controlsHeight = rect.height;
-            // Calculate offset from document top when in normal flow
-            controlsOriginalDocumentOffsetTop = controlsContainer.getBoundingClientRect().top + window.scrollY;
-            
-            if (DEBUG) {
-
-            }
-            onScroll(); // Apply correct sticky state based on new measurements
+            const rect = menu.controlsContainer.getBoundingClientRect();
+            menu.naturalWidth = rect.width;
+            menu.height = rect.height;
+            menu.originalOffsetTop = rect.top + window.scrollY;
+            this.updateMenuState(menu);
         };
 
         if (typeof MathJax !== 'undefined' && typeof MathJax.typesetPromise === 'function') {
             MathJax.typesetPromise()
-                .then(() => {
-                    measureAndSet();
-                    // Add a delayed re-measurement to account for other async rendering (e.g., Plotly)
-                    setTimeout(measureAndSet, 700); // Increased delay to 700ms
-                })
-                .catch(err => {
-                    // MathJax typesetPromise error
-                    measureAndSet(); // Fallback
-                    // Also add delayed re-measurement on fallback
-                    setTimeout(measureAndSet, 700); // Increased delay to 700ms
-                });
+                .then(() => setTimeout(measureAndSet, 700))
+                .catch(() => setTimeout(measureAndSet, 700));
         } else {
-            measureAndSet();
-            // Add a delayed re-measurement if MathJax is not present
-            setTimeout(measureAndSet, 700); // If MathJax not present, with increased delay
+            setTimeout(measureAndSet, 700);
         }
-    }
+    },
 
-    function onScroll() {
-        if (!controlsContainer || !section) return;
+    // Throttled scroll handler for performance
+    handleScroll: function() {
+        if (!this.ticking) {
+            window.requestAnimationFrame(() => {
+                this.menus.forEach(menu => this.updateMenuState(menu));
+                this.ticking = false;
+            });
+            this.ticking = true;
+        }
+    },
 
+    handleResize: function() {
+        clearTimeout(this.resizeTimer);
+        this.resizeTimer = setTimeout(() => {
+            this.menus.forEach(menu => this.setupInitial(menu));
+        }, 250);
+    },
+
+    // The core logic to update a single menu's position
+    updateMenuState: function(menu) {
         const currentScrollY = window.scrollY;
-        const sectionRect = section.getBoundingClientRect();
-        const effectiveControlsHeight = typeof controlsHeight === 'number' ? controlsHeight : 0;
-        const effectiveOffsetTop = typeof controlsOriginalDocumentOffsetTop === 'number' ? controlsOriginalDocumentOffsetTop : 0;
+        const sectionRect = menu.section.getBoundingClientRect();
+        const isAtEnd = (sectionRect.bottom - menu.height) <= 0;
 
-        const isBefore = currentScrollY < effectiveOffsetTop;
-        const isAtEnd = sectionRect.bottom <= effectiveControlsHeight;
+        // Continuously re-calculate offsetTop while the menu is in the normal document flow.
+        // This makes it resilient to layout shifts from other elements loading.
+        if (!menu.isSticky && !menu.isPinned) {
+            menu.originalOffsetTop = menu.controlsContainer.getBoundingClientRect().top + window.scrollY;
+        }
+
+        const isBefore = currentScrollY < menu.originalOffsetTop;
 
         if (isAtEnd) {
-            // State 3: Pinned to the bottom of the section
-            if (!controlsContainer.classList.contains('pinned')) {
-                controlsContainer.classList.remove('sticky');
-                controlsContainer.classList.add('pinned');
-                controlsContainer.style.position = 'absolute';
-                controlsContainer.style.top = 'auto'; // Unset top
-                controlsContainer.style.bottom = '0'; // Pin to bottom of section
-                controlsContainer.style.left = '50%';
-                controlsContainer.style.transform = 'translateX(-50%)';
-                controlsContainer.style.width = controlsNaturalWidth ? `${controlsNaturalWidth}px` : '';
-                controlsPlaceholder.style.height = effectiveControlsHeight ? `${effectiveControlsHeight}px` : '0';
+            if (menu.isPinned) return;
+            menu.isPinned = true;
+            menu.isSticky = false;
+            const c = menu.controlsContainer;
+            c.classList.remove('sticky');
+            c.classList.add('pinned');
+            c.style.position = 'absolute';
+            c.style.top = 'auto';
+            c.style.bottom = '0';
+            c.style.left = '50%';
+            c.style.transform = 'translateX(-50%)';
+            c.style.width = `${menu.naturalWidth}px`;
+            menu.controlsPlaceholder.style.height = `${menu.height}px`;
 
-            }
         } else if (isBefore) {
-            // State 1: Normal flow (before scrolling past it)
-            if (controlsContainer.classList.contains('sticky') || controlsContainer.classList.contains('pinned')) {
-                controlsContainer.classList.remove('sticky', 'pinned');
-                controlsContainer.style.position = '';
-                controlsContainer.style.top = '';
-                controlsContainer.style.bottom = '';
-                controlsContainer.style.left = '';
-                controlsContainer.style.width = '';
-                controlsContainer.style.transform = '';
-                controlsPlaceholder.style.height = '0';
+            if (!menu.isSticky && !menu.isPinned) return;
+            menu.isPinned = false;
+            menu.isSticky = false;
+            const c = menu.controlsContainer;
+            c.classList.remove('sticky', 'pinned');
+            c.style.position = '';
+            c.style.top = '';
+            c.style.bottom = '';
+            c.style.left = '';
+            c.style.width = '';
+            c.style.transform = '';
+            menu.controlsPlaceholder.style.height = '0';
 
-            }
         } else {
-            // State 2: Sticky (fixed to top of viewport)
-            if (!controlsContainer.classList.contains('sticky') || controlsContainer.classList.contains('pinned')) {
-                controlsContainer.classList.remove('pinned');
-                controlsContainer.classList.add('sticky');
-                controlsContainer.style.position = 'fixed';
-                controlsContainer.style.top = '0';
-                controlsContainer.style.bottom = 'auto'; // Unset bottom
-                controlsContainer.style.left = '50%';
-                controlsContainer.style.transform = 'translateX(-50%)';
-                controlsContainer.style.width = controlsNaturalWidth ? `${controlsNaturalWidth}px` : '';
-                controlsPlaceholder.style.height = effectiveControlsHeight ? `${effectiveControlsHeight}px` : '0';
-
-            }
+            if (menu.isSticky) return;
+            menu.isSticky = true;
+            menu.isPinned = false;
+            const c = menu.controlsContainer;
+            c.classList.remove('pinned');
+            c.classList.add('sticky');
+            c.style.position = 'fixed';
+            c.style.top = '0';
+            c.style.bottom = '';
+            c.style.left = '50%';
+            c.style.transform = 'translateX(-50%)';
+            c.style.width = `${menu.naturalWidth}px`;
+            menu.controlsPlaceholder.style.height = `${menu.height}px`;
         }
     }
+};
 
-    function forceRefreshStickyMeasurements() {
-
-        const oldOffset = controlsOriginalDocumentOffsetTop;
-        const oldHeight = controlsHeight;
-        const oldWidth = controlsNaturalWidth;
-
-        // Store current sticky/pinned state to see if we need to restore styles (though onScroll should handle it)
-        const isCurrentlySticky = controlsContainer.classList.contains('sticky');
-        const isCurrentlyPinned = controlsContainer.classList.contains('pinned');
-
-        // Reset styles to measure natural dimensions in normal flow
-        controlsContainer.classList.remove('sticky', 'pinned');
-        controlsContainer.style.position = '';
-        controlsContainer.style.top = '';
-        controlsContainer.style.left = '';
-        controlsContainer.style.transform = '';
-        controlsContainer.style.width = ''; // Allow natural width
-        // Placeholder height will be reset by onScroll if needed
-
-        // Re-measure all critical dimensions
-        const rect = controlsContainer.getBoundingClientRect();
-        controlsNaturalWidth = rect.width;
-        controlsHeight = rect.height;
-        controlsOriginalDocumentOffsetTop = rect.top + window.scrollY;
-
-        if (DEBUG) {
-
-        }
-
-        // Call onScroll() to re-evaluate and apply the correct state based on new measurements.
-        // This will also handle re-applying sticky/pinned styles if necessary and manage the placeholder.
-        onScroll();
-    }
-
-    if (controlsContainer) {
-        controlsContainer.forceRefreshStickyMeasurements = forceRefreshStickyMeasurements;
-    }
-
-    // Debounced resize and throttled scroll
-    // Adding a small delay to setupInitial to ensure other scripts/elements might be ready
-    // Adding a longer delay to setupInitial to ensure other scripts/elements (especially Plotly charts)
-    // have more time to render and stabilize the layout before any measurements are taken.
-    setTimeout(() => {
-        setupInitial(); 
-        let ticking = false;
-        window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    onScroll();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            if (resizeTimer) clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-
-                setupInitial(); // Re-initialize on resize
-            }, 250); // Debounce resize event
-        });
-
-
-    }, 1000); // Increased outer delay to 1000ms
+function initializeStickyMenu(sectionId, controlsContainerId, controlsPlaceholderId) {
+    requestAnimationFrame(() => {
+        stickyMenuManager.addMenu(sectionId, controlsContainerId, controlsPlaceholderId);
+    });
 }
-
-// If you plan to use this in a module system, you might export it:
-// export { initializeStickyMenu };

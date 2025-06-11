@@ -7,12 +7,21 @@ window.SVARData = {
     epsilon_1t: [],
     epsilon_2t: [],
     sigma_t: [],
-    // Raw innovations e (before scaling and normalization)
     e_1t: [],
     e_2t: [],
     B_0: null,
     T: 500,
     isNonRecursive: false,
+    phi_true_rec: null,
+    phi_true_non_rec: null,
+
+    // Current state variables
+    current_phi: 0,
+    current_B_phi: null,
+
+    // Constants
+    B0_RECURSIVE: [[1, 0], [0.5, 1]],
+    B0_NON_RECURSIVE: [[1, 0.5], [0.5, 1]],
     
     // Event system
     events: {
@@ -42,8 +51,8 @@ window.SVARData = {
         
         const event = new CustomEvent(this.events[eventType], {
             detail: { 
-                ...detail,
-                source: eventType,
+                source: 'Unknown', // Default source
+                ...detail, // Allow detail to overwrite the default source
                 timestamp: Date.now()
             }
         });

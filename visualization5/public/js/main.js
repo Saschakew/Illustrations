@@ -5,165 +5,132 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (!globalLoadingOverlay || !globalPageWrapper) {
         console.error("Global loading elements not found!");
-        // If loading elements aren't found, make sure content is visible anyway
         if (globalPageWrapper) globalPageWrapper.style.visibility = 'visible';
         return;
     }
+
+    // Initialize or extend the shared data object
+    window.SVARData = window.SVARData || {};
+    Object.assign(window.SVARData, {
+        data: window.SVARData.data || {},
+        subscribers: window.SVARData.subscribers || {},
+        
+        updateData: function(newData) {
+            Object.assign(this.data, newData);
+            this.notifyUpdate('DATA_UPDATED', this.data);
+        },
+        
+        subscribe: function(event, callback) {
+            if (!this.subscribers[event]) {
+                this.subscribers[event] = [];
+            }
+            this.subscribers[event].push(callback);
+        },
+        
+        notifyUpdate: function(event, detail) {
+            if (this.subscribers[event]) {
+                this.subscribers[event].forEach(callback => {
+                    try {
+                        callback(new CustomEvent(event, { detail }));
+                    } catch (e) {
+                        console.error(`Error in subscriber for event ${event}:`, e);
+                    }
+                });
+            }
+        }
+    });
+    // Dispatch a custom event to signal that the SVARData object is ready
+    document.dispatchEvent(new CustomEvent('SVARDataReady'));
     
-    const sections = [
-        'svar_setup',
-        'estimation_restrictions',
-        'estimation_nongaussianity',
-        'ridge_estimation'
-    ];
-    
-    // Track loading progress
-    let loadedSections = 0;
-    const totalSections = sections.length;
-    
+    // --- Section Loading Logic ---
+    const dataSourceSection = 'svar_setup';
+    const dependentSections = ['estimation_restrictions'/*, 'ridge_estimation'*/];
+
     // Function to hide the loading screen when everything is ready
     const hideGlobalLoader = () => {
-        console.log("All sections loaded and initialized. Hiding global loading screen...");
-        
-        // Fade out the loading overlay
+        console.log("Hiding global loading screen...");
         if (globalLoadingOverlay) {
             globalLoadingOverlay.style.opacity = '0';
             globalLoadingOverlay.addEventListener('transitionend', () => {
                 if (globalLoadingOverlay) globalLoadingOverlay.style.display = 'none';
             }, { once: true });
         }
-        
-        // Show the main content
         if (globalPageWrapper) {
             globalPageWrapper.style.visibility = 'visible';
             globalPageWrapper.style.opacity = '1';
         }
     };
-    
-    // Function to check if all sections are loaded and MathJax is ready
-    const checkAllLoaded = () => {
-        loadedSections++;
-        console.log(`Section ${loadedSections}/${totalSections} loaded`);
-        
-        if (loadedSections >= totalSections) {
-            console.log("All sections loaded. Checking MathJax status...");
-            waitForMathJaxAndRender();
-        }
-    };
-    
+
     // Function to wait for MathJax to be fully loaded and then render all LaTeX
-    const waitForMathJaxAndRender = () => {
-        // If MathJax is already fully loaded and ready
+    const finalizePage = () => {
+        console.log("All sections loaded. Typesetting MathJax...");
         if (typeof MathJax !== 'undefined' && typeof MathJax.typesetPromise === 'function') {
-            console.log("MathJax.typesetPromise() found. Waiting for all typesetting to complete...");
             MathJax.typesetPromise()
                 .then(() => {
-                    console.log("MathJax initial typesetting complete.");
+                    console.log("Final MathJax typesetting complete.");
                     hideGlobalLoader();
                 })
                 .catch(err => {
-                    console.error("MathJax typesetting failed:", err);
-                    // Wait longer before showing content if MathJax fails
-                    setTimeout(hideGlobalLoader, 1000);
+                    console.error("Final MathJax typesetting failed:", err);
+                    hideGlobalLoader();
                 });
         } else {
-            // MathJax is not yet fully loaded, wait for it
-            console.log("Waiting for MathJax to fully initialize...");
-            
-            // Set up a MathJax configuration hook that will run when MathJax is ready
-            window.MathJax = {
-                ...window.MathJax,
-                startup: {
-                    ...window.MathJax?.startup,
-                    ready: () => {
-                        console.log("MathJax startup ready triggered.");
-                        if (MathJax.startup.defaultReady) {
-                            MathJax.startup.defaultReady();
-                        }
-                        
-                        // Now MathJax is truly ready, process the page
-                        console.log("MathJax is now fully initialized. Processing typesetting...");
-                        MathJax.typesetPromise()
-                            .then(() => {
-                                console.log("MathJax typesetting complete after waiting for initialization.");
-                                hideGlobalLoader();
-                            })
-                            .catch(err => {
-                                console.error("MathJax typesetting failed after initialization:", err);
-                                setTimeout(hideGlobalLoader, 1000);
-                            });
-                    }
-                }
-            };
-            
-            // Fallback in case MathJax fails to load completely
-            setTimeout(() => {
-                console.warn("MathJax may not have fully loaded after waiting. Using fallback.");
-                if (typeof MathJax === 'undefined' || typeof MathJax.typesetPromise !== 'function') {
-                    hideGlobalLoader();
-                }
-            }, 5000); // 5 second fallback timeout
+            console.warn("MathJax not available for final typesetting.");
+            hideGlobalLoader();
         }
     };
 
-    // Load each section
-    sections.forEach(sectionId => {
-        fetch(`sections/${sectionId}.html`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then(data => {
-                // Remove any section-specific loading screens from the HTML
-                // This prevents duplicate loading screens
-                let processedData = data;
-                if (processedData.includes('id="loading-overlay"')) {
-                    const loadingOverlayRegex = /<div[^>]*id=["']loading-overlay["'][^>]*>[\s\S]*?<\/div>/i;
-                    processedData = processedData.replace(loadingOverlayRegex, '');
-                }
-                
-                // Also remove any page-content-wrapper divs to avoid nesting issues
-                if (processedData.includes('id="page-content-wrapper"')) {
-                    const startTag = /<div[^>]*id=["']page-content-wrapper["'][^>]*>/i;
-                    const endTag = /<\/div>\s*$/i; // Match the last closing div
-                    processedData = processedData
-                        .replace(startTag, '')
-                        .replace(endTag, '');
-                }
-                
-                const sectionElement = document.getElementById(sectionId.replace(/_/g, '-'));
-                if (sectionElement) {
-                    sectionElement.innerHTML = processedData;
+    const loadSection = (sectionId) => {
+        return new Promise((resolve, reject) => {
+            const filePath = `/sections/${sectionId}.html`;
+            console.log(`Fetching section: ${filePath}`);
 
-                    // Re-render LaTeX in the new content
-                    if (typeof MathJax !== 'undefined' && MathJax.typeset) {
-                        console.log(`Typesetting MathJax for section: ${sectionId}`);
-                        MathJax.typeset([sectionElement]);
+            fetch(filePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok for ${sectionId}: ${response.statusText}`);
                     }
+                    return response.text();
+                })
+                .then(data => {
+                    const sectionElement = document.getElementById(sectionId.replace(/_/g, '-'));
+                    if (sectionElement) {
+                        sectionElement.innerHTML = data;
 
-                    // After loading content, call the specific init function for that section
-                    if (sectionId === 'svar_setup' && typeof initSvarSetup === 'function') {
-                        console.log('Calling initSvarSetup() for svar-setup section...');
-                        initSvarSetup();
-                    } 
-                                        else if (sectionId === 'estimation_restrictions' && typeof initEstimationRestrictions === 'function') {
-                        console.log('Calling initEstimationRestrictions() for estimation-restrictions section...');
-                        initEstimationRestrictions();
-                    } 
-                    else if (sectionId === 'estimation_nongaussianity' && typeof initEstimationNonGaussianity === 'function') {
-                        console.log('Calling initEstimationNonGaussianity() for estimation-nongaussianity section...');
-                        initEstimationNonGaussianity();
+                        // Call the appropriate initialization function
+                        if (sectionId === 'svar_setup' && typeof initSvarSetup === 'function') {
+                            initSvarSetup();
+                        } else if (sectionId === 'estimation_restrictions' && window.SVARSections && typeof window.SVARSections.initEstimationRestrictions === 'function') {
+                            window.SVARSections.initEstimationRestrictions();
+                        } // Add other sections like ridge_estimation if they have init functions
+
+                        console.log(`Section '${sectionId}' loaded and initialized.`);
+                        resolve();
+                    } else {
+                        throw new Error(`Container element not found for section '${sectionId}'`);
                     }
-                    
-                    // Mark this section as loaded
-                    checkAllLoaded();
-                }
-            })
-            .catch(error => {
-                console.error(`Error loading section ${sectionId}:`, error);
-                checkAllLoaded(); // Still count this section to avoid being stuck
-            });
-    });
+                })
+                .catch(error => {
+                    console.error(`Error loading section '${sectionId}':`, error);
+                    reject(error);
+                });
+        });
+    };
+
+    // --- Main Execution Flow ---
+    console.log("Starting sequential section loading...");
+    loadSection(dataSourceSection)
+        .then(() => {
+            console.log(`Data source section '${dataSourceSection}' loaded. Loading dependent sections...`);
+            const dependentPromises = dependentSections.map(loadSection);
+            return Promise.all(dependentPromises);
+        })
+        .then(() => {
+            console.log('All sections have been successfully loaded.');
+            finalizePage();
+        })
+        .catch(error => {
+            console.error('A critical error occurred during section loading. The application may not function correctly.', error);
+            hideGlobalLoader();
+        });
 });

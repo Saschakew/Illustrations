@@ -64,7 +64,9 @@ section {
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    position: relative; /* Required for child elements positioned absolutely relative to the section */
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 section h2 {
@@ -497,10 +499,28 @@ input:checked + .slider:before {
 .plot-wrapper {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: flex-start;
-    gap: 1rem; 
-    margin-top: 1rem;
+    gap: 20px;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.plot-container-individual {
+    flex: 1 1 45%;
+    min-width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plot-container-individual > div {
+    width: 100%;
+    height: auto;
+}
+
+@media (max-width: 1200px) {
+    .plot-container-individual {
+        flex: 1 1 100%;
+    }
 }
 
 .plot-container {
