@@ -170,6 +170,7 @@ function initializeLambdaSliders() {
         slider.addEventListener('input', function() {
             const newLambda = parseInt(this.value);
             window.sharedData.lambda = newLambda;
+            updateAllPlots(); // Update plots when lambda changes
             
             if (output) {
                 output.textContent = newLambda;

@@ -53,7 +53,7 @@ window.PlotUtils = {
      * @param {number[]} [yAxisRange] - Optional. An array [min, max] to set a fixed y-axis range.
      * @param {number} [phi0LineValue] - Optional. The x-coordinate for a second vertical line (e.g., true phi_0).
      */
-    createOrUpdateLossPlot: function(elementId, xData, yData, title, xLabel, yLabel, verticalLineX, yAxisRange, phi0LineValue) {
+    createOrUpdateLossPlot: function(elementId, xData, yData, title, xLabel, yLabel, verticalLineX, yAxisRange, phi0LineValue, estimatedPhiLineValue) {
         const plotData = [{
             x: xData,
             y: yData,
@@ -134,6 +134,22 @@ window.PlotUtils = {
                     color: 'blue', // Different color for phi_0
                     width: 2,
                     dash: 'dot' // Different dash style for phi_0
+                }
+            });
+        }
+
+        // Add a third vertical line for the estimated phi value if provided
+        if (estimatedPhiLineValue !== undefined && estimatedPhiLineValue !== null && yData && yData.length > 0) {
+            layout.shapes.push({
+                type: 'line',
+                x0: estimatedPhiLineValue,
+                x1: estimatedPhiLineValue,
+                y0: yMinForLine, // Uses the same y-span
+                y1: yMaxForLine,
+                line: {
+                    color: 'green', // Distinct color for estimated phi
+                    width: 2,
+                    dash: 'longdash' // Distinct dash style
                 }
             });
         }

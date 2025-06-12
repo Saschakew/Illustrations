@@ -54,7 +54,7 @@ async function updateSectionTwoPlots() {
             phi_range.push(current_phi);
             
             // For each phi, calculate the corresponding innovations and then the loss.
-            const loss = calculateLossForPhi(current_phi, P, u_1t, u_2t);
+            const loss = calculateLossForPhi_S2(current_phi, P, u_1t, u_2t);
             loss_values.push(loss);
         }
 
@@ -67,7 +67,8 @@ async function updateSectionTwoPlots() {
             'Loss Value',
             phi,    // Current phi from slider (verticalLineX)
             [0, 1], // yAxisRange: [min, max]
-            window.sharedData.phi_0 // True phi_0 (phi0LineValue)
+            window.sharedData.phi_0, // True phi_0 (phi0LineValue)
+            window.sharedData.phi_est_rec // Estimated phi for recursive identification
         );
     }
 }
@@ -81,7 +82,7 @@ async function updateSectionTwoPlots() {
  * @param {number[]} u_2t - The second reduced-form shock series.
  * @returns {number|null} The calculated loss value or null on error.
  */
-function calculateLossForPhi(phi, P, u_1t, u_2t) {
+function calculateLossForPhi_S2(phi, P, u_1t, u_2t) {
     const R_phi = window.SVARMathUtil.getRotationMatrix(phi);
     const B_phi = window.SVARMathUtil.matrixMultiply(P, R_phi);
     if (!B_phi) return null;

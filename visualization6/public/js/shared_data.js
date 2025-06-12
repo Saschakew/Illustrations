@@ -18,6 +18,19 @@ window.sharedData = {
     // Innovations (estimated structural shocks) e_t = B(phi)^(-1) * u_t
     e_1t: [], // Default to empty array
     e_2t: [], // Default to empty array
+
+    // Estimated phi and B for recursive identification
+    phi_est_rec: 0, // Default to 0
+    B_est_rec: [[1, 0], [0, 1]], // Default to identity matrix
+
+    // Estimated phi and B for non-Gaussian methods (Section 3)
+    phi_est_nG: 0, // Default to 0
+    B_est_nG: [[1, 0], [0, 1]], // Default to identity matrix
+
+    // Estimated phi and B for Ridge regression (Section 4)
+    phi_est_ridge: 0, // Default to 0
+    B_est_ridge: [[1, 0], [0, 1]], // Default to identity matrix
+
     // other shared variables can be added here
 };
 
@@ -31,6 +44,12 @@ DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_1t:", window.share
 DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_2t:", window.sharedData.epsilon_2t);
 DebugManager.log('SHARED_DATA', 'Initial u_2t:', JSON.stringify(window.sharedData.u_2t));
 DebugManager.log('SHARED_DATA', 'Initial B_phi:', JSON.stringify(window.sharedData.B_phi));
+DebugManager.log('SHARED_DATA', 'Initial phi_est_rec:', window.sharedData.phi_est_rec);
+DebugManager.log('SHARED_DATA', 'Initial B_est_rec:', JSON.stringify(window.sharedData.B_est_rec));
+DebugManager.log('SHARED_DATA', 'Initial phi_est_nG:', window.sharedData.phi_est_nG);
+DebugManager.log('SHARED_DATA', 'Initial B_est_nG:', JSON.stringify(window.sharedData.B_est_nG));
+DebugManager.log('SHARED_DATA', 'Initial phi_est_ridge:', window.sharedData.phi_est_ridge);
+DebugManager.log('SHARED_DATA', 'Initial B_est_ridge:', JSON.stringify(window.sharedData.B_est_ridge));
 
 // Function to update B0 based on isRecursive and log changes
 window.sharedData.updateB0Mode = function() {

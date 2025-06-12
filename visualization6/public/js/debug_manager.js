@@ -2,12 +2,12 @@
 const DebugManager = (() => {
     const _debugCategories = {
         SVAR_SETUP: true,      // Logs from svar_setup.js
-        UI_FACTORY: false,      // Logs from ui_factory.js
-        SHARED_CONTROLS: false, // Logs from shared_controls.js
-        MAIN_APP: false,        // Logs from main.js (general app flow)
+        UI_FACTORY: true,      // Logs from ui_factory.js
+        SHARED_CONTROLS: true, // Logs from shared_controls.js
+        MAIN_APP: true,        // Logs from main.js (general app flow)
         DATA_HANDLING: true,   // Logs from shared_data.js or data operations
-        EVENT_HANDLING: false,  // Logs for event listener setup and triggers
-        PLOT_RENDERING: false,  // Logs related to Plotly or other plotting libraries
+        EVENT_HANDLING: true,  // Logs for event listener setup and triggers
+        PLOT_RENDERING: true,  // Logs related to Plotly or other plotting libraries
         SVAR_DATA_PIPELINE: true, // Logs for the SVAR data generation pipeline
         SVAR_MATH: false,          // Logs for SVARMathUtil functions (covariance, cholesky, etc.)
         // Add more categories as needed, e.g.:

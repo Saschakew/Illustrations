@@ -17,6 +17,16 @@ async function updateAllPlots() {
         await window.sectionTwo.updatePlots();
     }
 
+    // Update Section Three plots if its update function exists
+    if (window.sectionThree && typeof window.sectionThree.updatePlots === 'function') {
+        await window.sectionThree.updatePlots();
+    }
+
+    // Update Section Four plots if its update function exists
+    if (window.sectionFour && typeof window.sectionFour.updatePlots === 'function') {
+        await window.sectionFour.updatePlots();
+    }
+
     // ...add other sections here as they get plots
 
     DebugManager.log('PLOT_RENDERING', 'Finished updating all plots.');
@@ -64,6 +74,27 @@ async function regenerateSvarData() {
             window.sharedData.u_1t = u_1t;
             window.sharedData.u_2t = u_2t;
             DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData.');
+
+            // Calculate recursive estimates now that u_t is updated
+            if (typeof window.SVARCoreFunctions.calculateRecursiveEstimates === 'function') {
+                window.SVARCoreFunctions.calculateRecursiveEstimates();
+            } else {
+                DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateRecursiveEstimates function not found.');
+            }
+
+            // Calculate non-Gaussian estimates now that u_t is updated
+            if (typeof window.SVARCoreFunctions.calculateNonGaussianEstimates === 'function') {
+                window.SVARCoreFunctions.calculateNonGaussianEstimates();
+            } else {
+                DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateNonGaussianEstimates function not found.');
+            }
+
+            // Calculate Ridge estimates now that u_t is updated
+            if (typeof window.SVARCoreFunctions.calculateRidgeEstimates === 'function') {
+                window.SVARCoreFunctions.calculateRidgeEstimates();
+            } else {
+                DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateRidgeEstimates function not found.');
+            }
 
             // Now that u_t is updated, regenerate B(phi)
             await regenerateBPhi();
@@ -114,6 +145,27 @@ async function regenerateReducedFormShocksFromExistingEpsilon() {
         window.sharedData.u_2t = u_2t;
 
         DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData from existing epsilon_t.');
+
+        // Calculate recursive estimates now that u_t is updated
+        if (typeof window.SVARCoreFunctions.calculateRecursiveEstimates === 'function') {
+            window.SVARCoreFunctions.calculateRecursiveEstimates();
+        } else {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateRecursiveEstimates function not found.');
+        }
+
+        // Calculate non-Gaussian estimates now that u_t is updated
+        if (typeof window.SVARCoreFunctions.calculateNonGaussianEstimates === 'function') {
+            window.SVARCoreFunctions.calculateNonGaussianEstimates();
+        } else {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateNonGaussianEstimates function not found.');
+        }
+
+        // Calculate Ridge estimates now that u_t is updated
+        if (typeof window.SVARCoreFunctions.calculateRidgeEstimates === 'function') {
+            window.SVARCoreFunctions.calculateRidgeEstimates();
+        } else {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateRidgeEstimates function not found.');
+        }
 
         // Now that u_t is updated, regenerate B(phi)
         await regenerateBPhi();
