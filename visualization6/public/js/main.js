@@ -140,15 +140,69 @@ function regenerateBPhi() {
         if (B_phi_matrix) {
             window.sharedData.B_phi = B_phi_matrix;
             DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored B_phi in sharedData:', JSON.stringify(window.sharedData.B_phi));
+
+            // After B_phi is updated, regenerate innovations e_t
+            regenerateInnovations();
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: B(phi) generation returned null. Resetting B_phi to default.');
-            window.sharedData.B_phi = [[1, 0], [0, 1]]; // Reset to default on error
+            window.sharedData.B_phi = [[1,0],[0,1]]; // Reset B_phi on error
+            window.sharedData.e_1t = []; // Also reset innovations if B_phi generation fails
+            window.sharedData.e_2t = [];
         }
     } catch (error) {
         DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Exception during B(phi) regeneration:', error);
         window.sharedData.B_phi = [[1, 0], [0, 1]]; // Reset to default on exception
     }
 }
+
+
+/* --- START OF INNOVATIONS e_t GENERATION --- */
+/**
+ * Regenerates the structural innovations e_t = B(phi)^-1 * u_t and stores them in sharedData.
+ * This function is called when B(phi) or u_t change.
+ */
+function regenerateInnovations() {
+    const category = 'SVAR_DATA_PIPELINE';
+    DebugManager.log(category, 'Attempting to regenerate structural innovations e_t...');
+
+    if (!window.SVARCoreFunctions || !window.SVARCoreFunctions.generateInnovations) {
+        DebugManager.log(category, 'Error: SVARCoreFunctions.generateInnovations is not available. Cannot regenerate innovations.');
+        window.sharedData.e_1t = [];
+        window.sharedData.e_2t = [];
+        return;
+    }
+
+    const { B_phi, u_1t, u_2t } = window.sharedData;
+
+    if (!B_phi || !u_1t || u_1t.length === 0 || !u_2t || u_2t.length === 0) {
+        DebugManager.log(category, 'Error: Missing B_phi or u_t data in sharedData, or u_t is empty. Cannot regenerate innovations.', 
+            { B_phi_exists: !!B_phi, u1_len: u_1t ? u_1t.length : 0, u2_len: u_2t ? u_2t.length : 0 });
+        window.sharedData.e_1t = [];
+        window.sharedData.e_2t = [];
+        return;
+    }
+
+    try {
+        const innovations = window.SVARCoreFunctions.generateInnovations(B_phi, u_1t, u_2t);
+
+        if (innovations && innovations.e_1t && innovations.e_2t) {
+            window.sharedData.e_1t = innovations.e_1t;
+            window.sharedData.e_2t = innovations.e_2t;
+            DebugManager.log(category, 'Structural innovations e_t regenerated and stored in sharedData.');
+            // DebugManager.log(category, 'sharedData.e_1t (first 5):', JSON.parse(JSON.stringify(window.sharedData.e_1t.slice(0,5))));
+            // DebugManager.log(category, 'sharedData.e_2t (first 5):', JSON.parse(JSON.stringify(window.sharedData.e_2t.slice(0,5))));
+        } else {
+            DebugManager.log(category, 'Error: Failed to generate innovations. Result was null or malformed from SVARCoreFunctions.generateInnovations.');
+            window.sharedData.e_1t = [];
+            window.sharedData.e_2t = [];
+        }
+    } catch (error) {
+        DebugManager.log(category, 'Error during regenerateInnovations:', error);
+        window.sharedData.e_1t = [];
+        window.sharedData.e_2t = [];
+    }
+}
+/* --- END OF INNOVATIONS e_t GENERATION --- */
 
 document.addEventListener('DOMContentLoaded', async function() {
     const loadingOverlay = document.getElementById('loading-overlay');

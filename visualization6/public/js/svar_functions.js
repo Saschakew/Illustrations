@@ -172,6 +172,61 @@ window.SVARCoreFunctions = {
         }
         DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated B(phi) matrix =', JSON.stringify(B_phi_matrix));
         return B_phi_matrix;
+    },
+
+    /**
+     * Generates structural innovations e_t = B(phi)^-1 * u_t.
+     * @param {number[][]} B_phi - The 2x2 B(phi) matrix.
+     * @param {number[]} u_1t - The first reduced-form shock series.
+     * @param {number[]} u_2t - The second reduced-form shock series.
+     * @returns {{e_1t: number[], e_2t: number[]}|null} An object containing the innovation series, or null on error.
+     */
+    generateInnovations: function(B_phi, u_1t, u_2t) {
+        const category = 'SVAR_DATA_PIPELINE';
+        DebugManager.log(category, 'Attempting to generate structural innovations e_t...');
+
+        if (!window.SVARMathUtil) {
+            DebugManager.log(category, 'Error: SVARMathUtil is not available.');
+            return null;
+        }
+        if (!B_phi || !u_1t || !u_2t || u_1t.length !== u_2t.length || u_1t.length === 0) {
+            DebugManager.log(category, 'Error: Invalid inputs for generateInnovations. B_phi, u_1t, or u_2t are missing, mismatched, or empty.',
+                { B_phi_exists: !!B_phi, u1_len: u_1t ? u_1t.length : 0, u2_len: u_2t ? u_2t.length : 0 });
+            return null;
+        }
+
+        DebugManager.log(category, 'Input B_phi for innovations:', JSON.parse(JSON.stringify(B_phi)));
+        // DebugManager.log(category, 'Input u_1t for innovations (first 5):', JSON.parse(JSON.stringify(u_1t.slice(0,5))));
+        // DebugManager.log(category, 'Input u_2t for innovations (first 5):', JSON.parse(JSON.stringify(u_2t.slice(0,5))));
+
+        const B_phi_inv = window.SVARMathUtil.invert2x2Matrix(B_phi);
+        if (!B_phi_inv) {
+            DebugManager.log(category, 'Error: Could not invert B_phi. Cannot generate innovations.');
+            return null;
+        }
+        DebugManager.log(category, 'Inverted B_phi:', JSON.parse(JSON.stringify(B_phi_inv)));
+
+        const T = u_1t.length;
+        const e_1t_series = new Array(T);
+        const e_2t_series = new Array(T);
+
+        for (let i = 0; i < T; i++) {
+            const u_vector = [u_1t[i], u_2t[i]];
+            const e_vector = window.SVARMathUtil.multiplyMatrixByVector(B_phi_inv, u_vector);
+
+            if (!e_vector) {
+                DebugManager.log(category, `Error: Matrix-vector multiplication failed at t=${i}.`);
+                return null; // Stop if any multiplication fails
+            }
+            e_1t_series[i] = e_vector[0];
+            e_2t_series[i] = e_vector[1];
+        }
+
+        DebugManager.log(category, 'Successfully generated structural innovations e_t.');
+        // DebugManager.log(category, 'Generated e_1t (first 5):', JSON.parse(JSON.stringify(e_1t_series.slice(0,5))));
+        // DebugManager.log(category, 'Generated e_2t (first 5):', JSON.parse(JSON.stringify(e_2t_series.slice(0,5))));
+
+        return { e_1t: e_1t_series, e_2t: e_2t_series };
     }
 };
 

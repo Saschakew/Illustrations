@@ -114,5 +114,76 @@ window.SVARMathUtil = {
         res[1][1] = matrixA[1][0] * matrixB[0][1] + matrixA[1][1] * matrixB[1][1];
         DebugManager.log('SVAR_MATH', 'Matrix multiplication result:', JSON.stringify(res));
         return res;
+    },
+
+    /**
+     * Inverts a 2x2 matrix.
+     * M = [[a, b], [c, d]] => M^-1 = (1/det(M)) * [[d, -b], [-c, a]]
+     * @param {number[][]} matrix - The 2x2 matrix to invert.
+     * @returns {number[][]|null} The inverted matrix, or null if not invertible.
+     */
+    invert2x2Matrix: function(matrix) {
+        const category = 'SVAR_MATH';
+        if (!matrix || matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
+            DebugManager.log(category, 'Error: Invalid matrix for inversion. Must be 2x2.', matrix);
+            return null;
+        }
+
+        const a = matrix[0][0];
+        const b = matrix[0][1];
+        const c = matrix[1][0];
+        const d = matrix[1][1];
+
+        const determinant = a * d - b * c;
+        DebugManager.log(category, 'Calculating determinant for inversion:', determinant, 'from matrix:', JSON.parse(JSON.stringify(matrix)));
+
+        if (Math.abs(determinant) < 1e-12) { // Check for singularity (determinant close to zero)
+            DebugManager.log(category, 'Error: Matrix is singular or nearly singular, cannot invert. Determinant:', determinant);
+            return null;
+        }
+
+        const invDet = 1 / determinant;
+        const invertedMatrix = [
+            [d * invDet, -b * invDet],
+            [-c * invDet, a * invDet]
+        ];
+        DebugManager.log(category, 'Inverted matrix:', JSON.parse(JSON.stringify(invertedMatrix)));
+        return invertedMatrix;
+    },
+
+    /**
+     * Multiplies a 2x2 matrix by a 2x1 column vector.
+     * Result_vector = Matrix * Vector
+     * y1 = m11*v1 + m12*v2
+     * y2 = m21*v1 + m22*v2
+     * @param {number[][]} matrix - The 2x2 matrix.
+     * @param {number[]} vector - The 2x1 vector [v1, v2].
+     * @returns {number[]|null} The resulting 2x1 vector [y1, y2], or null on error.
+     */
+    multiplyMatrixByVector: function(matrix, vector) {
+        const category = 'SVAR_MATH';
+        if (!matrix || matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
+            DebugManager.log(category, 'Error: Invalid matrix for matrix-vector multiplication. Must be 2x2.', matrix);
+            return null;
+        }
+        if (!vector || vector.length !== 2) {
+            DebugManager.log(category, 'Error: Invalid vector for matrix-vector multiplication. Must be 2x1.', vector);
+            return null;
+        }
+
+        const m11 = matrix[0][0];
+        const m12 = matrix[0][1];
+        const m21 = matrix[1][0];
+        const m22 = matrix[1][1];
+
+        const v1 = vector[0];
+        const v2 = vector[1];
+
+        const resultVector = [
+            m11 * v1 + m12 * v2,
+            m21 * v1 + m22 * v2
+        ];
+        // DebugManager.log(category, 'Matrix-vector multiplication:', JSON.parse(JSON.stringify(matrix)), '*', JSON.parse(JSON.stringify(vector)), '=', JSON.parse(JSON.stringify(resultVector))); // Can be too verbose
+        return resultVector;
     }
 };

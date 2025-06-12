@@ -11,13 +11,19 @@ window.sharedData = {
     u_2t: [], // Stores the second reduced-form shock series u_2t = b21*eps1 + b22*eps2
 
     // B(phi) matrix, identified using phi and covariance of u_t
-    // B(phi) = P * R(phi), where P is Cholesky of Cov(u_t) and R(phi) is rotation matrix
+    // B(phi) = P * R(phi), where P is Cholesky of Cov(u_t)    // B(phi) matrix, typically 2x2, derived from phi and u_t
     B_phi: [[1, 0], [0, 1]], // Default to identity matrix
+    // Structural innovations e_t = B(phi)^-1 * u_t
+    e_1t: [], // Default to empty array
+    e_2t: [], // Default to empty array
     // other shared variables can be added here
 };
 
 DebugManager.log('DATA_HANDLING', "Initial sharedData.T:", window.sharedData.T);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.phi:", window.sharedData.phi);
+DebugManager.log('SVAR_DATA_PIPELINE', 'Initial sharedData.B_phi:', JSON.parse(JSON.stringify(window.sharedData.B_phi)));
+DebugManager.log('SVAR_DATA_PIPELINE', 'Initial sharedData.e_1t:', JSON.parse(JSON.stringify(window.sharedData.e_1t)));
+DebugManager.log('SVAR_DATA_PIPELINE', 'Initial sharedData.e_2t:', JSON.parse(JSON.stringify(window.sharedData.e_2t)));
 DebugManager.log('DATA_HANDLING', "Initial sharedData.lambda:", window.sharedData.lambda);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_1t:", window.sharedData.epsilon_1t);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_2t:", window.sharedData.epsilon_2t);
@@ -27,12 +33,13 @@ DebugManager.log('SHARED_DATA', 'Initial B_phi:', JSON.stringify(window.sharedDa
 
 // Function to update B0 based on isRecursive and log changes
 window.sharedData.updateB0Mode = function() {
+    const category = 'SVAR_DATA_PIPELINE';
     if (this.isRecursive) {
         this.B0 = [[1, 0], [0.5, 1]];
-        DebugManager.log('DATA_HANDLING', 'Mode set to Recursive. B0 updated to:', JSON.stringify(this.B0));
+        DebugManager.log(category, 'Mode set to Recursive. B0 updated to:', JSON.parse(JSON.stringify(this.B0)));
     } else {
         this.B0 = [[1, 0.5], [0.5, 1]];
-        DebugManager.log('DATA_HANDLING', 'Mode set to Non-Recursive. B0 updated to:', JSON.stringify(this.B0));
+        DebugManager.log(category, 'Mode set to Non-Recursive. B0 updated to:', JSON.parse(JSON.stringify(this.B0)));
     }
 };
 
