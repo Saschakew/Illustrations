@@ -164,26 +164,26 @@ function initializeLambdaSliders() {
         const output = document.getElementById(`${slider.id}_value`);
         slider.value = sharedLambda;
         if (output) {
-            output.textContent = sharedLambda;
+            output.textContent = parseFloat(sharedLambda).toFixed(2);
         }
 
         slider.addEventListener('input', function() {
-            const newLambda = parseInt(this.value);
+            const newLambda = parseFloat(this.value);
             window.sharedData.lambda = newLambda;
             updateAllPlots(); // Update plots when lambda changes
             
             if (output) {
-                output.textContent = newLambda;
+                output.textContent = newLambda.toFixed(2);
             }
-            console.log(`SharedData.lambda updated to: ${newLambda} by slider ${this.id}`);
+            DebugManager.log('SHARED_CONTROLS', `Lambda slider ${this.id} changed. New sharedData.lambda:`, newLambda.toFixed(2));
 
             // Synchronize other lambda sliders (if any exist in the future)
             lambdaSliders.forEach(otherSlider => {
                 if (otherSlider !== this) {
-                    otherSlider.value = newLambda;
+                    otherSlider.value = newLambda; // Slider value itself can be a float
                     const otherOutput = document.getElementById(`${otherSlider.id}_value`);
                     if (otherOutput) {
-                        otherOutput.textContent = newLambda;
+                        otherOutput.textContent = newLambda.toFixed(2);
                     }
                 }
             });

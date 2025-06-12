@@ -69,8 +69,8 @@ async function updateSectionThreePlots() {
         const phi_range = [];
         const loss_values = [];
         const steps = 100;
-        const min_phi = -Math.PI / 2;
-        const max_phi = Math.PI / 2;
+        const min_phi = -Math.PI / 4;
+        const max_phi = Math.PI / 4;
 
         for (let i = 0; i <= steps; i++) {
             const current_phi_iter = min_phi + (i / steps) * (max_phi - min_phi);

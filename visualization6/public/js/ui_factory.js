@@ -36,11 +36,11 @@ window.uiFactory = {
         const sliderId = id;
         const outputId = `${id}_value`;
         // Default phi is 0. Slider value will be 0.
-        // Slider range will be -157 to 157, representing scaled radians * 100.
+        // Slider range will be -79 to 79, representing scaled radians * 100.
         // Actual value in sharedData.phi will be radians.
         const defaultValueForSlider = (window.sharedData && typeof window.sharedData.phi !== 'undefined') ? Math.round(window.sharedData.phi * 100) : 0;
-        const minSliderVal = -157; // Approx -PI/2 * 100
-        const maxSliderVal = 157;  // Approx  PI/2 * 100
+        const minSliderVal = -79; // Approx -PI/4 * 100
+        const maxSliderVal = 79;  // Approx  PI/4 * 100
 
         return `
             <div class="control-item">
@@ -54,15 +54,18 @@ window.uiFactory = {
     createLambdaSlider: function(id, label = 'Lambda (λ):') {
         const sliderId = id;
         const outputId = `${id}_value`;
-        const defaultValue = (window.sharedData && typeof window.sharedData.lambda !== 'undefined') ? window.sharedData.lambda : 50;
+        // Default value will be 0.5, fetched from sharedData after it's updated.
+        // Fallback to 0.5 here ensures robustness if sharedData isn't ready, though it should be.
+        const defaultValue = (window.sharedData && typeof window.sharedData.lambda !== 'undefined') ? window.sharedData.lambda : 0.5;
         const minVal = 0;
-        const maxVal = 100;
+        const maxVal = 1;
+        const stepVal = 0.01;
 
         return `
             <div class="control-item">
                 <label for="${sliderId}">${label}</label>
-                <input type="range" id="${sliderId}" name="${sliderId}" min="${minVal}" max="${maxVal}" value="${defaultValue}" step="1" class="slider lambda-slider">
-                <output for="${sliderId}" id="${outputId}">${defaultValue}</output>
+                <input type="range" id="${sliderId}" name="${sliderId}" min="${minVal}" max="${maxVal}" value="${defaultValue}" step="${stepVal}" class="slider lambda-slider">
+                <output for="${sliderId}" id="${outputId}">${parseFloat(defaultValue).toFixed(2)}</output>
             </div>
         `;
     },

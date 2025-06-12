@@ -349,8 +349,8 @@ window.SVARCoreFunctions = {
             let minLoss = Infinity;
             let phi_at_minLoss = 0;
             const steps = 100;
-            const min_phi_range = -Math.PI / 2;
-            const max_phi_range = Math.PI / 2;
+            const min_phi_range = -Math.PI / 4;
+            const max_phi_range = Math.PI / 4;
 
             for (let i = 0; i <= steps; i++) {
                 const current_phi_iter = min_phi_range + (i / steps) * (max_phi_range - min_phi_range);
@@ -462,13 +462,9 @@ window.SVARCoreFunctions = {
             let minLoss = Infinity;
             let phi_at_minLoss = 0;
             const steps = 100;
-            const min_phi_range = -Math.PI / 2;
-            const max_phi_range = Math.PI / 2;
+            const min_phi_range = -Math.PI / 4; // Corrected Range
+            const max_phi_range = Math.PI / 4; // Corrected Range
             const lambda_val = sharedData.lambda / 1000; // Scaling lambda as it might be large for loss
-            // The division by 1000 for lambda is an assumption based on typical penalty scales.
-            // This might need adjustment depending on the expected magnitude of lambda and the loss terms.
-            // Consider if lambda from sharedData is already appropriately scaled or if this scaling is always needed.
-
 
             for (let i = 0; i <= steps; i++) {
                 const current_phi_iter = min_phi_range + (i / steps) * (max_phi_range - min_phi_range);
