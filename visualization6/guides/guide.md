@@ -84,21 +84,6 @@ To build the SVAR Visualizer systematically, follow these steps:
         *   Managing data flow with `shared_data.js` and responding to global data updates.
     *   **Styling**: Ensure the section adheres to `style_guide.md`, `style_guide_plots.md`, and `style_guide_menu.md`.
 
-## 4. Leveraging Windsurf for Efficiency
-
-To further enhance your development process, `guide_windsurf.md` details how to set up and use Windsurf Rules and Workflows. Here are some specific applications beneficial for the SVAR Visualizer project:
-
-*   **Automated Code Quality (Rules)**:
-    *   **Auto-formatting**: Automatically format your `.js`, `.html`, and `.css` files on save using a tool like Prettier. This ensures consistent code style across the project with no manual effort.
-    *   **JavaScript Linting**: Integrate a linter like ESLint to automatically check your JavaScript code for errors and style issues on save, helping to catch bugs early.
-    *   **Markdown Linting**: Keep your guide files (`.md`) clean and consistently formatted.
-
-*   **Streamlined Development Tasks (Workflows)**:
-    *   **Live Development Server**: Set up a workflow command to start a live-reloading server (e.g., using `live-server`). This automatically refreshes your browser when you save HTML, CSS, or JS files, speeding up the visual feedback loop.
-    *   **Documentation Generation**: If you use JSDoc comments in your JavaScript, create a workflow to generate API documentation automatically.
-    *   **(Ambitious) Section Scaffolding**: A workflow could be designed to create the basic boilerplate HTML and JS files for a new section, prompting for a section name. This would pre-fill the files with the basic structure outlined in `guide_section.md`, saving repetitive setup time.
-
-Refer to `guide_windsurf.md` for detailed setup instructions for these rules and workflows.
 
 ## 5. Iterate and Refine
 
