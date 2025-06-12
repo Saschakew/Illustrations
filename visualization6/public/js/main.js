@@ -23,6 +23,8 @@ function regenerateSvarData() {
         // Optionally clear or set to empty arrays on error to prevent using stale data
         window.sharedData.epsilon_1t = [];
         window.sharedData.epsilon_2t = [];
+        window.sharedData.u_1t = [];
+        window.sharedData.u_2t = [];
         return;
     }
 
@@ -31,18 +33,86 @@ function regenerateSvarData() {
         
         window.sharedData.epsilon_1t = epsilon_1t;
         window.sharedData.epsilon_2t = epsilon_2t;
-
         DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated and stored epsilon_1t (length:', epsilon_1t.length, ') and epsilon_2t (length:', epsilon_2t.length, ') in sharedData.');
+
+        // Now, generate reduced-form shocks u_t
+        if (typeof window.SVARCoreFunctions.generateU === 'function' && window.sharedData.B0) {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'Proceeding to generate u_t using B0:', JSON.stringify(window.sharedData.B0));
+            const { u_1t, u_2t } = window.SVARCoreFunctions.generateU(window.sharedData.B0, epsilon_1t, epsilon_2t);
+            window.sharedData.u_1t = u_1t;
+            window.sharedData.u_2t = u_2t;
+            DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData.');
+        } else {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.generateU not found or sharedData.B0 is not available. Cannot generate u_t.');
+            window.sharedData.u_1t = [];
+            window.sharedData.u_2t = [];
+        }
     } catch (error) {
         DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to generate epsilon_t:', error);
         window.sharedData.epsilon_1t = [];
         window.sharedData.epsilon_2t = [];
+        window.sharedData.u_1t = [];
+        window.sharedData.u_2t = [];
+    }
+}
+
+/**
+ * Regenerates only the reduced-form shocks (u_t) using existing structural shocks (epsilon_t)
+ * and the current B0 matrix from sharedData. This is typically called when B0 changes (e.g., mode switch).
+ */
+function regenerateReducedFormShocksFromExistingEpsilon() {
+    DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate u_t from existing epsilon_t and current B0...');
+
+    if (!window.SVARCoreFunctions || typeof window.SVARCoreFunctions.generateU !== 'function') {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.generateU function not found. Cannot regenerate u_t.');
+        return;
+    }
+
+    if (!window.sharedData || !window.sharedData.B0 || !window.sharedData.epsilon_1t || !window.sharedData.epsilon_2t) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: sharedData, B0, or epsilon_t series not found. Cannot regenerate u_t.');
+        return;
+    }
+
+    if (window.sharedData.epsilon_1t.length === 0 || window.sharedData.epsilon_2t.length === 0) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'WARNING: Epsilon_t series are empty. Cannot regenerate u_t. This might be normal if T is invalid or initial generation failed.');
+        // Ensure u_t is also empty if epsilon_t is empty
+        window.sharedData.u_1t = [];
+        window.sharedData.u_2t = [];
+        return;
+    }
+
+    try {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'Proceeding to regenerate u_t using B0:', JSON.stringify(window.sharedData.B0), 'and existing epsilon_t (length:', window.sharedData.epsilon_1t.length, ')');
+        const { u_1t, u_2t } = window.SVARCoreFunctions.generateU(window.sharedData.B0, window.sharedData.epsilon_1t, window.sharedData.epsilon_2t);
+        
+        window.sharedData.u_1t = u_1t;
+        window.sharedData.u_2t = u_2t;
+
+        DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData from existing epsilon_t.');
+    } catch (error) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to regenerate u_t from existing epsilon_t:', error);
+        window.sharedData.u_1t = [];
+        window.sharedData.u_2t = [];
     }
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    await loadSections();
-    initializeApp();
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) loadingOverlay.style.display = 'flex'; // Show loading screen
+
+    try {
+        await loadSections();
+        await initializeApp(); // Ensure initializeApp is async and awaited
+    } catch (error) {
+        DebugManager.log('MAIN_APP', 'ERROR: Critical error during initial load or app initialization:', error);
+        if (loadingOverlay) {
+            loadingOverlay.innerHTML = '<p>An error occurred during loading. Please try refreshing the page. Check console for details.</p>';
+            // Keep the overlay visible with the error message
+            return; // Stop further execution if critical init fails
+        }
+    }
+
+    if (loadingOverlay) loadingOverlay.style.display = 'none'; // Hide loading screen
 });
 
 async function loadSections() {
@@ -87,7 +157,7 @@ async function loadSections() {
     }
 }
 
-function initializeApp() {
+async function initializeApp() {
     DebugManager.log('MAIN_APP', 'Initializing app features...');
 
     // --- Dynamically create controls from placeholders ---
@@ -234,25 +304,25 @@ function initializeApp() {
     // Initialize section-specific JavaScript
     DebugManager.log('MAIN_APP', 'Initializing section-specific JavaScript...');
     if (typeof initializeSectionOne === 'function' && document.getElementById('section-one')) {
-        initializeSectionOne();
+        await initializeSectionOne();
     } else if (typeof initializeSectionOne !== 'function') {
         DebugManager.log('MAIN_APP', 'WARNING: initializeSectionOne function not found. Make sure section_one.js is loaded.');
     }
 
     if (typeof initializeSectionTwo === 'function' && document.getElementById('section-two')) {
-        initializeSectionTwo();
+        await initializeSectionTwo();
     } else if (typeof initializeSectionTwo !== 'function') {
         DebugManager.log('MAIN_APP', 'WARNING: initializeSectionTwo function not found. Make sure section_two.js is loaded.');
     }
 
     if (typeof initializeSectionThree === 'function' && document.getElementById('section-three')) {
-        initializeSectionThree();
+        await initializeSectionThree();
     } else if (typeof initializeSectionThree !== 'function') {
         DebugManager.log('MAIN_APP', 'WARNING: initializeSectionThree function not found. Make sure section_three.js is loaded.');
     }
 
     if (typeof initializeSectionFour === 'function' && document.getElementById('section-four')) {
-        initializeSectionFour();
+        await initializeSectionFour();
     } else if (typeof initializeSectionFour !== 'function') {
         DebugManager.log('MAIN_APP', 'WARNING: initializeSectionFour function not found. Make sure section_four.js is loaded.');
     }

@@ -7,6 +7,8 @@ window.sharedData = {
     B0: [], // To be initialized by updateB0Mode
     epsilon_1t: [], // To be populated by SVAR data pipeline
     epsilon_2t: [], // To be populated by SVAR data pipeline
+    u_1t: [], // To be populated by SVAR data pipeline (reduced-form shocks)
+    u_2t: [], // To be populated by SVAR data pipeline (reduced-form shocks)
     // other shared variables can be added here
 };
 
@@ -15,6 +17,8 @@ DebugManager.log('DATA_HANDLING', "Initial sharedData.phi:", window.sharedData.p
 DebugManager.log('DATA_HANDLING', "Initial sharedData.lambda:", window.sharedData.lambda);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_1t:", window.sharedData.epsilon_1t);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_2t:", window.sharedData.epsilon_2t);
+DebugManager.log('DATA_HANDLING', "Initial sharedData.u_1t:", window.sharedData.u_1t);
+DebugManager.log('DATA_HANDLING', "Initial sharedData.u_2t:", window.sharedData.u_2t);
 
 // Function to update B0 based on isRecursive and log changes
 window.sharedData.updateB0Mode = function() {

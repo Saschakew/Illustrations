@@ -77,6 +77,41 @@ window.SVARCoreFunctions = {
         DebugManager.log('SVAR_SETUP', `Normalized series. Final epsilon_1t (length ${normalizedSeries1.length}), epsilon_2t (length ${normalizedSeries2.length})`);
         
         return { epsilon_1t: normalizedSeries1, epsilon_2t: normalizedSeries2 };
+    },
+
+    /**
+     * Generates reduced-form shocks (u_t) from structural shocks (epsilon_t) and a B0 matrix.
+     * u_t = B0 * epsilon_t
+     * @param {number[][]} B_0 - The 2x2 structural matrix.
+     * @param {number[]} epsilon_1t - Array of the first structural shock series.
+     * @param {number[]} epsilon_2t - Array of the second structural shock series.
+     * @returns {{u_1t: number[], u_2t: number[]}} An object containing the two reduced-form shock series.
+     */
+    generateU: function(B_0, epsilon_1t, epsilon_2t) {
+        DebugManager.log('SVAR_SETUP', 'Attempting to generate reduced-form shocks u_t...');
+        if (!B_0 || B_0.length !== 2 || B_0[0].length !== 2 || B_0[1].length !== 2) {
+            DebugManager.log('SVAR_SETUP', 'ERROR: Invalid B0 matrix provided for generateU. Expected 2x2 matrix.', B_0);
+            return { u_1t: [], u_2t: [] };
+        }
+        if (!epsilon_1t || !epsilon_2t || epsilon_1t.length !== epsilon_2t.length) {
+            DebugManager.log('SVAR_SETUP', 'ERROR: Invalid or mismatched epsilon_t series for generateU.', {len1: epsilon_1t?.length, len2: epsilon_2t?.length});
+            return { u_1t: [], u_2t: [] };
+        }
+
+        const T = epsilon_1t.length;
+        const u_1t = new Array(T);
+        const u_2t = new Array(T);
+
+        DebugManager.log('SVAR_SETUP', `Generating u_t for T = ${T} using B0:`, JSON.stringify(B_0));
+
+        for (let i = 0; i < T; i++) {
+            // u_1t = B_0[0][0] * ε_1t + B_0[0][1] * ε_2t
+            u_1t[i] = B_0[0][0] * epsilon_1t[i] + B_0[0][1] * epsilon_2t[i];
+            // u_2t = B_0[1][0] * ε_1t + B_0[1][1] * ε_2t
+            u_2t[i] = B_0[1][0] * epsilon_1t[i] + B_0[1][1] * epsilon_2t[i];
+        }
+        DebugManager.log('SVAR_SETUP', 'Successfully generated u_1t and u_2t series.');
+        return { u_1t, u_2t };
     }
 };
 

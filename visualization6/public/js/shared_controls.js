@@ -244,6 +244,12 @@ function initializeModeSwitches() {
                 // Update B0 and log it
                 if (typeof window.sharedData.updateB0Mode === 'function') {
                     window.sharedData.updateB0Mode();
+                    // After B0 is updated, regenerate u_t using existing epsilon_t
+                    if (typeof regenerateReducedFormShocksFromExistingEpsilon === 'function') {
+                        regenerateReducedFormShocksFromExistingEpsilon();
+                    } else {
+                        DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateReducedFormShocksFromExistingEpsilon function not found. Cannot regenerate u_t on mode change.');
+                    }
                 } else {
                     DebugManager.log('SHARED_CONTROLS', 'ERROR: window.sharedData.updateB0Mode() function not found!');
                 }
