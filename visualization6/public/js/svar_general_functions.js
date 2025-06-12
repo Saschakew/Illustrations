@@ -4,11 +4,12 @@ window.SVARGeneralUtil = {
      * Generates a random number from a standard normal distribution using the Box-Muller transform.
      * @returns {number} A random number from N(0,1).
      */
-    normalRandom: function() {
+    normalRandom: function(mean = 0, stdDev = 1) {
         let u = 0, v = 0;
         while (u === 0) u = Math.random(); //Converting [0,1) to (0,1)
         while (v === 0) v = Math.random();
-        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        const standardNormal = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        return mean + stdDev * standardNormal;
     },
 
     /**
@@ -73,5 +74,38 @@ window.SVARGeneralUtil = {
         const normalizedSeries1 = this.normalizeSingleSeries(series1);
         const normalizedSeries2 = this.normalizeSingleSeries(series2);
         return { normalizedSeries1, normalizedSeries2 };
+    },
+
+    /**
+     * Generates a single random number from a mixture of two normal distributions.
+     * Component 1 (90% prob): N(-0.1*s_param, 1)
+     * Component 2 (10% prob): N(0.9*s_param, 1)
+     * @param {number} s_param - The skewness parameter.
+     * @returns {number} A random number from the mixture distribution.
+     */
+    generateSingleMixtureNormalValue: function(s_param) {
+        const prob = Math.random();
+        let mean, stdDev = 1;
+
+        if (prob < 0.9) { // 90% probability for component 1
+            mean = -0.1 * s_param;
+        } else { // 10% probability for component 2
+            mean = 0.9 * s_param;
+        }
+        return this.normalRandom(mean, stdDev);
+    },
+
+    /**
+     * Generates a series of random numbers from a mixture of two normal distributions.
+     * @param {number} size - The number of random numbers to generate.
+     * @param {number} s_param - The skewness parameter for the mixture.
+     * @returns {number[]} An array of 'size' random numbers from the mixture distribution.
+     */
+    generateMixtureNormalSeries: function(size, s_param) {
+        const series = [];
+        for (let i = 0; i < size; i++) {
+            series.push(this.generateSingleMixtureNormalValue(s_param));
+        }
+        return series;
     }
 };

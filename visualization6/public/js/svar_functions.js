@@ -6,6 +6,8 @@ if (typeof window.SVARGeneralUtil === 'undefined') {
     window.SVARGeneralUtil = { // Fallback to prevent errors, though functionality will be missing
         generateSingleNormalSeries: () => [],
         normalizeTwoSeriesForMeanAndStdDev: (s1, s2) => ({ normalizedSeries1: s1, normalizedSeries2: s2 }),
+        generateMixtureNormalSeries: () => [],
+        generateSingleMixtureNormalValue: () => 0,
         calculateMean: () => 0,
         calculateStdDev: () => 1
     };
@@ -46,20 +48,32 @@ window.SVARCoreFunctions = {
     /**
      * Generates structural shocks epsilon_t = (epsilon_1t, epsilon_2t).
      * Steps:
-     * 1. Generate raw standard normal shocks (eta_raw_t).
+     * 1. Generate raw shocks (eta_raw_t):
+     *    - eta_raw_1t: Standard normal N(0,1).
+     *    - eta_raw_2t: Mixture of two normal distributions N(-0.1*s, 1) and N(0.9*s, 1) for skewness.
      * 2. Generate sigma_t values for heteroskedasticity.
      * 3. Create un-normalized structural shocks (eta_raw_t * sigma_t).
      * 4. Normalize these shocks to have mean 0 and std dev 1 (final epsilon_t).
      * @param {number} T - The total number of observations (sample size).
+     * @param {number} [s_param=3] - The skewness parameter for the mixture distribution of the second shock.
      * @returns {{epsilon_1t: number[], epsilon_2t: number[]}} An object containing the two series of structural shocks.
      */
-    generateEpsilon: function(T) {
+    generateEpsilon: function(T, s_param = 3) {
         DebugManager.log('SVAR_SETUP', `Generating epsilon for T=${T}`);
 
-        // Step 1: Generate raw standard normal shocks (η_raw_t)
+        // Step 1: Generate raw shocks (η_raw_t)
+        // eta_raw_1t from N(0,1)
         const eta_raw_1t = window.SVARGeneralUtil.generateSingleNormalSeries(T);
-        const eta_raw_2t = window.SVARGeneralUtil.generateSingleNormalSeries(T);
-        DebugManager.log('SVAR_SETUP', `Generated raw eta_1t (length ${eta_raw_1t.length}) and eta_2t (length ${eta_raw_2t.length})`);
+        let eta_raw_2t;
+        // eta_raw_2t from mixture of normals: 0.9*N(-0.1*s, 1) + 0.1*N(0.9*s, 1)
+        if (typeof window.SVARGeneralUtil.generateMixtureNormalSeries !== 'function' || typeof window.SVARGeneralUtil.generateSingleMixtureNormalValue !== 'function') {
+            DebugManager.log('SVAR_SETUP', 'Error: SVARGeneralUtil.generateMixtureNormalSeries or generateSingleMixtureNormalValue is not available. Falling back to N(0,1) for eta_raw_2t.');
+            eta_raw_2t = window.SVARGeneralUtil.generateSingleNormalSeries(T);
+        } else {
+            eta_raw_2t = window.SVARGeneralUtil.generateMixtureNormalSeries(T, s_param);
+            DebugManager.log('SVAR_SETUP', `Generated raw eta_1t (length ${eta_raw_1t.length}) from N(0,1) and eta_2t (length ${eta_raw_2t.length}) from mixture with s_param=${s_param}`);
+        }
+            
 
         // Step 2: Generate the sigma values for heteroskedasticity
         const sigma_t_values = this.generateSigmaT(T); // Calls SVARCoreFunctions.generateSigmaT
