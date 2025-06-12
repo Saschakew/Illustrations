@@ -183,6 +183,38 @@ async function regenerateBPhi() {
  * Regenerates the structural innovations e_t = B(phi)^-1 * u_t and stores them in sharedData.
  * This function is called when B(phi) or u_t change.
  */
+async function regeneratePhi0() {
+    const category = 'SVAR_DATA_PIPELINE';
+    DebugManager.log(category, 'Attempting to regenerate phi_0...');
+
+    if (!window.sharedData || !window.SVARMathUtil) {
+        DebugManager.log(category, 'Error: sharedData or SVARMathUtil not available for regeneratePhi0.');
+        return;
+    }
+
+    try {
+        const B0 = window.sharedData.B0;
+        if (!B0) {
+            DebugManager.log(category, 'Error: B0 matrix not available in sharedData for phi_0 calculation.');
+            window.sharedData.phi_0 = null; // Ensure phi_0 is null if B0 is missing
+            return;
+        }
+
+        const phi_0_rad = SVARMathUtil.calculatePhi0(B0);
+
+        if (phi_0_rad !== null) {
+            window.sharedData.phi_0 = phi_0_rad;
+            DebugManager.log(category, `Successfully regenerated phi_0: ${phi_0_rad} radians.`);
+        } else {
+            window.sharedData.phi_0 = null; // Set to null if calculation failed
+            DebugManager.log(category, 'Failed to regenerate phi_0. Value set to null.');
+        }
+    } catch (error) {
+        DebugManager.log(category, 'Exception during regeneratePhi0:', error);
+        window.sharedData.phi_0 = null; // Ensure phi_0 is null on exception
+    }
+}
+
 async function regenerateInnovations() {
     const category = 'SVAR_DATA_PIPELINE';
     DebugManager.log(category, 'Attempting to regenerate structural innovations e_t...');
@@ -422,7 +454,9 @@ async function initializeApp() {
     // and their initial values might have updated sharedData (e.g., sharedData.T).
     // This ensures epsilon_t is ready before section-specific JS that might use it.
     DebugManager.log('MAIN_APP', 'Calling initial SVAR data regeneration...');
-    await regenerateSvarData();
+    await regenerateSvarData(); // Regenerate all SVAR data on initial load
+    await regeneratePhi0(); // Calculate initial phi_0 based on initial B0
+    await regenerateBPhi(); // Also generate B(phi) based on initial phi and u
 
     if (typeof initializeNewDataButtons === 'function') {
         initializeNewDataButtons();

@@ -1,4 +1,78 @@
-# SVAR Data Pipeline: From Menu Parameters to Epsilon_t
+# Full SVAR Data Pipeline Overview
+
+This document outlines the complete data generation and transformation pipeline within the SVAR visualizer, from the initial generation of structural shocks to the final computation of estimated structural innovations. The pipeline is designed to be reactive, meaning that changes to upstream parameters or data will automatically trigger recalculations downstream.
+
+## Data Flow and Key Components
+
+The pipeline proceeds in the following sequence:
+
+1.  **Structural Shocks (\(\epsilon_t\))**:
+    *   **Purpose**: Generate the underlying, unobserved structural shocks.
+    *   **Generation**: `SVARCoreFunctions.generateEpsilon(T)` using `sharedData.T` (sample size).
+        *   Involves generating raw N(0,1) shocks, applying time-varying volatility (\(\sigma_t\)), and then normalizing to mean 0, std dev 1.
+    *   **Storage**: `sharedData.epsilon_1t`, `sharedData.epsilon_2t`.
+    *   **Reactive Update**: Triggered by changes in `T` (sample size slider) or 'New Data' button.
+    *   **Orchestration**: `regenerateSvarData()` in `main.js`.
+
+2.  **Structural Matrix for DGP (\(B_0\))**:
+    *   **Purpose**: Defines the true underlying structural relationships in the Data Generating Process (DGP).
+    *   **Selection**: Based on `sharedData.isRecursive` (mode switch: Recursive/Non-Recursive).
+        *   Recursive: `[[1, 0], [0.5, 1]]`
+        *   Non-Recursive: `[[1, 0.5], [0.5, 1]]`
+    *   **Storage**: `sharedData.B0`.
+    *   **Reactive Update**: Triggered by the mode switch.
+    *   **Orchestration**: `sharedData.updateB0Mode()` which is called by `initializeModeSwitches` in `shared_controls.js`.
+
+3.  **Reduced-Form Shocks (\(u_t\))**:
+    *   **Purpose**: Generate the observed reduced-form shocks using \(u_t = B_0 \epsilon_t\).
+    *   **Generation**: `SVARCoreFunctions.generateU(B0, epsilon_1t, epsilon_2t)` using `sharedData.B0`, `sharedData.epsilon_1t`, `sharedData.epsilon_2t`.
+    *   **Storage**: `sharedData.u_1t`, `sharedData.u_2t`.
+    *   **Reactive Update**: Triggered by changes in \(\epsilon_t\) (via `regenerateSvarData`) or changes in `B0` (via `regenerateReducedFormShocksFromExistingEpsilon` in `main.js`).
+    *   **Orchestration**: `regenerateSvarData()` or `regenerateReducedFormShocksFromExistingEpsilon()`.
+
+4.  **True DGP Rotation Angle (\(\phi_0\))**:
+    *   **Purpose**: Calculate the intrinsic rotation angle \(\phi_0\) embedded in the true `B0` matrix, defined such that \(B_0 = R(\phi_0) P_{\text{true}}\), where \(P_{\text{true}} = \text{chol}(B_0 B_0')\).
+    *   **Calculation**: `SVARMathUtil.calculatePhi0(B0)` using `sharedData.B0`.
+        *   Steps: Compute \(B_0 B_0'\), Cholesky decompose to get \(P_{\text{true}}\), invert \(P_{\text{true}}\), compute \(R_{\text{cand}} = B_0 P_{\text{true}}^{-1}\), then \(\phi_0 = \text{atan2}(R_{\text{cand}}[1][0], R_{\text{cand}}[0][0])\).
+    *   **Storage**: `sharedData.phi_0` (in radians).
+    *   **Reactive Update**: Triggered by changes in `B0`.
+    *   **Orchestration**: `regeneratePhi0()` in `main.js`, which is called on `B0` update (via `sharedData.updateB0Mode()`) and during `initializeApp()`.
+
+5.  **Estimation Angle (\(\phi\))**:
+    *   **Purpose**: User-selected angle for identifying the structural model from the data.
+    *   **Source**: UI slider (`phi-slider`).
+    *   **Storage**: `sharedData.phi` (in radians).
+    *   **Reactive Update**: Triggered by user interaction with the \(\phi\) slider.
+    *   **Orchestration**: `initializePhiSliders` in `shared_controls.js` updates `sharedData.phi`.
+
+6.  **Estimated Identification Matrix (\(B(\phi)\))**:
+    *   **Purpose**: Construct the candidate structural matrix \(B(\phi) = P \cdot R(\phi)\) based on the data (via \(P\)) and the user's estimation angle (via \(R(\phi)\)).
+    *   **Generation**: `SVARCoreFunctions.generateBPhi(phi, u1_t, u2_t)` using `sharedData.phi`, `sharedData.u_1t`, `sharedData.u_2t`.
+        *   Steps: Calculate covariance of \(u_t\) (\(\Sigma_u\)), Cholesky decompose \(\Sigma_u\) to get \(P\), generate rotation matrix \(R(\phi)\) from `sharedData.phi`, then multiply \(P \cdot R(\phi)\).
+    *   **Storage**: `sharedData.B_phi` (a 2x2 matrix).
+    *   **Reactive Update**: Triggered by changes in `sharedData.phi` or `sharedData.u_1t`/`sharedData.u_2t`.
+    *   **Orchestration**: `regenerateBPhi()` in `main.js`.
+
+7.  **Estimated Structural Innovations (\(e_t\))**:
+    *   **Purpose**: Calculate the estimated structural innovations using \(e_t = B(\phi)^{-1} u_t\).
+    *   **Generation**: `SVARCoreFunctions.generateInnovations(B_phi, u1_t, u2_t)` using `sharedData.B_phi`, `sharedData.u_1t`, `sharedData.u_2t`.
+        *   Involves inverting `sharedData.B_phi` and then multiplying by each \(u_t\) vector.
+    *   **Storage**: `sharedData.e_1t`, `sharedData.e_2t`.
+    *   **Reactive Update**: Triggered by changes in `sharedData.B_phi` or `sharedData.u_1t`/`sharedData.u_2t`.
+    *   **Orchestration**: `regenerateInnovations()` in `main.js`.
+
+## Key JavaScript Files Involved
+
+*   `public/js/shared_data.js`: Central state management.
+*   `public/js/svar_math_util.js`: Low-level mathematical operations (matrix algebra, Cholesky, etc.).
+*   `public/js/svar_functions.js`: Core SVAR-specific generation functions (for \(\epsilon_t, u_t, B(\phi), e_t\)).
+*   `public/js/main.js`: Orchestration of the reactive data pipeline (`regenerateSvarData`, `regenerateReducedFormShocksFromExistingEpsilon`, `regeneratePhi0`, `regenerateBPhi`, `regenerateInnovations`, `initializeApp`).
+*   `public/js/shared_controls.js`: UI control initialization and event handlers that trigger pipeline updates.
+*   `public/js/debug_manager.js`: For categorized logging throughout the pipeline.
+
+---
+
+# SVAR Data Pipeline: From Menu Parameters to Epsilon_t (Original Content - Review for Integration/Removal)
 
 This document outlines the pipeline for generating the structural shock series, \\(\\epsilon_t = (\\epsilon_{1t}, \\epsilon_{2t})\\), using parameters from the UI menus (stored in `shared_data.js`) and the core generation functions (in `svar_functions.js`).
 

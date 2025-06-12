@@ -13,7 +13,9 @@ window.sharedData = {
     // B(phi) matrix, identified using phi and covariance of u_t
     // B(phi) = P * R(phi), where P is Cholesky of Cov(u_t)    // B(phi) matrix, typically 2x2, derived from phi and u_t
     B_phi: [[1, 0], [0, 1]], // Default to identity matrix
-    // Structural innovations e_t = B(phi)^-1 * u_t
+    phi_0: 0, // Angle such that B0 = R(phi_0) * P_true, where P_true = chol(B0 * B0')
+
+    // Innovations (estimated structural shocks) e_t = B(phi)^(-1) * u_t
     e_1t: [], // Default to empty array
     e_2t: [], // Default to empty array
     // other shared variables can be added here
@@ -27,21 +29,23 @@ DebugManager.log('SVAR_DATA_PIPELINE', 'Initial sharedData.e_2t:', JSON.parse(JS
 DebugManager.log('DATA_HANDLING', "Initial sharedData.lambda:", window.sharedData.lambda);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_1t:", window.sharedData.epsilon_1t);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_2t:", window.sharedData.epsilon_2t);
-DebugManager.log('DATA_HANDLING', "Initial sharedData.u_1t:", window.sharedData.u_1t);
 DebugManager.log('SHARED_DATA', 'Initial u_2t:', JSON.stringify(window.sharedData.u_2t));
 DebugManager.log('SHARED_DATA', 'Initial B_phi:', JSON.stringify(window.sharedData.B_phi));
 
 // Function to update B0 based on isRecursive and log changes
 window.sharedData.updateB0Mode = function() {
-    const category = 'SVAR_DATA_PIPELINE';
     if (this.isRecursive) {
-        this.B0 = [[1, 0], [0.5, 1]];
-        DebugManager.log(category, 'Mode set to Recursive. B0 updated to:', JSON.parse(JSON.stringify(this.B0)));
+        this.B0 = [[1, 0], [0.5, 1]]; // Example Recursive B0
     } else {
-        this.B0 = [[1, 0.5], [0.5, 1]];
-        DebugManager.log(category, 'Mode set to Non-Recursive. B0 updated to:', JSON.parse(JSON.stringify(this.B0)));
+        this.B0 = [[1, 0.5], [0.5, 1]]; // Example Non-Recursive B0
     }
-};
+    DebugManager.log('SVAR_DATA_PIPELINE', `B0 mode updated. isRecursive: ${this.isRecursive}, B0:`, JSON.stringify(this.B0));
+    if (typeof window.regeneratePhi0 === 'function') {
+        window.regeneratePhi0(); // Update phi_0 whenever B0 changes
+    } else {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'Warning: window.regeneratePhi0 function not found. Cannot update phi_0.');
+    }
+}
 
 // Initialize B0 based on the default mode
 window.sharedData.updateB0Mode();

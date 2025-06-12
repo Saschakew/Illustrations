@@ -197,5 +197,91 @@ window.SVARMathUtil = {
             return 0;
         }
         return arr.reduce((a, b) => a + b, 0) / arr.length;
+    },
+
+    /**
+     * Transposes a 2x2 matrix.
+     * @param {number[][]} matrix - The 2x2 matrix [[a, b], [c, d]].
+     * @returns {number[][]} The transposed matrix [[a, c], [b, d]], or null if input is invalid.
+     */
+    transposeMatrix2x2: function(matrix) {
+        const category = 'SVAR_MATH';
+        if (!matrix || matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
+            DebugManager.log(category, 'Error: Invalid matrix for transposeMatrix2x2. Expected 2x2 matrix.', matrix);
+            return null;
+        }
+        return [
+            [matrix[0][0], matrix[1][0]],
+            [matrix[0][1], matrix[1][1]]
+        ];
+    },
+
+    /**
+     * Calculates phi_0 such that B0 = R(phi_0) * P_true, where P_true = chol(B0 * B0').
+     * @param {number[][]} B0_matrix - The 2x2 structural matrix B0.
+     * @returns {number|null} The angle phi_0 in radians, or null if calculation fails.
+     */
+    calculatePhi0: function(B0_matrix) {
+        const category = 'SVAR_MATH';
+        DebugManager.log(category, 'Calculating phi_0 for B0:', JSON.parse(JSON.stringify(B0_matrix)));
+
+        if (!B0_matrix || B0_matrix.length !== 2 || B0_matrix[0].length !== 2 || B0_matrix[1].length !== 2) {
+            DebugManager.log(category, 'Error: Invalid B0_matrix for calculatePhi0. Expected 2x2 matrix.');
+            return null;
+        }
+
+        try {
+            const B0_transpose = this.transposeMatrix2x2(B0_matrix);
+            if (!B0_transpose) {
+                DebugManager.log(category, 'Error: Failed to transpose B0 matrix.');
+                return null;
+            }
+            // DebugManager.log(category, 'B0_transpose:', JSON.parse(JSON.stringify(B0_transpose)));
+
+            const Sigma_true = this.matrixMultiply(B0_matrix, B0_transpose);
+            if (!Sigma_true) {
+                DebugManager.log(category, 'Error: Failed to calculate Sigma_true = B0 * B0_transpose.');
+                return null;
+            }
+            // DebugManager.log(category, 'Sigma_true (B0 * B0_transpose):', JSON.parse(JSON.stringify(Sigma_true)));
+
+            const P_true = this.choleskyDecomposition(Sigma_true);
+            if (!P_true) {
+                DebugManager.log(category, 'Error: Failed to calculate Cholesky decomposition P_true of Sigma_true.');
+                return null;
+            }
+            // DebugManager.log(category, 'P_true (chol(Sigma_true)):', JSON.parse(JSON.stringify(P_true)));
+
+            // Ensure P_true is not singular before inverting. For a Cholesky factor, this means diagonal elements are non-zero.
+            if (Math.abs(P_true[0][0]) < 1e-9 || Math.abs(P_true[1][1]) < 1e-9) {
+                 DebugManager.log(category, 'Error: P_true is singular or near-singular, cannot invert for phi_0 calculation. P_true:', JSON.parse(JSON.stringify(P_true)));
+                 return null;
+            }
+
+            const P_true_inverse = this.invert2x2Matrix(P_true);
+            if (!P_true_inverse) {
+                DebugManager.log(category, 'Error: Failed to invert P_true.');
+                return null;
+            }
+            // DebugManager.log(category, 'P_true_inverse:', JSON.parse(JSON.stringify(P_true_inverse)));
+
+            const R_candidate = this.matrixMultiply(B0_matrix, P_true_inverse);
+            if (!R_candidate) {
+                DebugManager.log(category, 'Error: Failed to calculate R_candidate = B0 * P_true_inverse.');
+                return null;
+            }
+            // DebugManager.log(category, 'R_candidate (B0 * P_true_inverse):', JSON.parse(JSON.stringify(R_candidate)));
+
+            // phi_0 = atan2(R[1][0], R[0][0])
+            // R_candidate = [[cos(phi_0), -sin(phi_0)], [sin(phi_0), cos(phi_0)]]
+            // So, R_candidate[1][0] is sin(phi_0) and R_candidate[0][0] is cos(phi_0)
+            const phi_0_rad = Math.atan2(R_candidate[1][0], R_candidate[0][0]);
+            DebugManager.log(category, 'Successfully calculated phi_0 (radians):', phi_0_rad);
+            return phi_0_rad;
+
+        } catch (error) {
+            DebugManager.log(category, 'Exception during calculatePhi0:', error);
+            return null;
+        }
     }
 };
