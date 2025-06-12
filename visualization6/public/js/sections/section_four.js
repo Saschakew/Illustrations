@@ -41,7 +41,7 @@ async function updateSectionFourPlots() {
             const current_phi_iter = min_phi + (i / steps) * (max_phi - min_phi);
             phi_range.push(current_phi_iter);
             
-            const loss = calculateLossForPhi_S4(current_phi_iter, P, u_1t, u_2t, lambda);
+            const loss = calculateLossForPhi_S4(current_phi_iter, P, u_1t, u_2t, lambda, window.sharedData.v);
             loss_values.push(loss);
         }
 
@@ -49,7 +49,7 @@ async function updateSectionFourPlots() {
             'plot_s4_right',
             phi_range,
             loss_values,
-            'Loss L(φ) = (mean(e₁_t²e₂_t)² + mean(e₁_t e₂_t²)²) + λ - S4',
+            'Loss L(φ) = (mean(e₁_t²e₂_t)² + mean(e₁_t e₂_t²)²) + λvb₁₂² - S4',
             'φ (radians)',
             'Loss',
             phi, // Current global phi for vertical line (verticalLineX)
@@ -69,10 +69,11 @@ async function updateSectionFourPlots() {
  * @param {Array<Array<number>>} P_chol - The Cholesky decomposition matrix P.
  * @param {number[]} u1_series - The first reduced-form shock series.
  * @param {number[]} u2_series - The second reduced-form shock series.
- * @param {number} lambda_val - The lambda value to add to the loss.
+ * @param {number} lambda_val - The lambda value for the penalty term.
+ * @param {number} v_weight - The weight v for the penalty term.
  * @returns {number|null} The calculated loss value or null on error.
  */
-function calculateLossForPhi_S4(phi_val, P_chol, u1_series, u2_series, lambda_val) {
+function calculateLossForPhi_S4(phi_val, P_chol, u1_series, u2_series, lambda_val, v_weight) {
     if (!window.SVARMathUtil) {
         DebugManager.log('PLOT_RENDERING', 'SVARMathUtil not found in calculateLossForPhi_S4.');
         return null;
@@ -119,7 +120,16 @@ function calculateLossForPhi_S4(phi_val, P_chol, u1_series, u2_series, lambda_va
     const mean_e1_e2_sq = sum_e1_e2_sq / N;
 
     const loss_s3_component = Math.pow(mean_e1_sq_e2, 2) + Math.pow(mean_e1_e2_sq, 2);
-    const final_loss = loss_s3_component + lambda_val;
+
+    let penalty_term = 0;
+    if (B_phi && B_phi[0] && typeof B_phi[0][1] === 'number' && typeof v_weight === 'number' && !isNaN(v_weight) && typeof lambda_val === 'number' && !isNaN(lambda_val)) {
+        const b_12 = B_phi[0][1];
+        penalty_term = lambda_val * v_weight * Math.pow(b_12, 2);
+    } else {
+        DebugManager.log('PLOT_RENDERING', 'Could not calculate penalty term in calculateLossForPhi_S4 due to invalid B_phi[0][1], v_weight, or lambda_val.');
+    }
+
+    const final_loss = loss_s3_component + penalty_term;
 
     return final_loss;
 }
