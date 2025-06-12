@@ -31,7 +31,7 @@ The pipeline proceeds in the following sequence:
     *   **Orchestration**: `regenerateSvarData()` or `regenerateReducedFormShocksFromExistingEpsilon()`.
 
 4.  **True DGP Rotation Angle (\(\phi_0\))**:
-    *   **Purpose**: Calculate the intrinsic rotation angle \(\phi_0\) embedded in the true `B0` matrix, defined such that \(B_0 = R(\phi_0) P_{\text{true}}\), where \(P_{\text{true}} = \text{chol}(B_0 B_0')\).
+    *   **Purpose**: Calculate the intrinsic rotation angle \(\phi_0\) embedded in the true `B0` matrix. This angle is a fundamental characteristic of the chosen Data Generating Process (DGP), representing the rotation applied to a lower-triangular matrix \(P_{\text{true}}\) (derived from the Cholesky decomposition of \(B_0 B_0'\)) to obtain \(B_0\). Thus, \(B_0 = R(\phi_0) P_{\text{true}}\). Understanding \(\phi_0\) helps in interpreting the nature of the "true" structural identification. It is independent of the sample data and only changes if the definition of `B0` itself changes (e.g., switching between recursive and non-recursive forms).
     *   **Calculation**: `SVARMathUtil.calculatePhi0(B0)` using `sharedData.B0`.
         *   Steps: Compute \(B_0 B_0'\), Cholesky decompose to get \(P_{\text{true}}\), invert \(P_{\text{true}}\), compute \(R_{\text{cand}} = B_0 P_{\text{true}}^{-1}\), then \(\phi_0 = \text{atan2}(R_{\text{cand}}[1][0], R_{\text{cand}}[0][0])\).
     *   **Storage**: `sharedData.phi_0` (in radians).
