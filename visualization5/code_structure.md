@@ -16,6 +16,7 @@ This document outlines the standardized architecture for the SVAR Visualizer pro
 - **One-Way Data Flow:** UI interactions trigger data updates, which then flow out to all subscribed components.
 - **Shared, Reusable Components:** Common functionalities (controls, plotting, SVAR logic) are encapsulated in shared modules.
 - **Event-Driven Updates:** Components subscribe to data change events rather than directly calling each other.
+- **Event Source Tracking:** To prevent infinite loops, the origin of data updates is tracked and checked by subscribers.
 
 ## 3. Key Components & Their Roles
 
@@ -23,11 +24,13 @@ This document outlines the standardized architecture for the SVAR Visualizer pro
 - **Location:** `public/js/shared_data.js`
 - **Purpose:** Holds all shared application state (e.g., sample size `T`, model type `isNonRecursive`, generated data series like `epsilon_1t`, `u_1t`, `B_0`). Also stores constants (e.g., `B0_RECURSIVE`, `B0_NON_RECURSIVE`).
 - **Functionality:**
-    - Provides methods for updating its internal data (e.g., `window.SVARData.updateData(newData)`).
+    - Provides methods for updating its internal data (e.g., `window.SVARData.updateData(newData, source)`).
     - Implements a publish/subscribe system for event notification.
     - `window.SVARData.subscribe(eventName, callback)`: Allows components to listen for specific events.
     - `window.SVARData.notifyUpdate(eventName, detail)`: Dispatches an event with associated data.
-    - **Key Event:** `DATA_UPDATED` is dispatched when core simulation parameters or generated data series change. The updated data is passed in `event.detail`.
+    - **Key Event:** `DATA_UPDATED` is dispatched when core simulation parameters or generated data series change.
+        - **`event.detail`**: Contains the updated data bundle.
+        - **`event.detail.source` (CRITICAL):** A string identifier indicating the origin of the data update (e.g., `'svar_setup_controls'`, `'estimation_restrictions_ui'`). This is essential for subscribers to ignore events they triggered.
 
 ### 3.2. Shared JavaScript Modules
 - **Location:** `public/js/`
@@ -35,150 +38,122 @@ This document outlines the standardized architecture for the SVAR Visualizer pro
 
     - **`shared_controls.js` (`window.SVARControls`)**
         - **Manages:** Common UI controls (sliders, switches, buttons) across sections.
-        - **`initializeControls(sectionId)` function:**
-            - Takes the ID of the parent HTML section as an argument.
-            - Finds control elements within that section using predefined, consistent CSS classes (see Section 4: HTML Structure).
+        - **`initializeControls(sectionId, controlSourceId)` function:**
+            - Takes the ID of the parent HTML section and a unique `controlSourceId` string for this set of controls.
+            - Finds control elements within that section using predefined, consistent CSS classes.
             - **UI Event Handling:** Attaches event listeners to these controls. When a user interacts with a control:
-                - It typically calls a data generation/update function in `window.SVARFunctions` (e.g., `generateAndStoreSvarData`).
-            - **Data Subscription:** Subscribes to the `DATA_UPDATED` event from `window.SVARData`. When the central data changes (even if triggered by another section), it updates the visual state of the controls it manages to ensure they reflect the current state.
+                - It typically calls a data generation/update function in `window.SVARFunctions` (e.g., `generateAndStoreSvarData`), **passing the `controlSourceId` as the `source` argument.**
+            - **Data Subscription:** Subscribes to the `DATA_UPDATED` event from `window.SVARData`. When the central data changes:
+                - **It MUST check `event.detail.source`**. If `event.detail.source === controlSourceId`, it should generally ignore the event to prevent self-triggered loops.
+                - Updates the visual state of its managed controls if the event originated elsewhere.
+                - **Null Checks:** Before accessing properties of DOM elements (e.g., `.value`, `.textContent`), it must perform null checks to prevent runtime errors if an element is unexpectedly missing.
 
     - **`shared_svar_functions.js` (`window.SVARFunctions`)**
         - **Contains:** Core SVAR-specific logic, data generation algorithms, and matrix calculations.
-        - **Example: `generateAndStoreSvarData(T, isNonRecursive)`:**
-            - Performs all necessary calculations to generate structural shocks, reduced-form shocks, etc.
-            - Updates the `window.SVARData` store with the new parameters (`T`, `isNonRecursive`) and the newly generated data series.
-            - Calls `window.SVARData.notifyUpdate('DATA_UPDATED', allGeneratedData)` to inform all subscribers.
+        - **Example: `generateAndStoreSvarData(T, isNonRecursive, source)`:**
+            - Performs all necessary calculations.
+            - Updates `window.SVARData` using `window.SVARData.updateData(allGeneratedData, source)`, propagating the `source` argument.
 
     - **`shared_plots.js` (`window.SVARPlots`)**
-        - **Contains:** Functions dedicated to creating and updating Plotly.js visualizations.
-        - Example: `updateSvarSetupPlots(epsilon_1t, epsilon_2t, u_1t, u_2t)`. These functions typically take the necessary data arrays as arguments and handle the Plotly rendering logic.
+        - **Contains:** Functions for creating and updating Plotly.js visualizations.
 
     - **`shared_general_functions.js` (`window.SVARGeneral`)**
-        - **Contains:** Utility functions that are general-purpose and not specific to SVARs, plotting, or controls (e.g., custom random number generators, array manipulations if needed).
+        - **Contains:** General-purpose utility functions.
 
 ### 3.3. Section-Specific Logic (e.g., `svar_setup.js`)
-- **Location:** `public/js/section_name.js` (e.g., `public/js/svar_setup.js`)
-- **Purpose:** Handles the unique behavior and initialization for a specific interactive section of the application.
+- **Location:** `public/js/section_name.js`
+- **Purpose:** Handles unique behavior and initialization for a specific section.
 - **Structure:**
-    - Typically wrapped in an initialization function (e.g., `initSvarSetup()`) that is called by `main.js`.
+    - Typically wrapped in an initialization function (e.g., `initSvarSetup(sectionId, sectionSourceId)`).
     - **Initialization Steps:**
-        1. Calls `window.SVARControls.initializeControls('your-section-id')` to activate and synchronize the shared controls within its corresponding HTML.
-        2. Subscribes to the `DATA_UPDATED` event from `window.SVARData`. The event handler:
-            - Receives the updated data bundle in `event.detail`.
-            - Calls the appropriate plotting functions from `window.SVARPlots` with the new data to redraw its visualizations.
-        3. May trigger an initial data generation (e.g., by calling `window.SVARFunctions.generateAndStoreSvarData()` with default/initial control values) to populate plots when the section first loads.
-    - **Role:** Acts primarily as a "view" or "controller" layer for its specific section, orchestrating shared services and reacting to data changes. It should contain minimal local state related to the core simulation data.
+        1. Define a unique `sectionSourceId` string for this section (e.g., `'svar_setup_section'`).
+        2. Call `window.SVARControls.initializeControls(sectionId, sectionSourceId + '_controls')` (or a similar unique source for its controls).
+        3. Subscribe to `DATA_UPDATED`: `window.SVARData.subscribe('DATA_UPDATED', (event) => { ... });`.
+            - **CRITICAL:** Inside the subscriber, check `if (event.detail.source === sectionSourceId) return;` to prevent loops if this section itself triggered the update through other means (less common but possible).
+            - Receives `event.detail`.
+            - Calls plotting functions from `window.SVARPlots`.
+            - **Null Checks:** Perform null checks for expected data in `event.detail` or for DOM elements before use.
+        4. May trigger initial data generation, passing its `sectionSourceId`.
+- **Role:** Orchestrates shared services, reacts to data changes, and manages its specific UI elements.
 
 ### 3.4. HTML Structure (Section Files)
-- **Location:** `public/sections/section_name.html` (e.g., `public/sections/svar_setup.html`)
-- **Purpose:** Contains the HTML markup for a specific section, including placeholders for controls and plots.
-- **Control Element Classes:** For `shared_controls.js` to discover and manage UI elements, they **must** use consistent CSS classes:
-    - Sample Size Slider: Existing Bootstrap class `.form-range` (often with `[min="250"]` or similar attribute selectors if needed).
-    - Sample Size Value Display: `.sample-size-value` (e.g., `<span class="sample-size-value">500</span>`).
-    - "New Sample" Button: `.new-sample-btn` (e.g., `<button class="new-sample-btn">New Sample</button>`).
-    - Recursive/Non-Recursive Switch (and its labels):
-        - Switch input: `.custom-switch input[type="checkbox"]`
-        - "Recursive" label: `.phi-label-left`
-        - "Non-Recursive" label: `.phi-label-right`
-    - Plot Containers: Unique IDs (e.g., `id="shocksScatterPlot"`) for Plotly to target.
+- **Location:** `public/sections/section_name.html`
+- **Control Element Classes:** Use consistent CSS classes for discovery by `shared_controls.js`. (See `style_guide_menu.md` for details on menu structure).
+    - Ensure all interactive elements that might be targeted by JavaScript have unique and predictable IDs or robust class-based selectors.
 
 ### 3.5. Orchestration (`main.js`)
 - **Location:** `public/js/main.js`
-- **Purpose:**
-    - Manages the overall application lifecycle.
-    - Dynamically loads HTML content for each section into the main page.
-    - Ensures `window.SVARData` and its event system are initialized.
-    - Calls the initialization function for each section (e.g., `initSvarSetup()`) once its HTML content is loaded and other dependencies (like MathJax) are ready.
-    - Handles global UI concerns like the initial loading screen.
+- **Purpose:** Manages application lifecycle, loads sections, initializes `window.SVARData`, and calls section-specific init functions.
+    - **Error Handling:** Implement robust error handling for event subscriber callbacks to catch and log errors without breaking the entire event system.
 
-## 4. Data Flow (Simplified)
+## 4. Data Flow & Loop Prevention
 
-1.  **User Interaction:** User interacts with a control (e.g., moves a slider in Section A).
-2.  **Control Handler (`shared_controls.js`):** The event listener for that control (managed by `shared_controls.js`) is triggered.
-3.  **Data Generation (`shared_svar_functions.js`):** The control handler calls a function like `window.SVARFunctions.generateAndStoreSvarData()`, passing the new control value (e.g., new sample size `T`).
-4.  **Central Store Update (`shared_svar_functions.js` -> `window.SVARData`):**
-    - `generateAndStoreSvarData()` calculates all new data series.
-    - It then updates `window.SVARData` with these new values (e.g., new `T`, new `epsilon_1t`, etc.).
-    - Finally, it calls `window.SVARData.notifyUpdate('DATA_UPDATED', allNewData)`.
-5.  **Event Dispatch (`window.SVARData`):** `window.SVARData` broadcasts the `DATA_UPDATED` event to all subscribers. The `event.detail` contains the `allNewData` bundle.
-6.  **Reactive Updates:**
-    - **Controls (`shared_controls.js`):** The `DATA_UPDATED` subscriber within `shared_controls.js` (for Section A, Section B, etc.) receives the event. If the data change affects a control it manages (e.g., the sample size slider value), it updates the control's visual appearance. This keeps all instances of shared controls synchronized.
-    - **Plots (Section-Specific JS, e.g., `svar_setup.js`):** The `DATA_UPDATED` subscriber within `svar_setup.js` (and other section-specific scripts) receives the event. It extracts the necessary data series from `event.detail` and calls the relevant functions in `window.SVARPlots` to redraw its visualizations.
+1.  **User Interaction:** User interacts with a control in Section A (e.g., `sampleSizeSlider` in `svar_setup`).
+2.  **Control Handler (`shared_controls.js` for `svar_setup`):**
+    - Event listener triggers.
+    - Calls `window.SVARFunctions.generateAndStoreSvarData(newSize, ..., 'svar_setup_controls')`. The `'svar_setup_controls'` is the `source`.
+3.  **Data Generation (`shared_svar_functions.js`):**
+    - Calculates new data.
+    - Calls `window.SVARData.updateData(newDataBundle, 'svar_setup_controls')`.
+4.  **Central Store Update & Event Dispatch (`window.SVARData`):**
+    - Stores `newDataBundle`.
+    - Dispatches `DATA_UPDATED` event with `event.detail = { ...newDataBundle, source: 'svar_setup_controls' }`.
+5.  **Reactive Updates (Subscribers):**
+    - **`shared_controls.js` (for `svar_setup` controls):**
+        - Receives `DATA_UPDATED`.
+        - Checks `event.detail.source`. It's `'svar_setup_controls'`, which matches its own `controlSourceId`.
+        - **Action:** Ignores the event for its primary data update logic to prevent re-triggering. It might still update its visual state if necessary (e.g., slider position if the data was constrained by the model), but it won't re-call `generateAndStoreSvarData`.
+    - **`shared_controls.js` (for other sections, e.g., `estimation_restrictions` controls):**
+        - Receives `DATA_UPDATED`.
+        - Checks `event.detail.source`. It's `'svar_setup_controls'`, which does *not* match its `controlSourceId` (e.g., `'er_controls'`).
+        - **Action:** Updates its own control elements (e.g., sample size display) to reflect the new data.
+    - **`svar_setup.js` (Section Logic for `svar_setup`):**
+        - Receives `DATA_UPDATED`.
+        - Checks `event.detail.source`. It's `'svar_setup_controls'`. This might or might not be its own `sectionSourceId`. If the section logic itself can trigger updates, it should also check against its own `sectionSourceId`.
+        - **Action:** Updates plots using data from `event.detail`.
+    - **`estimation_restrictions.js` (Section Logic for `estimation_restrictions`):**
+        - Receives `DATA_UPDATED`.
+        - Checks `event.detail.source`. It's `'svar_setup_controls'`, which does not match its `sectionSourceId` (e.g., `'er_section'`).
+        - **Action:** Updates its plots and UI elements.
 
 ## 5. Adding a New Synchronized Section (Checklist)
 
-1.  **Create HTML File:**
-    - In `public/sections/`, create `new_section_name.html`.
-    - Include necessary control elements, ensuring they use the standard CSS classes defined in Section 3.4.
-    - Add `div` elements with unique IDs to serve as plot containers.
-2.  **Create JavaScript File:**
-    - In `public/js/`, create `new_section_name.js`.
-    - Implement an initialization function (e.g., `initNewSectionName()`).
-    - Inside this function:
-        - Call `window.SVARControls.initializeControls('new-section-id')` (where `'new-section-id'` is the ID of the main `div` or `section` tag for this new section in the main `index.html`).
-        - Subscribe to `window.SVARData.subscribe('DATA_UPDATED', (event) => { /* ... update plots ... */ });`.
-        - In the subscriber, call appropriate functions from `window.SVARPlots` using data from `event.detail`.
-        - If the section should display data on load, trigger an initial data generation via `window.SVARFunctions.generateAndStoreSvarData()`.
-3.  **Update `main.js`:**
-    - Add the new section to the `sections` array or similar configuration for dynamic HTML loading.
-    - Ensure `main.js` calls `initNewSectionName()` after the section's HTML is loaded and other dependencies are ready.
-4.  **Update `index.html` (if needed):**
-    - Add a main `section` tag with an ID for the new content (e.g., `<section id="new-section-id"></section>`).
-    - Add a navigation link to the new section in the main `<nav>` menu.
-5.  **Extend Shared Modules (if necessary):**
-    - If the new section requires new types of plots, add corresponding functions to `shared_plots.js`.
-    - If it requires new core SVAR logic or general utility functions, add them to `shared_svar_functions.js` or `shared_general_functions.js`, respectively.
+1.  **Define Unique Source IDs:**
+    - For the section itself (e.g., `const mySectionSourceId = 'my_new_section_logic';`).
+    - For controls managed by `shared_controls.js` within this section (e.g., `const myControlsSourceId = 'my_new_section_controls';`).
+2.  **Create HTML File (`public/sections/new_section_name.html`):**
+    - Structure according to `style_guide_menu.md`.
+    - Ensure all elements to be manipulated by JS have clear IDs or classes.
+3.  **Create JavaScript File (`public/js/new_section_name.js`):**
+    - Implement `initNewSectionName(sectionHtmlId, anyOtherParams)`.
+    - Inside:
+        - Call `window.SVARControls.initializeControls(sectionHtmlId, myControlsSourceId)`.
+            - Ensure `shared_controls.js` correctly finds elements (e.g., by passing unique IDs from your HTML or relying on consistent class names within the `sectionHtmlId` scope).
+            - **Verify `shared_controls.js` has null checks for all elements it tries to access.**
+        - Subscribe to `DATA_UPDATED`:
+          ```javascript
+          window.SVARData.subscribe('DATA_UPDATED', (event) => {
+              if (event.detail.source && event.detail.source.startsWith('my_new_section_')) { // Or more specific check
+                  // console.log(`'${mySectionSourceId}' ignoring self-sourced event from: ${event.detail.source}`);
+                  return;
+              }
+              // ... update plots and other UI specific to this section ...
+              // Perform null checks on event.detail data and DOM elements.
+          });
+          ```
+        - Trigger initial data load if needed, passing `mySectionSourceId` or `myControlsSourceId` as the source.
+4.  **Update `main.js`:**
+    - Load HTML, call `initNewSectionName()`.
+5.  **Update `index.html`:** Add section placeholder and nav link.
+6.  **Extend Shared Modules:** As needed.
 
-## 6. Best Practices and Common Pitfalls
+## 6. Best Practices for Avoiding Errors
 
-To avoid common runtime errors and ensure the application remains stable, follow these critical best practices when developing or modifying sections.
-
-### 6.1. Always Check for Section Visibility in Event Handlers
-
-- **Problem:** The `DATA_UPDATED` event is broadcast globally to all sections. If a section is hidden (`display: none`), its JavaScript event handler will still fire. Any attempt to access or modify DOM elements within the hidden section will result in a `TypeError` (e.g., "Cannot read properties of null").
-- **Solution:** Add a guard clause at the very beginning of every `DATA_UPDATED` subscriber to check if the section is currently visible. Only proceed with UI updates if the section is visible.
-
-**Example (in a section-specific JS file like `estimation_restrictions.js`):**
-```javascript
-window.SVARData.subscribe('DATA_UPDATED', (event) => {
-    const section = document.getElementById('estimation-restrictions');
-
-    // CRITICAL: Check for visibility before doing anything else.
-    if (section.style.display === 'none' || !document.body.contains(section)) {
-        return; // Do nothing if the section is not visible or detached from the DOM.
-    }
-
-    // ... proceed with updating plots and UI elements ...
-});
-```
-This also applies to shared modules like `shared_controls.js` that operate within a section's context.
-
-### 6.2. Write Robust Shared Modules with Null Checks
-
-- **Problem:** A shared module like `shared_controls.js` is designed to work across multiple sections. However, not all sections will contain every single shared control. For example, the "Estimation" section does not have a "Sample Size" slider. Without checks, the code will throw a `TypeError` when it tries to access a `null` element.
-- **Solution:** Inside shared modules, always perform a null check on a DOM element before attempting to read its properties or update it.
-
-**Example (in `shared_controls.js`):**
-```javascript
-// Inside the DATA_UPDATED subscriber...
-
-// Sync Sample Size (T)
-// CRITICAL: Check if sampleSizeSlider exists before accessing its properties.
-if (sampleSizeSlider && data.T && sampleSizeSlider.value !== String(data.T)) {
-    sampleSizeSlider.value = data.T;
-    if (sampleSizeValue) { // Also check for the value display span
-        sampleSizeValue.textContent = data.T;
-    }
-}
-
-// Sync Model Type (Recursive/Non-recursive)
-if (phiSwitch && typeof data.isNonRecursive === 'boolean' && phiSwitch.checked !== data.isNonRecursive) {
-    phiSwitch.checked = data.isNonRecursive;
-    updateToggleVisual();
-}
-```
-
-### 6.3. Ensure HTML and JavaScript are Synchronized
-
-- **Problem:** A `TypeError` can occur if the JavaScript code attempts to access a DOM element by an ID that does not exist in the corresponding HTML file. This is often due to a typo or forgetting to add the element to the HTML.
-- **Solution:** When writing JavaScript that interacts with a specific element, always double-check the HTML file to ensure the element exists and its `id` or `class` matches the selector in the JavaScript exactly.
+-   **Always Pass `source`:** Every call to `window.SVARData.updateData()` and consequently to functions like `generateAndStoreSvarData` **must** include a `source` argument.
+-   **Always Check `source` in Subscribers:** Every `DATA_UPDATED` event subscriber **must** check `event.detail.source` and ignore events that originate from itself to prevent infinite loops.
+-   **Null Check DOM Elements:** Before accessing properties like `.value`, `.textContent`, `.style`, or attaching event listeners to DOM elements queried from the document, **always** check if the element exists (i.g., `if (myElement) { ... }`). This is crucial if elements are dynamically added/removed or if selectors are incorrect.
+-   **Null Check Data Properties:** Before using data from `event.detail` or other sources (e.g., `event.detail.data.value.toFixed(2)`), ensure the intermediate properties (`data`, `value`) exist and are of the expected type.
+-   **Initialize Variables:** Ensure variables that will hold DOM elements or data are initialized (e.g., to `null` or an empty array) and that functions expecting them can handle these initial states.
+-   **Defensive Programming:** Write code that anticipates potential issues like missing data or elements. Use `try...catch` blocks for operations that might fail, especially around external libraries or complex DOM manipulations.
+-   **Clear Console Logs:** Use descriptive `console.log` messages during development to trace event flow and data changes, especially when debugging loops or unexpected behavior. Remove or conditionalize them for production.
+-   **Incremental Development:** When adding new features or controls, test frequently to catch issues early.

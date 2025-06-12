@@ -50,7 +50,7 @@ window.SVARFunctions = {
         return { u_1t, u_2t };
     },
 
-    generateAndStoreSvarData: function(T, isNonRecursive) {
+    generateAndStoreSvarData: function(T, isNonRecursive, source = null) {
         console.log(`[shared_svar_functions.js] Generating and storing SVAR data with T=${T}, isNonRecursive=${isNonRecursive}`);
         // Step 1: Generate structural shocks
         const { epsilon_1t, epsilon_2t } = this.generateEpsilon(T);
@@ -62,7 +62,8 @@ window.SVARFunctions = {
             // Potentially update SVARData with an error state or return null/error
             window.SVARData.updateData({
                 error: "B0 matrix undefined",
-                epsilon_1t: null, epsilon_2t: null, u_1t: null, u_2t: null, B_0: null
+                epsilon_1t: null, epsilon_2t: null, u_1t: null, u_2t: null, B_0: null,
+                source: source
             });
             return null; // Or throw an error
         }
@@ -79,7 +80,8 @@ window.SVARFunctions = {
             u_2t: u_2t,
             B_0: B_0,
             isNonRecursive: isNonRecursive,
-            error: null // Clear any previous error
+            error: null, // Clear any previous error
+            source: source // Pass the source of the update
         };
         window.SVARData.updateData(dataToStore);
 

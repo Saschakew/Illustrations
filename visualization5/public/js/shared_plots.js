@@ -25,6 +25,7 @@ window.SVARPlots = {
             return { width: 600, height: 400 };
         }
         
+        // Get the parent container width instead of the plot div width
         const parentContainer = plotDivElement.parentElement;
         if (!parentContainer) {
             console.warn("Could not find parent container. Using plot div width.");
@@ -43,37 +44,61 @@ window.SVARPlots = {
     },
 
     // Standard layout configuration
-    getStandardLayout: function(title, xAxisTitle, yAxisTitle) {
+    getStandardLayout: function(title, xAxisTitle, yAxisTitle, plotDivElement) {
+        const { width, height } = this.getPlotSize(plotDivElement);
         return {
-            title: { text: title, font: this.FONTS.TITLE },
+            title: { 
+                text: title,
+                font: this.FONTS.TITLE
+            },
             xaxis: {
                 title: { text: xAxisTitle, font: this.FONTS.AXIS_LABEL },
-                zeroline: true, zerolinecolor: this.COLORS.ZERO_LINE,
-                gridcolor: this.COLORS.GRID, tickfont: this.FONTS.TICK_LABEL
+                zeroline: true,
+                zerolinecolor: this.COLORS.ZERO_LINE,
+                gridcolor: this.COLORS.GRID,
+                tickfont: this.FONTS.TICK_LABEL
             },
             yaxis: {
                 title: { text: yAxisTitle, font: this.FONTS.AXIS_LABEL },
-                zeroline: true, zerolinecolor: this.COLORS.ZERO_LINE,
-                gridcolor: this.COLORS.GRID, tickfont: this.FONTS.TICK_LABEL
+                zeroline: true,
+                zerolinecolor: this.COLORS.ZERO_LINE,
+                gridcolor: this.COLORS.GRID,
+                tickfont: this.FONTS.TICK_LABEL
             },
+            width: width,
+            height: height,
             margin: { l: 50, r: 20, b: 50, t: 50, pad: 4 },
             paper_bgcolor: this.COLORS.WHITE,
             plot_bgcolor: this.COLORS.WHITE,
-            transition: { duration: 500, easing: 'cubic-in-out' }
+            transition: {
+                duration: 500,
+                easing: 'cubic-in-out'
+            }
         };
     },
 
     // Enhanced scatter plot configuration
     getScatterTrace: function(x, y, color, hoverTemplate) {
         return {
-            x: x, y: y, mode: 'markers', type: 'scatter',
+            x: x,
+            y: y,
+            mode: 'markers',
+            type: 'scatter',
             marker: {
-                size: 6, color: color, opacity: 0.7,
-                line: { width: 1, color: this.COLORS.TEXT }
+                size: 6,
+                color: color,
+                opacity: 0.7,
+                line: {
+                    width: 1,
+                    color: this.COLORS.TEXT
+                }
             },
             hoverinfo: 'x+y',
             hovertemplate: hoverTemplate || 'X: %{x:.3f}<br>Y: %{y:.3f}<extra></extra>',
-            animation: { duration: 1000, easing: 'cubic-in-out' }
+            animation: {
+                duration: 1000,
+                easing: 'cubic-in-out'
+            }
         };
     },
 
@@ -81,68 +106,171 @@ window.SVARPlots = {
         const shocksScatterPlotDiv = document.getElementById('shocksScatterPlot');
         const reducedShocksPlotDiv = document.getElementById('reducedShocksScatterPlot');
 
-        if (!shocksScatterPlotDiv || !reducedShocksPlotDiv) return;
-        if (!epsilon_1t || !u_1t || epsilon_1t.length === 0) return;
+        if (!shocksScatterPlotDiv || !reducedShocksPlotDiv) {
+            console.error("Plot div(s) for SVAR setup not found!");
+            return;
+        }
 
-        const traceEpsilon = this.getScatterTrace(epsilon_1t, epsilon_2t, this.COLORS.PRIMARY, 'ε₁: %{x:.3f}<br>ε₂: %{y:.3f}<extra></extra>');
-        const layoutEpsilon = this.getStandardLayout('Structural Shocks (ε₁ vs ε₂)', 'ε₁', 'ε₂', shocksScatterPlotDiv);
-        Plotly.newPlot(shocksScatterPlotDiv, [traceEpsilon], layoutEpsilon, { responsive: true, displayModeBar: false, displaylogo: false });
+        if (!epsilon_1t || !epsilon_2t || !u_1t || !u_2t || epsilon_1t.length === 0) {
+            console.warn("Data for plotting (epsilon_t or u_t) is not ready yet.");
+            return;
+        }
 
-        const traceU = this.getScatterTrace(u_1t, u_2t, this.COLORS.ACCENT, 'u₁: %{x:.3f}<br>u₂: %{y:.3f}<extra></extra>');
-        const layoutU = this.getStandardLayout('Reduced-Form Shocks (u₁ vs u₂)', 'u₁', 'u₂', reducedShocksPlotDiv);
-        Plotly.newPlot(reducedShocksPlotDiv, [traceU], layoutU, { responsive: true, displayModeBar: false, displaylogo: false });
+        // Plot 1: Structural Shocks (ε_t)
+        const traceEpsilon = this.getScatterTrace(
+            epsilon_1t,
+            epsilon_2t,
+            this.COLORS.PRIMARY,
+            'ε₁: %{x:.3f}<br>ε₂: %{y:.3f}<extra></extra>'
+        );
+
+        const layoutEpsilon = this.getStandardLayout(
+            'Structural Shocks (ε₁ vs ε₂)',
+            'ε₁',
+            'ε₂',
+            shocksScatterPlotDiv
+        );
+
+        Plotly.newPlot(shocksScatterPlotDiv, [traceEpsilon], layoutEpsilon, {
+            responsive: true,
+            displayModeBar: false,
+            displaylogo: false
+        });
+
+        // Plot 2: Reduced-Form Shocks (u_t)
+        const traceU = this.getScatterTrace(
+            u_1t,
+            u_2t,
+            this.COLORS.ACCENT,
+            'u₁: %{x:.3f}<br>u₂: %{y:.3f}<extra></extra>'
+        );
+
+        const layoutU = this.getStandardLayout(
+            'Reduced-Form Shocks (u₁ vs u₂)',
+            'u₁',
+            'u₂',
+            reducedShocksPlotDiv
+        );
+
+        Plotly.newPlot(reducedShocksPlotDiv, [traceU], layoutU, {
+            responsive: true,
+            displayModeBar: false,
+            displaylogo: false
+        });
     },
 
-    updateEstimationRestrictionPlots: function(plotData) {
-        const {
-            innovationsPlotId, e1Data, e2Data,
-            correlationPlotId, correlationData, currentPhi, phiTrue
-        } = plotData;
+    updateInnovationsScatterPlotER: function(plotDivId, e1Data, e2Data) {
+        const plotDiv = document.getElementById(plotDivId);
+        if (!plotDiv) {
+            console.error(`Plot container with id ${plotDivId} not found.`);
+            return;
+        }
 
-        const innovationsPlotDiv = document.getElementById(innovationsPlotId);
-        const correlationPlotDiv = document.getElementById(correlationPlotId);
+        const trace = this.getScatterTrace(
+            e1Data || [],
+            e2Data || [],
+            this.COLORS.PRIMARY,
+            'e₁(φ): %{x:.3f}<br>e₂(φ): %{y:.3f}<extra></extra>'
+        );
 
-        if (!innovationsPlotDiv || !correlationPlotDiv) return;
-        if (!e1Data || !correlationData || !correlationData.phis || correlationData.phis.length === 0) return;
+        const layout = this.getStandardLayout(
+            'Estimated Structural Shocks \\( \\hat{\\epsilon}_t(\\phi) \\) vs True Shocks \\( \\epsilon_t \\)',
+            'e₁(φ)',
+            'e₂(φ)',
+            plotDiv
+        );
 
-        // 1. Innovations Scatter Plot
-        const traceInnovations = this.getScatterTrace(e1Data, e2Data, this.COLORS.PRIMARY, 'ε̂₁: %{x:.3f}<br>ε̂₂: %{y:.3f}<extra></extra>');
-        const layoutInnovations = this.getStandardLayout('Estimated Structural Shocks (ε̂)', 'ε̂₁', 'ε̂₂', innovationsPlotDiv);
-        layoutInnovations.xaxis.range = [-4, 4];
-        layoutInnovations.yaxis.range = [-4, 4];
-        Plotly.newPlot(innovationsPlotDiv, [traceInnovations], layoutInnovations, { responsive: true, displayModeBar: false, displaylogo: false });
+        // Add range constraints
+        layout.xaxis.range = [-4, 4];
+        layout.yaxis.range = [-4, 4];
 
-        // 2. Correlation Plot
-        const traceCorrelation = {
-            x: correlationData.phis, y: correlationData.corrs, mode: 'lines', type: 'scatter',
-            name: 'Corr(ε̂₁, ε̂₂)', line: { color: this.COLORS.PRIMARY, width: 2 }
+        Plotly.newPlot(plotDiv, [trace], layout, {
+            responsive: true,
+            displayModeBar: false,
+            displaylogo: false
+        });
+    },
+
+    updateCorrelationPlotER: function(plotDivId, correlationData, currentPhi, phiTrueForPlot) {
+        const plotDiv = document.getElementById(plotDivId);
+        if (!plotDiv) {
+            console.error(`Plot container with id ${plotDivId} not found.`);
+            return;
+        }
+
+        const absoluteCorrs = (correlationData.corrs || []).map(Math.abs);
+
+        const trace = {
+            x: correlationData.phis || [],
+            y: absoluteCorrs,
+            mode: 'lines',
+            type: 'scatter',
+            line: {
+                color: this.COLORS.PRIMARY,
+                width: 2
+            },
+            animation: {
+                duration: 1000,
+                easing: 'cubic-in-out'
+            }
         };
-        const layoutCorrelation = this.getStandardLayout('Correlation of Estimated Shocks vs. Rotation Angle φ', 'Rotation Angle φ', 'Corr(ε̂₁, ε̂₂)', correlationPlotDiv);
-        
-        // Set fixed y-axis range for correlation
-        const yAxisRange = [-1, 1];
 
-        layoutCorrelation.shapes = [
-            { type: 'line', x0: currentPhi, x1: currentPhi, y0: yAxisRange[0], y1: yAxisRange[1], line: { color: this.COLORS.ACCENT, width: 2, dash: 'dash' } },
-            { type: 'line', x0: phiTrue, x1: phiTrue, y0: yAxisRange[0], y1: yAxisRange[1], line: { color: this.COLORS.SPECIAL, width: 2, dash: 'dot' } }
+        const layout = this.getStandardLayout(
+            'Absolute Correlation |corr(e₁, e₂)| vs. φ',
+            'Rotation Angle φ (radians)',
+            '|corr(e₁, e₂)|',
+            plotDiv
+        );
+
+        // Set y-axis range to [0, 1]
+        layout.yaxis.range = [0, 1];
+
+        // Add vertical lines for current and true phi
+        layout.shapes = [
+            {
+                type: 'line',
+                x0: currentPhi,
+                x1: currentPhi,
+                y0: 0, // Start from y=0
+                y1: 1, // End at y=1
+                line: {
+                    color: this.COLORS.TEXT,
+                    width: 2,
+                    dash: 'dash'
+                }
+            },
+            {
+                type: 'line',
+                x0: phiTrueForPlot,
+                x1: phiTrueForPlot,
+                y0: 0, // Start from y=0
+                y1: 1, // End at y=1
+                line: {
+                    color: this.COLORS.ACCENT,
+                    width: 2.5,
+                    dash: 'dot'
+                }
+            }
         ];
-        
-        layoutCorrelation.annotations = [{
-            x: phiTrue,
-            y: 0,
+
+        // Add annotation for true phi
+        layout.annotations = [{
+            x: phiTrueForPlot,
+            y: 1, // Position annotation at the top of the y-axis
             xref: 'x',
             yref: 'y',
-            text: 'True φ',
+            text: (correlationData.corrs && correlationData.corrs.length > 0 && typeof phiTrueForPlot !== 'undefined') ? 'φ₀ (True)' : 'φ₀ (N/A)',
             showarrow: true,
             arrowhead: 2,
-            ax: -25,
-            ay: -40,
-            font: { color: this.COLORS.SPECIAL }
+            ax: -20,
+            ay: -30,
+            font: { color: this.COLORS.ACCENT }
         }];
 
-        layoutCorrelation.xaxis.range = [-Math.PI / 2, Math.PI / 2];
-        layoutCorrelation.yaxis.range = yAxisRange;
-
-        Plotly.newPlot(correlationPlotDiv, [traceCorrelation], layoutCorrelation, { responsive: true, displayModeBar: false, displaylogo: false });
+        Plotly.newPlot(plotDiv, [trace], layout, {
+            responsive: true,
+            displayModeBar: false,
+            displaylogo: false
+        });
     }
 }; 

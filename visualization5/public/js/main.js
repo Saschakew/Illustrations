@@ -11,36 +11,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize or extend the shared data object
     window.SVARData = window.SVARData || {};
-    Object.assign(window.SVARData, {
-        data: window.SVARData.data || {},
-        subscribers: window.SVARData.subscribers || {},
-        
-        updateData: function(newData) {
-            Object.assign(this.data, newData);
-            this.notifyUpdate('DATA_UPDATED', this.data);
-        },
-        
-        subscribe: function(event, callback) {
-            if (!this.subscribers[event]) {
-                this.subscribers[event] = [];
-            }
-            this.subscribers[event].push(callback);
-        },
-        
-        notifyUpdate: function(event, detail) {
-            if (this.subscribers[event]) {
-                this.subscribers[event].forEach(callback => {
-                    try {
-                        callback(new CustomEvent(event, { detail }));
-                    } catch (e) {
-                        console.error(`Error in subscriber for event ${event}:`, e);
-                    }
-                });
-            }
-        }
-    });
+    // SVARData is expected to be defined by shared-data.js
+    // Ensure it exists, if not, log an error, but don't redefine its methods here.
+    if (!window.SVARData || typeof window.SVARData.subscribe !== 'function') {
+        console.error('[main.js] window.SVARData from shared-data.js is not properly initialized or missing crucial methods like subscribe. This will cause issues.');
+        // Fallback minimal structure to prevent immediate crashes in other parts if SVARData is expected.
+        window.SVARData = window.SVARData || {}; 
+        window.SVARData.events = window.SVARData.events || {};
+    } else {
+        console.log('[main.js] SVARData from shared-data.js seems to be loaded.');
+    }
     // Dispatch a custom event to signal that the SVARData object is ready
     document.dispatchEvent(new CustomEvent('SVARDataReady'));
+
+    // Setup global event listeners from SVARControls once SVARData is presumed ready
+    if (window.SVARControls && typeof window.SVARControls.setupGlobalEventListeners === 'function') {
+        window.SVARControls.setupGlobalEventListeners();
+    } else {
+        console.error('[main.js] SVARControls.setupGlobalEventListeners is not available. Global phi updates might not work.');
+    }
     
     // --- Section Loading Logic ---
     const dataSourceSection = 'svar_setup';

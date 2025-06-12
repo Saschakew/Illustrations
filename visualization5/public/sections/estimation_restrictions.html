@@ -1,7 +1,8 @@
+<section id="er-section-wrapper">
 <h2 class="text-center mb-4">Estimation and Identification with Restrictions</h2>
 
 <!-- Interactive Controls -->
-<div id="simulation-controls" class="controls-container card mb-4">
+<div id="controls-container-er" class="controls-container card mb-4">
     <div class="card-body">
         <div class="controls-row">
             <div class="control-item sample-size">
@@ -10,22 +11,19 @@
             </div>
             <div class="control-item phi-toggle">
                 <div class="phi-toggle-pill">
-                    <span class="phi-label phi-label-left">Recursive</span>
+                    <span class="phi-label phi-label-left-er">Recursive</span>
                     <label class="custom-switch">
-                        <input type="checkbox" id="phiSwitch" title="Switch between Recursive and Non-recursive models">
+                        <input type="checkbox" id="b0EstimationModeSwitch" title="Switch B0 estimation mode: Recursive (phi=0) or Non-Recursive (search phi)">
                         <span class="slider"></span>
                     </label>
-                    <span class="phi-label phi-label-right">Non-recursive</span>
+                    <span class="phi-label phi-label-right-er">Non-recursive</span>
                 </div>
-            </div>
-            <div class="control-item new-sample">
-                <button id="newSampleBtn" class="btn w-100 new-sample-btn">New Sample</button>
             </div>
         </div>
     </div>
 </div>
 
-<div id="controls-placeholder"></div>
+<div id="controls-placeholder-er" class="controls-placeholder"></div>
 
 <!-- Explanation Section -->
 <div class="explanation-section mb-4">
@@ -41,6 +39,10 @@
         Our goal is to find the correct rotation \( \phi \) that recovers the true \( B_0 \).
     </p>
 </div>
+
+
+
+
 
 <!-- Matrix Display -->
 <div class="row text-center mb-4">
@@ -59,18 +61,8 @@
 </div>
 
 <!-- Plots Section -->
-<div class="row">
-    <div class="col-lg-6">
-        <div class="plot-container">
-            <h5 class="text-center">Estimated Structural Shocks \( \hat{\epsilon}_t(\phi) \)</h5>
-            <div id="innovations-scatter-plot-er" class="plotly-chart"></div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="plot-container">
-            <h5 class="text-center">Correlation between Estimated Shocks</h5>
-            <p class="text-center small text-muted mb-1">True value of \( \phi \) that yields zero correlation: <strong id="phi-true-display">0.00</strong></p>
-            <div id="correlation-plot-er" class="plotly-chart"></div>
-        </div>
-    </div>
+<div class="plot-wrapper">
+    <div id="innovations-scatter-plot-er" class="plot-container-individual plotly-chart"></div>
+    <div id="correlation-plot-er" class="plot-container-individual plotly-chart"></div>
 </div>
+</section>

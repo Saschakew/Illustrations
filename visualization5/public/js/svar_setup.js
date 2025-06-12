@@ -22,12 +22,7 @@ function initSvarSetup() {
 
     // --- Reactive Plotting Setup ---
     // Plots will now update automatically whenever the central data store changes.
-    const section = document.getElementById('svar-setup');
-    window.SVARData.subscribe('DATA_UPDATED', (event) => {
-        // Defensively check if the section is visible before proceeding.
-        if (section.style.display === 'none' || !document.body.contains(section)) {
-            return; // Do nothing if the section is not visible or detached from the DOM.
-        }
+    window.SVARData.subscribe(window.SVARData.events.DATA_UPDATED, (event) => {
         const data = event.detail;
         console.log('[svar_setup.js] Received DATA_UPDATED event. Updating plots.');
         if (data && data.epsilon_1t && data.u_1t) {
