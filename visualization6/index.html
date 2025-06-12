@@ -8,37 +8,20 @@
 </head>
 <body>
     <div id="loading-overlay">
-        <div class="loading-spinner" aria-hidden="true"></div>
-        <div class="loading-message">
-            Loading SVAR Visualizer
-            <span class="loading-dots">
-                <span class="loading-dot"></span>
-                <span class="loading-dot"></span>
-                <span class="loading-dot"></span>
-            </span>
-        </div>
-        <p style="color:var(--color-background);font-size:0.95em;opacity:0.7;margin-top:0;">Please wait while we prepare your experience...</p>
+        <div class="loading-spinner"></div>
+        <p>Loading, please wait...</p>
     </div>
 
+    <nav id="main-nav" class="main-navigation">
+        <ul>
+            <li><a href="#section-one" class="active-link">Section One</a></li>
+            <li><a href="#section-two">Section Two</a></li>
+            <li><a href="#section-three">Section Three</a></li>
+            <li><a href="#section-four">Section Four</a></li>
+        </ul>
+    </nav>
+
     <main id="main-content" class="container">
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="hero-content">
-                <h1>Welcome to SVAR Visualizer</h1>
-                <p class="hero-subtitle">A modern, interactive tool for exploring Structural VAR models and their insights.</p>
-            </div>
-        </section>
-        <!-- End Hero Section -->
-
-        <nav id="main-nav" class="main-navigation">
-            <ul>
-                <li><a href="#section-one" class="active-link">Section One</a></li>
-                <li><a href="#section-two">Section Two</a></li>
-                <li><a href="#section-three">Section Three</a></li>
-                <li><a href="#section-four">Section Four</a></li>
-            </ul>
-        </nav>
-
         <!-- Section One: Lorem Ipsum -->
         <div id="section-one-placeholder" data-section-src="public/sections/section_one.html" class="content-section-placeholder"></div>
 
