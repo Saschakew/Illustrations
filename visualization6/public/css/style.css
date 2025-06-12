@@ -1,52 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:wght@400;600&display=swap');
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
 
 :root {
-    --color-primary: #007bff; /* Example: Blue */
-    --color-secondary: #6c757d; /* Example: Gray */
-    --color-background: #f8f9fa; /* Light gray background */
-    --color-card-background: #ffffff; /* White for cards */
-    --color-text: #333333;
-    --color-text-light: #f8f9fa;
-    --color-border: #dee2e6;
-    --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-size-base: 1rem;
-    --line-height-base: 1.5;
-    --card-border-radius: 0.5rem;
-    --card-box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    --padding-base: 1rem;
-    --padding-large: 1.5rem;
+    /* Color Palette */
+    --color-obsidian: #222831; /* Primary Background */
+    --color-gunmetal: #393E46; /* Secondary Background, Menu, Cards */
+    --color-turquoise: #00ADB5; /* Primary Accent */
+    --color-rose-taupe: #B83B5E; /* Secondary Accent */
+    --color-platinum: #EEEEEE; /* Primary Text */
+
+    /* Typography */
+    --font-family-headings: 'Montserrat', sans-serif;
+    --font-family-body: 'Open Sans', sans-serif;
+    --font-size-base: 1rem; /* 16px */
+    --line-height-base: 1.6;
+    --line-height-headings: 1.3;
+
+    /* Layout & Spacing */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* Components */
+    --card-border-radius: 8px;
+    --card-box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    --nav-height: 60px;
 }
 
 body {
-    font-family: var(--font-family-sans-serif);
+    font-family: var(--font-family-body);
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
-    color: var(--color-text);
-    background-color: var(--color-background);
+    color: var(--color-platinum);
+    background-color: var(--color-obsidian);
     margin: 0;
-    padding-top: 70px; /* Space for the fixed main navigation */
+    padding-top: var(--nav-height); /* Space for the fixed main navigation */
 }
 
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--padding-large) 0;
+    padding: var(--spacing-lg) 0;
 }
 
 /* Main Navigation */
 .main-navigation {
-    background-color: var(--color-primary);
-    padding: 0.5rem 1rem;
+    background-color: var(--color-gunmetal);
+    height: var(--nav-height);
+    padding: 0 var(--spacing-md);
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     display: flex;
+    align-items: center; /* Vertically align items */
     justify-content: center; /* Center the nav items */
 }
 
@@ -58,39 +73,49 @@ body {
 }
 
 .main-navigation li {
-    margin: 0 var(--padding-base);
+    margin: 0 var(--spacing-md);
 }
 
 .main-navigation a {
-    color: var(--color-text-light);
+    font-family: var(--font-family-headings); /* Using heading font for nav links for a bit more style */
+    color: var(--color-platinum);
     text-decoration: none;
     font-weight: 500;
-    padding: 0.5rem 0;
-    transition: color 0.3s ease;
+    padding: var(--spacing-sm) 0;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    border-bottom: 2px solid transparent; /* Placeholder for active state alignment */
 }
 
 .main-navigation a:hover,
+.main-navigation a:focus {
+    color: var(--color-turquoise);
+    border-bottom-color: transparent; /* Keep hover clean, active state handles border */
+}
+
 .main-navigation a.active-link {
-    color: var(--color-secondary);
-    border-bottom: 2px solid var(--color-secondary);
+    color: var(--color-turquoise);
+    font-weight: 700;
+    border-bottom: 2px solid var(--color-turquoise);
 }
 
 /* Content Sections */
 .content-section {
-    margin-bottom: var(--padding-large);
-    padding: var(--padding-large);
-    background-color: var(--color-card-background);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background-color: var(--color-gunmetal); /* Cards will also use Gunmetal */
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-box-shadow);
-    border: 1px solid var(--color-border);
+    /* border: 1px solid var(--color-border); Removed, using shadow for separation */
 }
 
 .content-section h2 {
+    font-family: var(--font-family-headings);
+    font-weight: 700;
     margin-top: 0;
-    color: var(--color-primary);
-    border-bottom: 2px solid var(--color-border);
-    padding-bottom: 0.5rem;
-    margin-bottom: var(--padding-base);
+    color: var(--color-turquoise);
+    border-bottom: 2px solid var(--color-obsidian); /* Darker border for contrast on Gunmetal */
+    padding-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
 }
 
 /* Controls Area */
@@ -100,31 +125,29 @@ body {
     margin-top: -1px; /* Counteract the height */
 }
 .controls-container {
-    background-color: #f1f3f5; /* Slightly different background for controls */
-    padding: var(--padding-base);
+    background-color: var(--color-gunmetal);
+    padding: var(--spacing-md);
     border-radius: var(--card-border-radius);
-    margin-bottom: var(--padding-base);
-    border: 1px solid #ced4da;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--card-box-shadow);
 }
 
 .controls-container.sticky-menu {
     position: fixed;
     /* top, left, width will be set by JavaScript */
-    background-color: rgba(241, 243, 245, 0.95); /* Semi-transparent sticky */
+    background-color: var(--color-gunmetal); /* Solid Gunmetal for sticky */
     z-index: 900;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: var(--padding-base);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: var(--spacing-md);
     border-radius: var(--card-border-radius);
-    border: 1px solid #ced4da;
     box-sizing: border-box; /* Ensure padding doesn't increase width */
 }
 
 .controls-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--padding-base);
-    margin-bottom: var(--padding-base);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
     align-items: center;
 }
 .controls-row:last-child {
@@ -134,28 +157,39 @@ body {
 .control-item {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--spacing-xs);
 }
 .control-item label {
-    font-size: 0.85rem;
-    color: var(--color-secondary);
+    font-size: 0.875rem; /* 14px */
+    color: var(--color-platinum); /* Lighter text for labels */
+    opacity: 0.8;
 }
 .control-item input[type="number"],
 .control-item input[type="text"],
 .control-item select {
-    padding: 0.375rem 0.75rem;
+    background-color: var(--color-obsidian);
+    color: var(--color-platinum);
+    padding: var(--spacing-sm) var(--spacing-md);
     font-size: 0.9rem;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
+    border: 1px solid var(--color-obsidian); /* Border same as bg, focus will highlight */
+    border-radius: 4px;
+    transition: border-color 0.2s ease;
+}
+.control-item input[type="number"]:focus,
+.control-item input[type="text"]:focus,
+.control-item select:focus {
+    outline: none;
+    border-color: var(--color-turquoise);
 }
 
 .control-item input[type="range"] {
     width: 150px;
+    /* TODO: Style range inputs more thoroughly later */
 }
 .control-item output {
     font-size: 0.9rem;
-    font-weight: bold;
-    color: var(--color-primary);
+    font-weight: 600;
+    color: var(--color-turquoise);
 }
 
 /* Plot Container */
@@ -199,11 +233,12 @@ body {
 /* Footer */
 .footer {
     text-align: center;
-    padding: var(--padding-large) 0;
-    margin-top: var(--padding-large);
-    font-size: 0.9rem;
-    color: var(--color-secondary);
-    border-top: 1px solid var(--color-border);
+    padding: var(--spacing-lg) 0;
+    margin-top: var(--spacing-lg);
+    font-size: 0.875rem; /* 14px */
+    color: var(--color-platinum);
+    opacity: 0.7;
+    border-top: 1px solid var(--color-gunmetal);
 }
 
 /* Utility classes */
@@ -211,49 +246,60 @@ body {
     text-align: center;
 }
 
+/* Buttons */
 .btn {
-    padding: 0.5rem 1rem;
+    font-family: var(--font-family-headings);
+    padding: var(--spacing-sm) var(--spacing-md);
     font-size: 0.9rem;
-    border-radius: 0.25rem;
+    font-weight: 600;
+    border-radius: 4px;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    text-decoration: none; /* For button-styled links */
+    display: inline-block; /* For button-styled links */
 }
 .btn-primary {
-    background-color: var(--color-primary);
-    color: var(--color-text-light);
-    border-color: var(--color-primary);
+    background-color: var(--color-turquoise);
+    color: var(--color-obsidian);
+    border-color: var(--color-turquoise);
 }
-.btn-primary:hover {
-    background-color: #0056b3; /* Darker blue */
-    border-color: #0056b3;
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--color-platinum); /* Lighter Turquoise or alternative */
+    border-color: var(--color-platinum);
+    color: var(--color-obsidian);
+    opacity: 0.9;
 }
+
 .btn-secondary {
-    background-color: var(--color-secondary);
-    color: var(--color-text-light);
-    border-color: var(--color-secondary);
+    background-color: transparent;
+    color: var(--color-turquoise);
+    border-color: var(--color-turquoise);
 }
-.btn-secondary:hover {
-    background-color: #545b62; /* Darker gray */
-    border-color: #545b62;
+.btn-secondary:hover, .btn-secondary:focus {
+    background-color: var(--color-turquoise);
+    color: var(--color-obsidian);
+    border-color: var(--color-turquoise);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     body {
-        padding-top: 60px; /* Adjust for smaller nav */
+        padding-top: var(--nav-height); /* Already dynamic */
     }
     .main-navigation {
-        padding: 0.3rem 0.5rem;
+        padding: 0 var(--spacing-sm); /* Reduced padding for smaller screens */
+        justify-content: space-around; /* Distribute links if they start to wrap, or implement hamburger */
     }
     .main-navigation li {
-        margin: 0 0.5rem;
+        margin: 0 var(--spacing-sm); /* Reduced margin */
     }
     .main-navigation a {
-        font-size: 0.9rem;
+        font-size: 0.85rem; /* Slightly smaller font for nav links */
+        padding: var(--spacing-xs) 0;
     }
     .controls-container.sticky-menu {
-        top: 60px; /* Adjust for smaller nav */
+        top: var(--nav-height); /* Adjust for nav height */
     }
     .controls-row {
         flex-direction: column;
@@ -275,19 +321,20 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+    background-color: rgba(34, 40, 49, 0.95); /* Obsidian with opacity */
     display: flex; /* Visible by default, JS will hide it */
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 2000; /* Ensure it's on top of everything */
-    color: #333;
+    color: var(--color-platinum);
+    font-family: var(--font-family-body);
     font-size: 1.2em;
 }
 
 .loading-spinner {
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid var(--color-primary, #007bff); /* Blue, or fallback */
+    border: 8px solid var(--color-gunmetal); /* Gunmetal for the track */
+    border-top: 8px solid var(--color-turquoise); /* Turquoise for the spinning part */
     border-radius: 50%;
     width: 60px;
     height: 60px;
