@@ -112,6 +112,66 @@ window.SVARCoreFunctions = {
         }
         DebugManager.log('SVAR_SETUP', 'Successfully generated u_1t and u_2t series.');
         return { u_1t, u_2t };
+    },
+
+    /**
+     * Generates the B(phi) matrix.
+     * B(phi) = P * R(phi), where P is the Cholesky decomposition of Cov(u_t),
+     * and R(phi) is the rotation matrix for angle phi.
+     * @param {number[]} u1_t - The first reduced-form shock series.
+     * @param {number[]} u2_t - The second reduced-form shock series.
+     * @param {number} phi - The rotation angle in radians.
+     * @returns {number[][]|null} The 2x2 B(phi) matrix or null on error.
+     */
+    generateBPhi: function(u1_t, u2_t, phi) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to generate B(phi)...', { phi: phi, u1_len: u1_t?.length, u2_len: u2_t?.length });
+
+        if (!window.SVARMathUtil) {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARMathUtil not found. Cannot generate B(phi).');
+            return null;
+        }
+        if (u1_t === null || u1_t === undefined || u2_t === null || u2_t === undefined || u1_t.length === 0 || u2_t.length === 0) {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: u_t series are null, undefined or empty. Cannot generate B(phi).', { u1_t, u2_t });
+            return null;
+        }
+        if (phi === null || phi === undefined) {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Phi is null or undefined. Cannot generate B(phi).', { phi });
+            return null;
+        }
+
+        // Step 1: Compute Covariance Matrix (Sigma_u)
+        const sigmaU = window.SVARMathUtil.calculateCovarianceMatrix(u1_t, u2_t);
+        if (!sigmaU) {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to calculate covariance matrix for B(phi) generation.');
+            return null;
+        }
+        DebugManager.log('SVAR_DATA_PIPELINE', 'B(phi) Step 1: Covariance Matrix Sigma_u =', JSON.stringify(sigmaU));
+
+        // Step 2: Cholesky Decomposition (P)
+        const P = window.SVARMathUtil.choleskyDecomposition(sigmaU);
+        if (!P) {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to compute Cholesky decomposition for B(phi) generation.');
+            return null;
+        }
+        DebugManager.log('SVAR_DATA_PIPELINE', 'B(phi) Step 2: Cholesky Factor P =', JSON.stringify(P));
+
+        // Step 3: Generate Rotation Matrix (R(phi))
+        const R_phi = window.SVARMathUtil.getRotationMatrix(phi);
+        // getRotationMatrix currently doesn't return null for invalid phi, but good to be defensive if it changes.
+        if (!R_phi) { 
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to generate rotation matrix R(phi).');
+            return null;
+        }
+        DebugManager.log('SVAR_DATA_PIPELINE', 'B(phi) Step 3: Rotation Matrix R(phi) =', JSON.stringify(R_phi));
+
+        // Step 4: Construct B(phi) = P * R(phi)
+        const B_phi_matrix = window.SVARMathUtil.matrixMultiply(P, R_phi);
+        if (!B_phi_matrix) {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to multiply P and R(phi) for B(phi) generation.');
+            return null;
+        }
+        DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated B(phi) matrix =', JSON.stringify(B_phi_matrix));
+        return B_phi_matrix;
     }
 };
 

@@ -42,6 +42,9 @@ function regenerateSvarData() {
             window.sharedData.u_1t = u_1t;
             window.sharedData.u_2t = u_2t;
             DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData.');
+
+            // Now that u_t is updated, regenerate B(phi)
+            regenerateBPhi();
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.generateU not found or sharedData.B0 is not available. Cannot generate u_t.');
             window.sharedData.u_1t = [];
@@ -89,10 +92,61 @@ function regenerateReducedFormShocksFromExistingEpsilon() {
         window.sharedData.u_2t = u_2t;
 
         DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData from existing epsilon_t.');
+
+        // Now that u_t is updated, regenerate B(phi)
+        regenerateBPhi();
     } catch (error) {
         DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to regenerate u_t from existing epsilon_t:', error);
         window.sharedData.u_1t = [];
         window.sharedData.u_2t = [];
+    }
+}
+
+/**
+ * Regenerates the B(phi) matrix using current u_t series and phi from sharedData,
+ * then stores it back into sharedData.
+ */
+function regenerateBPhi() {
+    DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate B(phi) and store in sharedData...');
+
+    if (!window.SVARCoreFunctions || typeof window.SVARCoreFunctions.generateBPhi !== 'function') {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.generateBPhi function not found. Cannot regenerate B(phi).');
+        window.sharedData.B_phi = [[1, 0], [0, 1]]; // Reset to default
+        return;
+    }
+
+    if (!window.sharedData || !window.sharedData.u_1t || !window.sharedData.u_2t || window.sharedData.phi === undefined) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: sharedData, u_t series, or phi not available. Cannot regenerate B(phi).');
+        window.sharedData.B_phi = [[1, 0], [0, 1]]; // Reset to default
+        return;
+    }
+
+    if (window.sharedData.u_1t.length === 0 || window.sharedData.u_2t.length === 0) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'WARNING: u_t series are empty. Cannot regenerate B(phi). Setting B_phi to default.');
+        window.sharedData.B_phi = [[1, 0], [0, 1]]; // Reset to default
+        // Potentially log current u_t for debugging if needed
+        // DebugManager.log('SVAR_DATA_PIPELINE', 'Current u_1t:', JSON.stringify(window.sharedData.u_1t));
+        // DebugManager.log('SVAR_DATA_PIPELINE', 'Current u_2t:', JSON.stringify(window.sharedData.u_2t));
+        return;
+    }
+
+    try {
+        const B_phi_matrix = window.SVARCoreFunctions.generateBPhi(
+            window.sharedData.u_1t,
+            window.sharedData.u_2t,
+            window.sharedData.phi
+        );
+
+        if (B_phi_matrix) {
+            window.sharedData.B_phi = B_phi_matrix;
+            DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored B_phi in sharedData:', JSON.stringify(window.sharedData.B_phi));
+        } else {
+            DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: B(phi) generation returned null. Resetting B_phi to default.');
+            window.sharedData.B_phi = [[1, 0], [0, 1]]; // Reset to default on error
+        }
+    } catch (error) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Exception during B(phi) regeneration:', error);
+        window.sharedData.B_phi = [[1, 0], [0, 1]]; // Reset to default on exception
     }
 }
 

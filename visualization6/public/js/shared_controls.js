@@ -127,8 +127,15 @@ function initializePhiSliders() {
             
             if (output) {
                 output.textContent = newPhi.toFixed(2);
+                DebugManager.log('SHARED_CONTROLS', `Phi slider ${slider.id} changed to: ${window.sharedData.phi}`);
+
+                // After phi is updated, regenerate B(phi)
+                if (typeof regenerateBPhi === 'function') {
+                    regenerateBPhi();
+                } else {
+                    DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateBPhi function not found. Cannot regenerate B(phi) on phi change.');
+                }
             }
-            DebugManager.log('SHARED_CONTROLS', 'Phi (sharedData.phi) updated to:', window.sharedData.phi.toFixed(3), '(Slider value:', this.value, ')');
 
             // Synchronize other phi sliders
             phiSliders.forEach(otherSlider => {

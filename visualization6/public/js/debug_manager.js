@@ -9,6 +9,7 @@ const DebugManager = (() => {
         EVENT_HANDLING: false,  // Logs for event listener setup and triggers
         PLOT_RENDERING: false,  // Logs related to Plotly or other plotting libraries
         SVAR_DATA_PIPELINE: true, // Logs for the SVAR data generation pipeline
+        SVAR_MATH: false,          // Logs for SVARMathUtil functions (covariance, cholesky, etc.)
         // Add more categories as needed, e.g.:
         // API_CALLS: false,
         // PERFORMANCE: false,
