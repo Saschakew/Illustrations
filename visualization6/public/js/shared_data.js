@@ -5,12 +5,16 @@ window.sharedData = {
     lambda: 50, // Default value for lambda
     isRecursive: true, // Default mode
     B0: [], // To be initialized by updateB0Mode
+    epsilon_1t: [], // To be populated by SVAR data pipeline
+    epsilon_2t: [], // To be populated by SVAR data pipeline
     // other shared variables can be added here
 };
 
 DebugManager.log('DATA_HANDLING', "Initial sharedData.T:", window.sharedData.T);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.phi:", window.sharedData.phi);
 DebugManager.log('DATA_HANDLING', "Initial sharedData.lambda:", window.sharedData.lambda);
+DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_1t:", window.sharedData.epsilon_1t);
+DebugManager.log('DATA_HANDLING', "Initial sharedData.epsilon_2t:", window.sharedData.epsilon_2t);
 
 // Function to update B0 based on isRecursive and log changes
 window.sharedData.updateB0Mode = function() {

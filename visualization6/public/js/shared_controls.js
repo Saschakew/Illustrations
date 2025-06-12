@@ -36,6 +36,13 @@ function initializeSliders() {
                     });
 
                     DebugManager.log('SHARED_CONTROLS', 'Sample Size T (sharedData.T) updated to:', window.sharedData.T);
+
+                    // Regenerate epsilon_t series with the new T value
+                    if (typeof regenerateSvarData === 'function') {
+                        regenerateSvarData();
+                    } else {
+                        DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateSvarData function not found. Cannot regenerate epsilon_t series on T change.');
+                    }
                 });
             }
         });
@@ -187,8 +194,12 @@ function initializeNewDataButtons() {
         DebugManager.log('SHARED_CONTROLS', `Found New Data button: ${button.id}`);
         // Placeholder for future click event listener
         button.addEventListener('click', function() {
-            DebugManager.log('SHARED_CONTROLS', `Button ${this.id} clicked. Functionality to be implemented.`);
-            // Later, this will trigger new data generation/sampling
+            DebugManager.log('SVAR_DATA_PIPELINE', `New Data button '${this.id}' clicked. Triggering regeneration of epsilon_t series.`);
+            if (typeof regenerateSvarData === 'function') {
+                regenerateSvarData();
+            } else {
+                DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateSvarData function not found. Cannot regenerate epsilon_t series on New Data button click.');
+            }
         });
     });
 

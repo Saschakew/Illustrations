@@ -1,3 +1,45 @@
+// main.js
+
+/**
+ * Regenerates the structural shock series (epsilon_1t, epsilon_2t) based on 
+ * current parameters in sharedData (primarily sharedData.T) and stores them back into sharedData.
+ */
+function regenerateSvarData() {
+    DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate epsilon_t series...');
+
+    if (!window.SVARCoreFunctions || typeof window.SVARCoreFunctions.generateEpsilon !== 'function') {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions or generateEpsilon function not found. Cannot generate epsilon_t.');
+        return;
+    }
+
+    if (!window.sharedData) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: sharedData not found. Cannot access T or store epsilon_t.');
+        return;
+    }
+
+    const T = window.sharedData.T;
+    if (typeof T !== 'number' || T <= 0 || isNaN(T)) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Invalid sample size T in sharedData:', T, '- Epsilon generation skipped.');
+        // Optionally clear or set to empty arrays on error to prevent using stale data
+        window.sharedData.epsilon_1t = [];
+        window.sharedData.epsilon_2t = [];
+        return;
+    }
+
+    try {
+        const { epsilon_1t, epsilon_2t } = window.SVARCoreFunctions.generateEpsilon(T);
+        
+        window.sharedData.epsilon_1t = epsilon_1t;
+        window.sharedData.epsilon_2t = epsilon_2t;
+
+        DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated and stored epsilon_1t (length:', epsilon_1t.length, ') and epsilon_2t (length:', epsilon_2t.length, ') in sharedData.');
+    } catch (error) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to generate epsilon_t:', error);
+        window.sharedData.epsilon_1t = [];
+        window.sharedData.epsilon_2t = [];
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     await loadSections();
     initializeApp();
@@ -176,6 +218,13 @@ function initializeApp() {
     }
 
     // Initialize New Data buttons
+
+    // Regenerate SVAR base data (epsilon_t) after all controls are initialized
+    // and their initial values might have updated sharedData (e.g., sharedData.T).
+    // This ensures epsilon_t is ready before section-specific JS that might use it.
+    DebugManager.log('MAIN_APP', 'Calling initial SVAR data regeneration...');
+    regenerateSvarData();
+
     if (typeof initializeNewDataButtons === 'function') {
         initializeNewDataButtons();
     } else {
