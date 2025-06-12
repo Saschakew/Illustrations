@@ -265,7 +265,7 @@ window.SVARMathUtil = {
             }
             // DebugManager.log(category, 'P_true_inverse:', JSON.parse(JSON.stringify(P_true_inverse)));
 
-            const R_candidate = this.matrixMultiply(B0_matrix, P_true_inverse);
+            const R_candidate = this.matrixMultiply(P_true_inverse, B0_matrix);
             if (!R_candidate) {
                 DebugManager.log(category, 'Error: Failed to calculate R_candidate = B0 * P_true_inverse.');
                 return null;

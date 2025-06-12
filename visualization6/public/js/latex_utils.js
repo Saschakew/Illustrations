@@ -92,6 +92,55 @@
             if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
                 DebugManager.log(category, `Updated B(phi) for ${elementId} with LaTeX: ${bPhiLatex}`);
             }
+        },
+
+        formatPhiToLatex: function(phiValue, phiName, precision = 3) {
+            const category = 'LATEX_UTIL';
+            if (typeof phiValue !== 'number' || Number.isNaN(phiValue)) {
+                if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                    DebugManager.log(category, `Phi value for ${phiName} is invalid or NaN. Provided:`, phiValue);
+                }
+                return `\\( ${phiName} = \\text{N/A} \\)`;
+            }
+            return `\\( ${phiName} = ${phiValue.toFixed(precision)} \\)`;
+        },
+
+        displayPhiEst: function(elementId, phiValue, phiName, precision = 3) {
+            const category = 'LATEX_UPDATE';
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Attempting to display ${phiName} in element: ${elementId}`);
+            }
+            const phiLatex = this.formatPhiToLatex(phiValue, phiName, precision);
+            this.updateLatexDisplay(elementId, phiLatex);
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Updated ${phiName} for ${elementId} with LaTeX: ${phiLatex}`);
+            }
+        },
+
+        displayBEstMatrix: function(elementId, matrix, matrixName, precision = 3) {
+            const category = 'LATEX_UPDATE';
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Attempting to display ${matrixName} matrix in element: ${elementId}`);
+            }
+
+            if (!matrix || !Array.isArray(matrix) || matrix.length !== 2 ||
+                !Array.isArray(matrix[0]) || matrix[0].length !== 2 ||
+                !Array.isArray(matrix[1]) || matrix[1].length !== 2) {
+                
+                if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                    DebugManager.log(category, `${matrixName} is not a valid 2x2 matrix or not available:`, matrix);
+                }
+                // Use formatMatrixToLatex's internal error handling for the string
+                const errorLatex = this.formatMatrixToLatex(matrix, matrixName, precision);
+                this.updateLatexDisplay(elementId, errorLatex);
+                return;
+            }
+
+            const bEstLatex = this.formatMatrixToLatex(matrix, matrixName, precision);
+            this.updateLatexDisplay(elementId, bEstLatex);
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Updated ${matrixName} for ${elementId} with LaTeX: ${bEstLatex}`);
+            }
         }
     };
 
