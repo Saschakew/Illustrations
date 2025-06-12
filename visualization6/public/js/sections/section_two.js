@@ -12,6 +12,17 @@ async function initializeSectionTwo() {
     DebugManager.log('INIT', `Initializing JavaScript for section: section-two`);
     if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
         window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s2_display');
+        // Display estimated phi_rec and B_rec
+        if (window.sharedData && typeof window.sharedData.phi_est_rec !== 'undefined') {
+            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', window.sharedData.phi_est_rec, '\\hat{\\phi}_{rec}');
+        } else {
+            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', NaN, '\\hat{\\phi}_{rec}'); // Show N/A
+        }
+        if (window.sharedData && window.sharedData.B_est_rec) {
+            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', window.sharedData.B_est_rec, '\\hat{B}_{rec}');
+        } else {
+            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', [[NaN, NaN],[NaN, NaN]], '\\hat{B}_{rec}'); // Show N/A
+        }
     } else {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available for initial display in Section Two.');
     }

@@ -403,6 +403,9 @@ window.SVARCoreFunctions = {
             DebugManager.log(category, 'sharedData.phi_est_nG:', sharedData.phi_est_nG);
             DebugManager.log(category, 'sharedData.B_est_nG:', JSON.parse(JSON.stringify(sharedData.B_est_nG)));
 
+            // Calculate and store v weight after B_est_nG is updated
+            this.calculateAndStoreVWeight();
+
         } catch (error) {
             DebugManager.log(category, 'Exception during calculateNonGaussianEstimates:', error);
             sharedData.phi_est_nG = 0;
@@ -525,6 +528,37 @@ window.SVARCoreFunctions = {
             sharedData.phi_est_ridge = 0;
             sharedData.B_est_ridge = [[NaN, NaN], [NaN, NaN]];
         }
+    },
+
+    /**
+     * Calculates and stores the weight v = 1 / (B_est_nG[0][1]^2).
+     * Handles potential numerical issues if B_est_nG[0][1] is close to zero.
+     */
+    calculateAndStoreVWeight: function() {
+        const category = 'SVAR_ESTIMATION';
+        const EPSILON = 1e-8; // Small constant to prevent division by zero
+
+        if (!sharedData.B_est_nG || !sharedData.B_est_nG[0] || typeof sharedData.B_est_nG[0][1] !== 'number') {
+            DebugManager.log(category, 'Error: B_est_nG is not properly defined for calculating v.');
+            sharedData.v = null;
+            return;
+        }
+
+        const b_tmp = sharedData.B_est_nG[0][1];
+        
+        // Ensure b_tmp is not too close to zero to avoid numerical instability
+        const denominator = Math.pow(Math.max(Math.abs(b_tmp), EPSILON), 2);
+        
+        if (denominator === 0) { // Should be caught by Math.max with EPSILON, but as a safeguard
+            DebugManager.log(category, `Warning: Denominator for v is zero (b_tmp = ${b_tmp}). Setting v to a large fallback value.`);
+            sharedData.v = 1 / (EPSILON * EPSILON); // Fallback to a large number
+        } else {
+            sharedData.v = 1 / denominator;
+        }
+
+        DebugManager.log(category, 'Successfully calculated and stored v weight.');
+        DebugManager.log(category, 'B_est_nG[0][1] (b_tmp):', b_tmp);
+        DebugManager.log(category, 'sharedData.v:', sharedData.v);
     }
 };
 

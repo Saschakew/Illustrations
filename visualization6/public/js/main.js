@@ -194,6 +194,16 @@ async function updateDynamicLatexOutputs() {
         // Add other B(phi) display element IDs here if they exist in other sections
     ];
 
+    // Update B0 matrix display in Section One
+    if (window.LatexUtils && typeof window.LatexUtils.displayBEstMatrix === 'function' && window.sharedData) {
+        if (document.getElementById('b0_matrix_s1_display')) {
+            window.LatexUtils.displayBEstMatrix('b0_matrix_s1_display', window.sharedData.B0, 'B_0');
+        }
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBEstMatrix or sharedData not available for B0 display in Section One.');
+    }
+
+    // Update B(phi) matrix displays
     if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
         bPhiElementIds.forEach(id => {
             if (document.getElementById(id)) { // Check if the element exists in the current DOM
@@ -204,13 +214,38 @@ async function updateDynamicLatexOutputs() {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available. Cannot update B(phi) displays.');
     }
 
-    // Add calls to other specific LaTeX update functions here if needed for other dynamic elements
-    // For example:
-    // if (window.LatexUtils && typeof window.LatexUtils.displaySigmaUMatrix === 'function') {
-    //     if (document.getElementById('sigma_u_display_id')) {
-    //         window.LatexUtils.displaySigmaUMatrix('sigma_u_display_id');
-    //     }
-    // }
+    // Update estimated phi and B matrices
+    if (window.LatexUtils && typeof window.LatexUtils.displayPhiEst === 'function' && typeof window.LatexUtils.displayBEstMatrix === 'function' && window.sharedData) {
+        // Section Two: Recursive
+        if (document.getElementById('phi_est_rec_s2_display')) {
+            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', window.sharedData.phi_est_rec, '\\hat{\\phi}_{rec}');
+        }
+        if (document.getElementById('b_est_rec_s2_display')) {
+            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', window.sharedData.B_est_rec, '\\hat{B}_{rec}');
+        }
+
+        // Section Three: Non-Gaussian
+        if (document.getElementById('phi_est_nG_s3_display')) {
+            window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', window.sharedData.phi_est_nG, '\\hat{\\phi}_{nG}');
+        }
+        if (document.getElementById('b_est_nG_s3_display')) {
+            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', window.sharedData.B_est_nG, '\\hat{B}_{nG}');
+        }
+
+        // Section Four: Ridge
+        if (document.getElementById('phi_est_ridge_s4_display')) {
+            window.LatexUtils.displayPhiEst('phi_est_ridge_s4_display', window.sharedData.phi_est_ridge, '\\hat{\\phi}_{ridge}');
+        }
+        if (document.getElementById('b_est_ridge_s4_display')) {
+            window.LatexUtils.displayBEstMatrix('b_est_ridge_s4_display', window.sharedData.B_est_ridge, '\\hat{B}_{ridge}');
+        }
+        // Update v weight display in Section Four
+        if (document.getElementById('v_weight_s4_display')) {
+            window.LatexUtils.displayVWeight('v_weight_s4_display', window.sharedData.v, 'v');
+        }
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'LatexUtils display functions for estimated parameters or sharedData not available.');
+    }
 
     DebugManager.log('LATEX_UPDATE', 'Finished attempting to update dynamic LaTeX outputs.');
 }

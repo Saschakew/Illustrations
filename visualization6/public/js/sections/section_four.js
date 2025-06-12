@@ -134,6 +134,23 @@ async function initializeSectionFour() {
 
     if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
         window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s4_display');
+        // Display estimated phi_ridge and B_ridge
+        if (window.sharedData && typeof window.sharedData.phi_est_ridge !== 'undefined') {
+            window.LatexUtils.displayPhiEst('phi_est_ridge_s4_display', window.sharedData.phi_est_ridge, '\\hat{\\phi}_{ridge}');
+        } else {
+            window.LatexUtils.displayPhiEst('phi_est_ridge_s4_display', NaN, '\\hat{\\phi}_{ridge}');
+        }
+        if (window.sharedData && window.sharedData.B_est_ridge) {
+            window.LatexUtils.displayBEstMatrix('b_est_ridge_s4_display', window.sharedData.B_est_ridge, '\\hat{B}_{ridge}');
+        } else {
+            window.LatexUtils.displayBEstMatrix('b_est_ridge_s4_display', [[NaN, NaN],[NaN, NaN]], '\\hat{B}_{ridge}');
+        }
+        // Display the v weight
+        if (window.sharedData && typeof window.sharedData.v !== 'undefined') {
+            window.LatexUtils.displayVWeight('v_weight_s4_display', window.sharedData.v, 'v');
+        } else {
+            window.LatexUtils.displayVWeight('v_weight_s4_display', null, 'v'); // Show 'Calculating...' or 'N/A'
+        }
     } else {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available for initial display in Section Four.');
     }

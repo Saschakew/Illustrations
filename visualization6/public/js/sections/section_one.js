@@ -47,5 +47,12 @@ async function initializeSectionOne() {
     // Initial plot rendering
     await updateSectionOnePlots();
 
+    // Display initial B0 matrix
+    if (window.LatexUtils && typeof window.LatexUtils.displayBEstMatrix === 'function' && window.sharedData) {
+        window.LatexUtils.displayBEstMatrix('b0_matrix_s1_display', window.sharedData.B0, 'B_0');
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBEstMatrix or sharedData not available for initial B0 display in Section One.');
+    }
+
     DebugManager.log('INIT', `Initialization for section: ${SECTION_ONE_ID} complete.`);
 }

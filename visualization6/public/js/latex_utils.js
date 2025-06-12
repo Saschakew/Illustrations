@@ -141,6 +141,36 @@
             if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
                 DebugManager.log(category, `Updated ${matrixName} for ${elementId} with LaTeX: ${bEstLatex}`);
             }
+        },
+
+        formatVToLatex: function(vValue, vName = 'v', precision = 3) {
+            const category = 'LATEX_UTIL';
+            if (typeof vValue !== 'number' || Number.isNaN(vValue)) {
+                if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                    DebugManager.log(category, `Value for ${vName} is invalid or NaN. Provided:`, vValue);
+                }
+                return `\( ${vName} = \text{N/A} \)`;
+            }
+            return `\( ${vName} = ${vValue.toFixed(precision)} \)`;
+        },
+
+        displayVWeight: function(elementId, vValue, vName = 'v', precision = 3) {
+            const category = 'LATEX_UPDATE';
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Attempting to display ${vName} in element: ${elementId}`);
+            }
+            
+            let vLatex;
+            if (vValue === null || typeof vValue === 'undefined') {
+                 vLatex = `\( ${vName} = \text{Calculating...} \)`;
+            } else {
+                vLatex = this.formatVToLatex(vValue, vName, precision);
+            }
+
+            this.updateLatexDisplay(elementId, vLatex);
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Updated ${vName} for ${elementId} with LaTeX: ${vLatex}`);
+            }
         }
     };
 

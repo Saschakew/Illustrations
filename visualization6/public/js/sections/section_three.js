@@ -13,6 +13,17 @@ async function initializeSectionThree() {
     DebugManager.log('INIT', `Initializing JavaScript for section: ${SECTION_THREE_ID}`);
     if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
         window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s3_display');
+        // Display estimated phi_nG and B_nG
+        if (window.sharedData && typeof window.sharedData.phi_est_nG !== 'undefined') {
+            window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', window.sharedData.phi_est_nG, '\\hat{\\phi}_{nG}');
+        } else {
+            window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', NaN, '\\hat{\\phi}_{nG}');
+        }
+        if (window.sharedData && window.sharedData.B_est_nG) {
+            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', window.sharedData.B_est_nG, '\\hat{B}_{nG}');
+        } else {
+            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', [[NaN, NaN],[NaN, NaN]], '\\hat{B}_{nG}');
+        }
     } else {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available for initial display in Section Three.');
     }
