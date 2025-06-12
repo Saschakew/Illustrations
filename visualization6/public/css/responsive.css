@@ -1,0 +1,46 @@
+/* RESPONSIVE STYLES - Mobile First */
+
+/* Tablet and larger */
+@media (max-width: 992px) {
+    .plot-area {
+        /* Stack plots on top of each other */
+        flex-basis: 100%;
+    }
+}
+
+/* Mobile devices */
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px; /* Adjust for smaller nav */
+    }
+
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.3rem; }
+
+    .main-navigation {
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .main-navigation li {
+        margin: 0 var(--spacing-sm);
+    }
+
+    .main-navigation a {
+        font-size: 0.9rem;
+    }
+
+    .controls-container.sticky-menu {
+        top: 60px; /* Adjust for smaller nav */
+    }
+
+    .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-md);
+    }
+
+    .control-item input[type="range"] {
+        width: 100%;
+    }
+}

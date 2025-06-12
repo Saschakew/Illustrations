@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap');
+
+:root {
+    /* Color Palette */
+    --color-background: #FFFFFF;
+    --color-section-background: #EEEEEE;
+    --color-primary: #00ADB5;
+    --color-text: #222831;
+    --color-accent: #ff7f0e;
+    --color-white: #FFFFFF;
+    
+    /* Typography */
+    --font-family-body: 'Lato', sans-serif;
+    --font-family-heading: 'Montserrat', sans-serif;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* Borders */
+    --border-radius: 8px;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family-body);
+    font-size: 1rem; /* Base size */
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-background-dark);
+    margin: 0;
+    padding-top: 70px; /* Space for fixed nav */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading);
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-primary);
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-accent);
+}

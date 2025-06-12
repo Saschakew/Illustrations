@@ -1,131 +1,69 @@
 # SVAR Visualizer Style Guide
 
-## 1. Introduction
+This guide outlines the design system and styling conventions for the SVAR Visualizer project. The goal is to create a clean, modern, minimalistic, and mobile-responsive interface.
 
-This style guide outlines the visual design principles for the SVAR Visualizer project. The goal is to create a clean, minimalistic, modern, and professional user interface that prioritizes readability, usability, and mobile-first responsiveness.
+## 1. Color Palette
 
-## 2. Color Palette
+The color palette provides a consistent and visually appealing look.
 
-The color palette is designed for a dark theme, offering clarity and reducing eye strain.
+- **Dark Background (`--color-background-dark`):** `#222831` (Very dark, almost black blue. For primary backgrounds.)
+- **Light Background / Card Color (`--color-background-light`):** `#393E46` (Dark grey. For cards, containers, and secondary backgrounds.)
+- **Primary Accent (`--color-primary`):** `#00ADB5` (A vibrant teal. For interactive elements like buttons, links, and highlights.)
+- **Secondary Accent / Warning (`--color-accent`):** `#B83B5E` (A muted magenta/rose. For warnings or secondary call-to-actions.)
+- **Text & Borders (`--color-text`):** `#EEEEEE` (Off-white. For all primary text, labels, and borders to ensure high contrast against dark backgrounds.)
 
-*   **Obsidian (`#222831`)**: Primary background color for the entire application.
-*   **Gunmetal (`#393E46`)**: Secondary background color for containers like cards, modals, sidebars, and the main navigation menu.
-*   **Turquoise (`#00ADB5`)**: Primary accent color. Used for interactive elements (buttons, links, active states, highlights) and calls to action.
-*   **Rose Taupe (`#B83B5E`)**: Secondary accent color. Used sparingly for specific highlights, warnings, or destructive actions to draw attention.
-*   **Platinum (`#EEEEEE`)**: Primary text color for content on dark backgrounds. Also used for icons.
+## 2. Typography
 
-## 3. Typography
+We will use fonts from Google Fonts for a clean and modern look.
 
-Clear and legible typography is crucial for a good user experience.
+- **Primary Font:** `Lato` (For body text, labels, and paragraphs. It's clean and highly readable.)
+- **Heading Font:** `Montserrat` (For all headings (`h1`, `h2`, `h3`). It's a modern, geometric sans-serif that pairs well with Lato.)
 
-*   **Font Families:**
-    *   Headings: 'Montserrat', sans-serif (Import from Google Fonts)
-    *   Body Text: 'Open Sans', sans-serif (Import from Google Fonts)
-*   **Font Weights:**
-    *   Headings: Bold (700), Medium (500)
-    *   Body: Regular (400), Semibold (600)
-*   **Font Sizes (Base: 16px):**
-    *   `h1`: 2.5rem (40px)
-    *   `h2`: 2rem (32px)
-    *   `h3`: 1.75rem (28px)
-    *   `h4`: 1.5rem (24px)
-    *   `p` (paragraph): 1rem (16px)
-    *   Small text: 0.875rem (14px)
-*   **Line Height:**
-    *   Body text: 1.6
-    *   Headings: 1.3
-*   **Text Color:**
-    *   Primary: `Platinum (#EEEEEE)` on `Obsidian` or `Gunmetal` backgrounds.
-    *   Links: `Turquoise (#00ADB5)` for unvisited, `Platinum (#EEEEEE)` for visited (or maintain Turquoise).
+### Font Sizing (Mobile First)
 
-## 4. Layout & Spacing
+- `h1`: `2rem`
+- `h2`: `1.75rem`
+- `h3`: `1.5rem`
+- `p` / body: `1rem` (base size)
+- labels / small text: `0.875rem`
 
-A consistent layout and spacing system improves visual harmony.
+Font sizes will be responsive and may be adjusted slightly for larger screens using media queries.
 
-*   **Grid System:** Utilize CSS Flexbox and Grid for flexible and responsive layouts.
-*   **Spacing Unit:** Base unit of `8px`. Use multiples for margins and paddings (e.g., `8px, 16px, 24px, 32px`).
-    *   `xs`: 4px
-    *   `sm`: 8px
-    *   `md`: 16px
-    *   `lg`: 24px
-    *   `xl`: 32px
-*   **Containers/Cards:**
-    *   Background: `Gunmetal (#393E46)`
-    *   Text: `Platinum (#EEEEEE)`
-    *   Padding: `md` (16px) or `lg` (24px)
-    *   Border Radius: `4px` or `8px` for a softer look.
-    *   Shadows: Subtle `box-shadow` for depth, e.g., `0 2px 10px rgba(0, 0, 0, 0.2)`.
+## 3. Layout & Spacing
 
-## 5. Interactive Elements
+- **Grid System:** We will use CSS Flexbox and Grid for layout to ensure responsiveness and alignment.
+- **Main Layout:** A single-column layout for mobile, expanding to a more complex grid on larger screens.
+- **Spacing:** A consistent spacing scale based on `rem` units will be used for margins and padding (e.g., `0.5rem`, `1rem`, `1.5rem`, `2rem`). This ensures visual rhythm.
+- **Containers:** Content sections will be wrapped in "cards" with the `--color-background-light` background, rounded corners, and consistent padding.
 
-*   **Buttons:**
-    *   Primary:
-        *   Background: `Turquoise (#00ADB5)`
-        *   Text: `Obsidian (#222831)` or `Platinum (#EEEEEE)` if contrast is better.
-        *   Padding: `sm` top/bottom, `md` left/right (e.g., 8px 16px).
-        *   Border Radius: `4px`.
-        *   Hover/Focus: Slightly darker `Turquoise` or subtle scale/shadow effect.
-    *   Secondary/Outline:
-        *   Background: Transparent or `Gunmetal (#393E46)`.
-        *   Text: `Turquoise (#00ADB5)`.
-        *   Border: `1px solid #00ADB5`.
-        *   Hover/Focus: Background `Turquoise` (text `Obsidian`), or border/text color intensifies.
-*   **Sliders:**
-    *   Track: Darker shade of `Gunmetal (#393E46)` or `Obsidian (#222831)`.
-    *   Thumb: `Turquoise (#00ADB5)`.
-    *   Value Display: `Platinum (#EEEEEE)`.
-*   **Switches/Toggles:**
-    *   Inactive Background: `Obsidian (#222831)` or darker `Gunmetal`.
-    *   Active Background: `Turquoise (#00ADB5)`.
-    *   Thumb: `Platinum (#EEEEEE)`.
-*   **Input Fields:**
-    *   Background: `Obsidian (#222831)` or a slightly darker shade of `Gunmetal (#393E46)`.
-    *   Text: `Platinum (#EEEEEE)`.
-    *   Border: `1px solid #393E46` (or a slightly lighter shade for visibility).
-    *   Focus State: Border color `Turquoise (#00ADB5)`.
-    *   Padding: `sm` (8px).
-    *   Border Radius: `4px`.
+## 4. Component Styles
 
-## 6. Navigation Menu (Top Sticky Bar)
+- **Buttons:**
+  - **Primary:** Solid `--color-primary` background, `--color-text` text. Subtle box-shadow on hover.
+  - **Secondary:** Outlined with `--color-primary`, transparent background.
+- **Sliders:** Custom-styled sliders to match the color palette. The track will be `--color-background-light` and the thumb will be `--color-primary`.
+- **Switches/Toggles:** Custom-styled to match the primary accent color.
+- **Cards:** As described in Layout, with `border-radius: 8px;` and `padding: 1.5rem;`.
 
-*   **Background:** `Gunmetal (#393E46)`.
-*   **Height:** Consistent height (e.g., 60px or 70px).
-*   **Text (Links):** `Platinum (#EEEEEE)`.
-*   **Link Hover/Focus:** Text color `Turquoise (#00ADB5)` or a subtle background highlight on the link.
-*   **Active Link:** Text color `Turquoise (#00ADB5)` and/or a bottom border in `Turquoise (#00ADB5)`.
-*   **Shadow:** Subtle `box-shadow` to distinguish from page content when scrolled, e.g., `0 2px 5px rgba(0,0,0,0.2)`.
-*   **Mobile (Hamburger Menu):**
-    *   Icon: `Platinum (#EEEEEE)`.
-    *   Dropdown/Off-canvas Background: `Gunmetal (#393E46)`.
-    *   Links: Same as desktop, stacked vertically.
+## 5. CSS Structure & Methodology
 
-## 7. Plots & Visualizations
+To avoid a single, monolithic `style.css` file, we will adopt a more modular and organized structure.
 
-*   **Colors:** Utilize the accent colors (`Turquoise`, `Rose Taupe`) strategically for data series. Ensure good contrast against `Gunmetal` or `Obsidian` backgrounds if plots are within cards.
-*   **Axes/Labels/Legends:** `Platinum (#EEEEEE)`.
-*   **Gridlines:** A very subtle, darker shade of `Gunmetal (#393E46)` or a highly transparent `Platinum (#EEEEEE)`.
+1.  **`style.css` (Main/Entry Point):** This file will import all other CSS files. It will also contain the root definitions for CSS variables (colors, fonts).
+2.  **`base.css`:** Contains global styles, resets (like `box-sizing: border-box`), typography rules for `body`, `h1`, `p`, etc., and basic link styling.
+3.  **`layout.css`:** Styles for major page containers, such as the header, main content area, sections, and footer. Defines the primary grid or flexbox containers.
+4.  **`components.css`:** Contains styles for all reusable UI components: buttons, sliders, cards, forms, toggles, etc. Each component will have its own clear section.
+5.  **`mobile.css`:** This file will be renamed to `responsive.css` and will contain all `@media` queries. We will follow a mobile-first approach, meaning the default styles in the other files are for mobile, and this file adds rules for larger screens.
 
-## 8. Mobile Responsiveness
+### Implementation Plan:
 
-*   **Strategy:** Design mobile-first or ensure all components adapt gracefully to smaller screens.
-*   **Breakpoints (Example):**
-    *   Small (sm): up to 640px
-    *   Medium (md): up to 768px
-    *   Large (lg): up to 1024px
-    *   Extra Large (xl): 1280px and above
-*   **Key Adaptations:**
-    *   Navigation: Hamburger menu.
-    *   Layouts: Single column for content where appropriate.
-    *   Touch Targets: Ensure buttons and interactive elements are large enough.
-    *   Font Scaling: Use `rem` units for scalability.
-
-## 9. Icons
-
-*   **Source:** Prefer SVG icons for scalability and style control. Consider libraries like Font Awesome (SVG version), Material Icons, or custom SVGs.
-*   **Color:** `Platinum (#EEEEEE)` for general use, `Turquoise (#00ADB5)` for interactive or highlighted icons.
-
-## 10. General Principles
-
-*   **Consistency:** Apply styles consistently across all sections and components.
-*   **Simplicity:** Avoid clutter. Every element should serve a purpose.
-*   **Accessibility (A11y):** Pay attention to color contrast, keyboard navigation, and semantic HTML.
+1.  **Create `guide_style.md`:** (This file).
+2.  **Create new CSS files:** `base.css`, `layout.css`, `components.css`.
+3.  **Rename `mobile.css` to `responsive.css`**.
+4.  **Refactor `style.css`:**
+    - Move all root variables (`:root`), resets, and base typography to `base.css`.
+    - Move layout-specific styles to `layout.css`.
+    - Move component-specific styles (buttons, sliders) to `components.css`.
+    - Move media queries to `responsive.css`.
+    - Update `style.css` to use `@import` to include the new files in the correct order (`base`, `layout`, `components`, `responsive`).
+5.  **Update `index.html`:** Ensure the link to `style.css` remains, as it will now act as the entry point for all other stylesheets.

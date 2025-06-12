@@ -415,7 +415,15 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    if (loadingOverlay) loadingOverlay.style.display = 'none'; // Hide loading screen
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('fade-out');
+        loadingOverlay.addEventListener('transitionend', function handler(e) {
+            if (e.propertyName === 'opacity') {
+                loadingOverlay.style.display = 'none';
+                loadingOverlay.removeEventListener('transitionend', handler);
+            }
+        });
+    }
 });
 
 async function loadSections() {
