@@ -49,10 +49,11 @@ window.PlotUtils = {
      * @param {string} title - The title of the plot.
      * @param {string} [xLabel=''] - The label for the x-axis.
      * @param {string} [yLabel=''] - The label for the y-axis.
-     * @param {number} [verticalLineX] - The x-coordinate of a vertical line to draw on the plot.
+     * @param {number} [verticalLineX] - The x-coordinate of a vertical line to draw on the plot (e.g., current phi slider value).
      * @param {number[]} [yAxisRange] - Optional. An array [min, max] to set a fixed y-axis range.
+     * @param {number} [phi0LineValue] - Optional. The x-coordinate for a second vertical line (e.g., true phi_0).
      */
-    createOrUpdateLossPlot: function(elementId, xData, yData, title, xLabel, yLabel, verticalLineX, yAxisRange) {
+    createOrUpdateLossPlot: function(elementId, xData, yData, title, xLabel, yLabel, verticalLineX, yAxisRange, phi0LineValue) {
         const plotData = [{
             x: xData,
             y: yData,
@@ -84,15 +85,28 @@ window.PlotUtils = {
             layout.yaxis.autorange = false;
         }
 
-        if (verticalLineX !== undefined && verticalLineX !== null && yData && yData.length > 0) {
-            let yMinForLine = Math.min(...yData);
-            let yMaxForLine = Math.max(...yData);
-
-            if (layout.yaxis && layout.yaxis.range) { // If fixed y-axis range is set, use it for the line
+        // Determine y-span for vertical lines, respecting fixed yAxisRange if set
+        let yMinForLine, yMaxForLine;
+        if (yData && yData.length > 0) {
+            if (layout.yaxis && layout.yaxis.range) { // If fixed y-axis range is set
                 yMinForLine = layout.yaxis.range[0];
                 yMaxForLine = layout.yaxis.range[1];
+            } else {
+                yMinForLine = Math.min(...yData);
+                yMaxForLine = Math.max(...yData);
             }
+        } else {
+            // Fallback if yData is empty or not provided, though lines might not be meaningful
+            yMinForLine = 0;
+            yMaxForLine = 1; // Default or consider layout.yaxis.range if available
+            if (layout.yaxis && layout.yaxis.range) {
+                 yMinForLine = layout.yaxis.range[0];
+                 yMaxForLine = layout.yaxis.range[1];
+            }
+        }
 
+        // Add a vertical line for the primary phi value (e.g., slider)
+        if (verticalLineX !== undefined && verticalLineX !== null && yData && yData.length > 0) {
             layout.shapes.push({
                 type: 'line',
                 x0: verticalLineX,
@@ -100,9 +114,26 @@ window.PlotUtils = {
                 y0: yMinForLine,
                 y1: yMaxForLine,
                 line: {
-                    color: 'red',
+                    color: 'red', // For the primary phi value (e.g., slider)
                     width: 2,
                     dash: 'dash'
+                }
+            });
+        }
+
+        // Add a second vertical line for phi_0 if provided
+        if (phi0LineValue !== undefined && phi0LineValue !== null && yData && yData.length > 0) {
+            // yMinForLine and yMaxForLine are already calculated considering yAxisRange
+            layout.shapes.push({
+                type: 'line',
+                x0: phi0LineValue,
+                x1: phi0LineValue,
+                y0: yMinForLine, // Uses the same y-span as the first line
+                y1: yMaxForLine,
+                line: {
+                    color: 'blue', // Different color for phi_0
+                    width: 2,
+                    dash: 'dot' // Different dash style for phi_0
                 }
             });
         }

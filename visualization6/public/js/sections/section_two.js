@@ -65,8 +65,9 @@ async function updateSectionTwoPlots() {
             'Loss Function L(φ) = mean(e₁_t * e₂_t)²',
             'φ (radians)',
             'Loss Value',
-            phi, // Pass the current phi to draw a vertical line
-            [0, 1] // yAxisRange: [min, max]
+            phi,    // Current phi from slider (verticalLineX)
+            [0, 1], // yAxisRange: [min, max]
+            window.sharedData.phi_0 // True phi_0 (phi0LineValue)
         );
     }
 }
