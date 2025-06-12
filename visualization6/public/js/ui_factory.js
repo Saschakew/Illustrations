@@ -9,7 +9,7 @@ window.uiFactory = {
         return `
             <div class="control-item">
                 <label for="${sliderId}">${label}</label>
-                <input type="range" id="${sliderId}" name="${sliderId}" min="100" max="2000" value="${defaultValue}" step="50" class="slider t-slider">
+                <input type="range" id="${sliderId}" name="${sliderId}" min="100" max="2000" value="${defaultValue}" step="10" class="slider t-slider">
                 <output for="${sliderId}" id="${outputId}">${defaultValue}</output>
             </div>
         `;
