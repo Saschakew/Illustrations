@@ -11,6 +11,11 @@ window.sectionThree = {
  */
 async function initializeSectionThree() {
     DebugManager.log('INIT', `Initializing JavaScript for section: ${SECTION_THREE_ID}`);
+    if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
+        window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s3_display');
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available for initial display in Section Three.');
+    }
     await updateSectionThreePlots();
     DebugManager.log('INIT', `Async initialization for section: ${SECTION_THREE_ID} complete.`);
 }

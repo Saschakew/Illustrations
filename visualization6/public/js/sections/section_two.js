@@ -10,6 +10,11 @@ window.sectionTwo = {
  */
 async function initializeSectionTwo() {
     DebugManager.log('INIT', `Initializing JavaScript for section: section-two`);
+    if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
+        window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s2_display');
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available for initial display in Section Two.');
+    }
     await updateSectionTwoPlots();
 }
 

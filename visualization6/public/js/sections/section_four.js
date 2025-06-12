@@ -132,6 +132,12 @@ async function initializeSectionFour() {
         updatePlots: updateSectionFourPlots
     };
 
+    if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
+        window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s4_display');
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available for initial display in Section Four.');
+    }
+
     // Initial plot rendering
     await updateSectionFourPlots();
 

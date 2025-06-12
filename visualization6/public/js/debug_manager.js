@@ -10,6 +10,8 @@ const DebugManager = (() => {
         PLOT_RENDERING: true,  // Logs related to Plotly or other plotting libraries
         SVAR_DATA_PIPELINE: true, // Logs for the SVAR data generation pipeline
         SVAR_MATH: false,          // Logs for SVARMathUtil functions (covariance, cholesky, etc.)
+        LATEX_UPDATE: false,       // Logs for high-level LaTeX update operations
+        LATEX_UTIL: false,         // Logs for low-level LatexUtils functions
         // Add more categories as needed, e.g.:
         // API_CALLS: false,
         // PERFORMANCE: false,

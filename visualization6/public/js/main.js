@@ -180,6 +180,42 @@ async function regenerateReducedFormShocksFromExistingEpsilon() {
  * Regenerates the B(phi) matrix using current u_t series and phi from sharedData,
  * then stores it back into sharedData.
  */
+/**
+ * Asynchronously updates all registered dynamic LaTeX displays on the page.
+ */
+async function updateDynamicLatexOutputs() {
+    DebugManager.log('LATEX_UPDATE', 'Attempting to update dynamic LaTeX outputs.');
+
+    // Define a list of element IDs that need B(phi) updates
+    const bPhiElementIds = [
+        'b_phi_matrix_s2_display',
+        'b_phi_matrix_s3_display',
+        'b_phi_matrix_s4_display'
+        // Add other B(phi) display element IDs here if they exist in other sections
+    ];
+
+    if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
+        bPhiElementIds.forEach(id => {
+            if (document.getElementById(id)) { // Check if the element exists in the current DOM
+                window.LatexUtils.displayBPhiMatrix(id);
+            }
+        });
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available. Cannot update B(phi) displays.');
+    }
+
+    // Add calls to other specific LaTeX update functions here if needed for other dynamic elements
+    // For example:
+    // if (window.LatexUtils && typeof window.LatexUtils.displaySigmaUMatrix === 'function') {
+    //     if (document.getElementById('sigma_u_display_id')) {
+    //         window.LatexUtils.displaySigmaUMatrix('sigma_u_display_id');
+    //     }
+    // }
+
+    DebugManager.log('LATEX_UPDATE', 'Finished attempting to update dynamic LaTeX outputs.');
+}
+
+
 async function regenerateBPhi() {
     DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate B(phi) and store in sharedData...');
 
@@ -213,10 +249,13 @@ async function regenerateBPhi() {
 
         if (B_phi_matrix) {
             window.sharedData.B_phi = B_phi_matrix;
-            DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored B_phi in sharedData:', JSON.stringify(window.sharedData.B_phi));
+            DebugManager.log('SVAR_DATA_PIPELINE', 'B(phi) regeneration complete. B_phi stored in sharedData:', JSON.stringify(window.sharedData.B_phi));
 
             // After B_phi is updated, regenerate innovations e_t
             await regenerateInnovations();
+            
+            await updateDynamicLatexOutputs(); // Update LaTeX displays for B(phi)
+            await updateAllPlots(); // Update plots as B(phi) might affect them indirectly or directly
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: B(phi) generation returned null. Resetting B_phi to default.');
             window.sharedData.B_phi = [[1,0],[0,1]]; // Reset B_phi on error
@@ -542,4 +581,15 @@ async function initializeApp() {
         DebugManager.log('MAIN_APP', 'WARNING: initializeSectionFour function not found. Make sure section_four.js is loaded.');
     }
     DebugManager.log('MAIN_APP', 'All initializations complete.');
+
+    // After all initializations and section-specific JS, typeset the whole document for static LaTeX.
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        DebugManager.log('LATEX_UPDATE', 'Attempting global MathJax typesetting for static content.');
+        window.MathJax.typesetPromise().catch((err) => {
+            console.error('Global MathJax typesetting error:', err);
+            DebugManager.log('LATEX_UPDATE', 'Global MathJax typesetting error:', err);
+        });
+    } else {
+        DebugManager.log('LATEX_UPDATE', 'MathJax.typesetPromise not available for global typesetting.');
+    }
 }
