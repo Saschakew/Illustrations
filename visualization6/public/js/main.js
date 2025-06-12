@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 async function loadSections() {
-    console.log('Loading sections...');
+    DebugManager.log('MAIN_APP', 'Loading sections...');
     const placeholders = document.querySelectorAll('div[data-section-src]');
     const fetchPromises = [];
 
@@ -25,12 +25,12 @@ async function loadSections() {
                     if (tempDiv.firstChild && placeholder.parentNode) {
                         placeholder.parentNode.replaceChild(tempDiv.firstChild, placeholder);
                     } else {
-                        console.error('Empty or invalid section content loaded from:', src, tempDiv.innerHTML);
+                        DebugManager.log('MAIN_APP', 'ERROR: Empty or invalid section content loaded from:', src, tempDiv.innerHTML);
                         placeholder.innerHTML = '<p>Error: Could not load section content properly. Ensure the fetched HTML has a single root element (e.g., a <section> tag).</p>';
                     }
                 })
                 .catch(error => {
-                    console.error('Error loading section:', src, error);
+                    DebugManager.log('MAIN_APP', 'ERROR: Error loading section:', src, error);
                     placeholder.innerHTML = `<p>Error loading content from ${src}. Check console for details.</p>`;
                 });
             fetchPromises.push(promise);
@@ -39,19 +39,58 @@ async function loadSections() {
 
     try {
         await Promise.all(fetchPromises);
-        console.log('All sections loaded successfully.');
+        DebugManager.log('MAIN_APP', 'All sections loaded successfully.');
     } catch (error) {
-        console.error('One or more sections failed to load:', error);
+        DebugManager.log('MAIN_APP', 'ERROR: One or more sections failed to load:', error);
     }
 }
 
 function initializeApp() {
-    console.log('Initializing app features...');
+    DebugManager.log('MAIN_APP', 'Initializing app features...');
+
+    // --- Dynamically create controls from placeholders ---
+    DebugManager.log('MAIN_APP', 'Processing UI control placeholders...');
+    document.querySelectorAll('[data-control-type]').forEach(placeholder => {
+        const type = placeholder.dataset.controlType;
+        const id = placeholder.dataset.controlId; // Essential for unique elements
+        let controlHtml = '';
+
+        if (type === 't-slider' && window.uiFactory && typeof window.uiFactory.createTSlider === 'function') {
+            // Pass the label from data-attribute if present, otherwise factory uses default
+            const label = placeholder.dataset.controlLabel; 
+            controlHtml = window.uiFactory.createTSlider(id, label); 
+        } else if (type === 'mode-switch' && window.uiFactory && typeof window.uiFactory.createModeSwitch === 'function') {
+            const label = placeholder.dataset.controlLabel; // Allow custom label via data-attribute
+            controlHtml = window.uiFactory.createModeSwitch(id, label);
+        } else if (type === 'phi-slider' && window.uiFactory && typeof window.uiFactory.createPhiSlider === 'function') {
+            controlHtml = window.uiFactory.createPhiSlider(id);
+        } else if (type === 'lambda-slider' && window.uiFactory && typeof window.uiFactory.createLambdaSlider === 'function') {
+            controlHtml = window.uiFactory.createLambdaSlider(id);
+        } else if (type === 'new-data-button' && window.uiFactory && typeof window.uiFactory.createNewDataButton === 'function') {
+            controlHtml = window.uiFactory.createNewDataButton(id);
+        }
+        // else if (type === 'button' && window.uiFactory && typeof window.uiFactory.createButton === 'function') {
+        //     const text = placeholder.dataset.buttonText || 'Button';
+        //     const classes = placeholder.dataset.buttonClasses || '';
+        //     controlHtml = window.uiFactory.createButton(id, text, classes);
+        // }
+        // ... other control types can be added here
+        
+        if (controlHtml) {
+            // Replace the placeholder div itself with the new control's HTML
+            placeholder.outerHTML = controlHtml; 
+            DebugManager.log('MAIN_APP', `Created ${type} with id '${id}'.`);
+        } else {
+            DebugManager.log('MAIN_APP', `WARNING: Could not create control of type: '${type}' with id: '${id}'. Check ui_factory.js and placeholder attributes.`);
+        }
+    });
+    DebugManager.log('MAIN_APP', 'Finished processing UI control placeholders.');
+    // --- End of dynamic control creation ---
 
     const navLinks = document.querySelectorAll('.main-navigation a');
     const mainNavElement = document.getElementById('main-nav');
     
-    // Smooth scrolling for navigation links
+    DebugManager.log('MAIN_APP', 'Smooth scrolling initialized for nav links.');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
@@ -105,40 +144,68 @@ function initializeApp() {
     if (typeof initializeSliders === 'function') {
         initializeSliders();
     } else {
-        console.error('initializeSliders function not found. Make sure shared_controls.js is loaded.');
+        DebugManager.log('MAIN_APP', 'ERROR: initializeSliders function not found. Make sure shared_controls.js is loaded.');
     }
 
     // Initialize sticky menus
     if (typeof initializeStickyMenus === 'function') {
         initializeStickyMenus();
     } else {
-        console.error('initializeStickyMenus function not found. Make sure sticky_menu.js is loaded.');
+        DebugManager.log('MAIN_APP', 'ERROR: initializeStickyMenus function not found. Make sure sticky_menu.js is loaded.');
+    }
+
+    // Initialize mode switches
+    if (typeof initializeModeSwitches === 'function') {
+        initializeModeSwitches(); // Initialize all mode switches
+    } else {
+        DebugManager.log('MAIN_APP', 'ERROR: initializeModeSwitches function not found. Make sure shared_controls.js is loaded.');
+    }
+
+    // Initialize phi sliders
+    if (typeof initializePhiSliders === 'function') {
+        initializePhiSliders(); // Initialize all phi sliders
+    } else {
+        DebugManager.log('MAIN_APP', 'ERROR: initializePhiSliders function not found. Make sure shared_controls.js is loaded.');
+    }
+
+    // Initialize lambda sliders
+    if (typeof initializeLambdaSliders === 'function') {
+        initializeLambdaSliders();
+    } else {
+        DebugManager.log('MAIN_APP', 'ERROR: initializeLambdaSliders function not found. Make sure shared_controls.js is loaded.');
+    }
+
+    // Initialize New Data buttons
+    if (typeof initializeNewDataButtons === 'function') {
+        initializeNewDataButtons();
+    } else {
+        DebugManager.log('MAIN_APP', 'ERROR: initializeNewDataButtons function not found. Make sure shared_controls.js is loaded.');
     }
 
     // Initialize section-specific JavaScript
-    console.log('Initializing section-specific JavaScript...');
+    DebugManager.log('MAIN_APP', 'Initializing section-specific JavaScript...');
     if (typeof initializeSectionOne === 'function' && document.getElementById('section-one')) {
         initializeSectionOne();
     } else if (typeof initializeSectionOne !== 'function') {
-        console.warn('initializeSectionOne function not found. Make sure section_one.js is loaded.');
+        DebugManager.log('MAIN_APP', 'WARNING: initializeSectionOne function not found. Make sure section_one.js is loaded.');
     }
 
     if (typeof initializeSectionTwo === 'function' && document.getElementById('section-two')) {
         initializeSectionTwo();
     } else if (typeof initializeSectionTwo !== 'function') {
-        console.warn('initializeSectionTwo function not found. Make sure section_two.js is loaded.');
+        DebugManager.log('MAIN_APP', 'WARNING: initializeSectionTwo function not found. Make sure section_two.js is loaded.');
     }
 
     if (typeof initializeSectionThree === 'function' && document.getElementById('section-three')) {
         initializeSectionThree();
     } else if (typeof initializeSectionThree !== 'function') {
-        console.warn('initializeSectionThree function not found. Make sure section_three.js is loaded.');
+        DebugManager.log('MAIN_APP', 'WARNING: initializeSectionThree function not found. Make sure section_three.js is loaded.');
     }
 
     if (typeof initializeSectionFour === 'function' && document.getElementById('section-four')) {
         initializeSectionFour();
     } else if (typeof initializeSectionFour !== 'function') {
-        console.warn('initializeSectionFour function not found. Make sure section_four.js is loaded.');
+        DebugManager.log('MAIN_APP', 'WARNING: initializeSectionFour function not found. Make sure section_four.js is loaded.');
     }
-    console.log('All initializations complete.');
+    DebugManager.log('MAIN_APP', 'All initializations complete.');
 }

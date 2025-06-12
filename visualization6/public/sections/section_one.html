@@ -1,23 +1,16 @@
 <section id="section-one" class="content-section">
             <h2>Section One: Lorem Ipsum Title</h2>
-            <div id="controls-placeholder_one"></div>
+
+            
             <div id="controls-container_one" class="controls-container">
                 <div class="controls-row">
-                    <div class="control-item">
-                        <label for="slider_alpha_s1">Parameter Alpha:</label>
-                        <input type="range" id="slider_alpha_s1" name="slider_alpha_s1" min="0" max="100" value="50" class="alpha-slider">
-                        <output for="slider_alpha_s1" id="slider_alpha_s1_value">50</output>
-                    </div>
-                    <div class="control-item">
-                        <label for="dropdown_sec1">Option Select:</label>
-                        <select id="dropdown_sec1" name="dropdown_sec1">
-                            <option value="opt1">Option 1</option>
-                            <option value="opt2">Option 2</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary">Action 1</button>
+                    <div data-control-type="t-slider" data-control-id="slider_T"></div>
+                    <div data-control-type="mode-switch" data-control-id="mode_switch_s1"></div> 
+                    <div data-control-type="new-data-button" data-control-id="new_data_btn_s1"></div> 
                 </div>
             </div>
+
+
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
             <div class="plot-area">
                 <p>Plot Area for Section One</p>
