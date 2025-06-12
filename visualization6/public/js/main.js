@@ -85,6 +85,12 @@ async function regenerateSvarData() {
             // Calculate non-Gaussian estimates now that u_t is updated
             if (typeof window.SVARCoreFunctions.calculateNonGaussianEstimates === 'function') {
                 window.SVARCoreFunctions.calculateNonGaussianEstimates();
+                // After non-Gaussian estimates, calculate and store the v weight for Ridge
+                if (typeof window.SVARCoreFunctions.calculateAndStoreVWeight === 'function') {
+                    window.SVARCoreFunctions.calculateAndStoreVWeight();
+                } else {
+                    DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateAndStoreVWeight function not found. Ridge estimates might be incorrect.');
+                }
             } else {
                 DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateNonGaussianEstimates function not found.');
             }
@@ -156,6 +162,12 @@ async function regenerateReducedFormShocksFromExistingEpsilon() {
         // Calculate non-Gaussian estimates now that u_t is updated
         if (typeof window.SVARCoreFunctions.calculateNonGaussianEstimates === 'function') {
             window.SVARCoreFunctions.calculateNonGaussianEstimates();
+            // After non-Gaussian estimates, calculate and store the v weight for Ridge
+            if (typeof window.SVARCoreFunctions.calculateAndStoreVWeight === 'function') {
+                window.SVARCoreFunctions.calculateAndStoreVWeight();
+            } else {
+                DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateAndStoreVWeight function not found. Ridge estimates might be incorrect.');
+            }
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateNonGaussianEstimates function not found.');
         }
@@ -242,6 +254,10 @@ async function updateDynamicLatexOutputs() {
         // Update v weight display in Section Four
         if (document.getElementById('v_weight_s4_display')) {
             window.LatexUtils.displayVWeight('v_weight_s4_display', window.sharedData.v, 'v');
+        }
+        // Update lambda display in Section Four
+        if (document.getElementById('lambda_s4_value_display')) { // Assuming this ID exists for lambda in S4
+            window.LatexUtils.displayVWeight('lambda_s4_value_display', window.sharedData.lambda, '\\lambda', 2); // Using 2 decimal places for lambda
         }
     } else {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils display functions for estimated parameters or sharedData not available.');

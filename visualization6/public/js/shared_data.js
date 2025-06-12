@@ -2,7 +2,7 @@
 window.sharedData = {
     T: 500, // Default sample size
     phi: 0, // Default value for phi, in radians
-    lambda: 0.5, // Default value for lambda (range 0-1)
+    lambda: 0.1, // Default value for lambda (max dynamically changes with T)
     v: null, // Weight v, calculated from B_est_nG[0][1], used in Section Four
     isRecursive: true, // Default mode
     B0: [], // To be initialized by updateB0Mode
