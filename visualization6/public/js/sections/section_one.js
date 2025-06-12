@@ -1,14 +1,51 @@
 // public/js/sections/section_one.js
-const SECTION_ONE_ID = 'section-one';
+// Ensure the global namespace for section-specific functions exists
+window.sectionOne = window.sectionOne || {};
+
+async function updateSectionOnePlots() {
+    try {
+        if (!window.PlotUtils) {
+            DebugManager.log('ERROR', 'PlotUtils is not available.');
+            return;
+        }
+
+        DebugManager.log('PLOT_RENDERING', 'Updating Section One plots...');
+
+        // Plot 1: Structural Shocks (epsilon_t)
+        PlotUtils.createOrUpdateScatterPlot(
+            'plot_s1_left',
+            window.sharedData.epsilon_1t,
+            window.sharedData.epsilon_2t,
+            'Structural Shocks (ε₁ vs ε₂)',
+            'ε₁',
+            'ε₂'
+        );
+
+        // Plot 2: Reduced-Form Shocks (u_t)
+        PlotUtils.createOrUpdateScatterPlot(
+            'plot_s1_right',
+            window.sharedData.u_1t,
+            window.sharedData.u_2t,
+            'Reduced-Form Shocks (u₁ vs u₂)',
+            'u₁',
+            'u₂'
+        );
+
+        DebugManager.log('PLOT_RENDERING', 'Section One plots updated successfully.');
+    } catch (error) {
+        DebugManager.log('ERROR', 'Failed to update Section One plots:', error);
+    }
+}
+
+// Expose the update function to the global scope so main.js can call it
+window.sectionOne.updatePlots = updateSectionOnePlots;
 
 async function initializeSectionOne() {
-        DebugManager.log('PLOT_RENDERING', `Async initializing JavaScript for section: ${SECTION_ONE_ID}`);
-    // Placeholder for section-one specific JavaScript logic
-    // e.g., event listeners for unique controls in section-one
+    const SECTION_ONE_ID = 'section-one';
+    DebugManager.log('INIT', `Initializing JavaScript for section: ${SECTION_ONE_ID}`);
 
-    // If Section One had its own complex, long-running setup (e.g., data fetching, specific plot rendering):
-    // await setupComplexVisualizationsForSectionOne();
-    // await fetchSectionOneSpecificData();
+    // Initial plot rendering
+    await updateSectionOnePlots();
 
-    DebugManager.log('PLOT_RENDERING', `Async initialization for section: ${SECTION_ONE_ID} complete.`);
+    DebugManager.log('INIT', `Initialization for section: ${SECTION_ONE_ID} complete.`);
 }

@@ -1,10 +1,32 @@
 // main.js
 
 /**
- * Regenerates the structural shock series (epsilon_1t, epsilon_2t) based on 
- * current parameters in sharedData (primarily sharedData.T) and stores them back into sharedData.
+ * Updates all plots across all sections.
+ * This function is called whenever underlying data changes.
  */
-function regenerateSvarData() {
+async function updateAllPlots() {
+    DebugManager.log('PLOT_RENDERING', 'Attempting to update all plots...');
+    
+    // Update Section One plots if its update function exists
+    if (window.sectionOne && typeof window.sectionOne.updatePlots === 'function') {
+        await window.sectionOne.updatePlots();
+    }
+
+    // Update Section Two plots if its update function exists
+    if (window.sectionTwo && typeof window.sectionTwo.updatePlots === 'function') {
+        await window.sectionTwo.updatePlots();
+    }
+
+    // ...add other sections here as they get plots
+
+    DebugManager.log('PLOT_RENDERING', 'Finished updating all plots.');
+}
+
+/**
+ * Regenerates the full SVAR data pipeline, starting from epsilon_t.
+ * This is the primary function called when T changes or 'New Data' is clicked.
+ */
+async function regenerateSvarData() {
     DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate epsilon_t series...');
 
     if (!window.SVARCoreFunctions || typeof window.SVARCoreFunctions.generateEpsilon !== 'function') {
@@ -44,7 +66,7 @@ function regenerateSvarData() {
             DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully generated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData.');
 
             // Now that u_t is updated, regenerate B(phi)
-            regenerateBPhi();
+            await regenerateBPhi();
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.generateU not found or sharedData.B0 is not available. Cannot generate u_t.');
             window.sharedData.u_1t = [];
@@ -63,7 +85,7 @@ function regenerateSvarData() {
  * Regenerates only the reduced-form shocks (u_t) using existing structural shocks (epsilon_t)
  * and the current B0 matrix from sharedData. This is typically called when B0 changes (e.g., mode switch).
  */
-function regenerateReducedFormShocksFromExistingEpsilon() {
+async function regenerateReducedFormShocksFromExistingEpsilon() {
     DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate u_t from existing epsilon_t and current B0...');
 
     if (!window.SVARCoreFunctions || typeof window.SVARCoreFunctions.generateU !== 'function') {
@@ -94,7 +116,7 @@ function regenerateReducedFormShocksFromExistingEpsilon() {
         DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored u_1t (length:', u_1t.length, ') and u_2t (length:', u_2t.length, ') in sharedData from existing epsilon_t.');
 
         // Now that u_t is updated, regenerate B(phi)
-        regenerateBPhi();
+        await regenerateBPhi();
     } catch (error) {
         DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to regenerate u_t from existing epsilon_t:', error);
         window.sharedData.u_1t = [];
@@ -106,7 +128,7 @@ function regenerateReducedFormShocksFromExistingEpsilon() {
  * Regenerates the B(phi) matrix using current u_t series and phi from sharedData,
  * then stores it back into sharedData.
  */
-function regenerateBPhi() {
+async function regenerateBPhi() {
     DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate B(phi) and store in sharedData...');
 
     if (!window.SVARCoreFunctions || typeof window.SVARCoreFunctions.generateBPhi !== 'function') {
@@ -142,7 +164,7 @@ function regenerateBPhi() {
             DebugManager.log('SVAR_DATA_PIPELINE', 'Successfully regenerated and stored B_phi in sharedData:', JSON.stringify(window.sharedData.B_phi));
 
             // After B_phi is updated, regenerate innovations e_t
-            regenerateInnovations();
+            await regenerateInnovations();
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: B(phi) generation returned null. Resetting B_phi to default.');
             window.sharedData.B_phi = [[1,0],[0,1]]; // Reset B_phi on error
@@ -161,45 +183,44 @@ function regenerateBPhi() {
  * Regenerates the structural innovations e_t = B(phi)^-1 * u_t and stores them in sharedData.
  * This function is called when B(phi) or u_t change.
  */
-function regenerateInnovations() {
+async function regenerateInnovations() {
     const category = 'SVAR_DATA_PIPELINE';
     DebugManager.log(category, 'Attempting to regenerate structural innovations e_t...');
 
-    if (!window.SVARCoreFunctions || !window.SVARCoreFunctions.generateInnovations) {
-        DebugManager.log(category, 'Error: SVARCoreFunctions.generateInnovations is not available. Cannot regenerate innovations.');
-        window.sharedData.e_1t = [];
-        window.sharedData.e_2t = [];
-        return;
-    }
-
-    const { B_phi, u_1t, u_2t } = window.sharedData;
-
-    if (!B_phi || !u_1t || u_1t.length === 0 || !u_2t || u_2t.length === 0) {
-        DebugManager.log(category, 'Error: Missing B_phi or u_t data in sharedData, or u_t is empty. Cannot regenerate innovations.', 
-            { B_phi_exists: !!B_phi, u1_len: u_1t ? u_1t.length : 0, u2_len: u_2t ? u_2t.length : 0 });
-        window.sharedData.e_1t = [];
-        window.sharedData.e_2t = [];
-        return;
-    }
-
     try {
-        const innovations = window.SVARCoreFunctions.generateInnovations(B_phi, u_1t, u_2t);
+        if (!window.SVARCoreFunctions || typeof window.SVARCoreFunctions.generateInnovations !== 'function') {
+            throw new Error('SVARCoreFunctions.generateInnovations not found.');
+        }
 
-        if (innovations && innovations.e_1t && innovations.e_2t) {
-            window.sharedData.e_1t = innovations.e_1t;
-            window.sharedData.e_2t = innovations.e_2t;
-            DebugManager.log(category, 'Structural innovations e_t regenerated and stored in sharedData.');
-            // DebugManager.log(category, 'sharedData.e_1t (first 5):', JSON.parse(JSON.stringify(window.sharedData.e_1t.slice(0,5))));
-            // DebugManager.log(category, 'sharedData.e_2t (first 5):', JSON.parse(JSON.stringify(window.sharedData.e_2t.slice(0,5))));
-        } else {
-            DebugManager.log(category, 'Error: Failed to generate innovations. Result was null or malformed from SVARCoreFunctions.generateInnovations.');
+        if (!window.sharedData || !window.sharedData.B_phi || !window.sharedData.u_1t || !window.sharedData.u_2t) {
+            throw new Error('sharedData or required series (B_phi, u_t) not found.');
+        }
+
+        const { B_phi, u_1t, u_2t } = window.sharedData;
+
+        if (u_1t.length === 0 || u_2t.length === 0) {
+            DebugManager.log(category, 'u_t series are empty. Clearing innovation data.');
             window.sharedData.e_1t = [];
             window.sharedData.e_2t = [];
+        } else {
+            const innovations = window.SVARCoreFunctions.generateInnovations(B_phi, u_1t, u_2t);
+            if (innovations) {
+                window.sharedData.e_1t = innovations.e_1t;
+                window.sharedData.e_2t = innovations.e_2t;
+                DebugManager.log(category, 'Successfully regenerated and stored e_t in sharedData.');
+            } else {
+                DebugManager.log(category, 'ERROR: generateInnovations returned null. Clearing innovation data.');
+                window.sharedData.e_1t = [];
+                window.sharedData.e_2t = [];
+            }
         }
     } catch (error) {
-        DebugManager.log(category, 'Error during regenerateInnovations:', error);
+        DebugManager.log(category, 'ERROR: Failed to generate innovations e_t:', error);
         window.sharedData.e_1t = [];
         window.sharedData.e_2t = [];
+    } finally {
+        // This is the end of the data generation chain, so always update all plots.
+        await updateAllPlots();
     }
 }
 /* --- END OF INNOVATIONS e_t GENERATION --- */
@@ -401,7 +422,7 @@ async function initializeApp() {
     // and their initial values might have updated sharedData (e.g., sharedData.T).
     // This ensures epsilon_t is ready before section-specific JS that might use it.
     DebugManager.log('MAIN_APP', 'Calling initial SVAR data regeneration...');
-    regenerateSvarData();
+    await regenerateSvarData();
 
     if (typeof initializeNewDataButtons === 'function') {
         initializeNewDataButtons();

@@ -185,5 +185,17 @@ window.SVARMathUtil = {
         ];
         // DebugManager.log(category, 'Matrix-vector multiplication:', JSON.parse(JSON.stringify(matrix)), '*', JSON.parse(JSON.stringify(vector)), '=', JSON.parse(JSON.stringify(resultVector))); // Can be too verbose
         return resultVector;
+    },
+
+    /**
+     * Calculates the mean of an array of numbers.
+     * @param {number[]} arr - The array of numbers.
+     * @returns {number} The mean of the array, or 0 if the array is empty.
+     */
+    mean: function(arr) {
+        if (!arr || arr.length === 0) {
+            return 0;
+        }
+        return arr.reduce((a, b) => a + b, 0) / arr.length;
     }
 };
