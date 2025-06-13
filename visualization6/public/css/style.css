@@ -5,39 +5,48 @@
 }
 
 :root {
-    /* Color Palette */
-    --color-obsidian: #222831; /* Primary Background */
-    --color-gunmetal: #393E46; /* Secondary Background, Menu, Cards */
-    --color-turquoise: #00ADB5; /* Primary Accent */
-    --color-rose-taupe: #B83B5E; /* Secondary Accent */
-    --color-platinum: #EEEEEE; /* Primary Text */
+    /* Light Theme Color Palette (from guide_style.md) */
+    --color-background-page: #F8F9FA;      /* Very Light Gray */
+    --color-background-card: #FFFFFF;       /* White */
+    --color-text-primary: #212529;        /* Almost Black/Very Dark Gray */
+    --color-text-secondary: #6C757D;      /* Medium Gray */
+    --color-accent-primary: #17A2B8;       /* Teal/Cyan */
+    --color-accent-primary-darker: #138496; /* Darker Teal */
+    --color-accent-secondary-plot-loss: #E83E8C; /* Pink/Magenta */
+    --color-accent-secondary-plot-phi: #28A745;  /* Green */
+    --color-border: #DEE2E6;              /* Light Gray */
+    --color-text-on-accent: #FFFFFF;      /* White */
+    --color-slider-track: #E9ECEF;        /* Light Gray */
+    --color-hero-background: linear-gradient(to bottom right, #E0F7FA, #F8F9FA); /* Very Light Cyan to Very Light Gray gradient */
 
     /* Typography */
     --font-family-headings: 'Montserrat', sans-serif;
     --font-family-body: 'Open Sans', sans-serif;
     --font-size-base: 1rem; /* 16px */
     --line-height-base: 1.6;
-    --line-height-headings: 1.3;
+    --line-height-headings: 1.4; /* Adjusted from 1.3 to 1.4 as per guide range */
 
-    /* Layout & Spacing */
-    --spacing-xs: 4px;
-    --spacing-sm: 8px;
-    --spacing-md: 16px;
-    --spacing-lg: 24px;
-    --spacing-xl: 32px;
+    /* Layout & Spacing (using guide's naming convention) */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-xxl: 48px;
 
     /* Components */
-    --card-border-radius: 8px;
-    --card-box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    --nav-height: 60px;
+    --card-border-radius: 8px; /* As per guide */
+    --card-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* As per guide */
+    --nav-height: 70px; /* Adjusted for potentially larger text/padding */
+    --button-border-radius: 6px; /* Guide: 4px or 6px, choosing 6px */
 }
 
 body {
     font-family: var(--font-family-body);
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
-    color: var(--color-platinum);
-    background-color: var(--color-obsidian);
+    color: var(--color-text-primary);
+    background-color: var(--color-background-page);
     margin: 0;
     padding-top: var(--nav-height); /* Space for the fixed main navigation */
 }
@@ -46,23 +55,52 @@ body {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: var(--spacing-lg) 0;
+    padding: var(--space-lg) 0;
+}
+
+/* Hero Section Styling (Placeholder - assuming a .hero-section class if used) */
+.hero-section {
+    background: var(--color-hero-background);
+    padding: var(--space-xl) var(--space-md); /* space-xl or space-xxl top/bottom */
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.hero-section .hero-title, /* Assuming h1 or a class for hero title */
+.hero-section h1 {
+    font-family: var(--font-family-headings);
+    font-size: 2.8rem; /* ~45px, guide: ~2.8rem - 3rem */
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: var(--line-height-headings);
+    margin-bottom: var(--space-sm);
+}
+
+.hero-section .hero-title .accent-text,
+.hero-section h1 .accent-text {
+    color: var(--color-accent-primary);
+}
+
+.hero-section .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-base);
 }
 
 /* Main Navigation */
 .main-navigation {
-    background-color: var(--color-gunmetal);
+    background-color: var(--color-background-card); /* Using card color for nav */
     height: var(--nav-height);
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--space-lg); /* Increased padding */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Softer shadow */
     display: flex;
-    align-items: center; /* Vertically align items */
-    justify-content: center; /* Center the nav items */
+    align-items: center;
+    justify-content: center; 
 }
 
 .main-navigation ul {
@@ -73,155 +111,217 @@ body {
 }
 
 .main-navigation li {
-    margin: 0 var(--spacing-md);
+    margin: 0 var(--space-md);
 }
 
 .main-navigation a {
-    font-family: var(--font-family-headings); /* Using heading font for nav links for a bit more style */
-    color: var(--color-platinum);
+    font-family: var(--font-family-headings);
+    color: var(--color-text-secondary); /* Secondary text for non-active */
     text-decoration: none;
-    font-weight: 500;
-    padding: var(--spacing-sm) 0;
+    font-weight: 500; /* Montserrat medium */
+    font-size: 0.9rem;
+    padding: var(--space-sm) 0;
     transition: color 0.2s ease, border-color 0.2s ease;
-    border-bottom: 2px solid transparent; /* Placeholder for active state alignment */
+    border-bottom: 2px solid transparent;
 }
 
 .main-navigation a:hover,
 .main-navigation a:focus {
-    color: var(--color-turquoise);
-    border-bottom-color: transparent; /* Keep hover clean, active state handles border */
+    color: var(--color-accent-primary);
 }
 
 .main-navigation a.active-link {
-    color: var(--color-turquoise);
-    font-weight: 700;
-    border-bottom: 2px solid var(--color-turquoise);
+    color: var(--color-accent-primary);
+    font-weight: 700; /* Montserrat bold */
+    border-bottom: 2px solid var(--color-accent-primary);
 }
 
-/* Content Sections */
+/* Permanently hide the main navigation menu */
+.main-navigation {
+    display: none !important;
+}
+
+/* Content Sections (Cards) */
 .content-section {
-    margin-bottom: var(--spacing-lg);
-    padding: var(--spacing-lg);
-    background-color: var(--color-gunmetal); /* Cards will also use Gunmetal */
+    margin-bottom: var(--space-xl); /* guide: space-lg or space-xl */
+    padding: var(--space-lg);    /* guide: space-lg or space-xl */
+    background-color: var(--color-background-card);
     border-radius: var(--card-border-radius);
     box-shadow: var(--card-box-shadow);
-    /* border: 1px solid var(--color-border); Removed, using shadow for separation */
+    border: 1px solid var(--color-border);
 }
 
-.content-section h2 {
+.section-supertitle {
+    font-size: 0.8rem; /* 12.8px, guide: ~13px */
+    font-weight: 600; /* Open Sans Semibold */
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+    display: block;
+}
+
+.content-section h2, .section-title {
     font-family: var(--font-family-headings);
-    font-weight: 700;
+    font-size: 1.75rem; /* 28px, as per guide */
+    font-weight: 700; /* Montserrat Bold */
+    color: var(--color-accent-primary);
     margin-top: 0;
-    color: var(--color-turquoise);
-    border-bottom: 2px solid var(--color-obsidian); /* Darker border for contrast on Gunmetal */
-    padding-bottom: var(--spacing-sm);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--space-lg);
+    line-height: var(--line-height-headings);
 }
 
 /* Controls Area */
 .controls-placeholder {
-    /* This div will be used to measure scroll position for sticky menu */
-    height: 1px; /* Minimal height, doesn't affect layout */
-    margin-top: -1px; /* Counteract the height */
+    height: 1px;
+    margin-top: -1px;
 }
 .controls-container {
-    background-color: var(--color-gunmetal);
-    padding: var(--spacing-md);
+    background-color: var(--color-background-card);
+    padding: var(--space-lg);
     border-radius: var(--card-border-radius);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--space-lg);
     box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
 }
 
 .controls-container.sticky-menu {
     position: fixed;
-    /* top, left, width will be set by JavaScript */
-    background-color: var(--color-gunmetal); /* Solid Gunmetal for sticky */
+    background-color: var(--color-background-card);
     z-index: 900;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    padding: var(--spacing-md);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: var(--space-md); /* Slightly less padding for sticky */
     border-radius: var(--card-border-radius);
-    box-sizing: border-box; /* Ensure padding doesn't increase width */
+    border: 1px solid var(--color-border);
 }
 
 .controls-row {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-md);
-    align-items: center;
-}
-.controls-row:last-child {
-    margin-bottom: 0;
+    gap: var(--space-lg);
+    align-items: flex-end;
+    margin-bottom: var(--space-md);
 }
 
 .control-item {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--space-sm);
 }
+
 .control-item label {
-    font-size: 0.875rem; /* 14px */
-    color: var(--color-platinum); /* Lighter text for labels */
-    opacity: 0.8;
+    font-size: 0.875rem; /* 14px, as per guide */
+    font-weight: 600; /* Open Sans Semibold */
+    color: var(--color-text-primary);
 }
+
 .control-item input[type="number"],
 .control-item input[type="text"],
 .control-item select {
-    background-color: var(--color-obsidian);
-    color: var(--color-platinum);
-    padding: var(--spacing-sm) var(--spacing-md);
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background-card);
+    color: var(--color-text-primary);
+    border-radius: var(--button-border-radius); /* Using button radius for consistency */
+    font-family: var(--font-family-body);
     font-size: 0.9rem;
-    border: 1px solid var(--color-obsidian); /* Border same as bg, focus will highlight */
-    border-radius: 4px;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .control-item input[type="number"]:focus,
 .control-item input[type="text"]:focus,
 .control-item select:focus {
     outline: none;
-    border-color: var(--color-turquoise);
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-accent-primary), 0.25);
 }
 
+/* Sliders */
 .control-item input[type="range"] {
-    width: 150px;
-    /* TODO: Style range inputs more thoroughly later */
+    width: 180px; /* Increased width */
+    height: 8px; /* Track height guide: 6-8px */
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-slider-track);
+    border-radius: 4px;
+    cursor: pointer;
 }
+
+.control-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px; /* Thumb diameter guide: 16-18px */
+    height: 18px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    border: 2px solid var(--color-background-card); /* Optional: border to lift thumb */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.control-item input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    border: 2px solid var(--color-background-card);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
 .control-item output {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color-turquoise);
+    font-size: 0.875rem; /* 14px, as per guide */
+    font-weight: 400; /* Open Sans Regular */
+    color: var(--color-text-secondary);
+    margin-left: var(--space-sm);
+    min-width: 30px; /* Ensure space for values */
+    text-align: right;
+}
+
+/* Mode Switch (styling for a select element, can be enhanced with custom control later) */
+.mode-switch select {
+    /* Uses general input styling above */
+    font-weight: 600; /* Semibold for Open Sans */
 }
 
 /* Plot Container */
 .plot-container {
     display: flex;
-    flex-wrap: wrap; /* Allows plots to wrap to the next line if needed */
-    gap: var(--padding-base); /* Space between plot areas */
-    /* Inherits .card styles like padding, background, border-radius, box-shadow, border */
+    flex-wrap: wrap;
+    gap: var(--space-lg);
 }
 
-/* Plot Area */
-.plot-area {
-    flex-grow: 1; /* Allow plot areas to grow */
-    flex-shrink: 1; /* Allow plot areas to shrink */
-    flex-basis: calc(50% - (var(--padding-base) / 2)); /* Aim for two columns, accounting for gap */
+.plots-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
 
-    min-height: 300px; /* Placeholder height */
-    background-color: #e9ecef; /* Light gray for plot background */
-    border: 1px dashed var(--color-border);
-    display: flex; /* For aligning content *within* the plot-area itself */
+.plot-area {
+    flex-basis: calc(50% - (var(--space-lg) / 2));
+    min-width: 300px;
+    height: 400px; /* Or make aspect-ratio based if desired */
+    background-color: var(--color-background-card);
+    border-radius: var(--card-border-radius);
+    padding: var(--space-md);
+    box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: var(--color-secondary);
-    border-radius: calc(var(--card-border-radius) - 1px); /* Inner radius */
-    /* width: 100%; /* Removed in favor of flex-basis */
+}
+
+.plot-area .plot-title {
+    font-family: var(--font-family-headings);
+    font-size: 0.9rem; /* guide: 0.875rem - 0.9rem */
+    font-weight: 500; /* Montserrat Medium */
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-sm);
 }
 
 /* Ensure Plotly's internal elements respect the .plot-area dimensions */
 .plot-area .js-plotly-plot,
 .plot-area .plot-container.plotly,
 .plot-area .svg-container {
-    width: 100% !important; /* Override Plotly's inline styles if necessary */
+    width: 100% !important;
     height: 100% !important;
 }
 
@@ -233,12 +333,12 @@ body {
 /* Footer */
 .footer {
     text-align: center;
-    padding: var(--spacing-lg) 0;
-    margin-top: var(--spacing-lg);
-    font-size: 0.875rem; /* 14px */
-    color: var(--color-platinum);
-    opacity: 0.7;
-    border-top: 1px solid var(--color-gunmetal);
+    padding: var(--space-lg) 0; /* guide: space-md or space-lg */
+    margin-top: var(--space-xl);
+    font-size: 0.8rem; /* 12.8px, guide: ~13px */
+    color: var(--color-text-secondary);
+    background-color: var(--color-background-page); /* As per guide */
+    border-top: 1px solid var(--color-border);
 }
 
 /* Utility classes */
@@ -248,58 +348,63 @@ body {
 
 /* Buttons */
 .btn {
-    font-family: var(--font-family-headings);
-    padding: var(--spacing-sm) var(--spacing-md);
+    font-family: var(--font-family-body); /* Guide: Open Sans */
+    padding: 10px 20px; /* guide: ~10px 20px */
     font-size: 0.9rem;
-    font-weight: 600;
-    border-radius: 4px;
+    font-weight: 600; /* Open Sans Semibold */
+    border-radius: var(--button-border-radius);
     border: 1px solid transparent;
     cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
-    text-decoration: none; /* For button-styled links */
-    display: inline-block; /* For button-styled links */
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 .btn-primary {
-    background-color: var(--color-turquoise);
-    color: var(--color-obsidian);
-    border-color: var(--color-turquoise);
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border-color: var(--color-accent-primary);
 }
 .btn-primary:hover, .btn-primary:focus {
-    background-color: var(--color-platinum); /* Lighter Turquoise or alternative */
-    border-color: var(--color-platinum);
-    color: var(--color-obsidian);
-    opacity: 0.9;
+    background-color: var(--color-accent-primary-darker);
+    border-color: var(--color-accent-primary-darker);
+    color: var(--color-text-on-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .btn-secondary {
     background-color: transparent;
-    color: var(--color-turquoise);
-    border-color: var(--color-turquoise);
+    color: var(--color-accent-primary);
+    border: 1px solid var(--color-accent-primary);
 }
 .btn-secondary:hover, .btn-secondary:focus {
-    background-color: var(--color-turquoise);
-    color: var(--color-obsidian);
-    border-color: var(--color-turquoise);
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border-color: var(--color-accent-primary);
+}
+
+/* MathJax specific styling if needed */
+.MathJax {
+    color: var(--color-text-primary) !important; /* Ensure MathJax inherits primary text color */
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     body {
-        padding-top: var(--nav-height); /* Already dynamic */
+        padding-top: var(--nav-height);
     }
     .main-navigation {
-        padding: 0 var(--spacing-sm); /* Reduced padding for smaller screens */
-        justify-content: space-around; /* Distribute links if they start to wrap, or implement hamburger */
+        padding: 0 var(--space-md);
+        justify-content: space-between; /* Allow space for a potential hamburger icon */
     }
     .main-navigation li {
-        margin: 0 var(--spacing-sm); /* Reduced margin */
+        margin: 0 var(--space-sm);
     }
     .main-navigation a {
-        font-size: 0.85rem; /* Slightly smaller font for nav links */
-        padding: var(--spacing-xs) 0;
+        font-size: 0.85rem;
     }
     .controls-container.sticky-menu {
-        top: var(--nav-height); /* Adjust for nav height */
+        top: var(--nav-height);
     }
     .controls-row {
         flex-direction: column;
@@ -308,9 +413,15 @@ body {
     .control-item input[type="range"] {
         width: 100%;
     }
-
     .plot-area {
-        flex-basis: 100%; /* Each plot takes full width on smaller screens, stacking them */
+        flex-basis: 100%;
+    }
+    .hero-section .hero-title,
+    .hero-section h1 {
+        font-size: 2.2rem;
+    }
+    .content-section h2, .section-title {
+        font-size: 1.5rem;
     }
 }
 
@@ -321,20 +432,28 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(34, 40, 49, 0.95); /* Obsidian with opacity */
-    display: flex; /* Visible by default, JS will hide it */
+    background-color: rgba(248, 249, 250, 0.95); /* --color-background-page with opacity */
+    display: flex; 
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 2000; /* Ensure it's on top of everything */
-    color: var(--color-platinum);
+    z-index: 2000; 
+    color: var(--color-text-primary);
     font-family: var(--font-family-body);
     font-size: 1.2em;
+    opacity: 1; /* Initially visible */
+    visibility: visible; /* Initially visible */
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out; /* For fade-out */
+}
+
+#loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .loading-spinner {
-    border: 8px solid var(--color-gunmetal); /* Gunmetal for the track */
-    border-top: 8px solid var(--color-turquoise); /* Turquoise for the spinning part */
+    border: 8px solid var(--color-slider-track); /* Light gray for track */
+    border-top: 8px solid var(--color-accent-primary); /* Accent for spinner */
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -345,4 +464,20 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Hide content initially, fade in after load */
+.main-navigation,
+#main-content,
+.footer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+}
+
+.main-navigation.loaded,
+#main-content.loaded,
+.footer.loaded {
+    opacity: 1;
+    visibility: visible;
 }

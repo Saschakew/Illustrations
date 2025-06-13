@@ -416,6 +416,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     if (loadingOverlay) loadingOverlay.style.display = 'none'; // Hide loading screen
+
+    // Reveal main UI sections now that loading is complete
+    // const nav = document.getElementById('main-nav'); // Navigation is hidden via CSS
+    // if (nav) nav.classList.add('loaded');           // Navigation is hidden via CSS
+
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) mainContent.classList.add('loaded');
+    const footerEl = document.querySelector('.footer');
+    if (footerEl) footerEl.classList.add('loaded');
 });
 
 async function loadSections() {

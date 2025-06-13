@@ -1,6 +1,6 @@
 # Loading Screen Implementation Guide
 
-This document explains how the application-wide loading screen works, its current "bouncing dots" design, and the responsibilities of developers when working on section-specific JavaScript.
+This document explains how the application-wide loading screen works, its new **particle animation** design (replacing the previous “bouncing dots”), and the responsibilities of developers when working on section-specific JavaScript.
 
 ## How It Works
 
@@ -8,14 +8,10 @@ The loading screen is designed to remain visible until the entire application, i
 
 1.  **HTML Structure (`index.html`):**
     *   A `div` with the ID `#loading-overlay` is placed directly inside the `<body>`.
-    *   This `div` contains the "bouncing dots" animation. The typical structure for this is:
+    *   This `div` contains the particle animation. The typical structure for this is:
         ```html
         <div id="loading-overlay">
-            <div class="bouncing-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-            </div>
+            <canvas id="particle-canvas"></canvas>
         </div>
         ```
     *   Key page elements like the hero section, main content area, and footer are initially styled to be hidden.
@@ -24,13 +20,11 @@ The loading screen is designed to remain visible until the entire application, i
     *   `#loading-overlay`:
         *   Styled to cover the entire viewport (e.g., `position: fixed; top: 0; left: 0; width: 100%; height: 100%;`).
         *   Has a background color (e.g., a semi-transparent dark color or a solid color matching the theme).
-        *   Uses flexbox or grid to center the `.bouncing-dots` container.
+        *   Uses flexbox or grid to center the `#particle-canvas` element.
         *   It is set to `display: flex;` (or `grid`) by default, making it visible as soon as the HTML starts rendering.
-    *   `.bouncing-dots` and `.dot`:
-        *   The `.bouncing-dots` container holds the individual `div.dot` elements.
-        *   Each `.dot` is styled (e.g., `width`, `height`, `background-color`, `border-radius: 50%`).
-        *   A CSS keyframe animation (e.g., `bounce`) is defined to make the dots move up and down.
-        *   This animation is applied to each `.dot` with staggered `animation-delay` values to create the bouncing sequence.
+    *   `#particle-canvas`:
+        *   The canvas takes full viewport so particles can cover the screen.
+        *   Styled with `width: 100%; height: 100%; display: block;` to remove inline-canvas whitespace.
     *   **Content Fading:**
         *   Initially, main page elements (e.g., `header`, `main`, `footer`) are styled with `opacity: 0;` and `visibility: hidden;` to prevent them from being seen during the loading phase or flashing before the loading screen is fully established.
         *   A `.loaded` class is added (typically to the `<body>` or a main wrapper) via JavaScript once all content is ready.
@@ -49,6 +43,97 @@ The loading screen is designed to remain visible until the entire application, i
     *   This function is `async`.
     *   It handles the initialization of shared controls (sliders, buttons, etc.) created by the UI factory.
     *   Crucially, it then calls and `await`s each section-specific initialization function (e.g., `await initializeSectionOne();`, `await initializeSectionTwo();`, etc.).
+
+## Particle Animation Details
+
+The revamped loading experience now features a lightweight, GPU-accelerated particle animation that aligns with the project’s style guide (`guides/guide_style.md`).  The animation is rendered on a `<canvas>` element using the open-source [tsParticles](https://particles.js.org/) library, which offers excellent performance and a small footprint (~50 KB minified).
+
+### 1.  HTML Structure (`index.html`)
+
+Replace the old *bouncing dots* markup with:
+
+```html
+<div id="loading-overlay">
+    <canvas id="particle-canvas"></canvas>
+</div>
+```
+
+### 2.  CSS Styling (`public/css/style.css`)
+
+```css
+/* Overlay container */
+#loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-background-page);
+    z-index: 9999;
+}
+
+/* Canvas takes full viewport so particles can cover the screen */
+#particle-canvas {
+    width: 100%;
+    height: 100%;
+    display: block; /* Removes inline-canvas whitespace */
+}
+```
+
+Key style-guide considerations:
+
+*   **Colors:** Particle colours reuse CSS variables `--color-accent-primary` (teal) and `--color-accent-secondary-plot-loss` (magenta) for on-brand flair.
+*   **Responsiveness:** Because the canvas is `100%` width/height, the animation gracefully scales on all view-ports.
+
+### 3.  JavaScript Initialisation (`public/js/main.js`)
+
+1.  Install tsParticles via npm or include its CDN bundle **before** `main.js`:
+
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js" defer></script>
+    ```
+2.  In `main.js`, initialise the particles **before** awaiting `loadSections()` so the animation is already running while other assets load:
+
+    ```javascript
+    async function showLoadingScreen() {
+        const { tsParticles } = window;
+        await tsParticles.load({
+            id: 'particle-canvas',
+            options: {
+                background: { color: { value: 'transparent' } },
+                fullScreen: { enable: false },
+                particles: {
+                    number: { value: 60, density: { enable: true, area: 800 } },
+                    color: { value: [
+                        getComputedStyle(document.documentElement)
+                            .getPropertyValue('--color-accent-primary').trim(),
+                        getComputedStyle(document.documentElement)
+                            .getPropertyValue('--color-accent-secondary-plot-loss').trim(),
+                    ] },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.6 },
+                    size: { value: { min: 2, max: 4 } },
+                    move: { enable: true, speed: 2, direction: 'none', outMode: 'bounce' },
+                },
+            },
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await showLoadingScreen();
+        await loadSections();
+        await initializeApp();
+        document.body.classList.add('loaded');
+        document.getElementById('loading-overlay').style.display = 'none';
+    });
+    ```
+
+### 4.  Accessibility & Performance
+
+*   **Reduced-motion users:** Respect the `prefers-reduced-motion` media query.  Wrap the particle initialisation in a check and skip or reduce motion if users prefer minimal animations.
+*   **Performance:** 60 particles with low opacity and small size keeps GPU usage negligible even on mobile devices.
+
+> **Tip:** If you need to tweak colours, sizes, or speeds, consult `guide_style.md` to ensure your choices remain on-brand.
 
 ## Developer Responsibilities for Section-Specific JavaScript
 

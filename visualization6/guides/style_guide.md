@@ -132,66 +132,7 @@ The website is designed to be fully responsive. Specific styles for smaller scre
 
 ---
 
-## 9. Hero & Loading Screen Creative Style (Implemented June 2025)
-
-The enhanced visual style of the hero and loading pages, implemented in June 2025, revolves around these core principles:
-
-### 9.1. Core Stylistic Elements
-
-1.  **Typography & Hierarchy:**
-    *   **Kicker Text:** A small, often uppercase, introductory line above main titles (e.g., "SVAR VISUALIZATION").
-    *   **Split Headlines/Titles:** Main titles are broken into two distinct parts, with one part emphasized using an accent color (e.g., "Unveiling Patterns, **Illuminating Insights.**"). This creates strong visual interest and guides the eye.
-    *   **Font Weights:** Clear differentiation in font weights to establish hierarchy.
-    *   **Animations:** Subtle fade-in and fade-in-up animations on text elements for a polished entrance.
-
-2.  **Background & Depth:**
-    *   **Base Gradient:** A soft, full-area linear gradient provides a subtle, modern base (e.g., `var(--color-hero-bg-start)` to `var(--color-hero-bg-end)`).
-    *   **Abstract Blurred Shape:** A large, centrally-placed radial gradient, blurred and semi-transparent, layered behind the content. This adds a sense of depth and a contemporary, abstract visual element. It also features a gentle fade-in animation.
-    *   **Particle Animation (Hero/Loading Only):** A dynamic layer of slowly drifting particles creates subtle movement and visual texture. This specific element is intentionally limited to the hero and loading screens to maintain focus on content elsewhere.
-
-3.  **Color Palette:**
-    *   **Primary Backgrounds:** Light, often desaturated, and clean.
-    *   **Primary Text:** Dark and highly legible.
-    *   **Accent Color:** A vibrant color (currently `var(--color-accent)`, a teal/cyan) used strategically for emphasis in titles and potentially interactive elements.
-
-4.  **Layout & Polish:**
-    *   **Generous Spacing:** Ample padding and margins.
-    *   **Smooth Transitions:** CSS transitions for opacity and visibility ensure smooth appearance and disappearance of elements.
-
-### 9.2. Extending the Creative Style to General Page Elements
-
-To create a cohesive visual experience, elements from the hero and loading screen style can be thoughtfully applied to the rest of the page:
-
-1.  **Section Titles (within Content Cards):**
-    *   **Current:** Section titles (`h2`) currently use the accent color and a bottom border.
-    *   **Proposed:** Adapt the kicker/split-title approach. For example:
-        *   Add a small kicker text above the `h2` (e.g., "Analysis Module," "Data Insights").
-        *   Split the `h2` text itself, using the accent color for one part.
-        *   Remove or soften the bottom border if the new typographic hierarchy is strong enough.
-
-2.  **Content Cards (`.content-section` / `div` with class `card`):
-    *   **Current:** White background, border, and box shadow.
-    *   **Proposed:** 
-        *   Option A (Subtle Depth): Introduce a very faint, scaled-down version of the abstract blurred radial gradient behind the card's content, ensuring it doesn't interfere with readability. This would be significantly more subtle than in the hero.
-        *   Option B (Gradient Background): Instead of plain white, use a very subtle linear gradient for the card background, similar to the hero's base but lighter (e.g., from white to a very light tint of `var(--color-background)` or `var(--color-hero-bg-start)`).
-        *   Maintain soft box shadows for separation.
-
-3.  **Buttons and Interactive Elements:**
-    *   **Current:** Buttons use primary accent color.
-    *   **Proposed:** Ensure all interactive elements (sliders, dropdowns, links) consistently use the established accent color for their primary interactive state. Enhance hover/focus states with subtle scale transforms or brighter/darker shades of the accent color for better feedback, moving beyond simple color changes if appropriate.
-
-4.  **Overall Page Background & Cohesion:**
-    *   **Current:** Page background is `var(--color-background)` (#EEEEEE).
-    *   **Proposed:** Consider if the main page background (`body`) should also adopt a very subtle version of the linear gradient used in the hero's base to tie the whole page together. This would need to be extremely faint to ensure content cards still stand out.
-
-5.  **Animations & Transitions:**
-    *   Apply subtle fade-in animations to content sections as they become visible or as data loads, similar to the hero text animations, to enhance the feeling of polish.
-
-These extensions aim to bring the modern, engaging feel of the hero and loading screens to the entire application without overwhelming the user or distracting from the data visualizations. The key is subtlety and consistency.
-
----
-
-## 8. Previous Design Enhancement Ideas (Archived June 2025)
+## 8. Design Enhancement Ideas (June 2025)
 
 Based on a review of the UI (screenshots provided June 13, 2025), the following enhancements are proposed to increase visual appeal, creativity, and overall polish.
 
