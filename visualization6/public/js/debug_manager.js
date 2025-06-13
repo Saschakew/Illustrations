@@ -10,6 +10,8 @@ const DebugManager = (() => {
         PLOT_RENDERING: false,  // Logs related to Plotly or other plotting libraries
         SVAR_DATA_PIPELINE: false, // Logs for the SVAR data generation pipeline
         SVAR_MATH: false,          // Logs for SVARMathUtil functions (covariance, cholesky, etc.)
+        PLOT_UPDATE: 'Plot Update',
+        HERO: true,                 // Logs for hero particle events
         LATEX_UPDATE: false,       // Logs for high-level LaTeX update operations
         LATEX_UTIL: false,         // Logs for low-level LatexUtils functions
         // Add more categories as needed, e.g.:
@@ -47,6 +49,12 @@ const DebugManager = (() => {
         }
     }
 
+    function error(categoryName, ...messages) {
+        if (isCategoryEnabled(categoryName)) {
+            console.error(`[${categoryName.toUpperCase()}_ERROR]`, ...messages);
+        }
+    }
+
     function getCategories() {
         // Return a copy to prevent direct modification
         return { ..._debugCategories };
@@ -57,6 +65,7 @@ const DebugManager = (() => {
         setCategory,
         isCategoryEnabled,
         log,
+        error,
         getCategories,
         enableAll: () => Object.keys(_debugCategories).forEach(cat => setCategory(cat, true)),
         disableAll: () => Object.keys(_debugCategories).forEach(cat => setCategory(cat, false)),

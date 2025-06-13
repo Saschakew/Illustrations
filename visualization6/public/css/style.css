@@ -48,7 +48,7 @@ body {
     color: var(--color-text-primary);
     background-color: var(--color-background-page);
     margin: 0;
-    padding-top: var(--nav-height); /* Space for the fixed main navigation */
+    /*padding-top: var(--nav-height); /* Space for the fixed main navigation */
 }
 
 .container {
@@ -61,9 +61,69 @@ body {
 /* Hero Section Styling (Placeholder - assuming a .hero-section class if used) */
 .hero-section {
     background: var(--color-hero-background);
-    padding: var(--space-xl) var(--space-md); /* space-xl or space-xxl top/bottom */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
+    padding: var(--space-xxl) var(--space-lg);
+    min-height: 60vh; /* Larger splash */
     margin-bottom: var(--space-xl);
+    overflow: hidden; /* Hide overflowing content */
+}
+
+/* Gradient fade to blend hero into page background */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 150px;
+    pointer-events: none;
+    z-index: 1; /* Above particles, below hero content */
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--color-background-page) 100%);
+}
+
+/* Particle Canvas inside hero */
+#hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Behind gradient overlay and hero content */
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-wave path {
+    animation: waveShift 12s linear infinite;
+    transform-origin: center;
+}
+
+@keyframes waveShift {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .hero-section .hero-title, /* Assuming h1 or a class for hero title */
@@ -298,11 +358,8 @@ body {
     flex-basis: calc(50% - (var(--space-lg) / 2));
     min-width: 300px;
     height: 400px; /* Or make aspect-ratio based if desired */
-    background-color: var(--color-background-card);
-    border-radius: var(--card-border-radius);
-    padding: var(--space-md);
-    box-shadow: var(--card-box-shadow);
-    border: 1px solid var(--color-border);
+    background-color: var(--color-background-card); 
+    padding: var(--space-md);  
     display: flex;
     flex-direction: column;
     align-items: center;
