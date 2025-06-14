@@ -508,9 +508,7 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    body {
-        padding-top: var(--nav-height);
-    }
+    
     .main-navigation {
         padding: 0 var(--space-md);
         justify-content: space-between; /* Allow space for a potential hamburger icon */
