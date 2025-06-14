@@ -573,9 +573,16 @@ async function initializeApp() {
 
     // Initialize sticky menus
     if (typeof initializeStickyMenus === 'function') {
-        initializeStickyMenus();
+        initializeStickyMenus(); // Initialize sticky menu behavior
     } else {
         DebugManager.log('MAIN_APP', 'ERROR: initializeStickyMenus function not found. Make sure sticky_menu.js is loaded.');
+    }
+    
+    // Initialize controls toggle buttons
+    if (typeof initializeControlsToggle === 'function') {
+        initializeControlsToggle(); // Initialize collapsible controls
+    } else {
+        DebugManager.log('MAIN_APP', 'ERROR: initializeControlsToggle function not found. Make sure controls_toggle.js is loaded.');
     }
 
     // Initialize mode switches

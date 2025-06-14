@@ -70,13 +70,22 @@ window.PlotUtils = {
      * @param {number} [phi0LineValue] - Optional. The x-coordinate for a second vertical line (e.g., true phi_0).
      */
     createOrUpdateLossPlot: function(elementId, xData, yData, title, xLabel, yLabel, verticalLineX, yAxisRange, phi0LineValue, estimatedPhiLineValue) {
+        // Fetch theme colors
+        const rootStyles = getComputedStyle(document.documentElement);
+        const themeColors = {
+            'blue': rootStyles.getPropertyValue('--color-accent-primary').trim() || '#17A2B8',
+            'pink': rootStyles.getPropertyValue('--color-accent-secondary-plot-loss').trim() || '#E83E8C',
+            'green': '#28A745',
+            'yellow': rootStyles.getPropertyValue('--color-accent-tertiary-particles').trim() || '#FFC107'
+        };
+
         const plotData = [{
             x: xData,
             y: yData,
             type: 'scatter',
             mode: 'lines+markers',
-            line: { color: 'rgba(220, 53, 69, 0.8)', width: 2 },
-            marker: { size: 6, color: 'rgba(220, 53, 69, 1)' },
+            line: { color: themeColors.pink, width: 2 },
+            marker: { size: 6, color: themeColors.pink },
             name: 'Loss Function'
         }];
 
@@ -87,24 +96,22 @@ window.PlotUtils = {
             margin: { l: 50, r: 30, b: 40, t: 40 },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
-            font: {
-                color: '#333'
-            },
-            yaxis: { title: yLabel, zeroline: false }, // Existing yaxis setup
-            shapes: []
+            font: { color: '#333' },
+            shapes: [],
+            annotations: [],
+            showlegend: false
         };
 
         // Apply fixed y-axis range if provided
         if (yAxisRange && Array.isArray(yAxisRange) && yAxisRange.length === 2 && typeof yAxisRange[0] === 'number' && typeof yAxisRange[1] === 'number') {
-            if (!layout.yaxis) layout.yaxis = {}; // Ensure yaxis object exists
+            if (!layout.yaxis) layout.yaxis = {};
             layout.yaxis.range = yAxisRange;
             layout.yaxis.autorange = false;
         }
 
-        // Determine y-span for vertical lines, respecting fixed yAxisRange if set
         let yMinForLine, yMaxForLine;
         if (yData && yData.length > 0) {
-            if (layout.yaxis && layout.yaxis.range) { // If fixed y-axis range is set
+            if (layout.yaxis && layout.yaxis.range) {
                 yMinForLine = layout.yaxis.range[0];
                 yMaxForLine = layout.yaxis.range[1];
             } else {
@@ -112,62 +119,58 @@ window.PlotUtils = {
                 yMaxForLine = Math.max(...yData);
             }
         } else {
-            // Fallback if yData is empty or not provided, though lines might not be meaningful
             yMinForLine = 0;
-            yMaxForLine = 1; // Default or consider layout.yaxis.range if available
+            yMaxForLine = 1;
             if (layout.yaxis && layout.yaxis.range) {
                  yMinForLine = layout.yaxis.range[0];
                  yMaxForLine = layout.yaxis.range[1];
             }
         }
 
-        // Add a vertical line for the primary phi value (e.g., slider)
+        const addAnnotation = (x, text, color, yOffset = -25) => {
+            layout.annotations.push({
+                x: x,
+                y: yMaxForLine,
+                xref: 'x',
+                yref: 'y',
+                text: text,
+                showarrow: true,
+                arrowhead: 2,
+                ax: 0,
+                ay: yOffset,
+                font: { color: color, size: 14, family: 'Arial, sans-serif' },
+                bordercolor: '#c7c7c7',
+                borderwidth: 1,
+                bgcolor: 'rgba(255,255,255,0.8)',
+                opacity: 0.8
+            });
+        };
+
+        // Line for phi slider value
         if (verticalLineX !== undefined && verticalLineX !== null && yData && yData.length > 0) {
             layout.shapes.push({
-                type: 'line',
-                x0: verticalLineX,
-                x1: verticalLineX,
-                y0: yMinForLine,
-                y1: yMaxForLine,
-                line: {
-                    color: 'red', // For the primary phi value (e.g., slider)
-                    width: 2,
-                    dash: 'dash'
-                }
+                type: 'line', x0: verticalLineX, x1: verticalLineX, y0: yMinForLine, y1: yMaxForLine,
+                line: { color: themeColors.yellow, width: 2, dash: 'dash' }
             });
+            addAnnotation(verticalLineX, 'φ', themeColors.yellow, -60);
         }
 
-        // Add a second vertical line for phi_0 if provided
+        // Line for true phi_0
         if (phi0LineValue !== undefined && phi0LineValue !== null && yData && yData.length > 0) {
-            // yMinForLine and yMaxForLine are already calculated considering yAxisRange
             layout.shapes.push({
-                type: 'line',
-                x0: phi0LineValue,
-                x1: phi0LineValue,
-                y0: yMinForLine, // Uses the same y-span as the first line
-                y1: yMaxForLine,
-                line: {
-                    color: 'blue', // Different color for phi_0
-                    width: 2,
-                    dash: 'dot' // Different dash style for phi_0
-                }
+                type: 'line', x0: phi0LineValue, x1: phi0LineValue, y0: yMinForLine, y1: yMaxForLine,
+                line: { color: themeColors.blue, width: 2, dash: 'dot' }
             });
+            addAnnotation(phi0LineValue, 'φ₀', themeColors.blue, -25);
         }
 
-        // Add a third vertical line for the estimated phi value if provided
+        // Line for estimated phi
         if (estimatedPhiLineValue !== undefined && estimatedPhiLineValue !== null && yData && yData.length > 0) {
             layout.shapes.push({
-                type: 'line',
-                x0: estimatedPhiLineValue,
-                x1: estimatedPhiLineValue,
-                y0: yMinForLine, // Uses the same y-span
-                y1: yMaxForLine,
-                line: {
-                    color: 'green', // Distinct color for estimated phi
-                    width: 2,
-                    dash: 'longdash' // Distinct dash style
-                }
+                type: 'line', x0: estimatedPhiLineValue, x1: estimatedPhiLineValue, y0: yMinForLine, y1: yMaxForLine,
+                line: { color: themeColors.green, width: 2, dash: 'longdash' }
             });
+            addAnnotation(estimatedPhiLineValue, 'φ̂', themeColors.green, -95);
         }
 
         Plotly.react(elementId, plotData, layout, {responsive: true, staticPlot: true, displayModeBar: false});

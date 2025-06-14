@@ -19,7 +19,7 @@ async function updateSectionOnePlots() {
             'Structural Shocks (ε₁ vs ε₂)',
             'ε₁',
             'ε₂',
-            'secondary'
+            'green'
         );
 
         // Plot 2: Reduced-Form Shocks (u_t)
@@ -29,7 +29,8 @@ async function updateSectionOnePlots() {
             window.sharedData.u_2t,
             'Reduced-Form Shocks (u₁ vs u₂)',
             'u₁',
-            'u₂'
+            'u₂',
+            'pink'
         );
 
         DebugManager.log('PLOT_RENDERING', 'Section One plots updated successfully.');
