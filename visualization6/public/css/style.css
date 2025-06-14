@@ -545,28 +545,21 @@ body {
 
 /* Loading Overlay Styles */
 #loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(248, 249, 250, 0.95); /* --color-background-page with opacity */
-    display: flex; 
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 2000; 
-    color: var(--color-text-primary);
-    font-family: var(--font-family-body);
-    font-size: 1.2em;
-    opacity: 1; /* Initially visible */
-    visibility: visible; /* Initially visible */
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out; /* For fade-out */
+    padding: var(--space-xxl) 0; /* Add some padding when it's inside main-content */
+    min-height: 30vh; /* Give it some minimum height to stabilize content */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-speed-normal) ease-out, visibility var(--transition-speed-normal) ease-out;
 }
 
 #loading-overlay.hidden {
     opacity: 0;
     visibility: hidden;
+    display: none !important; /* Ensure it's removed from layout when hidden */
 }
 
 .loading-spinner {
@@ -586,16 +579,35 @@ body {
 
 /* Hide content initially, fade in after load */
 .main-navigation,
-#main-content,
 .footer {
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    transition: opacity var(--transition-speed-slow) ease-in-out;
 }
 
 .main-navigation.loaded,
-#main-content.loaded,
+#main-content.loaded > .content-section-placeholder, /* Target placeholders for fade-in */
 .footer.loaded {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Ensure main-content itself is visible, but its direct section placeholders are initially hidden */
+#main-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+.content-section-placeholder {
+    opacity: 0;
+    visibility: hidden;
+    display: none; /* Initially hide section placeholders */
+    transition: opacity var(--transition-speed-slow) ease-in-out;
+}
+
+/* When main content is loaded, display and fade in the placeholders */
+#main-content.loaded > .content-section-placeholder {
+    display: block; /* Or flex, grid, depending on their intended layout */
     opacity: 1;
     visibility: visible;
 }
