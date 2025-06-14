@@ -50,19 +50,15 @@
                 color: { value: 'transparent' }
             },
             particles: {
-                number: {
-                    value: 60,
-                    density: { enable: true, area: 800 }
-                },
-                color: { value: [primaryColor, '#69c8e0', '#9adcec'] },
+                number: { value: 55, density: { enable: true, area: 800 } },
+                color: { value: [primaryColor, secondaryColor] },
                 shape: { type: 'circle' },
-                shadow: { enable: true, color: '#ffffff', blur: 8 },
-                opacity: { value: 0.7 },
-                size: { value: { min: 3, max: 5 }, random: true },
+                opacity: { value: 0.35 }, // Compromise: Spec is 0.25, raised slightly for visibility
+                size: { value: { min: 1.5, max: 3 }, random: true },
                 links: { enable: false },
                 move: {
                     enable: true,
-                    speed: 0.3,
+                    speed: 0.18,
                     direction: 'none',
                     random: true,
                     straight: false,
@@ -72,15 +68,16 @@
             interactivity: {
                 detectsOn: 'canvas',
                 events: {
-                    onHover: { enable: true, mode: 'parallax' },
-                    onClick: { enable: true, mode: 'push' },
+                    onHover: { enable: true, mode: ['parallax', 'repulse'] },
+                    onClick: { enable: false, mode: 'push' }, // Disabled as requested
                     resize: true
                 },
                 modes: {
                     parallax: { force: 8, smooth: 20 },
-                    push: { quantity: 6 }
+                    repulse: { distance: 25, duration: 0.6 } // Added gentle push-away
                 }
             },
+            backgroundMask: { enable: false }
             
         }).then(container => {
             DebugManager.log('HERO', 'tsParticles.load SUCCEEDED. Particle container:', container);

@@ -58,7 +58,25 @@ body {
     padding: var(--space-lg) 0;
 }
 
-/* Hero Section Styling (Placeholder - assuming a .hero-section class if used) */
+/* Generic Re-usable Heading Style for Sections */
+.section-heading {
+    font: 700 1.75rem/1.3 var(--font-family-headings);
+    color: var(--color-accent-primary-darker);
+    margin-bottom: var(--space-sm);
+    letter-spacing: 0.2px;
+    position: relative;
+}
+.section-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.3em;
+    width: 3rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-primary-darker));
+}
+
+/* Hero Section Styling */
 .hero-section {
     background: var(--color-hero-background);
     position: relative;
@@ -95,6 +113,50 @@ body {
     z-index: 1; /* sits above canvas but below hero text */
 }
 
+.hero-meta {
+    text-align: center;
+    position: relative;
+    z-index: 2; /* above canvas */
+}
+
+.paper-title {
+    font: 700 2.25rem/1.2 var(--font-family-headings);
+    color: var(--color-accent-primary-darker);
+    margin: 0 0 var(--space-md);
+}
+.author-details {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align blocks at the top if text wraps differently */
+    gap: var(--space-lg); /* Space between author blocks */
+    margin-bottom: var(--space-xs);
+}
+
+.author-block {
+    text-align: center;
+}
+
+.author-name {
+    font-weight: 600; /* Slightly bolder for names */
+    margin: 0 0 var(--space-xxs); /* Minimal space between name and affiliation */
+}
+
+.author-affiliation {
+    font-size: 0.9rem; /* Slightly smaller for affiliation */
+    margin: 0;
+}
+
+.paper-journal, /* Keep styling for journal, remove old paper-authors/affil */
+.paper-authors, /* Retain for potential future single-line use, but not primary for this layout */
+.paper-affil { /* Retain for potential future single-line use, but not primary for this layout */
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+/* .paper-authors { margin-bottom: var(--space-xs); } */ /* Handled by author-details margin */
+/* .paper-affil   { margin-bottom: var(--space-xs); } */ /* Handled by author-details margin */
+
+/* legacy selector remains for backwards compatibility */
 .hero-content {
     position: relative;
     z-index: 2;
