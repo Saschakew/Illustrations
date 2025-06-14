@@ -51,19 +51,21 @@
             },
             particles: {
                 number: {
-                    value: 45,
+                    value: 60,
                     density: { enable: true, area: 800 }
                 },
-                color: { value: [primaryColor, secondaryColor] },
+                color: { value: [primaryColor, '#69c8e0', '#9adcec'] },
                 shape: { type: 'circle' },
-                opacity: { value: 0.35 },
-                size: { value: { min: 2, max: 4 }, random: true },
+                shadow: { enable: true, color: '#ffffff', blur: 8 },
+                opacity: { value: 0.7 },
+                size: { value: { min: 3, max: 5 }, random: true },
                 links: { enable: false },
-                shadow: { enable: true, color: primaryColor, blur: 3 },
                 move: {
                     enable: true,
-                    speed: { min: 0.3, max: 0.5 },
+                    speed: 0.3,
                     direction: 'none',
+                    random: true,
+                    straight: false,
                     outModes: { default: 'out' }
                 }
             },
@@ -75,10 +77,11 @@
                     resize: true
                 },
                 modes: {
-                    parallax: { force: 30, smooth: 10 },
+                    parallax: { force: 8, smooth: 20 },
                     push: { quantity: 6 }
                 }
-            }
+            },
+            
         }).then(container => {
             DebugManager.log('HERO', 'tsParticles.load SUCCEEDED. Particle container:', container);
         }).catch(error => {
