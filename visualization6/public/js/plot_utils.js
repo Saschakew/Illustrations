@@ -10,16 +10,17 @@ window.PlotUtils = {
      * @param {string} [xLabel=''] - The label for the x-axis.
      * @param {string} [yLabel=''] - The label for the y-axis.
      */
-    createOrUpdateScatterPlot(elementId, xData, yData, title, xLabel = '', yLabel = '', selectedColorKey = 'primary') {
+    createOrUpdateScatterPlot(elementId, xData, yData, title, xLabel = '', yLabel = '', colorKey = 'blue') {
         // Fetch particle colors from CSS variables
         const rootStyles = getComputedStyle(document.documentElement);
         const particleColors = {
-            'primary': rootStyles.getPropertyValue('--color-accent-primary').trim() || '#17A2B8',
-            'secondary': rootStyles.getPropertyValue('--color-accent-secondary-plot-loss').trim() || '#E83E8C',
-            'tertiary': rootStyles.getPropertyValue('--color-accent-tertiary-particles').trim() || '#FFC107'
+            'blue': rootStyles.getPropertyValue('--color-accent-primary').trim() || '#17A2B8',
+            'pink': rootStyles.getPropertyValue('--color-accent-secondary-plot-loss').trim() || '#E83E8C',
+            'green': '#28A745',
+            'yellow': rootStyles.getPropertyValue('--color-accent-tertiary-particles').trim() || '#FFC107'
         };
 
-        const markerColor = particleColors[selectedColorKey] || particleColors['primary'];
+        const markerColor = particleColors[colorKey] || particleColors['blue'];
 
         const trace = {
             x: xData,
@@ -53,7 +54,7 @@ window.PlotUtils = {
             }
         };
 
-        Plotly.react(elementId, [trace], layout, {responsive: true});
+        Plotly.react(elementId, [trace], layout, {responsive: true, staticPlot: true, displayModeBar: false});
     },
 
     /**
@@ -169,6 +170,6 @@ window.PlotUtils = {
             });
         }
 
-        Plotly.react(elementId, plotData, layout, {responsive: true});
+        Plotly.react(elementId, plotData, layout, {responsive: true, staticPlot: true, displayModeBar: false});
     }
 };

@@ -24,7 +24,7 @@ function initializeSliders() {
                 slider.value = window.sharedData.T; // Set from sharedData
                 output.textContent = slider.value;
 
-                slider.addEventListener('input', function() {
+                slider.addEventListener('change', function() {
                     const newTValue = parseInt(this.value, 10);
                     window.sharedData.T = newTValue; // Update sharedData
 
@@ -177,7 +177,7 @@ function initializePhiSliders() {
             output.textContent = sharedPhi.toFixed(2); // Display initial value in radians
         }
 
-        slider.addEventListener('input', function() {
+        slider.addEventListener('change', function() {
             const sliderValue = parseInt(this.value);
             const newPhi = sliderValue / 100.0; // Convert back to radians
             window.sharedData.phi = newPhi;
