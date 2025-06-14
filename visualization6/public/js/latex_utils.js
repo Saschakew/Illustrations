@@ -38,25 +38,38 @@
         },
 
         updateLatexDisplay: function(elementId, latexString) {
-            const category = 'LATEX_UTIL';
             const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = latexString; 
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([element]).catch((err) => {
-                        console.error('MathJax typesetting error for element:', elementId, err);
-                        if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
-                            DebugManager.log(category, 'MathJax typesetting error for element:', elementId, 'Error:', err, 'LaTeX String:', latexString);
-                        }
-                    });
-                } else {
-                    console.warn('MathJax.typesetPromise is not available. LaTeX will not be rendered for element:', elementId);
-                    if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
-                         DebugManager.log(category, 'MathJax.typesetPromise not available for element:', elementId);
-                    }
+            if (!element) {
+                if (window.DebugManager && DebugManager.isCategoryEnabled('LATEX_UTIL')) {
+                    console.warn(`LatexUtils: Element with ID '${elementId}' not found.`);
                 }
+                return;
+            }
+
+            // Performance Optimization: Only update if the content has actually changed.
+            if (element.textContent === latexString) {
+                if (window.DebugManager && DebugManager.isCategoryEnabled('LATEX_UPDATE')) {
+                    console.log(`Skipping typeset for #${elementId}, content is unchanged.`);
+                }
+                return; // Exit if the new LaTeX string is the same as the old one
+            }
+
+            element.textContent = latexString;
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                if (window.DebugManager && DebugManager.isCategoryEnabled('LATEX_UPDATE')) {
+                    console.log(`Typesetting for element: #${elementId}`);
+                }
+                window.MathJax.typesetPromise([element]).catch((err) => {
+                    console.error('MathJax typesetting error for element:', elementId, err);
+                    if (window.DebugManager && DebugManager.isCategoryEnabled('LATEX_UPDATE')) {
+                        DebugManager.log('LATEX_UPDATE', 'MathJax typesetting error for element:', elementId, 'Error:', err, 'LaTeX String:', latexString);
+                    }
+                });
             } else {
-                if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                console.warn('MathJax.typesetPromise is not available. LaTeX will not be rendered for element:', elementId);
+                if (window.DebugManager && DebugManager.isCategoryEnabled('LATEX_UTIL')) {
+                     DebugManager.log('LATEX_UTIL', 'MathJax.typesetPromise not available for element:', elementId);
                     DebugManager.log(category, `LaTeX display element with ID '${elementId}' not found.`);
                 }
             }

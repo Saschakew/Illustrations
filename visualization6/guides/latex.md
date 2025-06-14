@@ -2,6 +2,73 @@
 
 This guide outlines the standardized approach for rendering and dynamically updating LaTeX content within the SVAR Visualizer application, leveraging MathJax.
 
+## Latex proposal to increase speed from different project
+
+Here’s the recipe we followed to make MathJax-based, dynamically updated LaTeX feel “instant” in the SVAR Visualizer:
+
+Isolate all LaTeX logic in a tiny utility module
+• public/js/latex_utils.js exposes pure functions:
+• formatMatrixToLatex(matrix) → \(\begin{bmatrix} … \end{bmatrix}\) string.
+• updateLatexDisplay(cssSelector, latexString) → sets textContent then calls MathJax.typesetPromise() only on that element, not the whole document.
+• Convenience wrappers (displayBPhiMatrix, displayPhiEst, …) call the two lines above.
+➜ Keeping rendering code here avoids repeating typesetPromise() calls or string building across the app.
+Render into lightweight placeholders
+• Section HTML files contain <span id="…_display"></span> inside normal text; no bulky canvases/iframes.
+• Because each placeholder is small, MathJax can re-typeset in a few ms.
+Batch refreshes in a single place
+• main.js has updateDynamicLatexOutputs(), called whenever data change events occur (regenerateBPhi(), new ε-sample, phi slider, etc.).
+• That function sequentially calls the utility wrappers, so only one update cycle happens per user interaction.
+Avoid unnecessary re-renders
+• Before updating, each wrapper checks if (oldLatex !== newLatex) and skips typesetPromise() when the content hasn’t changed.
+• Heavy data computations finish before LaTeX is touched, so MathJax never blocks long loops.
+Load order & async discipline
+• MathJax CDN is loaded once in index.html.
+• All section initializers (initializeSectionX) are marked async; the global loading overlay is hidden only after they await LaTeX rendering, ensuring the first paint is smooth.
+Debug visibility
+• New debug categories (LATEX_UPDATE, LATEX_UTIL) allow console-toggling of verbose logs to spot any accidental thrashing.
+Key takeaways reusable in other projects • Keep MathJax updates element-scoped (typesetPromise(element)) rather than page-wide.
+• Centralize LaTeX formatting & rendering in one utility; call it from a single batched refresh function.
+• Update only when the underlying value really changed.
+• Finish all heavy JS work first, then trigger the (quick) MathJax pass.
+• Provide lightweight, static placeholders so the DOM diff is minimal.
+
+Following this pattern lets us refresh multiple matrices and equations every slider move with virtually no perceptible lag.
+
+Here are the key technical details about our MathJax setup from the SVAR Visualizer:
+
+MathJax Version:
+We're using MathJax v3.2.2 (latest stable) loaded via CDN in index.html:
+html
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
+Configuration:
+Minimal setup with these optimizations:
+javascript
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)']],  // Only enable \(...\) delimiters (not $$)
+    tags: 'none'                   // Disable equation numbering
+  },
+  options: {
+    skipHtmlTags: ['script', 'style']  // Faster parsing by ignoring these
+  }
+};
+Loading Strategy:
+Placed in <head> with async to avoid render blocking
+Combined with our loading-overlay system to ensure MathJax is fully ready before any LaTeX rendering attempts
+Update Pattern:
+All dynamic updates use:
+javascript
+element.textContent = newLatexString;
+await MathJax.typesetPromise([element]);  // Scoped to just the changed element
+Why It's Fast:
+No SVG/Canvas - Using native HTML-CSS output (default in v3)
+Only the necessary TeX packages loaded (no chemistry, physics extras)
+Our latex_utils.js caches strings to skip redundant typesetPromise() calls
+This setup gives us sub-10ms updates per matrix even during rapid slider movements. The full config is documented in guides/latex.md.
+
+ 
+
+
 ## Core Principles
 
 1.  **Centralized Utilities**: A dedicated utility file, `public/js/latex_utils.js`, will house functions for formatting data into LaTeX strings and updating HTML elements.
