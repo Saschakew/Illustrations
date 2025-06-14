@@ -18,7 +18,8 @@ async function updateSectionOnePlots() {
             window.sharedData.epsilon_2t,
             'Structural Shocks (ε₁ vs ε₂)',
             'ε₁',
-            'ε₂'
+            'ε₂',
+            'secondary'
         );
 
         // Plot 2: Reduced-Form Shocks (u_t)

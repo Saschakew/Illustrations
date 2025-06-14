@@ -14,6 +14,7 @@
     --color-accent-primary-darker: #138496; /* Darker Teal */
     --color-accent-secondary-plot-loss: #E83E8C; /* Pink/Magenta */
     --color-accent-secondary-plot-phi: #28A745;  /* Green */
+    --color-accent-tertiary-particles: #FFC107; /* Soft Orange/Amber for particles */
     --color-border: #DEE2E6;              /* Light Gray */
     --color-text-on-accent: #FFFFFF;      /* White */
     --color-slider-track: #E9ECEF;        /* Light Gray */

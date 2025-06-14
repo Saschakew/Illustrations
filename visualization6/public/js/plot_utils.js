@@ -10,13 +10,28 @@ window.PlotUtils = {
      * @param {string} [xLabel=''] - The label for the x-axis.
      * @param {string} [yLabel=''] - The label for the y-axis.
      */
-    createOrUpdateScatterPlot(elementId, xData, yData, title, xLabel = '', yLabel = '') {
+    createOrUpdateScatterPlot(elementId, xData, yData, title, xLabel = '', yLabel = '', selectedColorKey = 'primary') {
+        // Fetch particle colors from CSS variables
+        const rootStyles = getComputedStyle(document.documentElement);
+        const particleColors = {
+            'primary': rootStyles.getPropertyValue('--color-accent-primary').trim() || '#17A2B8',
+            'secondary': rootStyles.getPropertyValue('--color-accent-secondary-plot-loss').trim() || '#E83E8C',
+            'tertiary': rootStyles.getPropertyValue('--color-accent-tertiary-particles').trim() || '#FFC107'
+        };
+
+        const markerColor = particleColors[selectedColorKey] || particleColors['primary'];
+
         const trace = {
             x: xData,
             y: yData,
             mode: 'markers',
             type: 'scatter',
-            marker: { size: 5, color: 'rgba(0, 123, 255, 0.6)' }
+            marker: { 
+                size: 4, // Adjusted for particle-like appearance (hero particles are 1.5-3, guide is 6)
+                color: markerColor, 
+                opacity: 0.7 // From style_guide_plots.md, hero particles are 0.35
+                // No line/border to better match hero particle appearance
+            }
         };
 
         const layout = {

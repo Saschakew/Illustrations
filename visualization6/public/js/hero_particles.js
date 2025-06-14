@@ -31,7 +31,8 @@
         const rootStyles = getComputedStyle(document.documentElement);
         const primaryColor = rootStyles.getPropertyValue('--color-accent-primary').trim() || '#17A2B8';
         const secondaryColor = rootStyles.getPropertyValue('--color-accent-secondary-plot-loss').trim() || '#E83E8C';
-        DebugManager.log('HERO', `Primary color: ${primaryColor}, Secondary color: ${secondaryColor}`);
+        const tertiaryColor = rootStyles.getPropertyValue('--color-accent-tertiary-particles').trim() || '#FFC107'; // Added tertiary color
+        DebugManager.log('HERO', `Primary color: ${primaryColor}, Secondary color: ${secondaryColor}, Tertiary color: ${tertiaryColor}`);
 
         // Ensure tsParticles is available
         if (!window.tsParticles) {
@@ -51,7 +52,7 @@
             },
             particles: {
                 number: { value: 55, density: { enable: true, area: 800 } },
-                color: { value: [primaryColor, secondaryColor] },
+                color: { value: [primaryColor, secondaryColor, tertiaryColor] }, // Added tertiaryColor to the array
                 shape: { type: 'circle' },
                 opacity: { value: 0.35 }, // Compromise: Spec is 0.25, raised slightly for visibility
                 size: { value: { min: 1.5, max: 3 }, random: true },
