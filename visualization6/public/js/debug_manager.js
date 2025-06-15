@@ -8,7 +8,7 @@ const DebugManager = (() => {
         DATA_HANDLING: false,   // Logs from shared_data.js or data operations
         EVENT_HANDLING: false,  // Logs for event listener setup and triggers
         PLOT_RENDERING: false,  // Logs related to Plotly or other plotting libraries
-        SVAR_DATA_PIPELINE: true, // Logs for the SVAR data generation pipeline
+        SVAR_DATA_PIPELINE: false, // Logs for the SVAR data generation pipeline
         SVAR_MATH: false,          // Logs for SVARMathUtil functions (covariance, cholesky, etc.)
         PLOT_UPDATE: 'Plot Update',
         HERO: false,                 // Logs for hero particle events

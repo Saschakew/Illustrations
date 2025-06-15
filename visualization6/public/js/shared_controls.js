@@ -30,7 +30,7 @@ function initializeSliders() {
 
                     // Synchronize all T-sliders and their outputs
                     tSliders.forEach(s => {
-                        const o = document.getElementById(s.id + '_value');
+                        const o = s.parentElement.querySelector(`output[for="${s.id}"]`);
                         s.value = newTValue;
                         if (o) o.textContent = newTValue;
                     });

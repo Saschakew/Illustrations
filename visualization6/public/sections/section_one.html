@@ -10,15 +10,27 @@
                 </div>
             </div>
 
-            <p>We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The
+            <p class="section-intro"><strong>Shock generation pipeline.</strong> We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The
                 second, \(\eta_{2t}\), is from a mixture of two Normal distributions, designed to be non-Gaussian.The raw shocks
                 \(\eta_{t}\) are scaled by a time-varying volatility process \(\sigma_t\). For the first half of the sample,
                 \(\sigma_t = 1\), and for the second half, \(\sigma_t = 2\). This produces structural shocks \(\epsilon_t = \sigma_t
                 \eta_{t}\). We normalize the shocks to zero mean and unit variance. The reduced-form shocks \(u_t\) are equal to
                 \(u_t = B_0 \epsilon_t\). </p>
-            <p class="model-explanation">We consider two different SVAR models: A recursive model with \(B_0^{\text{rec}} =
-            \begin{bmatrix} 1 & 0 \\ 0.5 & 1 \end{bmatrix}\) and a non-recursive model with \(B_0^{\text{non-rec}} =
-            \begin{bmatrix} 1 & 0.5 \\ 0.5 & 1 \end{bmatrix}\). Use the \(B_0\) switch to toggle between the two models. </p>
+            <h3 class="sub-topic-heading">Model Variants</h3>
+            <div class="estimate-card">
+                <h4 class="card-title">True \(B_0\) Matrix Options</h4>
+                <div class="est-line">
+                    <span class="est-label">Recursive \(B_0^{\text{rec}}\)</span>
+                    <span class="est-value">\(\begin{bmatrix} 1 & 0 \\ 0.5 & 1 \end{bmatrix}\)</span>
+                </div>
+                <div class="est-line">
+                    <span class="est-label">Non-recursive \(B_0^{\text{non-rec}}\)</span>
+                    <span class="est-value">\(\begin{bmatrix} 1 & 0.5 \\ 0.5 & 1 \end{bmatrix}\)</span>
+                </div>
+            </div>
+            <div class="info-callout">
+                <p><strong>Tip:</strong> Use the \(B_0\) switch in the controls above to toggle between the two true data generating models.</p>
+            </div>
 
             <div class="latex-output-container card">
                 <p>Data Generating Process: \(u_t = B_0 \epsilon_t\), where   <span id="b0_matrix_s1_display"></span></p>
@@ -29,12 +41,8 @@
                 <div id="plot_s1_right" class="plot-area"></div>
             </div> 
  
-            <ul>
-                <li><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \(\epsilon_{1t}\) against
-                    \(\epsilon_{2t}\). Observe the non-Gaussian features from \(\epsilon_{2t}\).</li>
-                <li><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \(u_{1t}\) against \(u_{2t}\).
-                    These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution
-                    changes when you toggle \(B_0\), illustrating how different mixtures of the structural shocks \(\epsilon_t\)
-                    can produce different patterns in the observed reduced-form residuals.</li>
-            </ul> 
+            <div class="plot-caption">
+                <p><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \(\epsilon_{1t}\) against \(\epsilon_{2t}\). Observe the non-Gaussian features from \(\epsilon_{2t}\).</p>
+                <p><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \(u_{1t}\) against \(u_{2t}\). These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution changes when you toggle \(B_0\), illustrating how different mixtures of the structural shocks \(\epsilon_t\) can produce different patterns in the observed reduced-form residuals.</p>
+            </div> 
         </section>

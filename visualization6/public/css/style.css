@@ -272,6 +272,41 @@ body {
     border: 1px solid var(--color-border);
 }
 
+/* Intro Section (Section Zero) */
+.intro-section {
+    background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%); /* Subtle gradient */
+    border: none;
+    box-shadow: none;
+    text-align: center;
+    padding: calc(var(--space-xl) * 1.5) var(--space-lg);
+}
+
+.intro-section h2 {
+    font-size: 2rem; /* Larger heading */
+    margin-bottom: var(--space-lg);
+    color: var(--color-accent-primary);
+}
+
+.intro-section p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.intro-section ul {
+    list-style: disc inside;
+    max-width: 800px;
+    margin: var(--space-md) auto;
+    padding-left: 0;
+    text-align: left;
+}
+
+.intro-section li {
+    margin-bottom: var(--space-sm);
+}
+
 .section-supertitle {
     font-size: 0.8rem; /* 12.8px, guide: ~13px */
     font-weight: 600; /* Open Sans Semibold */
@@ -290,6 +325,177 @@ body {
     margin-bottom: var(--space-lg);
     line-height: var(--line-height-headings);
 }
+
+/* === New Typographic & Content Elements (Added 2025-07-01) === */
+
+/* Section Introduction Paragraph */
+.section-intro {
+    font-size: 1.1rem; /* Slightly larger than base */
+    line-height: 1.7;
+    color: var(--color-text-secondary); /* Softer color for intro */
+    margin-bottom: var(--space-lg);
+    max-width: 75ch; /* Optimal line length */
+}
+
+/* Sub-Topic Heading (e.g., for h3 or h4 level topics within a section) */
+.sub-topic-heading {
+    font-family: var(--font-family-headings);
+    font-size: 1.3rem; /* Between base and section title */
+    font-weight: 600; /* Montserrat semibold or similar */
+    color: var(--color-text-primary);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+    max-width: 75ch;
+}
+
+/* Informational Callout (for tips, notes, definitions) */
+.info-callout {
+    background-color: #f0f7fa; /* Very light blue/cyan, derived from hero gradient */
+    border-left: 4px solid var(--color-accent-primary);
+    padding: var(--space-md);
+    margin: var(--space-lg) 0;
+    border-radius: var(--card-border-radius); /* Consistent with other cards */
+    font-size: 0.95rem;
+    max-width: 75ch;
+}
+.info-callout p:last-child {
+    margin-bottom: 0;
+}
+.info-callout strong, .info-callout b { /* Emphasize titles within callouts */
+    color: var(--color-accent-primary-darker);
+    font-weight: 600;
+}
+
+/* Floated Info Callout */
+.info-callout--floated-right {
+    float: right;
+    max-width: 230px; /* Adjust as needed */
+    margin-top: var(--space-xs); /* Align with paragraph flow */
+    margin-right: 0; /* No margin on the float side */
+    margin-bottom: var(--space-md);
+    margin-left: var(--space-lg); /* Space from the main text */
+    width: auto; /* Override inherited max-width if any */
+}
+
+/* Responsive behavior for floated callouts */
+@media (max-width: 991px) { /* Stacks below this width, adjust as needed */
+    .info-callout--floated-right {
+        float: none;
+        max-width: 100%; /* Full width on smaller screens */
+        margin-left: 0; /* Reset side margins */
+        margin-right: 0;
+        margin-top: var(--space-md); /* Standard top margin when stacked */
+    }
+}
+
+/* Refined Estimate Card */
+.estimate-card { /* Assuming this class is on a div wrapping the estimates */
+    background-color: var(--color-background-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
+    margin: var(--space-lg) 0;
+    max-width: 60ch; /* Cards might be narrower */
+}
+.estimate-card .card-title { /* Optional title for the card */
+    font-family: var(--font-family-headings);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+.est-line { /* For individual key-value lines within the estimate card */
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px dashed var(--color-border);
+    font-size: 0.95rem;
+}
+.est-line:last-child {
+    border-bottom: none;
+}
+.est-line .est-label {
+    color: var(--color-text-secondary);
+    margin-right: var(--space-md);
+    flex-shrink: 0;
+}
+.est-line .est-value {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-align: right;
+    flex-grow: 1;
+    word-break: break-all; /* Prevent long values from breaking layout */
+}
+.est-line .b-matrix-pill {
+    font-weight: normal; /* Override potential inherited bold from .est-value */
+}
+
+/* Plot Caption */
+.plot-caption {
+    font-size: 0.875rem; /* 14px */
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    line-height: 1.5;
+    max-width: 70ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+.plot-caption strong, .plot-caption b {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+/* Refined .b-matrix-pill (was in paragraph_util.css) */
+.b-matrix-pill {
+  display: inline-block;
+  background: #e9ecef; /* Using --color-slider-track for a neutral light gray */
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0 0.1em;
+  vertical-align: baseline;
+}
+
+/* General prose styling improvements within content sections */
+.content-section > p, /* Direct children paragraphs */
+.content-section > ul,
+.content-section > ol,
+.content-section > .info-callout > p, /* Paragraphs inside callouts */
+.content-section > .section-intro /* Ensure section intro also adheres */
+ {
+    max-width: 75ch; /* Optimal line length for readability */
+    /* If the content-section is not centered, add margin: auto for these text blocks */
+    /* margin-left: auto; margin-right: auto; */ /* This might be too aggressive globally */
+}
+
+.content-section p,
+.content-section ul,
+.content-section ol {
+    margin-bottom: var(--space-md); /* Consistent paragraph/list spacing */
+}
+.content-section ul, .content-section ol {
+    padding-left: var(--space-lg); /* Indent lists */
+}
+.content-section li {
+    margin-bottom: var(--space-sm); /* Consistent list item spacing */
+}
+
+/* Ensure Katex rendered math also respects text color */
+.katex {
+    color: var(--color-text-primary);
+}
+
 
 /* Controls Area */
 .controls-placeholder {
@@ -828,6 +1034,63 @@ body {
     .control-item input[type="range"] {
         width: 180px; /* Preserve compact width on small screens */
     }
+
+/* === Layout Enhancements (2025-06-15) === */
+/* 1. Constrain overall section width and center page content */
+.content-section {
+    max-width: 960px;               /* readable line length */
+    margin: 3rem auto;              /* vertical rhythm + center */
+    padding:   1.25rem;             /* horizontal breathing room */
+
+    /* 2-column grid: controls left (fixed), content right (auto) */
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    column-gap: 24px;
+}
+
+/* Full-width heading spans both columns */
+.content-section > h2 {
+    grid-column: 1 / -1;
+}
+
+/* Controls in column 1 */
+.content-section > .controls-container {
+    grid-column: 1;
+}
+
+/* Everything after controls flows into column 2 */
+.content-section > .controls-container ~ * {
+    grid-column: 2;
+}
+
+/* Mobile: collapse to single column */
+@media (max-width: 900px) {
+    .content-section {
+        grid-template-columns: 1fr;
+    }
+    .content-section > .controls-container {
+        grid-column: 1;
+    }
+    .content-section > .controls-container ~ * {
+        grid-column: 1;
+    }
+}
+
+/* 3. Prose typography for better readability */
+.prose,
+.content-section p {
+    max-width: 65ch;    /* ~65 characters per line */
+    line-height: 1.65;  /* relaxed line spacing */
+    margin-bottom: 1rem;
+}
+
+/* Keep cards and plots from stretching full width in grid */
+.plot-container.card,
+.latex-output-container.card,
+.plot-area {
+    max-width: 100%;
+}
+
     .plot-area {
         flex-basis: 100%;
     }
@@ -874,7 +1137,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* Hide content initially, fade in after load */
+/* Initial visibility for navigation and footer */
 .main-navigation,
 .footer {
     opacity: 0;
@@ -882,24 +1145,37 @@ body {
     transition: opacity var(--transition-speed-slow) ease-in-out;
 }
 
-.main-navigation.loaded,
-#main-content.loaded > .content-section-placeholder, /* Target placeholders for fade-in */
-.footer.loaded {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* Ensure main-content itself is visible, but its direct section placeholders are initially hidden */
+/* Ensure main-content itself is visible by default */
 #main-content {
     opacity: 1;
     visibility: visible;
 }
 
-.content-section-placeholder {
+/* Hide sections 1-N by default (direct children of main-content) */
+#main-content > .content-section-placeholder:not(#section-zero-placeholder) {
     opacity: 0;
     visibility: hidden;
-    display: none; /* Initially hide section placeholders */
-    transition: opacity var(--transition-speed-slow) ease-in-out;
+    display: none; /* Collapse space initially */
+    transition: opacity var(--transition-speed-slow) ease-in-out, visibility var(--transition-speed-slow) ease-in-out;
+}
+
+/* Ensure section-zero (as a direct child of main-content) is visible from the start */
+#main-content > #section-zero-placeholder {
+    opacity: 1;
+    visibility: visible;
+    display: block; /* Or its natural display state */
+}
+
+/* The loading overlay is also a direct child and should be visible by default.
+   Its specific styles (position, background, spinner) are defined elsewhere (e.g., around lines 1000-1030). */
+
+/* After everything is loaded, reveal nav, footer, and sections 1-N */
+.main-navigation.loaded,
+.footer.loaded,
+#main-content.loaded > .content-section-placeholder:not(#section-zero-placeholder) {
+    opacity: 1;
+    visibility: visible;
+    display: block; /* Or their natural display state */
 }
 
 /* When main content is loaded, display and fade in the placeholders */

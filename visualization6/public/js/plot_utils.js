@@ -81,6 +81,20 @@ window.PlotUtils = {
         };
 
         Plotly.react(elementId, [trace], layout, {responsive: true, staticPlot: true, displayModeBar: false});
+
+        // Trigger MathJax typesetting for LaTeX in titles or labels
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            const plotElement = document.getElementById(elementId);
+            if (plotElement) {
+                window.MathJax.typesetPromise([plotElement]).catch(err => {
+                    if (window.DebugManager && typeof window.DebugManager.log === 'function') {
+                        window.DebugManager.log('LATEX_UPDATE', 'MathJax typeset error (scatter):', elementId, err);
+                    } else {
+                        console.error('MathJax typeset error (scatter):', elementId, err);
+                    }
+                });
+            }
+        }
     },
 
     /**
@@ -192,5 +206,19 @@ window.PlotUtils = {
         }
 
         Plotly.react(elementId, plotData, layout, {responsive: true, staticPlot: true, displayModeBar: false});
+
+        // Trigger MathJax typesetting for LaTeX in titles or labels
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            const plotElement = document.getElementById(elementId);
+            if (plotElement) {
+                window.MathJax.typesetPromise([plotElement]).catch(err => {
+                    if (window.DebugManager && typeof window.DebugManager.log === 'function') {
+                        window.DebugManager.log('LATEX_UPDATE', 'MathJax typeset error (loss):', elementId, err);
+                    } else {
+                        console.error('MathJax typeset error (loss):', elementId, err);
+                    }
+                });
+            }
+        }
     }
 };

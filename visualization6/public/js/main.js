@@ -439,36 +439,50 @@ function initializeMainMenuToggle() {
     DebugManager.log('MAIN_APP', 'Main menu toggle initialized.');
 }
 
-document.addEventListener('DOMContentLoaded', async function() {
-    const loadingOverlay = document.getElementById('loading-overlay');
-    if (loadingOverlay) loadingOverlay.style.display = 'flex'; // Show loading screen
+document.addEventListener('DOMContentLoaded', async () => {
+    DebugManager.log('MAIN_APP', 'DOMContentLoaded event fired.');
 
-    try {
-        await loadSections();
-        await initializeApp(); // Ensure initializeApp is async and awaited
-    } catch (error) {
-        DebugManager.log('MAIN_APP', 'ERROR: Critical error during initial load or app initialization:', error);
-        if (loadingOverlay) {
-            loadingOverlay.innerHTML = '<p>An error occurred during loading. Please try refreshing the page. Check console for details.</p>';
-            // Keep the overlay visible with the error message
-            return; // Stop further execution if critical init fails
-        }
+    // Section Zero's HTML will be loaded by loadSections. 
+    // The loading overlay is already visible below section zero due to HTML structure and CSS.
+
+    DebugManager.log('MAIN_APP', 'Loading sections...');
+    await loadSections(); // This loads HTML into all placeholders, including section-zero
+    DebugManager.log('MAIN_APP', 'Sections loaded.');
+
+    DebugManager.log('MAIN_APP', 'Initializing app...');
+    await initializeApp(); // This initializes JS for all sections (0 to 4)
+    DebugManager.log('MAIN_APP', 'App initialized.');
+
+    // Hide the loading overlay
+    const loadingOverlayElement = document.getElementById('loading-overlay');
+    if (loadingOverlayElement) {
+        DebugManager.log('MAIN_APP', 'Hiding loading overlay.');
+        loadingOverlayElement.classList.add('hidden');
+        // The CSS for .hidden should handle display:none and transitions.
     }
 
-    if (loadingOverlay) loadingOverlay.style.display = 'none'; // Hide loading screen
+    // Add .loaded to #main-content to trigger fade-in of sections 1-4
+    const mainContentElement = document.getElementById('main-content');
+    if (mainContentElement) {
+        DebugManager.log('MAIN_APP', 'Adding .loaded class to main-content.');
+        mainContentElement.classList.add('loaded');
+    }
 
-    // Reveal main UI sections now that loading is complete
-    // const nav = document.getElementById('main-nav'); // Navigation is hidden via CSS
-    // if (nav) nav.classList.add('loaded');           // Navigation is hidden via CSS
+    // Add .loaded to nav and footer for their fade-in
+    const mainNavElement = document.getElementById('main-nav');
+    if (mainNavElement) {
+        mainNavElement.classList.add('loaded');
+    }
+    const footerElement = document.querySelector('footer.footer');
+    if (footerElement) {
+        footerElement.classList.add('loaded');
+    }
 
-    const mainContent = document.getElementById('main-content');
-    if (mainContent) mainContent.classList.add('loaded');
-    const footerEl = document.querySelector('.footer');
-    if (footerEl) footerEl.classList.add('loaded');
+    DebugManager.log('MAIN_APP', 'Page fully loaded and initialized.');
 });
 
 async function loadSections() {
-    DebugManager.log('MAIN_APP', 'Loading sections...');
+    DebugManager.log('MAIN_APP', 'Attempting to load HTML sections...');
     const placeholders = document.querySelectorAll('div[data-section-src]');
     const fetchPromises = [];
 
@@ -486,6 +500,7 @@ async function loadSections() {
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = html.trim();
                     
+                    // Replace placeholder with the first child of tempDiv (the actual section element)
                     if (tempDiv.firstChild && placeholder.parentNode) {
                         placeholder.parentNode.replaceChild(tempDiv.firstChild, placeholder);
                     } else {

@@ -10,22 +10,22 @@
                  </div>
              </div>
 
-                <p>
+                <p class="context"><strong>Context.</strong>
                     When structural shocks \(\epsilon_t\) are non-Gaussian, we can identify the model without imposing restrictions like
                     \(B_0\) being lower-triangular. The key idea is that rotating a non-Gaussian distribution changes its shape. We can
                     find the correct rotation angle \(\phi\) by finding the one that makes the resulting innovations \(e_t(\phi)\) "most
                     independent."
                 </p>
+                <h3 class="sub">Objective function</h3>
                 <p>
                     One way to measure this is to minimize an objective function based on higher-order moments. We define the objective
                     function as \(J(\phi) = \text{mean}(e_{1t}^2 e_{2t})^2 + \text{mean}(e_{2t}^2 e_{1t})^2\). The true rotation angle
                     \(\phi_0\) should minimize this function, driving it close to zero.
                 </p>
-                <p>Use the \(\phi\) slider to see how the innovations and the objective function change. The true data-generating matrix
+                <p class="tip">Use the \(\phi\) slider to see how the innovations and the objective function change. The true data-generating matrix
                     \(B_0\) (and thus the true \(\phi_0\)) is selected via the toggle.</p>
 
-
-                    <p>Estimate...</p>
+                <div class="estimate-card card"><p class="est-line">Estimate...</p></div>
 
             <div class="latex-output-container card">
                 <p>Current identification matrix \(B(\phi)\): <span id="b_phi_matrix_s3_display"></span></p>
