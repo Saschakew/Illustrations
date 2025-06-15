@@ -318,16 +318,16 @@ body {
 
 .controls-row {
     display: flex;
-    flex-wrap: nowrap; /* Prevent wrapping on large screens */
+    flex-wrap: nowrap; /* Default: prevent wrapping */
     gap: var(--space-lg);
     align-items: center; /* Better vertical alignment */
     margin-bottom: var(--space-md);
     justify-content: space-between; /* Distribute items evenly */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    padding-bottom: var(--space-sm); /* Add space for scrollbar */
 }
 
-.control-item {
-    display: flex;
-    flex-direction: column;
+.control-item {  
     gap: var(--space-sm);
     min-width: fit-content; /* Prevent items from shrinking too much */
 }
@@ -393,10 +393,91 @@ body {
 .control-item output {
     font-size: 0.875rem; /* 14px, as per guide */
     font-weight: 400; /* Open Sans Regular */
-    color: var(--color-text-secondary);
-    margin-left: var(--space-sm);
+    color: var(--color-text-secondary); 
     min-width: 30px; /* Ensure space for values */
     text-align: right;
+}
+
+/* Toggle Switch for B₀ Mode */
+.mode-switch-control { /* Container for the B0 label and the toggle */
+    display: flex;
+    align-items: center; /* Vertically align B0 label and toggle */
+    margin-bottom: var(--space-sm); /* Consistent spacing */
+}
+
+.mode-prefix-label { /* The "B0:" label */
+    margin-right: var(--space-xs); /* Smaller space for a tighter look */
+    font-weight: 500;
+    color: var(--color-text-primary);
+    font-size: 0.9rem; /* Match general label size if needed */
+}
+
+.mode-switch-toggle {
+    position: relative;
+    display: inline-block;
+    width: 190px; /* Adjusted for slightly wider internal labels */
+    height: 34px;
+}
+
+.mode-switch-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.mode-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border);
+    transition: .4s;
+    border-radius: var(--button-border-radius);
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; /* Removed */
+    /* padding: 0 10px; /* Removed */
+}
+
+.mode-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: calc(100% - 4px); /* Full height minus border of parent */
+    width: 90px; /* Width of one label segment */
+    left: 2px; /* Offset for border */
+    bottom: 2px; /* Offset for border */
+    background-color: var(--color-accent-primary);
+    transition: .4s;
+    border-radius: var(--border-radius-md); /* Slightly smaller radius */
+    z-index: 1;
+}
+
+.mode-switch-toggle input:checked + .mode-switch-slider:before {
+    transform: translateX(94px); /* Adjusted from 90px to 94px (188px inner width / 2) */
+}
+
+.mode-switch-toggle .mode-label {
+    color: var(--color-text-secondary); /* Default color for non-active labels */
+    font-size: 0.875rem;
+    font-weight: 600;
+    z-index: 2;
+    position: relative;
+    width: 50%; /* Changed from 85px to 50% */
+    text-align: center;
+    transition: color 0.4s;
+}
+
+.mode-switch-toggle input:checked + .mode-switch-slider .non-recursive-label,
+.mode-switch-toggle input:not(:checked) + .mode-switch-slider .recursive-label {
+    color: var(--color-text-on-accent); /* Active label color */
+}
+
+.mode-switch-control { 
+    align-items: center;
+    gap: var(--space-md);
 }
 
 /* Mode Switch (styling for a select element, can be enhanced with custom control later) */
@@ -422,8 +503,7 @@ body {
     flex-basis: calc(50% - (var(--space-lg) / 2));
     min-width: 300px;
     height: 400px; /* Or make aspect-ratio based if desired */
-    background-color: var(--color-background-card); 
-    padding: var(--space-md);  
+    background-color: var(--color-background-card);  
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -511,14 +591,13 @@ body {
 
 /* Responsive adjustments */
 /* Controls toggle button */
-.controls-toggle-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background-color: var(--color-background);
+.controls-toggle-btn { 
+    top: 12px; /* Adjusted for better alignment */
+    right: 12px; /* Adjusted for better alignment */
+    width: 32px;
+    height: 32px;
+    border-radius: var(--button-border-radius); /* Rounded square */
+    background-color: transparent;
     border: 1px solid var(--color-border);
     cursor: pointer;
     display: flex;
@@ -526,16 +605,19 @@ body {
     justify-content: center;
     z-index: 10;
     padding: 0;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-.controls-toggle-btn:hover {
-    background-color: var(--color-accent-primary-light);
+.controls-toggle-btn:hover,
+.controls-toggle-btn:focus {
+    background-color: var(--color-background-card-hover);
+    border-color: var(--color-border-strong); /* Or a slightly darker border */
+    outline: none; /* Remove default focus outline if custom is applied */
 }
 
 .toggle-icon {
     position: relative;
-    width: 18px;
+    width: 16px; /* Adjusted width */
     height: 2px;
     background-color: var(--color-text-primary);
     transition: all 0.3s ease;
@@ -545,18 +627,19 @@ body {
 .toggle-icon::after {
     content: '';
     position: absolute;
-    width: 18px;
+    left: 0; /* Ensure alignment */
+    width: 16px; /* Adjusted width */
     height: 2px;
     background-color: var(--color-text-primary);
     transition: all 0.3s ease;
 }
 
 .toggle-icon::before {
-    transform: translateY(-6px);
+    transform: translateY(-5px); /* Adjusted spacing */
 }
 
 .toggle-icon::after {
-    transform: translateY(6px);
+    transform: translateY(5px); /* Adjusted spacing */
 }
 
 .controls-toggle-btn.active .toggle-icon {
@@ -576,26 +659,137 @@ body {
     display: none;
 }
 
+/* Main Navigation Mobile Styles */
+.main-nav-toggle {
+    display: none; /* Hidden by default, shown in media query */
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index: 1001; /* Above nav content */
+}
+
+.main-nav-toggle-icon {
+    display: block;
+    position: relative;
+    width: 24px; /* Hamburger icon width */
+    height: 2px; /* Thickness of the lines */
+    background-color: var(--color-text-primary);
+    transition: all 0.2s ease-in-out;
+}
+
+.main-nav-toggle-icon::before,
+.main-nav-toggle-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px; /* Thickness of the lines */
+    background-color: var(--color-text-primary);
+    transition: all 0.2s ease-in-out;
+}
+
+.main-nav-toggle-icon::before {
+    transform: translateY(-7px); /* Space between lines */
+}
+
+.main-nav-toggle-icon::after {
+    transform: translateY(7px); /* Space between lines */
+}
+
+/* Active state for hamburger (X) */
+.main-nav-toggle.active .main-nav-toggle-icon {
+    background-color: transparent; /* Middle line disappears */
+}
+
+.main-nav-toggle.active .main-nav-toggle-icon::before {
+    transform: translateY(0) rotate(45deg);
+}
+
+.main-nav-toggle.active .main-nav-toggle-icon::after {
+    transform: translateY(0) rotate(-45deg);
+}
+
+/* Ensure controls toggle button is visible and controls are collapsed by default on small screens, and handle overflow for controls-row on larger screens */
+@media (min-width: 769px) {
+    .controls-toggle-btn {
+        display: none !important;
+    }
+    .controls-container.collapsed .controls-row {
+        display: flex;
+    }
+    .controls-row {
+        flex-wrap: wrap; /* Allow wrapping on large screens */
+        overflow-x: visible; /* No need for horizontal scroll when wrapping */
+        padding-bottom: 0; /* Remove scrollbar padding */
+    }
+    .control-item {
+        margin-bottom: var(--space-md); /* Add space between wrapped rows */
+    }
+}
+
 @media (max-width: 768px) {
     
     .main-navigation {
         padding: 0 var(--space-md);
-        justify-content: space-between; /* Allow space for a potential hamburger icon */
+        justify-content: space-between; /* Logo on left, hamburger on right */
     }
+
+    .main-navigation .main-nav-toggle {
+        display: block; /* Show hamburger on mobile */
+    }
+
+    /* Styles for the navigation list (ul) in mobile view */
+    .main-navigation ul {
+        display: none; /* Hide nav links by default on mobile */
+        flex-direction: column;
+        position: absolute;
+        top: var(--nav-height); /* Position below the nav bar */
+        left: 0;
+        width: 100%;
+        background-color: var(--color-background-card); /* Or var(--color-background) */
+        padding: var(--space-md) 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 1000; /* Ensure it's above content below */
+    }
+
+    /* When the navigation is open, show the list */
+    .main-navigation.nav-open ul {
+        display: flex;
+    }
+
+    /* Styles for list items (li) in mobile view */
     .main-navigation li {
-        margin: 0 var(--space-sm);
+        margin: 0; /* Remove default margins */
+        width: 100%;
+        text-align: center;
     }
+
+    /* Styles for links (a) in mobile view */
     .main-navigation a {
-        font-size: 0.85rem;
+        display: block;
+        padding: var(--space-md) var(--space-lg);
+        border-bottom: 1px solid var(--color-border-light); /* Separator for links */
+        width: 100%; /* Make links take full width */
+        /* Inherit general link styles from above, or redefine as needed */
     }
+    
+    /* Hover, focus, and active states for links in mobile view */
+    .main-navigation a:hover,
+    .main-navigation a:focus,
+    .main-navigation a.active-link {
+        background-color: var(--color-background-card-hover);
+        color: var(--color-accent-primary);
+        border-bottom-color: var(--color-accent-primary); /* Highlight active/hovered link's border */
+    }
+
     .controls-container.sticky-menu {
         top: var(--nav-height);
     }
     .controls-container {
         padding: var(--space-sm);
     }
-    .controls-row {
-        flex-direction: column;
+    .controls-row { 
         align-items: stretch;
         flex-wrap: wrap;
     }

@@ -27,6 +27,7 @@ window.PlotUtils = {
             y: yData,
             mode: 'markers',
             type: 'scatter',
+            name: 'Data',
             marker: { 
                 size: 4, // Adjusted for particle-like appearance (hero particles are 1.5-3, guide is 6)
                 color: markerColor, 
@@ -46,11 +47,23 @@ window.PlotUtils = {
                 scaleanchor: 'x',
                 scaleratio: 1
             },
-            margin: { t: 40, b: 40, l: 40, r: 20 },
+            margin: { t: 60, b: 120, l: 40, r: 20 },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             font: {
                 color: '#333'
+            },
+            showlegend: true,
+            legend: {
+                orientation: 'h',
+                yanchor: 'top',
+                y: -0.30,
+                xanchor: 'center',
+                x: 0.5,
+                bgcolor: 'rgba(255,255,255,0.8)',
+                bordercolor: '#c7c7c7',
+                borderwidth: 1,
+                font: { size: 12 }
             }
         };
 
@@ -93,13 +106,24 @@ window.PlotUtils = {
             title: title,
             xaxis: { title: xLabel },
             yaxis: { title: yLabel, zeroline: false },
-            margin: { l: 50, r: 30, b: 40, t: 40 },
+            margin: { l: 50, r: 30, b: 120, t: 60 },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
             font: { color: '#333' },
             shapes: [],
             annotations: [],
-            showlegend: false
+            showlegend: true,
+            legend: {
+                orientation: 'h',
+                yanchor: 'top',
+                y: -0.30,
+                xanchor: 'center',
+                x: 0.5,
+                bgcolor: 'rgba(255,255,255,0.8)',
+                bordercolor: '#c7c7c7',
+                borderwidth: 1,
+                font: { size: 12 }
+            }
         };
 
         // Apply fixed y-axis range if provided
@@ -127,50 +151,31 @@ window.PlotUtils = {
             }
         }
 
-        const addAnnotation = (x, text, color, yOffset = -25) => {
-            layout.annotations.push({
-                x: x,
-                y: yMaxForLine,
-                xref: 'x',
-                yref: 'y',
-                text: text,
-                showarrow: true,
-                arrowhead: 2,
-                ax: 0,
-                ay: yOffset,
-                font: { color: color, size: 14, family: 'Arial, sans-serif' },
-                bordercolor: '#c7c7c7',
-                borderwidth: 1,
-                bgcolor: 'rgba(255,255,255,0.8)',
-                opacity: 0.8
+        const addVerticalLineTrace = (x, color, dashStyle, name) => {
+            plotData.push({
+                x: [x, x],
+                y: [yMinForLine, yMaxForLine],
+                mode: 'lines',
+                line: { color: color, width: 2, dash: dashStyle },
+                hoverinfo: 'skip',
+                showlegend: true,
+                name: name
             });
         };
 
-        // Line for phi slider value
+        // Vertical line for current phi (slider)
         if (verticalLineX !== undefined && verticalLineX !== null && yData && yData.length > 0) {
-            layout.shapes.push({
-                type: 'line', x0: verticalLineX, x1: verticalLineX, y0: yMinForLine, y1: yMaxForLine,
-                line: { color: themeColors.yellow, width: 2, dash: 'dash' }
-            });
-            addAnnotation(verticalLineX, 'φ', themeColors.yellow, -60);
+            addVerticalLineTrace(verticalLineX, themeColors.yellow, 'dash', 'Current φ');
         }
 
-        // Line for true phi_0
+        // Vertical line for true φ₀
         if (phi0LineValue !== undefined && phi0LineValue !== null && yData && yData.length > 0) {
-            layout.shapes.push({
-                type: 'line', x0: phi0LineValue, x1: phi0LineValue, y0: yMinForLine, y1: yMaxForLine,
-                line: { color: themeColors.blue, width: 2, dash: 'dot' }
-            });
-            addAnnotation(phi0LineValue, 'φ₀', themeColors.blue, -25);
+            addVerticalLineTrace(phi0LineValue, themeColors.blue, 'dot', 'True φ₀');
         }
 
-        // Line for estimated phi
+        // Vertical line for estimated φ̂
         if (estimatedPhiLineValue !== undefined && estimatedPhiLineValue !== null && yData && yData.length > 0) {
-            layout.shapes.push({
-                type: 'line', x0: estimatedPhiLineValue, x1: estimatedPhiLineValue, y0: yMinForLine, y1: yMaxForLine,
-                line: { color: themeColors.green, width: 2, dash: 'longdash' }
-            });
-            addAnnotation(estimatedPhiLineValue, 'φ̂', themeColors.green, -95);
+            addVerticalLineTrace(estimatedPhiLineValue, themeColors.green, 'longdash', 'Estimated φ̂');
         }
 
         Plotly.react(elementId, plotData, layout, {responsive: true, staticPlot: true, displayModeBar: false});

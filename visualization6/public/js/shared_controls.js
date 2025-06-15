@@ -304,55 +304,57 @@ function initializeNewDataButtons() {
 
 function initializeModeSwitches() {
     DebugManager.log('SHARED_CONTROLS', 'Initializing mode switches...');
-    const modeSwitches = document.querySelectorAll('.mode-switch');
+    const modeSwitches = document.querySelectorAll('.mode-switch'); // These are the <input type="checkbox">
     let switchesInitialized = false;
 
     if (modeSwitches.length > 0) {
-        // Set initial state of all switches from sharedData
-        if (window.sharedData && typeof window.sharedData.isRecursive !== 'undefined') {
-            const currentMode = window.sharedData.isRecursive ? 'recursive' : 'non-recursive';
-            modeSwitches.forEach(switchEl => {
-                switchEl.value = currentMode;
-            });
-            DebugManager.log('SHARED_CONTROLS', `Initial Mode (sharedData.isRecursive: ${window.sharedData.isRecursive}) set to: ${currentMode}. All ${modeSwitches.length} mode switch(es) updated.`);
-        } else {
-            DebugManager.log('SHARED_CONTROLS', 'WARNING: window.sharedData.isRecursive not found. Mode switches will use HTML defaults and mode will not be globally stored/managed yet.');
-            // Fallback: use the first switch's value to set sharedData if undefined
-            if (window.sharedData && modeSwitches[0]) {
-                window.sharedData.isRecursive = modeSwitches[0].value === 'recursive';
-                if (typeof window.sharedData.updateB0Mode === 'function') {
-                    window.sharedData.updateB0Mode(); // This will also log
-                } else {
-                    DebugManager.log('SHARED_CONTROLS', 'ERROR: window.sharedData.updateB0Mode() function not found!');
-                }
-            }
+        // 1. Determine initial model state (sharedData.isRecursive)
+        // If sharedData.isRecursive is undefined, default to RECURSIVE model state.
+        // Recursive model state means sharedData.isRecursive = false.
+        if (window.sharedData && typeof window.sharedData.isRecursive === 'undefined') {
+            window.sharedData.isRecursive = false; // Default to Recursive model state
+            DebugManager.log('SHARED_CONTROLS', `sharedData.isRecursive was undefined. Defaulted to false (Recursive model).`);
         }
+        // At this point, window.sharedData.isRecursive is definitely defined.
+
+        // 2. Set initial visual state of all switches based on the (now defined) model state.
+        // If model is recursive (sharedData.isRecursive === false), switch should be CHECKED (visually "Recursive").
+        // If model is non-recursive (sharedData.isRecursive === true), switch should be UNCHECKED (visually "Non-Recursive").
+        // So, visual state switchEl.checked = !window.sharedData.isRecursive;
+        const currentModelIsRecursiveState = window.sharedData.isRecursive; 
+        const visualShouldBeChecked = !currentModelIsRecursiveState; // true if switch should show "Recursive"
 
         modeSwitches.forEach(switchEl => {
-            switchEl.addEventListener('change', function() {
-                const newIsRecursive = this.value === 'recursive';
-                window.sharedData.isRecursive = newIsRecursive;
-                
-                DebugManager.log('SHARED_CONTROLS', `Mode changed to: ${this.value} (sharedData.isRecursive: ${window.sharedData.isRecursive})`);
+            switchEl.checked = visualShouldBeChecked;
+        });
+        DebugManager.log('SHARED_CONTROLS', `Initial model state sharedData.isRecursive: ${currentModelIsRecursiveState}. All ${modeSwitches.length} switches visually set to: ${visualShouldBeChecked ? 'Recursive (checked)' : 'Non-Recursive (unchecked)'}.`);
 
-                // Update B0 and log it
+        // 3. Add event listeners
+        modeSwitches.forEach(switchEl => {
+            switchEl.addEventListener('change', function() {
+                // `this.checked` is the new visual state of the switch that was just changed.
+                // If `this.checked` is true (visually "Recursive"), model should be recursive (sharedData.isRecursive = false).
+                // If `this.checked` is false (visually "Non-Recursive"), model should be non-recursive (sharedData.isRecursive = true).
+                window.sharedData.isRecursive = !this.checked;
+                
+                const newVisualIsChecked = this.checked;
+                DebugManager.log('SHARED_CONTROLS', `Mode changed. Visual: ${newVisualIsChecked ? 'Recursive (checked)' : 'Non-Recursive (unchecked)'}. Model sharedData.isRecursive is now: ${window.sharedData.isRecursive}`);
+
                 if (typeof window.sharedData.updateB0Mode === 'function') {
                     window.sharedData.updateB0Mode();
-                    // After B0 is updated, regenerate u_t using existing epsilon_t
                     if (typeof regenerateReducedFormShocksFromExistingEpsilon === 'function') {
                         regenerateReducedFormShocksFromExistingEpsilon();
                     } else {
-                        DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateReducedFormShocksFromExistingEpsilon function not found. Cannot regenerate u_t on mode change.');
+                        DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateReducedFormShocksFromExistingEpsilon function not found.');
                     }
                 } else {
                     DebugManager.log('SHARED_CONTROLS', 'ERROR: window.sharedData.updateB0Mode() function not found!');
                 }
 
-                // Synchronize all other mode switches
-                const newModeValue = this.value;
+                // Synchronize all other mode switches to the new VISUAL state
                 modeSwitches.forEach(s => {
                     if (s !== this) {
-                        s.value = newModeValue;
+                        s.checked = newVisualIsChecked;
                     }
                 });
             });
@@ -361,7 +363,7 @@ function initializeModeSwitches() {
     }
 
     if (!switchesInitialized) {
-        // No mode switches (.mode-switch) found in the currently processed DOM.
+        DebugManager.log('SHARED_CONTROLS', 'No mode switches (.mode-switch) found in the currently processed DOM.');
     }
     DebugManager.log('SHARED_CONTROLS', 'Mode switch initialization complete.');
 }

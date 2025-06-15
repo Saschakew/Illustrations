@@ -399,6 +399,46 @@ async function regenerateInnovations() {
 }
 /* --- END OF INNOVATIONS e_t GENERATION --- */
 
+function initializeMainMenuToggle() {
+    DebugManager.log('MAIN_APP', 'Initializing main menu toggle...');
+    const mainNav = document.getElementById('main-nav');
+    const navUl = mainNav ? mainNav.querySelector('ul') : null;
+
+    if (!mainNav || !navUl) {
+        DebugManager.log('MAIN_APP', 'ERROR: Main navigation or its UL not found. Cannot create hamburger menu.');
+        return;
+    }
+
+    // Check if toggle button already exists to prevent duplicates during hot reloads/re-initializations
+    if (mainNav.querySelector('.main-nav-toggle')) {
+        DebugManager.log('MAIN_APP', 'Main menu toggle button already exists.');
+        return;
+    }
+
+    const toggleButton = document.createElement('button');
+    toggleButton.className = 'main-nav-toggle';
+    toggleButton.setAttribute('aria-label', 'Toggle navigation');
+    toggleButton.setAttribute('aria-expanded', 'false');
+    toggleButton.setAttribute('aria-controls', 'main-nav-ul'); // Assuming ul will get this id
+
+    const toggleIcon = document.createElement('span');
+    toggleIcon.className = 'main-nav-toggle-icon';
+    toggleButton.appendChild(toggleIcon);
+
+    // Prepend the button to the main-nav container
+    mainNav.prepend(toggleButton);
+    navUl.id = 'main-nav-ul'; // Ensure the ul has an id for aria-controls
+
+    toggleButton.addEventListener('click', () => {
+        const isExpanded = mainNav.classList.toggle('nav-open');
+        toggleButton.classList.toggle('active');
+        toggleButton.setAttribute('aria-expanded', isExpanded.toString());
+        DebugManager.log('MAIN_APP', `Main navigation toggled. Is open: ${isExpanded}`);
+    });
+
+    DebugManager.log('MAIN_APP', 'Main menu toggle initialized.');
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) loadingOverlay.style.display = 'flex'; // Show loading screen
@@ -647,6 +687,9 @@ async function initializeApp() {
     } else if (typeof initializeSectionFour !== 'function') {
         DebugManager.log('MAIN_APP', 'WARNING: initializeSectionFour function not found. Make sure section_four.js is loaded.');
     }
+    // Initialize main menu toggle (hamburger)
+    initializeMainMenuToggle();
+
     DebugManager.log('MAIN_APP', 'All initializations complete.');
 
     // After all initializations and section-specific JS, typeset the whole document for static LaTeX.
