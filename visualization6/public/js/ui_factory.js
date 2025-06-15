@@ -22,7 +22,7 @@ window.uiFactory = {
 
         return `
         <div class="control-item mode-switch-control">
-            <span class="mode-prefix-label">B₀:</span> 
+            <span class="mode-prefix-label">B₀=</span> 
             <label class="mode-switch-toggle">
                 <input type="checkbox" id="${switchId}" name="${switchId}" class="mode-switch" ${isRecursiveSelected ? 'checked' : ''}>
                 <span class="mode-switch-slider">

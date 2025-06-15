@@ -320,16 +320,17 @@ body {
     display: flex;
     flex-wrap: nowrap; /* Default: prevent wrapping */
     gap: var(--space-lg);
-    align-items: center; /* Better vertical alignment */
-    margin-bottom: var(--space-md);
+    align-items: center; /* Better vertical alignment */ 
     justify-content: space-between; /* Distribute items evenly */
     overflow-x: auto; /* Allow horizontal scrolling if needed */
     padding-bottom: var(--space-sm); /* Add space for scrollbar */
 }
 
-.control-item {  
-    gap: var(--space-sm);
+.control-item {
+    display: flex; /* Keep children inline */
+    align-items: center; 
     min-width: fit-content; /* Prevent items from shrinking too much */
+    flex-wrap: nowrap; /* Prevent wrapping inside control */
 }
 
 .control-item label {
@@ -401,21 +402,20 @@ body {
 /* Toggle Switch for B₀ Mode */
 .mode-switch-control { /* Container for the B0 label and the toggle */
     display: flex;
-    align-items: center; /* Vertically align B0 label and toggle */
-    margin-bottom: var(--space-sm); /* Consistent spacing */
+    align-items: center; /* Vertically align B0 label and toggle */ 
 }
 
-.mode-prefix-label { /* The "B0:" label */
-    margin-right: var(--space-xs); /* Smaller space for a tighter look */
-    font-weight: 500;
+.mode-prefix-label { /* The "B0=" label */
+    font-weight: 600; /* Match other control labels */
+    font-size: 0.875rem; /* Match other control labels */
     color: var(--color-text-primary);
-    font-size: 0.9rem; /* Match general label size if needed */
+    margin-right: var(--space-xs);
 }
 
 .mode-switch-toggle {
     position: relative;
     display: inline-block;
-    width: 190px; /* Adjusted for slightly wider internal labels */
+    width: 260px; /* Increased width to fit 'Non-Recursive' */
     height: 34px;
 }
 
@@ -435,7 +435,9 @@ body {
     background-color: var(--color-background-card);
     border: 1px solid var(--color-border);
     transition: .4s;
-    border-radius: var(--button-border-radius);
+    border-radius: 22px;
+    width: 100%; /* Fills the toggle container and preserves rounded ends */
+    overflow: hidden; /* Clip inner highlight for clean rounding */
     display: flex;
     align-items: center;
     /* justify-content: space-between; /* Removed */
@@ -446,20 +448,21 @@ body {
     position: absolute;
     content: "";
     height: calc(100% - 4px); /* Full height minus border of parent */
-    width: 90px; /* Width of one label segment */
+    width: 126px; /* 50% width minus inner gaps */
     left: 2px; /* Offset for border */
     bottom: 2px; /* Offset for border */
     background-color: var(--color-accent-primary);
     transition: .4s;
-    border-radius: var(--border-radius-md); /* Slightly smaller radius */
+    border-radius: 22px; /* Match outer slider radius for rounded corners */
     z-index: 1;
 }
 
 .mode-switch-toggle input:checked + .mode-switch-slider:before {
-    transform: translateX(94px); /* Adjusted from 90px to 94px (188px inner width / 2) */
+    transform: translateX(130px);
 }
 
 .mode-switch-toggle .mode-label {
+    white-space: nowrap; /* Prevent line breaks */
     color: var(--color-text-secondary); /* Default color for non-active labels */
     font-size: 0.875rem;
     font-weight: 600;
@@ -476,8 +479,7 @@ body {
 }
 
 .mode-switch-control { 
-    align-items: center;
-    gap: var(--space-md);
+    align-items: center; 
 }
 
 /* Mode Switch (styling for a select element, can be enhanced with custom control later) */
@@ -582,6 +584,36 @@ body {
     background-color: var(--color-accent-primary);
     color: var(--color-text-on-accent);
     border-color: var(--color-accent-primary);
+}
+
+/* New Data Button - accent style */
+.btn.new-data-button {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border: 1px solid var(--color-accent-primary);
+    padding: 8px 18px; /* slightly tighter than generic */
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--button-border-radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn.new-data-button:hover,
+.btn.new-data-button:focus {
+    background-color: var(--color-accent-primary-darker);
+    border-color: var(--color-accent-primary-darker);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+
+.btn.new-data-button:active {
+    transform: translateY(0);
+    box-shadow: none;
 }
 
 /* MathJax specific styling if needed */
@@ -724,7 +756,7 @@ body {
         padding-bottom: 0; /* Remove scrollbar padding */
     }
     .control-item {
-        margin-bottom: var(--space-md); /* Add space between wrapped rows */
+        /* margin-bottom: var(--space-md); Add space between wrapped rows */
     }
 }
 
@@ -792,13 +824,9 @@ body {
     .controls-row { 
         align-items: stretch;
         flex-wrap: wrap;
-    }
-    .control-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    } 
     .control-item input[type="range"] {
-        width: 100%;
+        width: 180px; /* Preserve compact width on small screens */
     }
     .plot-area {
         flex-basis: 100%;
