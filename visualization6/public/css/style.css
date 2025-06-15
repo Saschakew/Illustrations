@@ -310,8 +310,7 @@ body {
     position: fixed;
     background-color: var(--color-background-card);
     z-index: 900;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: var(--space-md); /* Slightly less padding for sticky */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
     border-radius: var(--card-border-radius);
     border: 1px solid var(--color-border);
 }
