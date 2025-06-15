@@ -10,14 +10,31 @@
                 </div>
             </div>
 
-            <div class="latex-output-container card">
-                <p>Data Generating Process: \(u_t = B_0 \epsilon_t\), where \(B_0\): <span id="b0_matrix_s1_display"></span></p>
-            </div>
+            <p>We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The
+                second, \(\eta_{2t}\), is from a mixture of two Normal distributions, designed to be non-Gaussian.The raw shocks
+                \(\eta_{t}\) are scaled by a time-varying volatility process \(\sigma_t\). For the first half of the sample,
+                \(\sigma_t = 1\), and for the second half, \(\sigma_t = 2\). This produces structural shocks \(\epsilon_t = \sigma_t
+                \eta_{t}\). We normalize the shocks to zero mean and unit variance. The reduced-form shocks \(u_t\) are equal to
+                \(u_t = B_0 \epsilon_t\). </p>
+            <p class="model-explanation">We consider two different SVAR models: A recursive model with \(B_0^{\text{rec}} =
+            \begin{bmatrix} 1 & 0 \\ 0.5 & 1 \end{bmatrix}\) and a non-recursive model with \(B_0^{\text{non-rec}} =
+            \begin{bmatrix} 1 & 0.5 \\ 0.5 & 1 \end{bmatrix}\). Use the \(B_0\) switch to toggle between the two models. </p>
 
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <div class="latex-output-container card">
+                <p>Data Generating Process: \(u_t = B_0 \epsilon_t\), where   <span id="b0_matrix_s1_display"></span></p>
+            </div>
+ 
             <div class="plot-container card">
                 <div id="plot_s1_left" class="plot-area"></div>
                 <div id="plot_s1_right" class="plot-area"></div>
-            </div>
-            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div> 
+ 
+            <ul>
+                <li><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \(\epsilon_{1t}\) against
+                    \(\epsilon_{2t}\). Observe the non-Gaussian features from \(\epsilon_{2t}\).</li>
+                <li><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \(u_{1t}\) against \(u_{2t}\).
+                    These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution
+                    changes when you toggle \(B_0\), illustrating how different mixtures of the structural shocks \(\epsilon_t\)
+                    can produce different patterns in the observed reduced-form residuals.</li>
+            </ul> 
         </section>

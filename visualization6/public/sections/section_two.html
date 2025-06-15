@@ -11,13 +11,32 @@
                 </div>
             </div>
 
+            <p>
+                In the SVAR model, we estimate the reduced-form shocks, \( u_t \), but we are truly interested in the underlying
+                structural shocks, \( \epsilon_t \). The relationship is given by \( u_t = B_0 \epsilon_t \). From the data \( u_t
+                \), we can estimate the covariance matrix \( \Sigma_u = E(u_t u_t') \). The theoretical relationship is \( \Sigma_u
+                = B_0 B_0' \) since \( E(\epsilon_t \epsilon_t') = I \).
+            </p>
+            <p>
+                The sample covariance matrix, \( \hat{\Sigma}_u \), is our estimate of \( \Sigma_u \). We can decompose it using the
+                Cholesky decomposition: \( \hat{\Sigma}_u = \hat{P} \hat{P}' \), where \( \hat{P} \) is a lower triangular matrix.
+                This \( \hat{P} \) is one possible estimate for \( B_0 \).
+            </p>
+            <p>
+                However, any matrix \( \hat{B}_0 = \hat{P} R \), where \( R \) is an orthonormal rotation matrix (i.e., \( RR' = I
+                \)), is also a valid candidate, since \( \hat{B}_0 \hat{B}_0' = \hat{P} R R' \hat{P}' = \hat{P} \hat{P}' =
+                \hat{\Sigma}_u \). In the 2-variable case, this rotation matrix is defined by a single angle \( \phi \):
+                \[ R(\phi) = \begin{pmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{pmatrix} \]
+                Our goal is to find the correct rotation \( \phi \) that recovers the true \( B_0 \).
+            </p>
+
             <div class="latex-output-container card">
                 <p>Current identification matrix \(B(\phi)\): <span id="b_phi_matrix_s2_display"></span></p>
                 <p>Estimated \(\hat{\phi}_{rec}\): <span id="phi_est_rec_s2_display"></span></p>
                 <p>Estimated \(\hat{B}_{rec}\): <span id="b_est_rec_s2_display"></span></p>
             </div>
 
-            <p>Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+            
             <div class="plot-container card">
                 <div id="plot_s2_left" class="plot-area"></div>
                 <div id="plot_s2_right" class="plot-area"></div>

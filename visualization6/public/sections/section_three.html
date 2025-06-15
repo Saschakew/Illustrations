@@ -10,15 +10,40 @@
                  </div>
              </div>
 
+                <p>
+                    When structural shocks \(\epsilon_t\) are non-Gaussian, we can identify the model without imposing restrictions like
+                    \(B_0\) being lower-triangular. The key idea is that rotating a non-Gaussian distribution changes its shape. We can
+                    find the correct rotation angle \(\phi\) by finding the one that makes the resulting innovations \(e_t(\phi)\) "most
+                    independent."
+                </p>
+                <p>
+                    One way to measure this is to minimize an objective function based on higher-order moments. We define the objective
+                    function as \(J(\phi) = \text{mean}(e_{1t}^2 e_{2t})^2 + \text{mean}(e_{2t}^2 e_{1t})^2\). The true rotation angle
+                    \(\phi_0\) should minimize this function, driving it close to zero.
+                </p>
+                <p>Use the \(\phi\) slider to see how the innovations and the objective function change. The true data-generating matrix
+                    \(B_0\) (and thus the true \(\phi_0\)) is selected via the toggle.</p>
+
+
+                    <p>Estimate...</p>
+
             <div class="latex-output-container card">
                 <p>Current identification matrix \(B(\phi)\): <span id="b_phi_matrix_s3_display"></span></p>
                 <p>Estimated \(\hat{\phi}_{nG}\): <span id="phi_est_nG_s3_display"></span></p>
                 <p>Estimated \(\hat{B}_{nG}\): <span id="b_est_nG_s3_display"></span></p>
             </div>
 
-            <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident.</p>
+           
             <div class="plot-container card">
                 <div id="plot_s3_left" class="plot-area"></div>
                 <div id="plot_s3_right" class="plot-area"></div>
             </div>
+
+            <ul>
+                <li><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \(e_{1t}(\phi)\) vs.
+                    \(e_{2t}(\phi)\) for the currently selected \(\phi\).</li>
+                <li><strong>Right Plot (Objective Function):</strong> Shows the objective function \(J(\phi)\) across all possible
+                    values of \(\phi \in [0, \pi/2]\). A vertical line indicates the current \(\phi\), and another marks the true
+                    \(\phi_0\).</li>
+            </ul>
         </section>
