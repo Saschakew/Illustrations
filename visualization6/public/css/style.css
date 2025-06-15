@@ -824,6 +824,7 @@ body {
     .controls-row { 
         align-items: stretch;
         flex-wrap: wrap;
+        overflow: hidden;
     } 
     .control-item input[type="range"] {
         width: 180px; /* Preserve compact width on small screens */
