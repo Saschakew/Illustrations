@@ -12,33 +12,50 @@
             </div>
 
             <p>
-                In the SVAR model, we estimate the reduced-form shocks, \( u_t \), but we are truly interested in the underlying
-                structural shocks, \( \epsilon_t \). The relationship is given by \( u_t = B_0 \epsilon_t \). From the data \( u_t
-                \), we can estimate the covariance matrix \( \Sigma_u = E(u_t u_t') \). The theoretical relationship is \( \Sigma_u
-                = B_0 B_0' \) since \( E(\epsilon_t \epsilon_t') = I \).
+                We observe reduced-form shocks \(u_t\) and seek to recover the unobserved structural shocks \(\epsilon_t\). The
+                relationship is \(\epsilon_t = B_0^{-1} u_t\), but the true matrix \(B_0\) is unknown. 
+                Define innovations \(e_t(B) = B^{-1} u_t\). Assuming structural shocks are uncorrelated and have unit variance
+                (\(E[\epsilon_t \epsilon_t'] = I\)), we look for a matrix \(B\) such that the sample innovations \(e_t(B)\) also
+                satisfy this property.
             </p>
             <p>
-                The sample covariance matrix, \( \hat{\Sigma}_u \), is our estimate of \( \Sigma_u \). We can decompose it using the
-                Cholesky decomposition: \( \hat{\Sigma}_u = \hat{P} \hat{P}' \), where \( \hat{P} \) is a lower triangular matrix.
-                This \( \hat{P} \) is one possible estimate for \( B_0 \).
+                The set of such matrices \(B\) can be parameterized by a single rotation angle \(\phi  \).
+                Specifically, all matrices \(B(\phi) = B^{\text{Chol}} Q(\phi)\) yield innovations with unit variance and
+                uncorrelated shocks, where \(B^{\text{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\),
+                and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\).
             </p>
+            <p>Use the \(\phi \) slider to select a rotation angle and see the corresponding matrix 
+             <span id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \(e_t(B) = B(\phi)^{-1} u_t\).</p>
+            
+            <p> Given the true data-generating matrix \(B_0\) (selected via the toggle), we can calculate the   rotation angle
+                \(\phi_0\) such that \(B(\phi_0) = B_0\). For the recursive \(B_0\) we get \(\phi_0^{\text{rec}} = 0\). For the non-recursive \(B_0\) we get
+                \(\phi_0^{\text{non-rec}} \approx -0.46\).</p>
+
+                <p>
+                The Cholesky identification imposes a recursive structure on \(B\) (e.g., its (1,2) element is zero), which uniquely
+                determines the rotation angle as \(\phi=0\). 
+                For this data set, applying the Cholesky identification yields     <span id="b_est_rec_s2_display"></span>.</p>
+    
+
             <p>
-                However, any matrix \( \hat{B}_0 = \hat{P} R \), where \( R \) is an orthonormal rotation matrix (i.e., \( RR' = I
-                \)), is also a valid candidate, since \( \hat{B}_0 \hat{B}_0' = \hat{P} R R' \hat{P}' = \hat{P} \hat{P}' =
-                \hat{\Sigma}_u \). In the 2-variable case, this rotation matrix is defined by a single angle \( \phi \):
-                \[ R(\phi) = \begin{pmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{pmatrix} \]
-                Our goal is to find the correct rotation \( \phi \) that recovers the true \( B_0 \).
+                <strong>Observations:</strong>
+                All \(B(\phi)\) yield uncorrelated innovations \(e_{1t}(\phi)\) and \(e_{2t}(\phi)\).
+                The recursive estimator works well when the true model is recursive.
+                The recursive estimator is biased when the true model is non-recursive.
+                The bias does not vanish with an increasing sample size.
             </p>
-
-            <div class="latex-output-container card">
-                <p>Current identification matrix \(B(\phi)\): <span id="b_phi_matrix_s2_display"></span></p>
-                <p>Estimated \(\hat{\phi}_{rec}\): <span id="phi_est_rec_s2_display"></span></p>
-                <p>Estimated \(\hat{B}_{rec}\): <span id="b_est_rec_s2_display"></span></p>
-            </div>
-
             
             <div class="plot-container card">
                 <div id="plot_s2_left" class="plot-area"></div>
                 <div id="plot_s2_right" class="plot-area"></div>
             </div>
+
+            <ul>
+                <li><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \(e_{1t}(\phi)\) vs.
+                    \(e_{2t}(\phi)\) for the currently selected \(\phi\).</li>
+                <li><strong>Right Plot (Sample Correlation):</strong> Shows the sample correlation, \(\text{mean}(e_{1t}(\phi) \cdot
+                    e_{2t}(\phi))\), across all possible values of \(\phi \in [0, \pi/2]\). A vertical line indicates the current
+                    \(\phi\). Another line marks \(\phi_0\) which corresponds to the true \(B_0\) which changes with the recursive
+                    vs non-recursive slider. </li>
+            </ul>
         </section>

@@ -22,12 +22,25 @@ window.PlotUtils = {
 
         const markerColor = particleColors[colorKey] || particleColors['blue'];
 
+        // Determine an informative legend label based on the plot title
+        let legendLabel = 'Data';
+        if (typeof title === 'string') {
+            const lowerTitle = title.toLowerCase();
+            if (lowerTitle.includes('structural shocks')) {
+                legendLabel = 'Structural Shocks εₜ';
+            } else if (lowerTitle.includes('reduced-form shocks')) {
+                legendLabel = 'Reduced-Form Shocks uₜ';
+            } else if (lowerTitle.includes('innovation')) { // matches 'innovation' or 'innovations'
+                legendLabel = 'Innovations eₜ';
+            }
+        }
+
         const trace = {
             x: xData,
             y: yData,
             mode: 'markers',
             type: 'scatter',
-            name: 'Data',
+            name: legendLabel,
             marker: { 
                 size: 4, // Adjusted for particle-like appearance (hero particles are 1.5-3, guide is 6)
                 color: markerColor, 
