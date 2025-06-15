@@ -1,0 +1,24 @@
+name: "Server Management"
+description: "Start and manage the local development server"
+
+commands:
+  - name: "Restart Python HTTP Server"
+    description: "Kills any existing server on port 8000 and starts a new Python HTTP server"
+    command: |
+      $ErrorActionPreference = "SilentlyContinue"
+      Write-Host "Stopping any existing server on port 8000..."
+      $connections = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue
+      foreach ($conn in $connections) {
+          Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue
+      }
+      Write-Host "Starting Python HTTP server on port 8000..."
+      Start-Process -NoNewWindow -FilePath "python" -ArgumentList "-m", "http.server", "8000"
+      Write-Host "Server started at http://localhost:8000"
+    cwd: "."
+    wait_for_completion: false
+
+  - name: "Open in Browser"
+    description: "Open http://localhost:8000 in default browser"
+    command: Start-Process "http://localhost:8000"
+    cwd: "."
+    wait_for_completion: false

@@ -1,0 +1,882 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:wght@400;600&display=swap');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:root {
+    /* Light Theme Color Palette (from guide_style.md) */
+    --color-background-page: #F8F9FA;      /* Very Light Gray */
+    --color-background-card: #FFFFFF;       /* White */
+    --color-text-primary: #212529;        /* Almost Black/Very Dark Gray */
+    --color-text-secondary: #6C757D;      /* Medium Gray */
+    --color-accent-primary: #17A2B8;       /* Teal/Cyan */
+    --color-accent-primary-darker: #138496; /* Darker Teal */
+    --color-accent-secondary-plot-loss: #E83E8C; /* Pink/Magenta */
+    --color-accent-secondary-plot-phi: #28A745;  /* Green */
+    --color-accent-tertiary-particles: #FFC107; /* Soft Orange/Amber for particles */
+    --color-border: #DEE2E6;              /* Light Gray */
+    --color-text-on-accent: #FFFFFF;      /* White */
+    --color-slider-track: #E9ECEF;        /* Light Gray */
+    --color-hero-background: linear-gradient(to bottom right, #E0F7FA, #F8F9FA); /* Very Light Cyan to Very Light Gray gradient */
+
+    /* Typography */
+    --font-family-headings: 'Montserrat', sans-serif;
+    --font-family-body: 'Open Sans', sans-serif;
+    --font-size-base: 1rem; /* 16px */
+    --line-height-base: 1.6;
+    --line-height-headings: 1.4; /* Adjusted from 1.3 to 1.4 as per guide range */
+
+    /* Layout & Spacing (using guide's naming convention) */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-xxl: 48px;
+
+    /* Components */
+    --card-border-radius: 8px; /* As per guide */
+    --card-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* As per guide */
+    --nav-height: 70px; /* Adjusted for potentially larger text/padding */
+    --button-border-radius: 6px; /* Guide: 4px or 6px, choosing 6px */
+}
+
+body {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--color-text-primary);
+    background-color: var(--color-background-page);
+    margin: 0;
+    /*padding-top: var(--nav-height); /* Space for the fixed main navigation */
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-lg) 0;
+}
+
+/* Generic Re-usable Heading Style for Sections */
+.section-heading {
+    font: 700 1.75rem/1.3 var(--font-family-headings);
+    color: var(--color-accent-primary-darker);
+    margin-bottom: var(--space-sm);
+    letter-spacing: 0.2px;
+    position: relative;
+}
+.section-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.3em;
+    width: 3rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-primary-darker));
+}
+
+/* Hero Section Styling */
+.hero-section {
+    background: var(--color-hero-background);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-xxl) var(--space-lg);
+    min-height: 60vh; /* Larger splash */
+    margin-bottom: var(--space-xl);
+    overflow: hidden; /* Hide overflowing content */
+}
+
+/* Particle Canvas inside hero */
+#hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Behind overlay and hero text, above background */
+    pointer-events: none;
+}
+
+/* Soft fade-out to merge particle canvas into page background */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0; /* full width bottom strip */
+    height: 160px;
+    background: linear-gradient(to bottom, transparent 0%, var(--color-background-page) 90%);
+    pointer-events: none;
+    z-index: 1; /* sits above canvas but below hero text */
+}
+
+.hero-meta {
+    text-align: center;
+    position: relative;
+    z-index: 2; /* above canvas */
+}
+
+.paper-title {
+    font: 700 2.25rem/1.2 var(--font-family-headings);
+    color: var(--color-accent-primary-darker);
+    margin: 0 0 var(--space-md);
+}
+.author-details {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align blocks at the top if text wraps differently */
+    gap: var(--space-lg); /* Space between author blocks */
+    margin-bottom: var(--space-xs);
+}
+
+.author-block {
+    text-align: center;
+}
+
+.author-name {
+    font-weight: 600; /* Slightly bolder for names */
+    margin: 0 0 var(--space-xxs); /* Minimal space between name and affiliation */
+}
+
+.author-affiliation {
+    font-size: 0.9rem; /* Slightly smaller for affiliation */
+    margin: 0;
+}
+
+.paper-journal, /* Keep styling for journal, remove old paper-authors/affil */
+.paper-authors, /* Retain for potential future single-line use, but not primary for this layout */
+.paper-affil { /* Retain for potential future single-line use, but not primary for this layout */
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+/* .paper-authors { margin-bottom: var(--space-xs); } */ /* Handled by author-details margin */
+/* .paper-affil   { margin-bottom: var(--space-xs); } */ /* Handled by author-details margin */
+
+/* legacy selector remains for backwards compatibility */
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-wave path {
+    animation: waveShift 12s linear infinite;
+    transform-origin: center;
+}
+
+@keyframes waveShift {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.hero-section .hero-title, /* Assuming h1 or a class for hero title */
+.hero-section h1 {
+    font-family: var(--font-family-headings);
+    font-size: 2.8rem; /* ~45px, guide: ~2.8rem - 3rem */
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: var(--line-height-headings);
+    margin-bottom: var(--space-sm);
+}
+
+.hero-section .hero-title .accent-text,
+.hero-section h1 .accent-text {
+    color: var(--color-accent-primary);
+}
+
+.hero-section .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-base);
+}
+
+/* Main Navigation */
+.main-navigation {
+    background-color: var(--color-background-card); /* Using card color for nav */
+    height: var(--nav-height);
+    padding: 0 var(--space-lg); /* Increased padding */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Softer shadow */
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+.main-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.main-navigation li {
+    margin: 0 var(--space-md);
+}
+
+.main-navigation a {
+    font-family: var(--font-family-headings);
+    color: var(--color-text-secondary); /* Secondary text for non-active */
+    text-decoration: none;
+    font-weight: 500; /* Montserrat medium */
+    font-size: 0.9rem;
+    padding: var(--space-sm) 0;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.main-navigation a:hover,
+.main-navigation a:focus {
+    color: var(--color-accent-primary);
+}
+
+.main-navigation a.active-link {
+    color: var(--color-accent-primary);
+    font-weight: 700; /* Montserrat bold */
+    border-bottom: 2px solid var(--color-accent-primary);
+}
+
+/* Permanently hide the main navigation menu */
+.main-navigation {
+    display: none !important;
+}
+
+/* Content Sections (Cards) */
+.content-section {
+    margin-bottom: var(--space-xl); /* guide: space-lg or space-xl */
+    padding: var(--space-lg);    /* guide: space-lg or space-xl */
+    background-color: var(--color-background-card);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
+}
+
+.section-supertitle {
+    font-size: 0.8rem; /* 12.8px, guide: ~13px */
+    font-weight: 600; /* Open Sans Semibold */
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+    display: block;
+}
+
+.content-section h2, .section-title {
+    font-family: var(--font-family-headings);
+    font-size: 1.75rem; /* 28px, as per guide */
+    font-weight: 700; /* Montserrat Bold */
+    color: var(--color-accent-primary);
+    margin-top: 0;
+    margin-bottom: var(--space-lg);
+    line-height: var(--line-height-headings);
+}
+
+/* Controls Area */
+.controls-placeholder {
+    height: 1px;
+    margin-top: -1px;
+}
+.controls-container {
+    background-color: var(--color-background-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-border-radius);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
+    position: relative;
+}
+
+.controls-container.sticky-menu {
+    position: fixed;
+    background-color: var(--color-background-card);
+    z-index: 900;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: var(--space-md); /* Slightly less padding for sticky */
+    border-radius: var(--card-border-radius);
+    border: 1px solid var(--color-border);
+}
+
+.controls-row {
+    display: flex;
+    flex-wrap: nowrap; /* Default: prevent wrapping */
+    gap: var(--space-lg);
+    align-items: center; /* Better vertical alignment */
+    margin-bottom: var(--space-md);
+    justify-content: space-between; /* Distribute items evenly */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    padding-bottom: var(--space-sm); /* Add space for scrollbar */
+}
+
+.control-item {  
+    gap: var(--space-sm);
+    min-width: fit-content; /* Prevent items from shrinking too much */
+}
+
+.control-item label {
+    font-size: 0.875rem; /* 14px, as per guide */
+    font-weight: 600; /* Open Sans Semibold */
+    color: var(--color-text-primary);
+}
+
+.control-item input[type="number"],
+.control-item input[type="text"],
+.control-item select {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background-card);
+    color: var(--color-text-primary);
+    border-radius: var(--button-border-radius); /* Using button radius for consistency */
+    font-family: var(--font-family-body);
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.control-item input[type="number"]:focus,
+.control-item input[type="text"]:focus,
+.control-item select:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-accent-primary), 0.25);
+}
+
+/* Sliders */
+.control-item input[type="range"] {
+    width: 180px; /* Increased width */
+    height: 8px; /* Track height guide: 6-8px */
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-slider-track);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.control-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px; /* Thumb diameter guide: 16-18px */
+    height: 18px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    border: 2px solid var(--color-background-card); /* Optional: border to lift thumb */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.control-item input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    border: 2px solid var(--color-background-card);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.control-item output {
+    font-size: 0.875rem; /* 14px, as per guide */
+    font-weight: 400; /* Open Sans Regular */
+    color: var(--color-text-secondary); 
+    min-width: 30px; /* Ensure space for values */
+    text-align: right;
+}
+
+/* Toggle Switch for B₀ Mode */
+.mode-switch-control { /* Container for the B0 label and the toggle */
+    display: flex;
+    align-items: center; /* Vertically align B0 label and toggle */
+    margin-bottom: var(--space-sm); /* Consistent spacing */
+}
+
+.mode-prefix-label { /* The "B0:" label */
+    margin-right: var(--space-xs); /* Smaller space for a tighter look */
+    font-weight: 500;
+    color: var(--color-text-primary);
+    font-size: 0.9rem; /* Match general label size if needed */
+}
+
+.mode-switch-toggle {
+    position: relative;
+    display: inline-block;
+    width: 190px; /* Adjusted for slightly wider internal labels */
+    height: 34px;
+}
+
+.mode-switch-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.mode-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border);
+    transition: .4s;
+    border-radius: var(--button-border-radius);
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; /* Removed */
+    /* padding: 0 10px; /* Removed */
+}
+
+.mode-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: calc(100% - 4px); /* Full height minus border of parent */
+    width: 90px; /* Width of one label segment */
+    left: 2px; /* Offset for border */
+    bottom: 2px; /* Offset for border */
+    background-color: var(--color-accent-primary);
+    transition: .4s;
+    border-radius: var(--border-radius-md); /* Slightly smaller radius */
+    z-index: 1;
+}
+
+.mode-switch-toggle input:checked + .mode-switch-slider:before {
+    transform: translateX(94px); /* Adjusted from 90px to 94px (188px inner width / 2) */
+}
+
+.mode-switch-toggle .mode-label {
+    color: var(--color-text-secondary); /* Default color for non-active labels */
+    font-size: 0.875rem;
+    font-weight: 600;
+    z-index: 2;
+    position: relative;
+    width: 50%; /* Changed from 85px to 50% */
+    text-align: center;
+    transition: color 0.4s;
+}
+
+.mode-switch-toggle input:checked + .mode-switch-slider .non-recursive-label,
+.mode-switch-toggle input:not(:checked) + .mode-switch-slider .recursive-label {
+    color: var(--color-text-on-accent); /* Active label color */
+}
+
+.mode-switch-control { 
+    align-items: center;
+    gap: var(--space-md);
+}
+
+/* Mode Switch (styling for a select element, can be enhanced with custom control later) */
+.mode-switch select {
+    /* Uses general input styling above */
+    font-weight: 600; /* Semibold for Open Sans */
+}
+
+/* Plot Container */
+.plot-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.plots-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.plot-area {
+    flex-basis: calc(50% - (var(--space-lg) / 2));
+    min-width: 300px;
+    height: 400px; /* Or make aspect-ratio based if desired */
+    background-color: var(--color-background-card);  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.plot-area .plot-title {
+    font-family: var(--font-family-headings);
+    font-size: 0.9rem; /* guide: 0.875rem - 0.9rem */
+    font-weight: 500; /* Montserrat Medium */
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-sm);
+}
+
+/* Ensure Plotly's internal elements respect the .plot-area dimensions */
+.plot-area .js-plotly-plot,
+.plot-area .plot-container.plotly,
+.plot-area .svg-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.plot-area .main-svg {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: var(--space-lg) 0; /* guide: space-md or space-lg */
+    margin-top: var(--space-xl);
+    font-size: 0.8rem; /* 12.8px, guide: ~13px */
+    color: var(--color-text-secondary);
+    background-color: var(--color-background-page); /* As per guide */
+    border-top: 1px solid var(--color-border);
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--font-family-body); /* Guide: Open Sans */
+    padding: 10px 20px; /* guide: ~10px 20px */
+    font-size: 0.9rem;
+    font-weight: 600; /* Open Sans Semibold */
+    border-radius: var(--button-border-radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-primary {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border-color: var(--color-accent-primary);
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--color-accent-primary-darker);
+    border-color: var(--color-accent-primary-darker);
+    color: var(--color-text-on-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-accent-primary);
+    border: 1px solid var(--color-accent-primary);
+}
+.btn-secondary:hover, .btn-secondary:focus {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border-color: var(--color-accent-primary);
+}
+
+/* MathJax specific styling if needed */
+.MathJax {
+    color: var(--color-text-primary) !important; /* Ensure MathJax inherits primary text color */
+}
+
+/* Responsive adjustments */
+/* Controls toggle button */
+.controls-toggle-btn { 
+    top: 12px; /* Adjusted for better alignment */
+    right: 12px; /* Adjusted for better alignment */
+    width: 32px;
+    height: 32px;
+    border-radius: var(--button-border-radius); /* Rounded square */
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.controls-toggle-btn:hover,
+.controls-toggle-btn:focus {
+    background-color: var(--color-background-card-hover);
+    border-color: var(--color-border-strong); /* Or a slightly darker border */
+    outline: none; /* Remove default focus outline if custom is applied */
+}
+
+.toggle-icon {
+    position: relative;
+    width: 16px; /* Adjusted width */
+    height: 2px;
+    background-color: var(--color-text-primary);
+    transition: all 0.3s ease;
+}
+
+.toggle-icon::before,
+.toggle-icon::after {
+    content: '';
+    position: absolute;
+    left: 0; /* Ensure alignment */
+    width: 16px; /* Adjusted width */
+    height: 2px;
+    background-color: var(--color-text-primary);
+    transition: all 0.3s ease;
+}
+
+.toggle-icon::before {
+    transform: translateY(-5px); /* Adjusted spacing */
+}
+
+.toggle-icon::after {
+    transform: translateY(5px); /* Adjusted spacing */
+}
+
+.controls-toggle-btn.active .toggle-icon {
+    background-color: transparent;
+}
+
+.controls-toggle-btn.active .toggle-icon::before {
+    transform: rotate(45deg);
+}
+
+.controls-toggle-btn.active .toggle-icon::after {
+    transform: rotate(-45deg);
+}
+
+/* Collapsed state */
+.controls-container.collapsed .controls-row {
+    display: none;
+}
+
+/* Main Navigation Mobile Styles */
+.main-nav-toggle {
+    display: none; /* Hidden by default, shown in media query */
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index: 1001; /* Above nav content */
+}
+
+.main-nav-toggle-icon {
+    display: block;
+    position: relative;
+    width: 24px; /* Hamburger icon width */
+    height: 2px; /* Thickness of the lines */
+    background-color: var(--color-text-primary);
+    transition: all 0.2s ease-in-out;
+}
+
+.main-nav-toggle-icon::before,
+.main-nav-toggle-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px; /* Thickness of the lines */
+    background-color: var(--color-text-primary);
+    transition: all 0.2s ease-in-out;
+}
+
+.main-nav-toggle-icon::before {
+    transform: translateY(-7px); /* Space between lines */
+}
+
+.main-nav-toggle-icon::after {
+    transform: translateY(7px); /* Space between lines */
+}
+
+/* Active state for hamburger (X) */
+.main-nav-toggle.active .main-nav-toggle-icon {
+    background-color: transparent; /* Middle line disappears */
+}
+
+.main-nav-toggle.active .main-nav-toggle-icon::before {
+    transform: translateY(0) rotate(45deg);
+}
+
+.main-nav-toggle.active .main-nav-toggle-icon::after {
+    transform: translateY(0) rotate(-45deg);
+}
+
+/* Ensure controls toggle button is visible and controls are collapsed by default on small screens, and handle overflow for controls-row on larger screens */
+@media (min-width: 769px) {
+    .controls-toggle-btn {
+        display: none !important;
+    }
+    .controls-container.collapsed .controls-row {
+        display: flex;
+    }
+    .controls-row {
+        flex-wrap: wrap; /* Allow wrapping on large screens */
+        overflow-x: visible; /* No need for horizontal scroll when wrapping */
+        padding-bottom: 0; /* Remove scrollbar padding */
+    }
+    .control-item {
+        margin-bottom: var(--space-md); /* Add space between wrapped rows */
+    }
+}
+
+@media (max-width: 768px) {
+    
+    .main-navigation {
+        padding: 0 var(--space-md);
+        justify-content: space-between; /* Logo on left, hamburger on right */
+    }
+
+    .main-navigation .main-nav-toggle {
+        display: block; /* Show hamburger on mobile */
+    }
+
+    /* Styles for the navigation list (ul) in mobile view */
+    .main-navigation ul {
+        display: none; /* Hide nav links by default on mobile */
+        flex-direction: column;
+        position: absolute;
+        top: var(--nav-height); /* Position below the nav bar */
+        left: 0;
+        width: 100%;
+        background-color: var(--color-background-card); /* Or var(--color-background) */
+        padding: var(--space-md) 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 1000; /* Ensure it's above content below */
+    }
+
+    /* When the navigation is open, show the list */
+    .main-navigation.nav-open ul {
+        display: flex;
+    }
+
+    /* Styles for list items (li) in mobile view */
+    .main-navigation li {
+        margin: 0; /* Remove default margins */
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Styles for links (a) in mobile view */
+    .main-navigation a {
+        display: block;
+        padding: var(--space-md) var(--space-lg);
+        border-bottom: 1px solid var(--color-border-light); /* Separator for links */
+        width: 100%; /* Make links take full width */
+        /* Inherit general link styles from above, or redefine as needed */
+    }
+    
+    /* Hover, focus, and active states for links in mobile view */
+    .main-navigation a:hover,
+    .main-navigation a:focus,
+    .main-navigation a.active-link {
+        background-color: var(--color-background-card-hover);
+        color: var(--color-accent-primary);
+        border-bottom-color: var(--color-accent-primary); /* Highlight active/hovered link's border */
+    }
+
+    .controls-container.sticky-menu {
+        top: var(--nav-height);
+    }
+    .controls-container {
+        padding: var(--space-sm);
+    }
+    .controls-row { 
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+    .control-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .control-item input[type="range"] {
+        width: 100%;
+    }
+    .plot-area {
+        flex-basis: 100%;
+    }
+    .hero-section .hero-title,
+    .hero-section h1 {
+        font-size: 2.2rem;
+    }
+    .content-section h2, .section-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Loading Overlay Styles */
+#loading-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-xxl) 0; /* Add some padding when it's inside main-content */
+    min-height: 30vh; /* Give it some minimum height to stabilize content */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-speed-normal) ease-out, visibility var(--transition-speed-normal) ease-out;
+}
+
+#loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    display: none !important; /* Ensure it's removed from layout when hidden */
+}
+
+.loading-spinner {
+    border: 8px solid var(--color-slider-track); /* Light gray for track */
+    border-top: 8px solid var(--color-accent-primary); /* Accent for spinner */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Hide content initially, fade in after load */
+.main-navigation,
+.footer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed-slow) ease-in-out;
+}
+
+.main-navigation.loaded,
+#main-content.loaded > .content-section-placeholder, /* Target placeholders for fade-in */
+.footer.loaded {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Ensure main-content itself is visible, but its direct section placeholders are initially hidden */
+#main-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+.content-section-placeholder {
+    opacity: 0;
+    visibility: hidden;
+    display: none; /* Initially hide section placeholders */
+    transition: opacity var(--transition-speed-slow) ease-in-out;
+}
+
+/* When main content is loaded, display and fade in the placeholders */
+#main-content.loaded > .content-section-placeholder {
+    display: block; /* Or flex, grid, depending on their intended layout */
+    opacity: 1;
+    visibility: visible;
+}
