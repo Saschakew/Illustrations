@@ -52,7 +52,7 @@ async function initializeSectionOne() {
 
     // 1. Intro Paragraph
     const introHTML = `
-       <p class="section-intro"> This section...</p>
+       <p class="section-intro"> This section briefly explains the data-generating process of the SVAR model.</p>
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
@@ -61,7 +61,7 @@ async function initializeSectionOne() {
 
     // 3. B0 Matrix Options Card and Tip Callout
     const DGPHTML = `
-    <p>We  generate two raw shock series. The first, \\(\\eta_{1t}\\), follows a Normal distribution. The
+    <p>We consider a simple bivariate example. We  generate two raw shock series. The first, \\(\\eta_{1t}\\), follows a Normal distribution. The
         second, \\(\\eta_{2t}\\), is drawn from a non-Gaussian distribution. The raw shocks
         \\(\\eta_{t}\\) are scaled by a time-varying volatility process \\(\\sigma_t\\) and we obtain the structural shocks \\(\\epsilon_t = \\sigma_t
         \\eta_{t}\\). We normalize the shocks to zero mean and unit variance. </p> 
@@ -69,7 +69,7 @@ async function initializeSectionOne() {
         <p>The reduced-form shocks \\(u_t\\) are equal to  \\(u_t = B_0 \\epsilon_t\\). We consider two variants of the true \\(B_0\\) matrix. The first is the recursive \\(B_0^{\\mathrm{rec}} = \\begin{bmatrix} 1 & 0 \\\\ 0.5 & 1 \\end{bmatrix}\\) and the second is the non-recursive \\(B_0^{\\mathrm{non-rec}} = \\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}\\).</p>
     `;
     const DGPNoteHTML = ContentTemplates.buildInfoCallout(
-        '<p><strong>Note:</strong> Note on dependency..</p>', 
+        '<p><strong>Note:</strong> Note on dependency...</p>', 
         false, 
         true
     );
@@ -80,7 +80,7 @@ async function initializeSectionOne() {
     <div class="controls-explanation-card">
         <p><strong>Controls Overview:</strong></p>
         <ul>
-            <li><strong>\(B_0\) Switch:</strong> Toggles the true data-generating matrix between a recursive and a non-recursive structure.</li>
+            <li><strong>\\(B_0\\) Switch:</strong> Toggles the true data-generating matrix between a recursive and a non-recursive structure.</li>
             <li><strong>T Slider:</strong> Adjusts the sample size (number of observations) for the generated data.</li>
             <li><strong>New Data Button:</strong> Generates a new dataset with the current settings, allowing you to see how results vary across different random draws.</li>
         </ul>
@@ -94,11 +94,11 @@ async function initializeSectionOne() {
 
     // 3. B0 Matrix Options Card and Tip Callout
     const AnnimationsHTML = `
-    <p><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \(\epsilon_{1t}\) against \(\epsilon_{2t}\). Observe the non-Gaussian features from \(\epsilon_{2t}\).</p>
-                <p><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \(u_{1t}\) against \(u_{2t}\). These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution changes when you toggle \(B_0\), illustrating how different mixtures of the structural shocks \(\epsilon_t\) can produce different patterns in the observed reduced-form residuals.</p>
+    <p><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \\(\\epsilon_{1t}\\) against \\(\\epsilon_{2t}\\). </p>
+                <p><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \\(u_{1t}\\) against \\(u_{2t}\\). These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution changes when you toggle \\(B_0\\), illustrating how different mixtures of the structural shocks \\(\\epsilon_t\\) can produce different patterns in the observed reduced-form residuals.</p>
     `;
     const AnnimationsNoteHTML = ContentTemplates.buildInfoCallout(
-        '<p><strong>Observations:</strong> ...</p>',
+        '<p><strong>Observations:</strong> 1. Observe the skewness of \\(\\epsilon_{2t}\\). There are outliers where \\(\\epsilon_{2t}\\) is very large, however, there are no comparable outliers where \\(\\epsilon_{2t}\\) is very small.</p>',
         false,
         true
     );

@@ -21,51 +21,62 @@ async function initializeSectionTwo() {
     // 1. Intro Paragraph
     const introHTML = `
         <p class="section-intro">
-            <strong>Identification problem.</strong> We observe reduced-form shocks \\(u_t\\) and seek to recover the unobserved structural shocks \\(\epsilon_t\\). The
-            relationship is \\(\epsilon_t = B_0^{-1} u_t\\), but the true matrix \\(B_0\\) is unknown. 
-            Define innovations \\(e_t(B) = B^{-1} u_t\\). Assuming structural shocks are uncorrelated and have unit variance
-            (\\(E[\epsilon_t \epsilon_t'] = I\\)), we look for a matrix \\(B\\) such that the sample innovations \\(e_t(B)\\) also
-            satisfy this property.
+        This section briefly explains the SVAR identification problem and outlines how short-run restrictions are used to solve it.
         </p>
+
+
+     
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
-    // 2. Sub-topic Heading: Rotation Family
-    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Rotation family B(\( \phi \))'));
+    // 2. Sub-topic Heading:  Identification Problem
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('The identification problem'));
 
-    // 3. Main content about B(phi) with side callout
-    const bPhiMainHTML = `
-        <p>
-            The set of such matrices \\(B\\) can be parameterized by a single rotation angle \\(\phi\\). 
-            Specifically, all matrices \\(B(\phi) = B^{\mathrm{Chol}} Q(\phi)\\) yield innovations with unit variance and
-            uncorrelated shocks, where \(B^{\mathrm{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\) , 
-            and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\).
+    // 3.  Identification Problem Main Content
+    const IdentificationProblemMainHTML = `
+       <p>
+              We observe reduced-form shocks \\(u_t\\) and seek to recover the unobserved structural shocks \\(\epsilon_t\\) and the true mixing matrix \\(B_0\\), related by \\(\epsilon_t = B_0^{-1} u_t\\).
+            Define innovations \\(e_t(B) = B^{-1} u_t\\). Assuming that the structural shocks are uncorrelated and have unit variance
+            (\\(E[\epsilon_t \epsilon_t'] = I\\)), we look for a matrix \\(B\\) such that the sample innovations \\(e_t(B)\\) are also uncorrelated and have unit variance. The set of such matrices \\(B\\) can be parameterized by a single rotation angle \\(\phi\\).  
         </p>
     `;
-    const bPhiCalloutHTML = ContentTemplates.buildInfoCallout(`
-        <p><strong>Tip:</strong> Use the \(\phi\) slider to select a rotation angle and see the corresponding matrix 
-        <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\phi)^{-1} u_t\\). Given the true data-generating matrix \\(B_0\\) (selected via the toggle), we can calculate the rotation angle
-        \\(\phi_0\\) such that \\(B(\phi_0) = B_0\\). For the recursive \\(B_0\\) we get \\(\phi_0^{\text{rec}} = 0\\). For the non-recursive \\(B_0\\) we get
-        \\(\phi_0^{\text{non-rec}} \approx -0.46\\).</p>
+    const IdentificationProblemCalloutHTML = ContentTemplates.buildInfoCallout(`
+        <p><strong>Note:</strong> All matrices \\(B(\\phi) = B^{\\text{Chol}} Q(\\phi)\\) yield innovations with unit variance and
+            uncorrelated shocks, where \\(B^{\\text{Chol}}\\) is the Cholesky decomposition of the sample covariance of \\(u_t\\) , 
+            and \\(Q(\\phi) = \\begin{bmatrix} \\cos \\phi & -\\sin\\phi \\\\ \\sin\\phi & \\cos\\phi \\end{bmatrix}\\).</p>
     `, false, true);
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(bPhiMainHTML, bPhiCalloutHTML));
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(IdentificationProblemMainHTML, IdentificationProblemCalloutHTML));
 
-    // 4. Cholesky Identification with side callout
-    const choleskyMainHTML = `
-        <p>
-            The Cholesky identification imposes a recursive structure on \\(B\\) (e.g., its (1,2) element is zero), which uniquely
-            determines the rotation angle as \(\phi=0\\). 
-            For this data set, applying the Cholesky identification yields <span id="b_est_rec_s2_display"></span>.
+    // 3. Sub-topic Heading:  Short-Run Restrictions
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Short-Run Restrictions'));
+
+    const RestrictionsMainHTML = `
+       <p>
+            Traditionally, short-run zero restrictions are imposed on the \\(B\\) matrix to identify the SVAR. In the bivariate example, only a single restriction is required to reduce the set of \\(B(\\phi)\\) which yield uncorrelated innovations to a unique matrix. 
+</p>
+<p>
+            We impose a recursive structure on \\(B\\) (e.g., its (1,2) element is zero), which uniquely
+            determines the rotation angle as \\(\phi=0\\). This is the Cholesky identification.  For this data set, applying the Cholesky identification yields <span id="b_est_rec_s2_display"></span>.
         </p>
-    `;
-    const choleskyCalloutHTML = ContentTemplates.buildInfoCallout(`
-        <p><strong>Cholesky ID:</strong> This identification assumes a recursive structure for the \\(B\\) matrix (lower triangular), which sets its (1,2) element to zero. This uniquely determines the rotation angle as \(\phi=0\\) in the \\(B(\phi)\\) parameterization.</p>
-    `, true, true);
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(choleskyMainHTML, choleskyCalloutHTML));
 
+
+    <p> Given the true data-generating matrix \\(B_0\\) (selected via the toggle), we can calculate the rotation angle
+        \\(\phi_0\\) such that \\(B(\phi_0) = B_0\\). For the recursive \\(B_0\\) we get \\(\\phi_0^{\\text{rec}} = 0\\). For the non-recursive \\(B_0\\) we get
+        \\(\\phi_0^{\\text{non-rec}} \approx -0.46\\).</p>
+    `;
+    const RestrictionsCalloutHTML = ContentTemplates.buildInfoCallout(`
+        <p><strong>Note:</strong> Cholesky identification assumes a recursive structure for the \\(B\\) matrix (lower triangular), which sets its (1,2) element to zero. This uniquely determines the rotation angle as \\(\\phi=0\\) in the \\(B(\\phi)\\) parameterization.</p>
+    `, false, true);
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(RestrictionsMainHTML, RestrictionsCalloutHTML));
+
+
+
+   
     // 5. Observations Callout (full width for this example, or could be col-lg-8)
     const observationsHTML = ContentTemplates.buildInfoCallout(`
-        <p><strong>Observations:</strong></p>
+        <p><strong>Observations:</strong> ...Use the \(\phi\) slider to select a rotation angle and see the corresponding matrix
+        <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\phi)^{-1} u_t\\).</p>
+        
         <ul>
             <li>All \\(B(\phi)\\) yield uncorrelated innovations \\(e_{1t}(\phi)\\) and \\(e_{2t}(\phi)\\).</li>
             <li>The recursive estimator works well when the true model is recursive.</li>

@@ -418,8 +418,7 @@ body {
 .info-callout {
     background-color: #f0f7fa; /* Very light blue/cyan, derived from hero gradient */
     border-left: 4px solid var(--color-accent-primary);
-    padding: var(--space-md);
-    margin: var(--space-lg) 0;
+    padding: var(--space-md); 
     border-radius: var(--card-border-radius); /* Consistent with other cards */
     font-size: 0.95rem;
     max-width: 75ch;
