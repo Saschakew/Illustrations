@@ -113,6 +113,13 @@ body {
     background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-primary-darker));
 }
 
+/* --- Section Specific Styling --- */
+.section-text-content {
+    max-width: 100%;
+    overflow-x: hidden; /* Prevent this container itself from overflowing */
+}
+
+
 /* Hero Section Styling */
 .hero-section {
     background: var(--color-hero-background);
@@ -319,8 +326,13 @@ body {
 
 .latex-equation {
     text-align: center;
-    padding: var(--space-lg) 0;
+    padding-top: var(--space-lg);
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 10px; /* For scrollbar spacing */
     margin-bottom: var(--space-lg);
+    overflow-x: auto;   /* Add horizontal scrollbar if content overflows */
+    overflow-y: hidden; /* Prevent vertical scrollbar */
 }
 
 /* Content Sections (Cards) */

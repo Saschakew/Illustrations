@@ -56,7 +56,7 @@ async function initializeSectionThree() {
     
     
     const objectiveFunctionMainHTML = `
-        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{nG} = argmin_{\\phi} J(\\phi) = \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2')}
+        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{nG} = argmin_{\\phi}   \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2')}
          `;
     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
 
