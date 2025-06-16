@@ -11,47 +11,106 @@
                 </div>
             </div>
 
-            <p class="section-intro">
-                <strong>Identification problem.</strong> We observe reduced-form shocks \(u_t\) and seek to recover the unobserved structural shocks \(\epsilon_t\). The
-                relationship is \(\epsilon_t = B_0^{-1} u_t\), but the true matrix \(B_0\) is unknown. 
-                Define innovations \(e_t(B) = B^{-1} u_t\). Assuming structural shocks are uncorrelated and have unit variance
-                (\(E[\epsilon_t \epsilon_t'] = I\)), we look for a matrix \(B\) such that the sample innovations \(e_t(B)\) also
-                satisfy this property.
-            </p>
-            <h3 class="sub-topic-heading">Rotation family B(\(\phi\))</h3>
-<p>
-                The set of such matrices \(B\) can be parameterized by a single rotation angle \(\phi  \).
-                Specifically, all matrices \(B(\phi) = B^{\text{Chol}} Q(\phi)\) yield innovations with unit variance and
-                uncorrelated shocks, where \(B^{\text{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\),
-                and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\).
-            </p>
-            <div class="info-callout">
-                <p><strong>Tip:</strong> Use the \(\phi\) slider to select a rotation angle and see the corresponding matrix 
-                <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \(e_t(B) = B(\phi)^{-1} u_t\). Given the true data-generating matrix \(B_0\) (selected via the toggle), we can calculate the rotation angle
-                \(\phi_0\) such that \(B(\phi_0) = B_0\). For the recursive \(B_0\) we get \(\phi_0^{\text{rec}} = 0\). For the non-recursive \(B_0\) we get
-                \(\phi_0^{\text{non-rec}} \approx -0.46\).</p>
+            <div class="container-fluid section-text-content">
+                <div class="row mb-3">
+                    <div class="col-lg-8">
+                        <p class="section-intro">
+                            <strong>Identification problem.</strong> We observe reduced-form shocks \(u_t\) and seek to recover the unobserved structural shocks \(\epsilon_t\). The
+                            relationship is \(\epsilon_t = B_0^{-1} u_t\), but the true matrix \(B_0\) is unknown. 
+                            Define innovations \(e_t(B) = B^{-1} u_t\). Assuming structural shocks are uncorrelated and have unit variance
+                            (\(E[\epsilon_t \epsilon_t'] = I\)), we look for a matrix \(B\) such that the sample innovations \(e_t(B)\) also
+                            satisfy this property.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <!-- Optional: Side note for intro -->
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-12">
+                        <h3 class="sub-topic-heading">Rotation family B(\(\phi\))</h3>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-8">
+                        <p>
+                            The set of such matrices \(B\) can be parameterized by a single rotation angle \(\phi  \).
+                            Specifically, all matrices \(B(\phi) = B^{\text{Chol}} Q(\phi)\) yield innovations with unit variance and
+                            uncorrelated shocks, where \(B^{\text{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\),
+                            and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\).
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="info-callout h-100">
+                            <p><strong>Tip:</strong> Use the \(\phi\) slider to select a rotation angle and see the corresponding matrix 
+                            <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \(e_t(B) = B(\phi)^{-1} u_t\). Given the true data-generating matrix \(B_0\) (selected via the toggle), we can calculate the rotation angle
+                            \(\phi_0\) such that \(B(\phi_0) = B_0\). For the recursive \(B_0\) we get \(\phi_0^{\text{rec}} = 0\). For the non-recursive \(B_0\) we get
+                            \(\phi_0^{\text{non-rec}} \approx -0.46\).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-8">
+                        <p>
+                            The Cholesky identification imposes a recursive structure on \(B\) (e.g., its (1,2) element is zero), which uniquely
+                            determines the rotation angle as \(\phi=0\). 
+                            For this data set, applying the Cholesky identification yields <span id="b_est_rec_s2_display"></span>.
+                        </p>
+                    </div>
+                    <div class="col-lg-4">
+                         <div class="info-callout info-callout--sm h-100">
+                            <p><strong>Cholesky ID:</strong> This identification assumes a recursive structure for the \(B\) matrix (lower triangular), which sets its (1,2) element to zero. This uniquely determines the rotation angle as \(\phi=0\) in the \(B(\phi)\) parameterization.</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row mb-3">
+                    <div class="col-lg-8">
+                        <div class="info-callout">
+                            <p><strong>Observations:</strong></p>
+                            <ul>
+                                <li>All \(B(\phi)\) yield uncorrelated innovations \(e_{1t}(\phi)\) and \(e_{2t}(\phi)\).</li>
+                                <li>The recursive estimator works well when the true model is recursive.</li>
+                                <li>The recursive estimator is biased when the true model is non-recursive.</li>
+                                <li>The bias does not vanish with an increasing sample size.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <!-- Optional: Side note for observations -->
+                    </div>
+                </div>
             </div>
 
-                <p>
-                    <div class="info-callout info-callout--sm info-callout--floated-right">
-                        <p><strong>Cholesky:</strong> Results in a lower-triangular B matrix, effectively setting the (1,2) element to zero.</p>
+            <!-- Example Code Block -->
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                    <h3 class="sub-topic-heading">Code Example: Defining the Rotation Matrix</h3>
+                    <div class="code-block">
+                        <pre><code>function getRotationMatrix(phi) {
+  return [
+    [Math.cos(phi), -Math.sin(phi)],
+    [Math.sin(phi), Math.cos(phi)]
+  ];
+}</code></pre>
                     </div>
-                The Cholesky identification imposes a recursive structure on \(B\) (e.g., its (1,2) element is zero), which uniquely
-                determines the rotation angle as \(\phi=0\). 
-                For this data set, applying the Cholesky identification yields     <span id="b_est_rec_s2_display"></span>.</p>
-    
+                </div>
+            </div>
 
-            <div class="info-callout">
-                <p><strong>Observations:</strong></p>
-                <ul>
-                    <li>All \(B(\phi)\) yield uncorrelated innovations \(e_{1t}(\phi)\) and \(e_{2t}(\phi)\).</li>
-                    <li>The recursive estimator works well when the true model is recursive.</li>
-                    <li>The recursive estimator is biased when the true model is non-recursive.</li>
-                    <li>The bias does not vanish with an increasing sample size.</li>
-                </ul>
+            <!-- Example LaTeX Equation -->
+            <div class="row mb-3">
+                <div class="col-lg-12">
+                    <h3 class="sub-topic-heading">Key Equation: The Rotation Family</h3>
+                    <div class="latex-equation">
+                        $$ B(\phi) = B^{\text{Chol}} Q(\phi) $$
+                    </div>
+                </div>
             </div>
             
-            <div class="plot-container card">
+            <div class="plot-container">
                 <div id="plot_s2_left" class="plot-area"></div>
                 <div id="plot_s2_right" class="plot-area"></div>
             </div>

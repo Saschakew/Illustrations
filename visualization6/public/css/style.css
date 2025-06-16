@@ -47,7 +47,7 @@ body {
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
     color: var(--color-text-primary);
-    background-color: var(--color-background-page);
+    background-color: var(--color-background-page) !important;
     margin: 0;
     /*padding-top: var(--nav-height); /* Space for the fixed main navigation */
 }
@@ -99,8 +99,9 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; /* Behind overlay and hero text, above background */
+    z-index: 10; /* Diagnostic: Bring to front */
     pointer-events: none;
+    background-color: red; /* Diagnostic: Make canvas visible */
 }
 
 /* Soft fade-out to merge particle canvas into page background */
@@ -262,6 +263,30 @@ body {
     display: none !important;
 }
 
+/* Code and LaTeX Containers */
+.code-block {
+    background-color: var(--color-background-code);
+    border-radius: var(--card-border-radius);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    overflow-x: auto;
+}
+
+.code-block pre {
+    margin: 0;
+}
+
+.code-block code {
+    font-family: var(--font-family-monospace);
+    font-size: 0.9em;
+}
+
+.latex-equation {
+    text-align: center;
+    padding: var(--space-lg) 0;
+    margin-bottom: var(--space-lg);
+}
+
 /* Content Sections (Cards) */
 .content-section {
     margin-bottom: var(--space-xl); /* guide: space-lg or space-xl */
@@ -274,7 +299,7 @@ body {
 
 /* Intro Section (Section Zero) */
 .intro-section {
-    background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%); /* Subtle gradient */
+    background-color: var(--color-background-page);
     border: none;
     box-shadow: none;
     text-align: center;
@@ -367,28 +392,6 @@ body {
 .info-callout strong, .info-callout b { /* Emphasize titles within callouts */
     color: var(--color-accent-primary-darker);
     font-weight: 600;
-}
-
-/* Floated Info Callout */
-.info-callout--floated-right {
-    float: right;
-    max-width: 230px; /* Adjust as needed */
-    margin-top: var(--space-xs); /* Align with paragraph flow */
-    margin-right: 0; /* No margin on the float side */
-    margin-bottom: var(--space-md);
-    margin-left: var(--space-lg); /* Space from the main text */
-    width: auto; /* Override inherited max-width if any */
-}
-
-/* Responsive behavior for floated callouts */
-@media (max-width: 991px) { /* Stacks below this width, adjust as needed */
-    .info-callout--floated-right {
-        float: none;
-        max-width: 100%; /* Full width on smaller screens */
-        margin-left: 0; /* Reset side margins */
-        margin-right: 0;
-        margin-top: var(--space-md); /* Standard top margin when stacked */
-    }
 }
 
 /* Refined Estimate Card */

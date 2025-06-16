@@ -51,7 +51,7 @@ window.PlotUtils = {
 
         const layout = {
             title: title,
-            xaxis: { title: xLabel, zeroline: true, zerolinewidth: 2, zerolinecolor: '#999' },
+            xaxis: { title: xLabel, zeroline: true, zerolinewidth: 2, zerolinecolor: '#999', automargin: true },
             yaxis: { 
                 title: yLabel, 
                 zeroline: true, 
@@ -131,7 +131,7 @@ window.PlotUtils = {
 
         const layout = {
             title: title,
-            xaxis: { title: xLabel },
+            xaxis: { title: xLabel, automargin: true },
             yaxis: { title: yLabel, zeroline: false },
             margin: { l: 50, r: 30, b: 120, t: 60 },
             paper_bgcolor: 'rgba(0,0,0,0)',

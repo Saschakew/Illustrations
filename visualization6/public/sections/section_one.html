@@ -10,33 +10,58 @@
                 </div>
             </div>
 
-            <p class="section-intro"><strong>Shock generation pipeline.</strong> We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The
-                second, \(\eta_{2t}\), is from a mixture of two Normal distributions, designed to be non-Gaussian.The raw shocks
-                \(\eta_{t}\) are scaled by a time-varying volatility process \(\sigma_t\). For the first half of the sample,
-                \(\sigma_t = 1\), and for the second half, \(\sigma_t = 2\). This produces structural shocks \(\epsilon_t = \sigma_t
-                \eta_{t}\). We normalize the shocks to zero mean and unit variance. The reduced-form shocks \(u_t\) are equal to
-                \(u_t = B_0 \epsilon_t\). </p>
-            <h3 class="sub-topic-heading">Model Variants</h3>
-            <div class="estimate-card">
-                <h4 class="card-title">True \(B_0\) Matrix Options</h4>
-                <div class="est-line">
-                    <span class="est-label">Recursive \(B_0^{\text{rec}}\)</span>
-                    <span class="est-value">\(\begin{bmatrix} 1 & 0 \\ 0.5 & 1 \end{bmatrix}\)</span>
+            <div class="container-fluid section-text-content">
+                <div class="row mb-3">
+                    <div class="col-lg-8">
+                        <p class="section-intro"><strong>Shock generation pipeline.</strong> We first generate two raw shock series. The first, \(\eta_{1t}\), is drawn from a standard Normal distribution. The
+                            second, \(\eta_{2t}\), is from a mixture of two Normal distributions, designed to be non-Gaussian.The raw shocks
+                            \(\eta_{t}\) are scaled by a time-varying volatility process \(\sigma_t\). For the first half of the sample,
+                            \(\sigma_t = 1\), and for the second half, \(\sigma_t = 2\). This produces structural shocks \(\epsilon_t = \sigma_t
+                            \eta_{t}\). We normalize the shocks to zero mean and unit variance. The reduced-form shocks \(u_t\) are equal to
+                            \(u_t = B_0 \epsilon_t\). </p>
+                    </div>
+                    <div class="col-lg-4">
+                        <!-- Optional: Side note for intro -->
+                    </div>
                 </div>
-                <div class="est-line">
-                    <span class="est-label">Non-recursive \(B_0^{\text{non-rec}}\)</span>
-                    <span class="est-value">\(\begin{bmatrix} 1 & 0.5 \\ 0.5 & 1 \end{bmatrix}\)</span>
-                </div>
-            </div>
-            <div class="info-callout">
-                <p><strong>Tip:</strong> Use the \(B_0\) switch in the controls above to toggle between the two true data generating models.</p>
-            </div>
 
-            <div class="latex-output-container card">
-                <p>Data Generating Process: \(u_t = B_0 \epsilon_t\), where   <span id="b0_matrix_s1_display"></span></p>
+                <div class="row mb-3">
+                    <div class="col-lg-12">
+                        <h3 class="sub-topic-heading">Model Variants</h3>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-lg-8">
+                        <div class="estimate-card">
+                            <h4 class="card-title">True \(B_0\) Matrix Options</h4>
+                            <div class="est-line">
+                                <span class="est-label">Recursive \(B_0^{\text{rec}}\)</span>
+                                <span class="est-value">\(\begin{bmatrix} 1 & 0 \\ 0.5 & 1 \end{bmatrix}\)</span>
+                            </div>
+                            <div class="est-line">
+                                <span class="est-label">Non-recursive \(B_0^{\text{non-rec}}\)</span>
+                                <span class="est-value">\(\begin{bmatrix} 1 & 0.5 \\ 0.5 & 1 \end{bmatrix}\)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="info-callout h-100">
+                            <p><strong>Tip:</strong> Use the \(B_0\) switch in the controls above to toggle between the two true data generating models.</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row mb-3">
+                    <div class="col-lg-12">
+                        <div class="latex-output-container card">
+                            <p>Data Generating Process: \(u_t = B_0 \epsilon_t\), where   <span id="b0_matrix_s1_display"></span></p>
+                        </div>
+                    </div>
+                </div>
             </div>
  
-            <div class="plot-container card">
+            <div class="plot-container">
                 <div id="plot_s1_left" class="plot-area"></div>
                 <div id="plot_s1_right" class="plot-area"></div>
             </div> 
