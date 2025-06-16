@@ -418,6 +418,91 @@ window.SVARCoreFunctions = {
      * phi_est_ridge minimizes the loss function L(phi) = (mean(e_1t^2 * e_2t))^2 + (mean(e_1t * e_2t^2))^2 + λv(b_12(φ))^2.
      * B_est_ridge = P_hat * R(phi_est_ridge).
      */
+    /**
+     * Calculates the ridge loss for a single phi value.
+     * L(phi) = (mean(e_1t^2 * e_2t))^2 + (mean(e_1t * e_2t^2))^2 + λv(b_12(φ))^2.
+     * @param {number} phi_iter - The phi value for which to calculate the loss.
+     * @param {number[][]} P_hat - The Cholesky decomposition of Cov(u_t).
+     * @param {number[]} u_1t - The first reduced-form shock series.
+     * @param {number[]} u_2t - The second reduced-form shock series.
+     * @param {number} lambda_val - The lambda penalty strength.
+     * @param {number|null} v_val - The v weight for the penalty (can be null if not applicable).
+     * @returns {number|null} The calculated loss, or null/Infinity on error.
+     */
+    calculateSingleRidgeLoss: function(phi_iter, P_hat, u_1t, u_2t, lambda_val, v_val) {
+        const category = 'SVAR_DATA_PIPELINE'; // Or a more specific category like 'RIDGE_LOSS_CALC'
+
+        if (!window.SVARMathUtil) {
+            DebugManager.log(category, 'Error: SVARMathUtil not available in calculateSingleRidgeLoss.');
+            return Infinity; // Return a high value to indicate error/unsuitability
+        }
+        if (!P_hat || !u_1t || !u_2t || u_1t.length !== u_2t.length || u_1t.length === 0 || typeof lambda_val !== 'number') {
+            DebugManager.log(category, 'Error: Invalid inputs for calculateSingleRidgeLoss.');
+            return Infinity;
+        }
+
+        const R_iter = SVARMathUtil.getRotationMatrix(phi_iter);
+        const B_iter = SVARMathUtil.matrixMultiply(P_hat, R_iter);
+
+        if (!B_iter || !B_iter[0] || typeof B_iter[0][1] !== 'number') {
+            DebugManager.log(category, `calculateSingleRidgeLoss: B_iter or B_iter[0][1] is invalid for phi_iter=${phi_iter}.`);
+            return Infinity;
+        }
+
+        const B_iter_inv = SVARMathUtil.invert2x2Matrix(B_iter);
+        if (!B_iter_inv) {
+            DebugManager.log(category, `calculateSingleRidgeLoss: B_iter is not invertible for phi_iter=${phi_iter}.`);
+            return Infinity;
+        }
+
+        const temp_e_1t = [];
+        const temp_e_2t = [];
+        for (let j = 0; j < u_1t.length; j++) {
+            const u_vector = [u_1t[j], u_2t[j]];
+            const e_vector = SVARMathUtil.multiplyMatrixByVector(B_iter_inv, u_vector);
+            if (e_vector && e_vector.length === 2) {
+                temp_e_1t.push(e_vector[0]);
+                temp_e_2t.push(e_vector[1]);
+            } else {
+                DebugManager.log(category, `calculateSingleRidgeLoss: Invalid e_vector for u_vector at index ${j}, phi_iter=${phi_iter}.`);
+                return Infinity; // Critical error if innovations can't be formed
+            }
+        }
+
+        if (temp_e_1t.length !== u_1t.length) { // Safeguard
+            DebugManager.log(category, `calculateSingleRidgeLoss: Mismatch in generated innovations length for phi_iter=${phi_iter}.`);
+            return Infinity;
+        }
+
+        const term1_products = temp_e_1t.map((val, index) => Math.pow(val, 2) * temp_e_2t[index]);
+        const mean_term1 = SVARMathUtil.mean(term1_products);
+
+        const term2_products = temp_e_1t.map((val, index) => val * Math.pow(temp_e_2t[index], 2));
+        const mean_term2 = SVARMathUtil.mean(term2_products);
+
+        if (mean_term1 === null || mean_term2 === null) {
+            DebugManager.log(category, `calculateSingleRidgeLoss: mean_term1 or mean_term2 is null for phi_iter=${phi_iter}.`);
+            return Infinity;
+        }
+
+        const s3_loss_component = Math.pow(mean_term1, 2) + Math.pow(mean_term2, 2);
+
+        let penalty_term = 0;
+        const b_12_iter = B_iter[0][1];
+
+        if (v_val === null) { // v can be explicitly null if B_est_nG failed
+            DebugManager.log(category, `calculateSingleRidgeLoss: v_val is null. Penalty term will be 0 for phi_iter=${phi_iter}.`);
+        } else if (typeof b_12_iter === 'number' &&
+                   typeof v_val === 'number' && !isNaN(v_val) &&
+                   typeof lambda_val === 'number' && !isNaN(lambda_val)) {
+            penalty_term = lambda_val * v_val * Math.pow(b_12_iter, 2);
+        } else {
+            DebugManager.log(category, `calculateSingleRidgeLoss: Could not calculate penalty term for phi_iter=${phi_iter}. b_12_iter: ${b_12_iter}, v_val: ${v_val}, lambda_val: ${lambda_val}. Penalty set to 0.`);
+        }
+        
+        return s3_loss_component + penalty_term;
+    },
+
     calculateRidgeEstimates: function() {
         const category = 'SVAR_DATA_PIPELINE';
         DebugManager.log(category, 'Attempting to calculate Ridge estimates (phi_est_ridge, B_est_ridge)...');
@@ -464,94 +549,49 @@ window.SVARCoreFunctions = {
             const steps = 100;
             const min_phi_range = -Math.PI / 4; 
             const max_phi_range = Math.PI / 4; 
-            // sharedData.lambda and sharedData.v are used directly in the penalty term calculation within the loop.
 
-        for (let i = 0; i <= steps; i++) {
-            const current_phi_iter = min_phi_range + (i / steps) * (max_phi_range - min_phi_range);
-            
-            const R_iter = SVARMathUtil.getRotationMatrix(current_phi_iter);
-            const B_iter = SVARMathUtil.matrixMultiply(P_hat, R_iter); // B_iter is B(φ) for current_phi_iter
-            
-            // Ensure B_iter and B_iter[0][1] (for b_12(φ)) are valid before proceeding
-            if (!B_iter || !B_iter[0] || typeof B_iter[0][1] !== 'number') { 
-                DebugManager.log(category, `Skipping iteration for phi_iter=${current_phi_iter}, B_iter or B_iter[0][1] is invalid.`);
-                continue;
-            }
+            for (let i = 0; i <= steps; i++) {
+                const phi_iter = min_phi_range + (max_phi_range - min_phi_range) * i / steps;
+                
+                // DebugManager.log(category, `Ridge Iteration ${i}: phi_iter = ${phi_iter.toFixed(4)}`);
 
-            const B_iter_inv = SVARMathUtil.invert2x2Matrix(B_iter);
-            if (!B_iter_inv) {
-                DebugManager.log(category, `Skipping iteration for phi_iter=${current_phi_iter}, B_iter is not invertible.`);
-                continue;
-            }
+                const currentLoss = this.calculateSingleRidgeLoss(
+                    phi_iter,
+                    P_hat, // P_hat is calculated above in this function
+                    sharedData.u_1t,
+                    sharedData.u_2t,
+                    sharedData.lambda,
+                    sharedData.v // v is calculated by calculateAndStoreVWeight, called by non-Gaussian usually
+                );
 
-            const temp_e_1t = [];
-            const temp_e_2t = [];
-            for (let j = 0; j < sharedData.u_1t.length; j++) {
-                const u_vector = [sharedData.u_1t[j], sharedData.u_2t[j]];
-                const e_vector = SVARMathUtil.multiplyMatrixByVector(B_iter_inv, u_vector);
-                if (e_vector && e_vector.length === 2) {
-                    temp_e_1t.push(e_vector[0]);
-                    temp_e_2t.push(e_vector[1]);
-                } else {
-                    DebugManager.log(category, `Invalid e_vector for u_vector at index ${j}, phi_iter=${current_phi_iter}. e_vector:`, e_vector);
+                // DebugManager.log(category, `Ridge Iteration ${i}: phi_iter = ${phi_iter.toFixed(4)}, Loss = ${currentLoss}`);
+
+                if (currentLoss === null || currentLoss === Infinity) {
+                    // DebugManager.log(category, `Skipping phi_iter = ${phi_iter.toFixed(4)} due to invalid loss (null or Infinity).`);
+                    continue; // Skip if loss calculation failed
+                }
+
+                if (currentLoss < minLoss) {
+                    minLoss = currentLoss;
+                    phi_at_minLoss = phi_iter;
+                    // DebugManager.log(category, `New minLoss found: ${minLoss.toFixed(4)} at phi_iter = ${phi_at_minLoss.toFixed(4)}`);
                 }
             }
 
-            // Ensure innovations were successfully generated for all u_t
-            if (temp_e_1t.length !== sharedData.u_1t.length || temp_e_2t.length !== sharedData.u_2t.length) {
-                 DebugManager.log(category, `Skipping iteration for phi_iter=${current_phi_iter}, mismatch in length of generated innovations. Expected ${sharedData.u_1t.length}, got e1: ${temp_e_1t.length}, e2: ${temp_e_2t.length}.`);
-                 continue; 
-            }
-            if (temp_e_1t.length === 0) { // Should be caught by above, but as a safeguard
-                DebugManager.log(category, `Skipping iteration for phi_iter=${current_phi_iter}, no innovations generated.`);
-                continue;
-            }
-
-            const term1_products = temp_e_1t.map((val, index) => Math.pow(val, 2) * temp_e_2t[index]);
-            const mean_term1 = SVARMathUtil.mean(term1_products);
-
-            const term2_products = temp_e_1t.map((val, index) => val * Math.pow(temp_e_2t[index], 2));
-            const mean_term2 = SVARMathUtil.mean(term2_products);
-
-            if (mean_term1 === null || mean_term2 === null) {
-                DebugManager.log(category, `Skipping iteration for phi_iter=${current_phi_iter}, mean_term1 or mean_term2 is null.`);
-                continue;
-            }
-
-            const s3_loss_component = Math.pow(mean_term1, 2) + Math.pow(mean_term2, 2);
-            
-            let penalty_term = 0;
-            const b_12_iter = B_iter[0][1]; // This is b_12(φ) for the current iteration's phi
-
-            // Check if sharedData.v is explicitly null (can happen if B_est_nG calculation failed)
-            if (sharedData.v === null) {
-                DebugManager.log(category, `sharedData.v is null. Penalty term will be 0 for phi_iter=${current_phi_iter}.`);
-            } else if (typeof b_12_iter === 'number' &&
-                       typeof sharedData.v === 'number' && !isNaN(sharedData.v) &&
-                       typeof sharedData.lambda === 'number' && !isNaN(sharedData.lambda)) {
-                penalty_term = sharedData.lambda * sharedData.v * Math.pow(b_12_iter, 2);
-            } else {
-                DebugManager.log(category, `Could not calculate penalty term for phi_iter=${current_phi_iter}. b_12_iter: ${b_12_iter}, v: ${sharedData.v}, lambda: ${sharedData.lambda}. Penalty set to 0.`);
-            }
-            
-            const currentLoss = s3_loss_component + penalty_term;
-            // DebugManager.log(category, `Iter: phi=${current_phi_iter.toFixed(3)}, S3Loss=${s3_loss_component.toFixed(5)}, Penalty=${penalty_term.toFixed(5)}, TotalLoss=${currentLoss.toFixed(5)}`);
-
-            if (currentLoss < minLoss) {
-                minLoss = currentLoss;
-                phi_at_minLoss = current_phi_iter;
-            }
-        }
-
-            DebugManager.log(category, `Final phi_at_minLoss before assignment: ${phi_at_minLoss}, minLoss: ${minLoss}`);
+            // Store the results
             sharedData.phi_est_ridge = phi_at_minLoss;
-            const R_phi_est_ridge = SVARMathUtil.getRotationMatrix(sharedData.phi_est_ridge);
-            sharedData.B_est_ridge = SVARMathUtil.matrixMultiply(P_hat, R_phi_est_ridge);
-            if (!sharedData.B_est_ridge) { // Handle potential error from matrixMultiply
-                 DebugManager.log(category, 'Error: Failed to compute B_est_ridge.');
-                 sharedData.B_est_ridge = [[NaN, NaN], [NaN, NaN]];
+            const R_optimal_ridge = SVARMathUtil.getRotationMatrix(phi_at_minLoss);
+            if (!R_optimal_ridge) {
+                DebugManager.log(category, `Error: Failed to get R_optimal_ridge for phi_est_ridge = ${phi_at_minLoss}.`);
+                sharedData.B_est_ridge = [[NaN, NaN], [NaN, NaN]];
+            } else {
+                sharedData.B_est_ridge = SVARMathUtil.matrixMultiply(P_hat, R_optimal_ridge);
+                if (!sharedData.B_est_ridge) {
+                    DebugManager.log(category, `Error: Failed to compute B_est_ridge with optimal phi ${phi_at_minLoss}.`);
+                    sharedData.B_est_ridge = [[NaN, NaN], [NaN, NaN]]; // Fallback
+                }
             }
-
+            
             DebugManager.log(category, 'Successfully calculated and stored Ridge estimates.');
             DebugManager.log(category, 'sharedData.phi_est_ridge:', sharedData.phi_est_ridge);
             DebugManager.log(category, 'sharedData.B_est_ridge:', JSON.parse(JSON.stringify(sharedData.B_est_ridge)));

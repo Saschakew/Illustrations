@@ -21,47 +21,73 @@ async function initializeSectionThree() {
 
     // 1. Intro Paragraph
     const introHTML = `
-        <p class="section-intro"><strong>Context.</strong>
-            When structural shocks \(\epsilon_t\) are non-Gaussian, we can identify the model without imposing restrictions like
-            \(B_0\) being lower-triangular. The key idea is that rotating a non-Gaussian distribution changes its shape. We can
-            find the correct rotation angle \(\phi\) by finding the one that makes the resulting innovations \(e_t(\phi)\) "most
-            independent."
+        <p class="section-intro">
+            This section explores how non-Gaussianity in structural shocks \\(\\epsilon_t\\) can be exploited to identify the SVAR model without relying on traditional short-run zero restrictions. 
         </p>
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
-    // 2. Sub-topic Heading: Objective function
-    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Objective function'));
+    // 2. Sub-topic Heading: Identification via Non-Gaussianity
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Identification via Non-Gaussianity'));
 
-    // 3. Objective Function Description and Tip Callout
-    const objectiveMainHTML = `
+    // 3. Identification Content & Callout
+    const identificationMainHTML = `
         <p>
-            One way to measure this is to minimize an objective function based on higher-order moments. We define the objective
-            function as \(J(\phi) = \mathrm{mean}(e_{1t}^2 e_{2t})^2 + \mathrm{mean}(e_{2t}^2 e_{1t})^2\). The true rotation angle
-            \(\phi_0\) should minimize this function, driving it close to zero.
+            When at most one of the structural shocks \\(\\epsilon_{it}\\) is Gaussian, the matrix \\(B_0\\) is identified up to permutation and scaling of the shocks. We seek a rotation angle \\(\\phi\\) that transforms the reduced-form innovations \\(u_t\\) into innovations \\(e_t(\\phi) = B(\\phi)^{-1} u_t\\) that are "as independent as possible." This can be achieved by minimizing an objective function based on higher-order moments of \\(e_t(\\phi)\\).
         </p>
-        <div class="estimate-card card"><p class="est-line">Estimate...</p></div>
+        
     `;
-    const objectiveTipCalloutHTML = ContentTemplates.buildInfoCallout(
-        '<p><strong>Tip:</strong> Use the \(\phi\) slider to see how the innovations and the objective function change. The true data-generating matrix \(B_0\) (and thus the true \(\phi_0\)) is selected via the toggle.</p>',
+    const identificationCalloutHTML = ContentTemplates.buildInfoCallout(
+        '<p><strong>Key Insight:</strong> Unlike Gaussian shocks, whose rotated versions remain Gaussian, rotated non-Gaussian shocks exhibit changes in their statistical properties (like skewness and kurtosis), which helps in pinpointing the correct underlying structure.</p>',
         false,
         true
     );
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(objectiveMainHTML, objectiveTipCalloutHTML));
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(identificationMainHTML, identificationCalloutHTML));
 
-    // 4. LaTeX Output Container
-    const latexOutputsHTML = `
-        <div class="latex-output-container card">
-            <p>Current identification matrix \(B(\phi)\): <span id="b_phi_matrix_s3_display"></span></p>
-            <p>Estimated \(\hat{\phi}_{nG}\): <span id="phi_est_nG_s3_display"></span></p>
-            <p>Estimated \(\hat{B}_{nG}\): <span id="b_est_nG_s3_display"></span></p>
-        </div>
+    const objectiveFunctionMainHTML = `<p>
+            Here, we use a simple objective function to minimize the innovation's coskewness, which is given by:
+        </p> 
+        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{nG} = argmin_{\\phi} J(\\phi) = \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2')}
+        <p>
+            The estimator \\(\\hat{\\phi}_{nG}\\) estimates the rotation angle to be <span id="phi_est_nG_s3_display"></span>, which corresponds to an estimated structural matrix <span id="b_est_nG_s3_display"></span>, compared to the true structural matrix <span id="b_true_s3_display"></span>.
+        </p>  `;
+    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
+    
+    // 4. Sub-topic Heading: Objective Function
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Objective Function for Non-Gaussianity'));
+
+    // 5. Objective Function Description
+    const objectiveFunctionHTML = `
+        
+        <p>
+            The true rotation angle \\(\\phi_0\\) (which depends on the true \\(B_0\\)) should ideally minimize this function, driving it towards zero. The estimated \\(\\hat{\\phi}_{nG}\\) is the angle that minimizes \\(J(\\phi)\\) for the observed data.
+        </p>
     `;
-    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(latexOutputsHTML, 'latex-output-row'));
+    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionHTML, 'objective-function-row'));
+
+   
+
+    // 7. Sub-topic Heading: Animations
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Animations'));
+
+    // 8. Animations Description
+    const animationsHTML = `
+        <p><strong>Left Plot (Innovations):</strong> Displays a scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) against \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
+        <p><strong>Right Plot (Objective Function):</strong> Shows the objective function \\(J(\\phi)\\) plotted against a range of \\(\\phi\\) values. 
+            A <span style="color: var(--plot-color-current-phi);">blue vertical line</span> indicates the current \\(\\phi\\) selected by the slider. 
+            A <span style="color: var(--plot-color-phi0);">red dashed line</span> marks the true \\(\\phi_0\\) (derived from the selected true \\(B_0\\)).
+            A <span style="color: var(--plot-color-estimated-phi);">green long-dashed line</span> marks the estimated \\(\\hat{\\phi}_{nG}\\) that minimizes \\(J(\\phi)\\).
+        </p>
+        <p><strong>Observations:</strong></p>
+        <ul>
+            <li>Use the \\(\\phi\\) slider to select a rotation angle and see coskewness of the innovations \\(e_t(\\phi)\\) changes.</li>
+            <li>The non-Gaussian estimator aligns close to the true \\(\\phi_0\\) in the recursive and non-recursive cases.</li> 
+        </ul>
+    `;
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(animationsHTML));
 
     // Initialize LaTeX displays now that spans are in the DOM
-    if (window.LatexUtils) {
-        window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s3_display');
+    if (window.LatexUtils) { 
         if (window.sharedData && typeof window.sharedData.phi_est_nG !== 'undefined') {
             window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', window.sharedData.phi_est_nG, '\\hat{\\phi}_{nG}');
         } else {
@@ -70,7 +96,13 @@ async function initializeSectionThree() {
         if (window.sharedData && window.sharedData.B_est_nG) {
             window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', window.sharedData.B_est_nG, '\\hat{B}_{nG}');
         } else {
-            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', [[NaN, NaN],[NaN, NaN]], '\\hat{B}_{nG}');
+            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', [[NaN, NaN], [NaN, NaN]], '\\hat{B}_{nG}');
+        }
+        // Display the true B0 matrix
+        if (window.sharedData && window.sharedData.B0) {
+            window.LatexUtils.displayBEstMatrix('b_true_s3_display', window.sharedData.B0, 'B_0');
+        } else {
+            window.LatexUtils.displayBEstMatrix('b_true_s3_display', [[NaN, NaN], [NaN, NaN]], 'B_0');
         }
     } else {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils not available for initial display in Section Three.');
@@ -100,7 +132,7 @@ async function updateSectionThreePlots() {
             'plot_s3_left',
             e_1t,
             e_2t,
-            'Scatter of Structural Innovations (e_t) - S3',
+            'Structural Innovations e(φ) (Non-Gaussian ID)',
             'e_1t',
             'e_2t'
         );
@@ -129,7 +161,7 @@ async function updateSectionThreePlots() {
         for (let i = 0; i <= steps; i++) {
             const current_phi_iter = min_phi + (i / steps) * (max_phi - min_phi);
             phi_range.push(current_phi_iter);
-            
+
             const objective_val = calculateLossForPhi_S3(current_phi_iter, P, u_1t, u_2t);
             objective_values.push(objective_val);
         }
@@ -138,7 +170,7 @@ async function updateSectionThreePlots() {
             'plot_s3_right',
             phi_range,
             objective_values,
-            'Objective J(φ) = (E[e₁²e₂])² + (E[e₁e₂²])² - S3',
+            'Objective J(φ) (Non-Gaussian ID)',
             'φ (radians)',
             'Objective Value',
             phi,    // Current phi from slider (verticalLineX)

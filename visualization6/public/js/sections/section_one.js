@@ -80,8 +80,8 @@ async function initializeSectionOne() {
     <div class="controls-explanation-card">
         <p><strong>Controls Overview:</strong></p>
         <ul>
-            <li><strong>\\(B_0\\) Switch:</strong> Toggles the true data-generating matrix between a recursive and a non-recursive structure.</li>
             <li><strong>T Slider:</strong> Adjusts the sample size (number of observations) for the generated data.</li>
+            <li><strong>\\(B_0\\) Switch:</strong> Toggles the true data-generating matrix between a recursive and a non-recursive structure.</li>
             <li><strong>New Data Button:</strong> Generates a new dataset with the current settings, allowing you to see how results vary across different random draws.</li>
         </ul>
     </div>
@@ -95,14 +95,11 @@ async function initializeSectionOne() {
     // 3. B0 Matrix Options Card and Tip Callout
     const AnnimationsHTML = `
     <p><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \\(\\epsilon_{1t}\\) against \\(\\epsilon_{2t}\\). </p>
-                <p><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \\(u_{1t}\\) against \\(u_{2t}\\). These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution changes when you toggle \\(B_0\\), illustrating how different mixtures of the structural shocks \\(\\epsilon_t\\) can produce different patterns in the observed reduced-form residuals.</p>
+    <p><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \\(u_{1t}\\) against \\(u_{2t}\\). These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution changes when you toggle \\(B_0\\), illustrating how different mixtures of the structural shocks \\(\\epsilon_t\\) can produce different patterns in the observed reduced-form residuals.</p>
+
+        <p><strong>Observations:</strong> 1. Observe the skewness of \\(\\epsilon_{2t}\\). There are outliers where \\(\\epsilon_{2t}\\) is very large, however, there are no comparable outliers where \\(\\epsilon_{2t}\\) is very small.</p>
     `;
-    const AnnimationsNoteHTML = ContentTemplates.buildInfoCallout(
-        '<p><strong>Observations:</strong> 1. Observe the skewness of \\(\\epsilon_{2t}\\). There are outliers where \\(\\epsilon_{2t}\\) is very large, however, there are no comparable outliers where \\(\\epsilon_{2t}\\) is very small.</p>',
-        false,
-        true
-    );
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(AnnimationsHTML, AnnimationsNoteHTML));
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(AnnimationsHTML));
 
 
 

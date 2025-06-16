@@ -211,6 +211,14 @@ async function updateDynamicLatexOutputs() {
         if (document.getElementById('b0_matrix_s1_display')) {
             window.LatexUtils.displayBEstMatrix('b0_matrix_s1_display', window.sharedData.B0, 'B_0');
         }
+        // Update B0 matrix display in Section Three
+        if (document.getElementById('b_true_s3_display')) {
+            window.LatexUtils.displayBEstMatrix('b_true_s3_display', window.sharedData.B0, 'B_0');
+        }
+        // Update B0 matrix display in Section Two
+        if (document.getElementById('b_true_s2_display')) {
+            window.LatexUtils.displayBEstMatrix('b_true_s2_display', window.sharedData.B0, 'B_0');
+        }
     } else {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBEstMatrix or sharedData not available for B0 display in Section One.');
     }
@@ -666,17 +674,6 @@ async function initializeApp() {
     // Regenerate SVAR base data (epsilon_t) after all controls are initialized
     // and their initial values might have updated sharedData (e.g., sharedData.T).
     // This ensures epsilon_t is ready before section-specific JS that might use it.
-    DebugManager.log('MAIN_APP', 'Calling initial SVAR data regeneration...');
-    await regenerateSvarData(); // Regenerate all SVAR data on initial load
-    await regeneratePhi0(); // Calculate initial phi_0 based on initial B0
-    await regenerateBPhi(); // Also generate B(phi) based on initial phi and u
-
-    if (typeof initializeNewDataButtons === 'function') {
-        initializeNewDataButtons();
-    } else {
-        DebugManager.log('MAIN_APP', 'ERROR: initializeNewDataButtons function not found. Make sure shared_controls.js is loaded.');
-    }
-
     // Initialize section-specific JavaScript
     DebugManager.log('MAIN_APP', 'Initializing section-specific JavaScript...');
     if (typeof initializeSectionOne === 'function' && document.getElementById('section-one')) {
@@ -701,6 +698,17 @@ async function initializeApp() {
         await initializeSectionFour();
     } else if (typeof initializeSectionFour !== 'function') {
         DebugManager.log('MAIN_APP', 'WARNING: initializeSectionFour function not found. Make sure section_four.js is loaded.');
+    }
+
+    DebugManager.log('MAIN_APP', 'Calling initial SVAR data regeneration...');
+    await regenerateSvarData(); // Regenerate all SVAR data on initial load
+    await regeneratePhi0(); // Calculate initial phi_0 based on initial B0
+    await regenerateBPhi(); // Also generate B(phi) based on initial phi and u
+
+    if (typeof initializeNewDataButtons === 'function') {
+        initializeNewDataButtons();
+    } else {
+        DebugManager.log('MAIN_APP', 'ERROR: initializeNewDataButtons function not found. Make sure shared_controls.js is loaded.');
     }
     // Initialize main menu toggle (hamburger)
     initializeMainMenuToggle();

@@ -35,10 +35,14 @@ async function initializeSectionTwo() {
     // 3.  Identification Problem Main Content
     const IdentificationProblemMainHTML = `
        <p>
-              We observe reduced-form shocks \\(u_t\\) and seek to recover the unobserved structural shocks \\(\epsilon_t\\) and the true mixing matrix \\(B_0\\), related by \\(\epsilon_t = B_0^{-1} u_t\\).
+              We observe reduced-form shocks \\(u_t\\) and seek to recover the unobserved structural shocks \\(\\epsilon_t\\) and the true mixing matrix \\(B_0\\), related by \\(\\epsilon_t = B_0^{-1} u_t\\).
             Define innovations \\(e_t(B) = B^{-1} u_t\\). Assuming that the structural shocks are uncorrelated and have unit variance
-            (\\(E[\epsilon_t \epsilon_t'] = I\\)), we look for a matrix \\(B\\) such that the sample innovations \\(e_t(B)\\) are also uncorrelated and have unit variance. The set of such matrices \\(B\\) can be parameterized by a single rotation angle \\(\phi\\).  
+            (\\(E[\\epsilon_t \\epsilon_t'] = I\\)), we look for a matrix \\(B\\) such that the sample innovations \\(e_t(B)\\) are also uncorrelated and have unit variance. The set of such matrices \\(B\\) can be parameterized by a single rotation angle \\(\\phi\\).  
         </p>
+
+        <p> Given the true data-generating matrix \\(B_0\\) (selected via the toggle), we can calculate the rotation angle
+        \\(\\phi_0\\) such that \\(B(\\phi_0) = B_0\\). For the recursive \\(B_0\\) we get \\(\\phi_0^{\\text{rec}} = 0\\). For the non-recursive \\(B_0\\) we get
+        \\(\\phi_0^{\\text{non-rec}} \\approx -0.46\\).</p>
     `;
     const IdentificationProblemCalloutHTML = ContentTemplates.buildInfoCallout(`
         <p><strong>Note:</strong> All matrices \\(B(\\phi) = B^{\\text{Chol}} Q(\\phi)\\) yield innovations with unit variance and
@@ -56,13 +60,11 @@ async function initializeSectionTwo() {
 </p>
 <p>
             We impose a recursive structure on \\(B\\) (e.g., its (1,2) element is zero), which uniquely
-            determines the rotation angle as \\(\phi=0\\). This is the Cholesky identification.  For this data set, applying the Cholesky identification yields <span id="b_est_rec_s2_display"></span>.
+            determines the rotation angle as \\(\\phi=0\\). This is the Cholesky identification.  For this data set, applying the Cholesky identification yields the recursive estimator \\(\\hat{B}_{rec}\\) <span id="b_est_rec_s2_display"></span>, corresponding to \\(\\hat{\\phi}_{rec}\\) <span id="phi_est_rec_s2_display"></span>, compared to the true structural matrix <span id="b_true_s2_display"></span>.
         </p>
 
 
-    <p> Given the true data-generating matrix \\(B_0\\) (selected via the toggle), we can calculate the rotation angle
-        \\(\phi_0\\) such that \\(B(\phi_0) = B_0\\). For the recursive \\(B_0\\) we get \\(\\phi_0^{\\text{rec}} = 0\\). For the non-recursive \\(B_0\\) we get
-        \\(\\phi_0^{\\text{non-rec}} \approx -0.46\\).</p>
+    
     `;
     const RestrictionsCalloutHTML = ContentTemplates.buildInfoCallout(`
         <p><strong>Note:</strong> Cholesky identification assumes a recursive structure for the \\(B\\) matrix (lower triangular), which sets its (1,2) element to zero. This uniquely determines the rotation angle as \\(\\phi=0\\) in the \\(B(\\phi)\\) parameterization.</p>
@@ -70,35 +72,41 @@ async function initializeSectionTwo() {
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(RestrictionsMainHTML, RestrictionsCalloutHTML));
 
 
+    // 4. Explain controls
+    const ExplainControlsHTML = `
+    <div class="controls-explanation-card">
+        <p><strong>Controls Overview:</strong></p>
+        <ul>
+            <li><strong>\\(T\\) Slider:</strong> Adjusts the sample size \\(T\\) for the \\(B(\phi)\\) parameterization.</li>
+            <li><strong>\\(B_0\\) Switch:</strong> Toggles the true data-generating matrix between a recursive and a non-recursive structure.</li>
+            <li><strong>\\(\\phi\\) Slider:</strong> Adjusts the rotation angle \\(\phi\\) for the \\(B(\phi)\\) parameterization.</li>
+            <li><strong>New Data Button:</strong> Generates a new dataset with the current settings, allowing you to see how results vary across different random draws.</li>
+        </ul>
+    </div>
+    `;
+    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(ExplainControlsHTML, 'explain-controls-row'));
 
    
-    // 5. Observations Callout (full width for this example, or could be col-lg-8)
-    const observationsHTML = ContentTemplates.buildInfoCallout(`
-        <p><strong>Observations:</strong> ...Use the \(\phi\) slider to select a rotation angle and see the corresponding matrix
-        <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\phi)^{-1} u_t\\).</p>
-        
+    //2. Sub - topic Heading: Model Variants
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Annimations'));
+
+    // 3. B0 Matrix Options Card and Tip Callout
+    const AnnimationsHTML = `
+       <p><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) vs. \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
+        <p><strong>Right Plot (Correlation):</strong> Shows the correlation, \\(\\text{mean}(e_{1t}(\\phi) \\cdot e_{2t}(\\phi))\\), across different values of \\(\\phi  \\). A vertical line indicates the current \\(\\phi\\). Another line marks \\(\\phi_0\\) which corresponds to the true \\(B_0\\) which changes with the recursive vs non-recursive slider.</p>
+
+         <p><strong>Observations:</strong> Use the \\(\\phi\\) slider to select a rotation angle and see the corresponding matrix <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\\phi)^{-1} u_t\\).</p>
         <ul>
-            <li>All \\(B(\phi)\\) yield uncorrelated innovations \\(e_{1t}(\phi)\\) and \\(e_{2t}(\phi)\\).</li>
+            <li>All \\(B(\\phi)\\) yield uncorrelated innovations \\(e_{1t}(\\phi)\\) and \\(e_{2t}(\\phi)\\).</li>
             <li>The recursive estimator works well when the true model is recursive.</li>
             <li>The recursive estimator is biased when the true model is non-recursive.</li>
             <li>The bias does not vanish with an increasing sample size.</li>
         </ul>
-    `);
-    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(observationsHTML, 'observations-callout-row'));
+    `; 
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(AnnimationsHTML));
 
-    // 6. Code Block Example
-    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Code Example: Defining the Rotation Matrix'));
-    const codeBlockContent = ContentTemplates.buildCodeBlock(
-        'function getRotationMatrix(phi) {\n  return [\n    [Math.cos(phi), -Math.sin(phi)],\n    [Math.sin(phi), Math.cos(phi)]\n  ];\n}', 
-        'javascript'
-    );
-    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(codeBlockContent, 'code-block-row'));
-
-    // 7. LaTeX Equation Example
-    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Key Equation: The Rotation Family'));
-    const latexEqContent = ContentTemplates.buildLatexEquationBlock('B(\phi) = B^{\text{Chol}} Q(\phi)');
-    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(latexEqContent, 'latex-equation-row'));
-
+ 
+ 
     // Initialize LaTeX displays now that spans are in the DOM
     if (window.LatexUtils) {
         window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s2_display');
