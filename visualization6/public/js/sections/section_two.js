@@ -2,41 +2,123 @@
 
 // Expose the update function on a global object for main.js to use
 window.sectionTwo = {
-    updatePlots: updateSectionTwoPlots
+    updatePlots: updateSectionTwoPlots,
+    initialize: initializeSectionTwo // Expose initialize if main.js needs to call it directly after dynamic load
 };
 
 /**
- * Initializes the section, primarily by performing an initial plot rendering.
+ * Initializes the section by building its content and performing an initial plot rendering.
  */
 async function initializeSectionTwo() {
     DebugManager.log('INIT', `Initializing JavaScript for section: section-two`);
-    if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
+    const contentArea = document.getElementById('section-two-dynamic-content');
+    if (!contentArea) {
+        DebugManager.log('ERROR', 'Section two dynamic content area not found.');
+        return;
+    }
+    contentArea.innerHTML = ''; // Clear any existing placeholder content
+
+    // 1. Intro Paragraph
+    const introHTML = `
+        <p class="section-intro">
+            <strong>Identification problem.</strong> We observe reduced-form shocks \\(u_t\\) and seek to recover the unobserved structural shocks \\(\epsilon_t\\). The
+            relationship is \\(\epsilon_t = B_0^{-1} u_t\\), but the true matrix \\(B_0\\) is unknown. 
+            Define innovations \\(e_t(B) = B^{-1} u_t\\). Assuming structural shocks are uncorrelated and have unit variance
+            (\\(E[\epsilon_t \epsilon_t'] = I\\)), we look for a matrix \\(B\\) such that the sample innovations \\(e_t(B)\\) also
+            satisfy this property.
+        </p>
+    `;
+    contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
+
+    // 2. Sub-topic Heading: Rotation Family
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Rotation family B(\( \phi \))'));
+
+    // 3. Main content about B(phi) with side callout
+    const bPhiMainHTML = `
+        <p>
+            The set of such matrices \\(B\\) can be parameterized by a single rotation angle \\(\phi\\). 
+            Specifically, all matrices \\(B(\phi) = B^{\mathrm{Chol}} Q(\phi)\\) yield innovations with unit variance and
+            uncorrelated shocks, where \(B^{\mathrm{Chol}}\) is the Cholesky decomposition of the sample covariance of \(u_t\) , 
+            and \(Q(\phi) = \begin{pmatrix} \cos\phi & -\sin\phi \\ \sin\phi & \cos\phi \end{pmatrix}\).
+        </p>
+    `;
+    const bPhiCalloutHTML = ContentTemplates.buildInfoCallout(`
+        <p><strong>Tip:</strong> Use the \(\phi\) slider to select a rotation angle and see the corresponding matrix 
+        <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\phi)^{-1} u_t\\). Given the true data-generating matrix \\(B_0\\) (selected via the toggle), we can calculate the rotation angle
+        \\(\phi_0\\) such that \\(B(\phi_0) = B_0\\). For the recursive \\(B_0\\) we get \\(\phi_0^{\text{rec}} = 0\\). For the non-recursive \\(B_0\\) we get
+        \\(\phi_0^{\text{non-rec}} \approx -0.46\\).</p>
+    `, false, true);
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(bPhiMainHTML, bPhiCalloutHTML));
+
+    // 4. Cholesky Identification with side callout
+    const choleskyMainHTML = `
+        <p>
+            The Cholesky identification imposes a recursive structure on \\(B\\) (e.g., its (1,2) element is zero), which uniquely
+            determines the rotation angle as \(\phi=0\\). 
+            For this data set, applying the Cholesky identification yields <span id="b_est_rec_s2_display"></span>.
+        </p>
+    `;
+    const choleskyCalloutHTML = ContentTemplates.buildInfoCallout(`
+        <p><strong>Cholesky ID:</strong> This identification assumes a recursive structure for the \\(B\\) matrix (lower triangular), which sets its (1,2) element to zero. This uniquely determines the rotation angle as \(\phi=0\\) in the \\(B(\phi)\\) parameterization.</p>
+    `, true, true);
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(choleskyMainHTML, choleskyCalloutHTML));
+
+    // 5. Observations Callout (full width for this example, or could be col-lg-8)
+    const observationsHTML = ContentTemplates.buildInfoCallout(`
+        <p><strong>Observations:</strong></p>
+        <ul>
+            <li>All \\(B(\phi)\\) yield uncorrelated innovations \\(e_{1t}(\phi)\\) and \\(e_{2t}(\phi)\\).</li>
+            <li>The recursive estimator works well when the true model is recursive.</li>
+            <li>The recursive estimator is biased when the true model is non-recursive.</li>
+            <li>The bias does not vanish with an increasing sample size.</li>
+        </ul>
+    `);
+    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(observationsHTML, 'observations-callout-row'));
+
+    // 6. Code Block Example
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Code Example: Defining the Rotation Matrix'));
+    const codeBlockContent = ContentTemplates.buildCodeBlock(
+        'function getRotationMatrix(phi) {\n  return [\n    [Math.cos(phi), -Math.sin(phi)],\n    [Math.sin(phi), Math.cos(phi)]\n  ];\n}', 
+        'javascript'
+    );
+    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(codeBlockContent, 'code-block-row'));
+
+    // 7. LaTeX Equation Example
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Key Equation: The Rotation Family'));
+    const latexEqContent = ContentTemplates.buildLatexEquationBlock('B(\phi) = B^{\text{Chol}} Q(\phi)');
+    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(latexEqContent, 'latex-equation-row'));
+
+    // Initialize LaTeX displays now that spans are in the DOM
+    if (window.LatexUtils) {
         window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s2_display');
-        // Display estimated phi_rec and B_rec
         if (window.sharedData && typeof window.sharedData.phi_est_rec !== 'undefined') {
             window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', window.sharedData.phi_est_rec, '\\hat{\\phi}_{rec}');
         } else {
-            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', NaN, '\\hat{\\phi}_{rec}'); // Show N/A
+            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', NaN, '\\hat{\\phi}_{rec}');
         }
         if (window.sharedData && window.sharedData.B_est_rec) {
             window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', window.sharedData.B_est_rec, '\\hat{B}_{rec}');
         } else {
-            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', [[NaN, NaN],[NaN, NaN]], '\\hat{B}_{rec}'); // Show N/A
+            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', [[NaN, NaN],[NaN, NaN]], '\\hat{B}_{rec}');
         }
-    } else {
-        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available for initial display in Section Two.');
     }
+
+    // Typeset MathJax
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        await window.MathJax.typesetPromise([contentArea]);
+    }
+
     await updateSectionTwoPlots();
 }
 
 /**
  * Updates both plots in Section Two.
  * - Left Plot: Scatter plot of the current structural innovations (e_t).
- * - Right Plot: Loss function L(phi) = mean(e_1t * e_2t) vs. a range of phi values.
+ * - Right Plot: Loss function L(phi) = mean(e_1t * e_2t)^2 vs. a range of phi values.
  */
 async function updateSectionTwoPlots() {
     DebugManager.log('PLOT_RENDERING', 'Updating Section Two plots...');
-    const { e_1t, e_2t, u_1t, u_2t, phi } = window.sharedData;
+    const { e_1t, e_2t, u_1t, u_2t, phi, phi_0, phi_est_rec } = window.sharedData;
 
     // Left Plot: Scatter of structural innovations e_t
     if (window.PlotUtils && e_1t && e_2t) {
@@ -52,7 +134,6 @@ async function updateSectionTwoPlots() {
 
     // Right Plot: Loss function L(phi)
     if (window.PlotUtils && window.SVARMathUtil && u_1t && u_1t.length > 0) {
-        // The loss function calculation depends on the Cholesky factor of the covariance of u_t.
         const cov_u = window.SVARMathUtil.calculateCovarianceMatrix(u_1t, u_2t);
         if (!cov_u) return;
 
@@ -66,11 +147,9 @@ async function updateSectionTwoPlots() {
         const max_phi = Math.PI / 4;
 
         for (let i = 0; i <= steps; i++) {
-            const current_phi = min_phi + (i / steps) * (max_phi - min_phi);
-            phi_range.push(current_phi);
-            
-            // For each phi, calculate the corresponding innovations and then the loss.
-            const loss = calculateLossForPhi_S2(current_phi, P, u_1t, u_2t);
+            const current_phi_iter = min_phi + (i / steps) * (max_phi - min_phi);
+            phi_range.push(current_phi_iter);
+            const loss = calculateLossForPhi_S2(current_phi_iter, P, u_1t, u_2t);
             loss_values.push(loss);
         }
 
@@ -78,28 +157,28 @@ async function updateSectionTwoPlots() {
             'plot_s2_right',
             phi_range,
             loss_values,
-            'Loss Function L(φ) = mean(e₁_t * e₂_t)²',
+            'Loss Function L(φ) = mean(e₁_t ⋅ e₂_t)²',
             'φ (radians)',
             'Loss Value',
             phi,    // Current phi from slider (verticalLineX)
-            [0, 1], // yAxisRange: [min, max]
-            window.sharedData.phi_0, // True phi_0 (phi0LineValue)
-            window.sharedData.phi_est_rec // Estimated phi for recursive identification
+            [0, 0.5], // yAxisRange - set to [0, 0.5]
+            phi_0, // True phi_0 (phi0LineValue)
+            phi_est_rec // Estimated phi for recursive identification
         );
     }
 }
 
 /**
  * Helper function to calculate the loss for a single phi value.
- * Loss = mean(e_1t * e_2t), where e_t = inv(P * R(phi)) * u_t
- * @param {number} phi - The angle for which to calculate the loss.
+ * Loss = (mean(e_1t * e_2t))^2, where e_t = inv(P * R(phi)) * u_t
+ * @param {number} current_phi_iter - The angle for which to calculate the loss.
  * @param {number[][]} P - The Cholesky factor of the covariance of u_t.
- * @param {number[]} u_1t - The first reduced-form shock series.
- * @param {number[]} u_2t - The second reduced-form shock series.
+ * @param {number[]} u_1t_series - The first reduced-form shock series.
+ * @param {number[]} u_2t_series - The second reduced-form shock series.
  * @returns {number|null} The calculated loss value or null on error.
  */
-function calculateLossForPhi_S2(phi, P, u_1t, u_2t) {
-    const R_phi = window.SVARMathUtil.getRotationMatrix(phi);
+function calculateLossForPhi_S2(current_phi_iter, P, u_1t_series, u_2t_series) {
+    const R_phi = window.SVARMathUtil.getRotationMatrix(current_phi_iter);
     const B_phi = window.SVARMathUtil.matrixMultiply(P, R_phi);
     if (!B_phi) return null;
 
@@ -108,8 +187,8 @@ function calculateLossForPhi_S2(phi, P, u_1t, u_2t) {
 
     const temp_e_1t = [];
     const temp_e_2t = [];
-    for (let i = 0; i < u_1t.length; i++) {
-        const u_vector = [u_1t[i], u_2t[i]];
+    for (let i = 0; i < u_1t_series.length; i++) {
+        const u_vector = [u_1t_series[i], u_2t_series[i]];
         const e_vector = window.SVARMathUtil.multiplyMatrixByVector(B_phi_inv, u_vector);
         if (e_vector) {
             temp_e_1t.push(e_vector[0]);
