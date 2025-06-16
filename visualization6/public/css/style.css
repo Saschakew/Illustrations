@@ -1000,9 +1000,7 @@ body {
         overflow-x: visible; /* No need for horizontal scroll when wrapping */
         padding-bottom: 0; /* Remove scrollbar padding */
     }
-    .control-item {
-        /* margin-bottom: var(--space-md); Add space between wrapped rows */
-    }
+
 }
 
 @media (max-width: 768px) {
@@ -1191,36 +1189,50 @@ body {
     visibility: visible;
 }
 
-/* Hide sections 1-N by default (direct children of main-content) */
-#main-content > .content-section-placeholder:not(#section-zero-placeholder) {
+/* --- Content Loading Transition --- */
+
+/* Initially, hide all content sections that are NOT section-zero.
+   We use max-height for a smooth collapse/expand transition. */
+.content-section:not(#section-zero) {
     opacity: 0;
     visibility: hidden;
-    display: none; /* Collapse space initially */
-    transition: opacity var(--transition-speed-slow) ease-in-out, visibility var(--transition-speed-slow) ease-in-out;
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+    transition: all 0.5s ease-in-out;
 }
 
-/* Ensure section-zero (as a direct child of main-content) is visible from the start */
-#main-content > #section-zero-placeholder {
+/* Section zero is always visible and does not transition. */
+#section-zero {
     opacity: 1;
     visibility: visible;
-    display: block; /* Or its natural display state */
 }
 
-/* The loading overlay is also a direct child and should be visible by default.
-   Its specific styles (position, background, spinner) are defined elsewhere (e.g., around lines 1000-1030). */
+/* When the main content area is marked as 'loaded', reveal the sections. */
+#main-content.loaded .content-section:not(#section-zero) {
+    opacity: 1;
+    visibility: visible;
+    max-height: 5000px; /* Large enough to not clip content */
+    /* Restore original spacing from .content-section rule */
+    margin: 3rem auto;
+    padding: 1.25rem;
+    border-width: 1px;
+}
 
-/* After everything is loaded, reveal nav, footer, and sections 1-N */
+/* Also handle the fade-in for nav and footer */
+.main-navigation,
+.footer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out 0.2s; /* Delay slightly */
+}
+
 .main-navigation.loaded,
-.footer.loaded,
-#main-content.loaded > .content-section-placeholder:not(#section-zero-placeholder) {
-    opacity: 1;
-    visibility: visible;
-    display: block; /* Or their natural display state */
-}
-
-/* When main content is loaded, display and fade in the placeholders */
-#main-content.loaded > .content-section-placeholder {
-    display: block; /* Or flex, grid, depending on their intended layout */
+.footer.loaded {
     opacity: 1;
     visibility: visible;
 }

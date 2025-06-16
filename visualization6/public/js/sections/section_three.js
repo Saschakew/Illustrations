@@ -44,14 +44,33 @@ async function initializeSectionThree() {
     );
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(identificationMainHTML, identificationCalloutHTML));
 
-    const objectiveFunctionMainHTML = `<p>
+
+    // 4. Objective Function Content
+
+    const objfunctionHTML = `<p>
             Here, we use a simple objective function to minimize the innovation's coskewness, which is given by:
         </p> 
+    `;
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(objfunctionHTML));
+    
+    
+    
+    const objectiveFunctionMainHTML = `
         ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{nG} = argmin_{\\phi} J(\\phi) = \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2')}
-        <p>
-            The estimator \\(\\hat{\\phi}_{nG}\\) estimates the rotation angle to be <span id="phi_est_nG_s3_display"></span>, which corresponds to an estimated structural matrix <span id="b_est_nG_s3_display"></span>, compared to the true structural matrix <span id="b_true_s3_display"></span>.
-        </p>  `;
+         `;
     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
+
+    const estimatorNGHTML = `
+    <p>
+            The estimator \\(\\hat{\\phi}_{nG}\\) estimates the rotation angle to be <span id="phi_est_nG_s3_display"></span>, which corresponds to an estimated structural matrix <span id="b_est_nG_s3_display"></span>. 
+        </p>
+    `;
+    const estimatorNGCalloutHTML = ContentTemplates.buildInfoCallout(
+        '<p><strong>Note:</strong> Compared   the estimator to the true structural matrix <span id="b_true_s3_display"></span>.</p>',
+        false,
+        true
+    );
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorNGHTML, estimatorNGCalloutHTML));
     
     // 4. Sub-topic Heading: Objective Function
     contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Objective Function for Non-Gaussianity'));

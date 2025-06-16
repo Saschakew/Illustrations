@@ -57,20 +57,20 @@ async function initializeSectionTwo() {
     const RestrictionsMainHTML = `
        <p>
             Traditionally, short-run zero restrictions are imposed on the \\(B\\) matrix to identify the SVAR. In the bivariate example, only a single restriction is required to reduce the set of \\(B(\\phi)\\) which yield uncorrelated innovations to a unique matrix. 
-</p>
-<p>
+</p> `;
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(RestrictionsMainHTML));
+
+
+    const EstimatorRecursiveHTML = `
+    <p>
             We impose a recursive structure on \\(B\\) (e.g., its (1,2) element is zero), which uniquely
-            determines the rotation angle as \\(\\phi=0\\). This is the Cholesky identification.  For this data set, applying the Cholesky identification yields the recursive estimator \\(\\hat{B}_{rec}\\) <span id="b_est_rec_s2_display"></span>, corresponding to \\(\\hat{\\phi}_{rec}\\) <span id="phi_est_rec_s2_display"></span>, compared to the true structural matrix <span id="b_true_s2_display"></span>.
+            determines the rotation angle as \\(\\phi=0\\). This is the Cholesky identification.  For this data set, applying the Cholesky identification yields the recursive estimator \\(\\hat{B}_{rec}\\) <span id="b_est_rec_s2_display"></span>, corresponding to \\(\\hat{\\phi}_{rec}\\) <span id="phi_est_rec_s2_display"></span>, .
         </p>
-
-
-    
     `;
     const RestrictionsCalloutHTML = ContentTemplates.buildInfoCallout(`
-        <p><strong>Note:</strong> Cholesky identification assumes a recursive structure for the \\(B\\) matrix (lower triangular), which sets its (1,2) element to zero. This uniquely determines the rotation angle as \\(\\phi=0\\) in the \\(B(\\phi)\\) parameterization.</p>
+        <p><strong>Note:</strong>Compare the estimator to  true structural matrix <span id="b_true_s2_display"></span></p>
     `, false, true);
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(RestrictionsMainHTML, RestrictionsCalloutHTML));
-
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(EstimatorRecursiveHTML, RestrictionsCalloutHTML));
 
     // 4. Explain controls
     const ExplainControlsHTML = `

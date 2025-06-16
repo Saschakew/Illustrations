@@ -495,6 +495,12 @@ async function loadSections() {
     const fetchPromises = [];
 
     placeholders.forEach(placeholder => {
+        // Skip section-zero-placeholder to preserve its embedded content
+        if (placeholder.id === 'section-zero-placeholder') {
+            DebugManager.log('MAIN_APP', 'Skipping section-zero-placeholder to preserve embedded content.');
+            return;
+        }
+        
         const src = placeholder.dataset.sectionSrc;
         if (src) {
             const promise = fetch(src)
@@ -576,13 +582,15 @@ async function initializeApp() {
 
     const navLinks = document.querySelectorAll('.main-navigation a');
     const mainNavElement = document.getElementById('main-nav');
-    
-    DebugManager.log('MAIN_APP', 'Smooth scrolling initialized for nav links.');
+
+    // Smooth scrolling for nav links
+    DebugManager.log('MAIN_APP', 'Initializing smooth scrolling for nav links.');
     navLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             e.preventDefault();
-            const targetId = this.getAttribute('href'); 
-            const targetElement = document.querySelector(targetId); 
+            const targetId = this.getAttribute('href');
+            if (!targetId || targetId === '#') return;
+            const targetElement = document.querySelector(targetId);
             const currentMainNavHeight = mainNavElement ? mainNavElement.offsetHeight : 70;
 
             if (targetElement) {
@@ -596,16 +604,17 @@ async function initializeApp() {
         });
     });
 
-    // Active link highlighting
-    const sections = document.querySelectorAll('.content-section');
+    // Active link highlighting on scroll
+    DebugManager.log('MAIN_APP', 'Initializing active link highlighting.');
+    const contentSections = document.querySelectorAll('.content-section');
     const updateActiveLink = () => {
         let currentSectionId = '';
         const currentMainNavHeight = mainNavElement ? mainNavElement.offsetHeight : 70;
 
-        sections.forEach(section => {
+        contentSections.forEach(section => {
             if (section.id) {
                 const sectionTop = section.getBoundingClientRect().top + window.pageYOffset;
-                const activationPoint = sectionTop - currentMainNavHeight - 50; 
+                const activationPoint = sectionTop - currentMainNavHeight - 50;
                 if (window.pageYOffset >= activationPoint) {
                     currentSectionId = section.id;
                 }
@@ -621,7 +630,7 @@ async function initializeApp() {
         });
     };
 
-    if (sections.length > 0) {
+    if (contentSections.length > 0) {
         window.addEventListener('scroll', updateActiveLink);
         window.addEventListener('resize', updateActiveLink);
         updateActiveLink(); // Initial check
