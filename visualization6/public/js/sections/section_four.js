@@ -22,7 +22,7 @@ async function initializeSectionFour() {
     // 1. Intro Paragraph
     const introHTML = `
         <p class="section-intro">
-            This section combines the non-Gaussian estimator with short-run restrictions included via ridge regularization. ...
+            The ridge SVAR–GMM estimator proposed in the paper augments the non-Gaussian identification criterion with a <em>shrinkage</em> term that softly pulls the structural matrix towards the economically motivated zero restrictions of the recursive model.  The tuning parameter \(\lambda\) lets you move seamlessly between the purely data-driven estimator (\(\lambda = 0\)) and the fully restricted short-run identification (\(\lambda \to \infty\)).
         </p>
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
@@ -33,10 +33,11 @@ async function initializeSectionFour() {
     // 3. Ridge Regularization Content
     const ridgeMainHTML = `
         <p>
-            Ridge regularization modifies the standard objective function by adding a penalty proportional to the squared magnitude of some parameters. In our context, we can penalize complexity or deviations from a preferred structure. The strength of this penalty is controlled by a parameter \\(\\lambda \\ge 0\\).
+            Ridge regularization modifies the original non-Gaussian objective by <strong>adding an adaptive penalty</strong> on the off-diagonal elements of the candidate structural matrix \(B(\phi)\).
+            Formally, the penalty is \(\lambda \sum_{i\neq j} v_{ij}^2 b_{ij}(\phi)^2\) with data-driven weights \(v_{ij} = |\tilde{b}_{ij}|^{-\gamma}\) (\(\gamma>0\)) computed from a preliminary estimator \(\tilde{B}\).  Large preliminary elements therefore receive small weights, allowing the estimator to back-off when the data clearly reject a zero restriction.
         </p>
         <p>
-            The goal is to find a \\(\\phi\\) that balances fitting the data (minimizing the original objective) and satisfying the regularization (keeping the penalty small). This can lead to more robust estimates, especially in challenging data environments.
+            The slider below the plots changes \(\lambda\) in real time so you can observe how stronger shrinkage (larger \(\lambda\)) gradually aligns \(\hat{B}_{ridge}\) with the recursive benchmark, while smaller values reproduce Section&nbsp;Three’s mean-independence estimator.
         </p>
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(ridgeMainHTML));
@@ -47,12 +48,12 @@ async function initializeSectionFour() {
     // 5. Ridge Objective Function Description
     const ridgeObjectiveHTML = `
         <p>
-            The ridge-regularized objective function, \\(J_{ridge}(\\phi)\\), is defined as:
+            The ridge-regularised objective function used in the paper is
         </p>
-        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{ridge} =  argmin_{\\phi} \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2 + \\frac{\\lambda}{1000} \\cdot \\| v(\\phi) \\|^2')}
+        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{ridge} = \\arg\\min_{\\phi}\, J(\\phi)  +  \\lambda \\sum_{i\\neq j} v_{ij}^2 b_{ij}(\\phi)^2')}
         <p>
             Where \\(J(\\phi)\\) is the non-Gaussian objective function from Section Three: \\(J(\\phi) = \\mathrm{mean}(e_{1t}^2 e_{2t})^2 + \\mathrm{mean}(e_{1t} e_{2t}^2)^2\\).
-            The term \\(v(\\phi)\\) represents a vector of parameters derived from \\(B(\\phi)\\) that we wish to penalize. For instance, \\(v(\\phi)\\) could be related to the off-diagonal elements of \\(B(\\phi)\\) to encourage solutions closer to a diagonal (recursive) structure. The \\(\\lambda\\) parameter controls the strength of this penalty. The division by 1000 is a scaling factor.
+            Here \(J(\\phi)\) is the non-Gaussian coskewness criterion from Section&nbsp;Three and the second term is the adaptive ridge penalty.  When a restriction is likely to be valid (small preliminary \(|\tilde{b}_{ij}|\)), the corresponding weight \(v_{ij}\) is large, so deviating from zero becomes expensive; invalid restrictions impose only a light penalty.
         </p>
     `;
     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(ridgeObjectiveHTML, 'ridge-objective-row'));
