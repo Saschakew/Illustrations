@@ -21,9 +21,7 @@ async function initializeSectionThree() {
 
     // 1. Intro Paragraph
     const introHTML = `
-        <p class="section-intro">
-            This section explores how non-Gaussianity in structural shocks \\(\\epsilon_t\\) can be exploited to identify the SVAR model without relying on traditional short-run zero restrictions. 
-        </p>
+        <p class="section-intro">This section demonstrates how \\(B_0\\) can be identified by leveraging the non-Gaussianity of the structural shocks. Instead of assuming full statistical independence, we rely on the weaker condition of **mean independence**, which requires that \\(E[\\epsilon_{it} | \\epsilon_{jt}] = 0\\) for \\(i \\neq j\\). This assumption allows for higher-order dependencies like common volatility. </p>
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
@@ -48,7 +46,7 @@ async function initializeSectionThree() {
     // 4. Objective Function Content
 
     const objfunctionHTML = `<p>
-            Here, we use a simple objective function to minimize the innovation's coskewness, which is given by:
+            Under the assumption of mean independence, certain higher-order cross-moments of the true structural shocks are zero. For example, the coskewness terms \\(E[\\epsilon_{it}^2 \\epsilon_{jt}]\\) and \\(E[\\epsilon_{it} \\epsilon_{jt}^2]\\) are both zero. We can therefore find the correct rotation angle \\(\\phi\\) by minimizing an objective function built from the sample analogues of these theoretical moment conditions
         </p> 
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(objfunctionHTML));
@@ -62,27 +60,18 @@ async function initializeSectionThree() {
 
     const estimatorNGHTML = `
     <p>
-            The estimator \\(\\hat{\\phi}_{nG}\\) estimates the rotation angle to be <span id="phi_est_nG_s3_display"></span>, which corresponds to an estimated structural matrix <span id="b_est_nG_s3_display"></span>. 
-        </p>
+        The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator <span id="b_est_nG_s3_display"></span>.
+    </p>
+    <p><strong>Compare this estimator to the true</strong> <span id="b_true_s3_display"></span></p>
+    <ul>
+        <li>The non-Gaussian estimator is <strong>consistent</strong> for \\(B_0\\) whether the true model is recursive or non-recursive. This makes it a robust alternative when there is uncertainty about the correct zero restrictions.</li>
+        <li>However, because it relies on higher-order moments (like coskewness), it tends to be <strong>less efficient</strong> (i.e., have higher variance) than the Cholesky estimator, especially in small samples. This means its estimates can be more volatile.</li>
+    </ul>
+    <p>This highlights the trade-off: robustness to misspecification versus efficiency when correctly specified.</p>
     `;
-    const estimatorNGCalloutHTML = ContentTemplates.buildInfoCallout(
-        '<p><strong>Note:</strong> Compared   the estimator to the true structural matrix <span id="b_true_s3_display"></span>.</p>',
-        false,
-        true
-    );
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorNGHTML, estimatorNGCalloutHTML));
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorNGHTML));
     
-    // 4. Sub-topic Heading: Objective Function
-    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Objective Function for Non-Gaussianity'));
-
-    // 5. Objective Function Description
-    const objectiveFunctionHTML = `
-        
-        <p>
-            The true rotation angle \\(\\phi_0\\) (which depends on the true \\(B_0\\)) should ideally minimize this function, driving it towards zero. The estimated \\(\\hat{\\phi}_{nG}\\) is the angle that minimizes \\(J(\\phi)\\) for the observed data.
-        </p>
-    `;
-    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionHTML, 'objective-function-row'));
+   
 
    
 
@@ -100,7 +89,7 @@ async function initializeSectionThree() {
         <p><strong>Observations:</strong></p>
         <ul>
             <li>Use the \\(\\phi\\) slider to select a rotation angle and see coskewness of the innovations \\(e_t(\\phi)\\) changes.</li>
-            <li>The non-Gaussian estimator aligns close to the true \\(\\phi_0\\) in the recursive and non-recursive cases.</li> 
+            <li>The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) aligns close to the true \\(\\phi_0\\) in the recursive and non-recursive cases.</li> 
         </ul>
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(animationsHTML));

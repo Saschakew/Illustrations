@@ -12,8 +12,8 @@ const DebugManager = (() => {
         SVAR_MATH: false,          // Logs for SVARMathUtil functions (covariance, cholesky, etc.)
         PLOT_UPDATE: 'Plot Update',
         HERO: false,                 // Logs for hero particle events
-        LATEX_UPDATE: false,       // Logs for high-level LaTeX update operations
-        LATEX_UTIL: false,         // Logs for low-level LatexUtils functions
+        LATEX_UPDATE: true,       // Logs for high-level LaTeX update operations
+        LATEX_UTIL: true,         // Logs for low-level LatexUtils functions
         // Add more categories as needed, e.g.:
         // API_CALLS: false,
         // PERFORMANCE: false,

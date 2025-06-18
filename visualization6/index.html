@@ -50,16 +50,18 @@
 
     <main id="main-content" class="container">
         <!-- Section Zero: Intro -->
-        <div id="section-zero-placeholder" data-section-src="public/sections/section_zero.html" class="content-section-placeholder">
+        <div id="section-zero-placeholder" class="content-section-placeholder">
                 <section id="section-zero" class="intro-section content-section">
-                    <h2>Welcome to the SVAR&nbsp;Visualizer</h2>
-                    <p class="section-intro">This interactive demo invites you to explore how different identification strategies reveal the hidden structure in a two-variable Structural Vector Autoregression (SVAR).</p>
+                    <h2>Welcome to an interactive illustration</h2>
+                    <p class="section-intro">This interactive demo invites you to explore a combination of a statistical identification approach with potentially
+                    invalid short-run zero restrictions in SVAR models.</p>
                     <p>With only a handful of sliders and switches you can:</p>
                     <ul>
-                        <li>Generate fresh data under alternative data-generating processes.</li>
-                        <li>Recover parameters by imposing classic recursive (short-run) restrictions.</li>
-                        <li>Relax Gaussianity to learn from higher-moment information.</li>
-                        <li>Balance fit and parsimony via ridge-penalised estimation.</li>
+                        <li>Generate data under alternative data-generating processes.</li>
+                        <li>Observe how estimates based on invalid short-run restrictions lead to biased esimates.</li>
+                        <li>Explore how estimates based on non-Gaussianity tend to be volatile.</li>
+                        <li>Explore how our combination of statistical identification with short-run restrictions balances efficiency and
+                            robustness</li>
                     </ul>
                     <p>Tweak a control and watch plots, matrices, and LaTeX formulas update in real time.</p>
                 </section>

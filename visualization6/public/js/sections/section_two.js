@@ -56,21 +56,27 @@ async function initializeSectionTwo() {
 
     const RestrictionsMainHTML = `
        <p>
-            Traditionally, short-run zero restrictions are imposed on the \\(B\\) matrix to identify the SVAR. In the bivariate example, only a single restriction is required to reduce the set of \\(B(\\phi)\\) which yield uncorrelated innovations to a unique matrix. 
-</p> `;
+            The conventional approach to solving the identification problem is to impose economically-motivated short-run zero restrictions on the \\(B\\) matrix. In the bivariate example, only a single restriction is required to reduce the set of \\(B(\\phi)\\) which yield uncorrelated innovations to a unique matrix.
+</p>
+
+<p>While this approach provides a unique solution, it comes with a significant drawback: if the model is exactly identified by the restriction, an incorrect restriction cannot be detected by the data, even in large samples. This can lead to biased estimates and flawed inference. The following sections explore methods that relax this rigid assumption.</p>`;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(RestrictionsMainHTML));
 
 
     const EstimatorRecursiveHTML = `
     <p>
-            We impose a recursive structure on \\(B\\) (e.g., its (1,2) element is zero), which uniquely
-            determines the rotation angle as \\(\\phi=0\\). This is the Cholesky identification.  For this data set, applying the Cholesky identification yields the recursive estimator \\(\\hat{B}_{rec}\\) <span id="b_est_rec_s2_display"></span>, corresponding to \\(\\hat{\\phi}_{rec}\\) <span id="phi_est_rec_s2_display"></span>, .
-        </p>
+        By imposing the zero restriction \\(b_{12}=0\\), we uniquely identify the model. This is the well-known <strong>Cholesky identification</strong>. It yields the estimator <span id="b_est_rec_s2_display"></span>. 
+        But is this a good estimate? That depends entirely on whether the restriction is correct.
+    </p>
+
+     <p><strong>Compare the estimator to the true  </strong> <span id="b_true_s2_display"></span></p>
+        <ul>
+            <li>When the true model is <strong>recursive</strong>, the Cholesky estimator is consistent and performs well.</li>
+            <li>When the true model is <strong>non-recursive</strong>, the restriction \\(b_{12}=0\\) is incorrect. The resulting estimator is biased and inconsistent—notice that it is not close to the true \\(B_0\\), and this bias does not disappear even with a large sample size.</li>
+        </ul>
+        <p>This highlights the risk of imposing dogmatic restrictions.</p>
     `;
-    const RestrictionsCalloutHTML = ContentTemplates.buildInfoCallout(`
-        <p><strong>Note:</strong>Compare the estimator to  true structural matrix <span id="b_true_s2_display"></span></p>
-    `, false, true);
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(EstimatorRecursiveHTML, RestrictionsCalloutHTML));
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(EstimatorRecursiveHTML));
 
     // 4. Explain controls
     const ExplainControlsHTML = `

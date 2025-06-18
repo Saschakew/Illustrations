@@ -52,7 +52,7 @@ async function initializeSectionOne() {
 
     // 1. Intro Paragraph
     const introHTML = `
-       <p class="section-intro"> This section briefly explains the data-generating process of the SVAR model.</p>
+       <p class="section-intro"> This section illustrates the data-generating process (DGP) for a structural vector autoregression (SVAR). We begin with the relationship between the observed reduced-form shocks \\(u_t\\) and the unobserved structural shocks \\(\\epsilon_t\\), governed by the equation \\(u_t = B_0 \\epsilon_t\\), where \\(B_0\\) is the true structural matrix.</p>
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
@@ -69,7 +69,7 @@ async function initializeSectionOne() {
         <p>The reduced-form shocks \\(u_t\\) are equal to  \\(u_t = B_0 \\epsilon_t\\). We consider two variants of the true \\(B_0\\) matrix. The first is the recursive \\(B_0^{\\mathrm{rec}} = \\begin{bmatrix} 1 & 0 \\\\ 0.5 & 1 \\end{bmatrix}\\) and the second is the non-recursive \\(B_0^{\\mathrm{non-rec}} = \\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}\\).</p>
     `;
     const DGPNoteHTML = ContentTemplates.buildInfoCallout(
-        '<p><strong>Note:</strong> Note on dependency...</p>', 
+        '<p><strong>Note:</strong> The raw shocks \\(\\eta_t\\) are generated to be mutually independent. However, because they are scaled by a common time-varying volatility process \\(\\sigma_t\\), the resulting structural shocks \\(\\epsilon_t\\) are no longer fully independent. They are, however, designed to be mean independent (i.e., \\(E[\\epsilon_{it} | \\epsilon_{jt}] = 0\\)).</p>',
         false, 
         true
     );
