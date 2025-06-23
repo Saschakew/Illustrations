@@ -2,7 +2,7 @@
 const DebugManager = (() => {
     const _debugCategories = {
         SVAR_SETUP: false,      // Logs from svar_setup.js
-        UI_FACTORY: true,      // Logs from ui_factory.js
+        UI_FACTORY: false,      // Logs from ui_factory.js
         SHARED_CONTROLS: false, // Logs from shared_controls.js
         MAIN_APP: false,        // Logs from main.js (general app flow)
         DATA_HANDLING: false,   // Logs from shared_data.js or data operations
@@ -14,6 +14,7 @@ const DebugManager = (() => {
         HERO: false,                 // Logs for hero particle events
         LATEX_UPDATE: true,       // Logs for high-level LaTeX update operations
         LATEX_UTIL: true,         // Logs for low-level LatexUtils functions
+        DYNAMIC_LATEX_MANAGER: true, // Logs for the dynamic LaTeX manager operations
         // Add more categories as needed, e.g.:
         // API_CALLS: false,
         // PERFORMANCE: false,

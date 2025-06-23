@@ -1,94 +1,107 @@
 # Handling Dynamic LaTeX in SVAR Visualizer
 
-This guide outlines the standardized approach for rendering and dynamically updating LaTeX content within the SVAR Visualizer application, leveraging MathJax.
+This guide outlines the standardized approach for rendering and dynamically updating LaTeX content within the SVAR Visualizer application. The system leverages MathJax for rendering and a central `DynamicLatexManager` for managing updates.
 
-## Latex proposal to increase speed from different project
+**For step-by-step instructions on adding a new dynamic LaTeX element, please refer to the detailed guide: [`./create_dynamic_latex.md`](./create_dynamic_latex.md).**
 
-Here’s the recipe we followed to make MathJax-based, dynamically updated LaTeX feel “instant” in the SVAR Visualizer:
+## Core System Components
 
-Isolate all LaTeX logic in a tiny utility module
-• public/js/latex_utils.js exposes pure functions:
-• formatMatrixToLatex(matrix) → \(\begin{bmatrix} … \end{bmatrix}\) string.
-• updateLatexDisplay(cssSelector, latexString) → sets textContent then calls MathJax.typesetPromise() only on that element, not the whole document.
-• Convenience wrappers (displayBPhiMatrix, displayPhiEst, …) call the two lines above.
-➜ Keeping rendering code here avoids repeating typesetPromise() calls or string building across the app.
-Render into lightweight placeholders
-• Section HTML files contain <span id="…_display"></span> inside normal text; no bulky canvases/iframes.
-• Because each placeholder is small, MathJax can re-typeset in a few ms.
-Batch refreshes in a single place
-• main.js has updateDynamicLatexOutputs(), called whenever data change events occur (regenerateBPhi(), new ε-sample, phi slider, etc.).
-• That function sequentially calls the utility wrappers, so only one update cycle happens per user interaction.
-Avoid unnecessary re-renders
-• Before updating, each wrapper checks if (oldLatex !== newLatex) and skips typesetPromise() when the content hasn’t changed.
-• Heavy data computations finish before LaTeX is touched, so MathJax never blocks long loops.
-Load order & async discipline
-• MathJax CDN is loaded once in index.html.
-• All section initializers (initializeSectionX) are marked async; the global loading overlay is hidden only after they await LaTeX rendering, ensuring the first paint is smooth.
-Debug visibility
-• New debug categories (LATEX_UPDATE, LATEX_UTIL) allow console-toggling of verbose logs to spot any accidental thrashing.
-Key takeaways reusable in other projects • Keep MathJax updates element-scoped (typesetPromise(element)) rather than page-wide.
-• Centralize LaTeX formatting & rendering in one utility; call it from a single batched refresh function.
-• Update only when the underlying value really changed.
-• Finish all heavy JS work first, then trigger the (quick) MathJax pass.
-• Provide lightweight, static placeholders so the DOM diff is minimal.
+1.  **`public/js/dynamic_latex_manager.js` (DynamicLatexManager)**:
+    *   This is the central coordinator for all dynamic LaTeX elements.
+    *   It provides `registerDynamicLatex(elementId, dataType, utilKey, fixedArgs)` to register an HTML element for dynamic updates.
+    *   It exposes `updateAllDynamicLatex()` which is called by `main.js` (within `updateDynamicLatexOutputs`) whenever global data that might affect LaTeX displays changes.
+    *   The manager iterates through all registered elements and uses the appropriate `LatexUtils` function to re-render them with the latest data from `window.sharedData`.
 
-Following this pattern lets us refresh multiple matrices and equations every slider move with virtually no perceptible lag.
+2.  **`public/js/latex_utils.js` (LatexUtils)**:
+    *   This utility file contains functions responsible for the actual LaTeX string generation and rendering via MathJax.
+    *   Examples include `displayMatrix(elementId, matrixData, matrixName)`, `displayVector(elementId, vectorData, vectorName)`, etc.
+    *   These functions take an element ID, the data to display, and any other necessary parameters, then update the element's content and call `MathJax.typesetPromise()` on that specific element.
+    *   `DynamicLatexManager` calls functions from `LatexUtils` based on the registration details of each dynamic element.
 
-Here are the key technical details about our MathJax setup from the SVAR Visualizer:
+3.  **`public/js/shared_data.js`**: 
+    *   Holds the global data (e.g., `window.sharedData.B0`, `window.sharedData.phi_est_nG`) that dynamic LaTeX elements display.
+    *   When this data changes, `DynamicLatexManager` ensures the corresponding LaTeX displays are updated.
 
-MathJax Version:
-We're using MathJax v3.2.2 (latest stable) loaded via CDN in index.html:
-html
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
-Configuration:
-Minimal setup with these optimizations:
-javascript
-window.MathJax = {
-  tex: {
-    inlineMath: [['\\(', '\\)']],  // Only enable \(...\) delimiters (not $$)
-    tags: 'none'                   // Disable equation numbering
-  },
-  options: {
-    skipHtmlTags: ['script', 'style']  // Faster parsing by ignoring these
-  }
-};
-Loading Strategy:
-Placed in <head> with async to avoid render blocking
-Combined with our loading-overlay system to ensure MathJax is fully ready before any LaTeX rendering attempts
-Update Pattern:
-All dynamic updates use:
-javascript
-element.textContent = newLatexString;
-await MathJax.typesetPromise([element]);  // Scoped to just the changed element
-Why It's Fast:
-No SVG/Canvas - Using native HTML-CSS output (default in v3)
-Only the necessary TeX packages loaded (no chemistry, physics extras)
-Our latex_utils.js caches strings to skip redundant typesetPromise() calls
-This setup gives us sub-10ms updates per matrix even during rapid slider movements. The full config is documented in guides/latex.md.
+4.  **`public/js/main.js`**: 
+    *   The `updateDynamicLatexOutputs()` function in `main.js` is responsible for triggering a global update of all registered dynamic LaTeX elements by calling `window.DynamicLatexManager.updateAllDynamicLatex()`.
+    *   This typically happens after operations that modify data in `window.sharedData`.
 
- 
+5.  **HTML Placeholders**:
+    *   Simple `<span>` or `<div>` elements with unique IDs are used in HTML files (e.g., `index.html` or section-specific HTML) to designate where LaTeX should be rendered.
+    *   Example: `<span id="b0_matrix_display"></span>`
 
+## How Dynamic Updates Work
 
-## Core Principles
+1.  **Registration**: During initialization (e.g., in a section's JavaScript file like `section_two.js`), dynamic LaTeX elements are registered with the `DynamicLatexManager` using `registerDynamicLatex()`. This registration includes the element's ID, the `sharedData` key for its data, the `LatexUtils` function to use for rendering, and any fixed arguments for that function.
+2.  **Initial Render**: Upon registration, `DynamicLatexManager` performs an initial render of the element.
+3.  **Data Change**: An event in the application (e.g., user input, new calculation) modifies data in `window.sharedData`.
+4.  **Update Trigger**: The application logic (usually in `main.js`) calls `updateDynamicLatexOutputs()`.
+5.  **Manager Updates All**: `updateDynamicLatexOutputs()` calls `window.DynamicLatexManager.updateAllDynamicLatex()`.
+6.  **Targeted Re-rendering**: The `DynamicLatexManager` iterates through all its registered elements. For each element, it retrieves the current data from `window.sharedData` and calls the specified `LatexUtils` function to re-render the LaTeX in the designated HTML placeholder.
 
-1.  **Centralized Utilities**: A dedicated utility file, `public/js/latex_utils.js`, will house functions for formatting data into LaTeX strings and updating HTML elements.
-2.  **MathJax Integration**: All LaTeX rendering relies on MathJax. After updating an element's content with a LaTeX string, `MathJax.typesetPromise()` must be called to re-render the math.
-3.  **Unique Element IDs**: HTML elements designated to display LaTeX must have unique IDs.
-4.  **Reactive Updates**: When underlying data for a LaTeX display changes, a mechanism must trigger the re-rendering of that specific LaTeX element.
+This centralized approach simplifies adding new dynamic LaTeX elements and ensures consistent update behavior.
 
-## `public/js/latex_utils.js`
+## MathJax Configuration and Best Practices
 
-This file will expose a `window.LatexUtils` object with helper functions.
+The following details about our MathJax setup remain crucial for performance and correct rendering:
 
-### 1. `formatMatrixToLatex(matrix, matrixName, precision = 3)`
+*   **MathJax Version**: We use MathJax v3.2.2 (or latest stable v3.x) loaded via CDN in `index.html`:
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
+    ```
+*   **Configuration** (typically set before MathJax script tag in `index.html` or in a dedicated config block):
+    ```javascript
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']], // Standard delimiters for inline math
+        displayMath: [['$$', '$$']], // Standard delimiters for display math
+        tags: 'none' // Disable automatic equation numbering if not needed
+      },
+      options: {
+        skipHtmlTags: ['script', 'style', 'textarea', 'pre'] // Faster parsing
+      },
+      startup: {
+        ready: () => {
+          MathJax.startup.defaultReady();
+          // Custom ready logic if needed
+        }
+      }
+    };
+    ```
+*   **Loading Strategy**: 
+    *   The MathJax script tag in `index.html` should ideally have `async` to avoid render-blocking.
+    *   Ensure `dynamic_latex_manager.js` and `latex_utils.js` are loaded *before* scripts that use them, and `shared_data.js` before those.
+*   **Scoped Updates**: `LatexUtils` functions should always use scoped MathJax updates for performance:
+    ```javascript
+    // Inside a LatexUtils function, after setting element.innerHTML or element.textContent
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([element]);
+    }
+    ```
+*   **Performance Tips (General):**
+    *   Keep LaTeX strings as simple as possible.
+    *   Avoid unnecessary re-renders by having `DynamicLatexManager` (or `LatexUtils` if a check is implemented there) compare old vs. new data/LaTeX strings before calling `typesetPromise` (current `DynamicLatexManager` re-renders on each call to `updateAllDynamicLatex`).
+    *   Ensure heavy JavaScript computations complete *before* triggering LaTeX updates.
 
-Converts a 2D array (matrix) into a LaTeX string.
+## `public/js/latex_utils.js` Overview
 
-*   **Parameters**:
-    *   `matrix` (Array<Array<number>>): The matrix data.
-    *   `matrixName` (string): The name of the matrix to be displayed (e.g., "B(\\phi)", "\\Sigma_u").
-    *   `precision` (number, optional): Number of decimal places for matrix elements. Defaults to 3.
-*   **Returns**: (string) A LaTeX string, e.g., `\\( B(\\phi) = \\begin{bmatrix} 1.000 & 0.500 \\\\ 0.250 & 0.800 \\end{bmatrix} \\)`.
+This file provides the core rendering functions called by `DynamicLatexManager`. Key functions include:
+
+*   `formatMatrixToLatex(matrix, matrixName, precision = 3)`: Converts a 2D array into a LaTeX matrix string.
+*   `displayMatrix(elementId, matrix, matrixName, precision = 3)`: Renders a matrix in the specified element.
+*   Other specific display functions (e.g., `displayVector`, `displayScalar`).
+
+These functions are responsible for:
+1.  Fetching the HTML element by `elementId`.
+2.  Formatting the input data into a valid LaTeX string.
+3.  Setting the `innerHTML` or `textContent` of the element.
+4.  Calling `MathJax.typesetPromise([element])` to make MathJax render the new LaTeX.
+
+Refer to `public/js/latex_utils.js` for the exact implementation details of these rendering functions.
+
+## Debugging
+
+Utilize the `DebugManager` with categories like `DYNAMIC_LATEX_MANAGER` and `LATEX_UTIL` to trace registration and update processes. Check the browser console for any errors related to MathJax or these modules.
 
 ### 2. `updateLatexDisplay(elementId, latexString)`
 
@@ -105,19 +118,68 @@ A specific helper to get `sharedData.B_phi`, format it using `formatMatrixToLate
 *   **Parameters**:
     *   `elementId` (string): The ID of the HTML element where `B(\phi)` should be displayed.
 
+### 4. `formatPhiToLatex(phiValue, phiName, precision = 3)`
+
+Converts a scalar number (phi value) into a LaTeX string.
+
+*   **Parameters**:
+    *   `phiValue` (number): The scalar value.
+    *   `phiName` (string): The name of the phi value (e.g., "\\hat{\\phi}_{rec}").
+    *   `precision` (number, optional): Number of decimal places. Defaults to 3.
+*   **Returns**: (string) A LaTeX string, e.g., `\( \hat{\phi}_{rec} = 0.123 \)`.
+
+### 5. `displayPhiEst(elementId, phiValue, phiName, precision = 3)`
+
+A helper to display an estimated \(\phi\) value. It uses `formatPhiToLatex` and `updateLatexDisplay`.
+
+*   **Parameters**:
+    *   `elementId` (string): The ID of the HTML element.
+    *   `phiValue` (number): The estimated phi value (e.g., `sharedData.phi_est_rec`).
+    *   `phiName` (string): The LaTeX name for the phi (e.g., "\\hat{\\phi}_{rec}").
+    *   `precision` (number, optional): Defaults to 3.
+
+### 6. `displayBEstMatrix(elementId, matrix, matrixName, precision = 3)`
+
+A helper to display an estimated \(B\) matrix (e.g., `sharedData.B_est_rec`). It uses `formatMatrixToLatex` and `updateLatexDisplay`.
+
+*   **Parameters**:
+    *   `elementId` (string): The ID of the HTML element.
+    *   `matrix` (Array<Array<number>>): The estimated B matrix data.
+    *   `matrixName` (string): The LaTeX name for the matrix (e.g., "\\hat{B}_{rec}").
+    *   `precision` (number, optional): Defaults to 3.
+
+### 7. `formatVToLatex(vValue, vName = 'v', precision = 3)`
+
+Converts a scalar number (e.g., v-weight) into a LaTeX string.
+
+*   **Parameters**:
+    *   `vValue` (number): The scalar value.
+    *   `vName` (string): The name of the value (e.g., "v").
+    *   `precision` (number, optional): Number of decimal places. Defaults to 3.
+*   **Returns**: (string) A LaTeX string, e.g., `\( v = 0.500 \)`.
+
+### 8. `displayVWeight(elementId, vValue, vName = 'v', precision = 3)`
+
+A helper to display a scalar value, typically a weight like `v_weight`. It uses `formatVToLatex` and `updateLatexDisplay`. Shows "Calculating..." if `vValue` is null or undefined.
+
+*   **Parameters**:
+    *   `elementId` (string): The ID of the HTML element.
+    *   `vValue` (number | null | undefined): The value to display.
+    *   `vName` (string): The LaTeX name for the value.
+    *   `precision` (number, optional): Defaults to 3.
+
 **Example Implementation Snippet (`latex_utils.js`):**
 ```javascript
 window.LatexUtils = {
-    formatMatrixToLatex: function(matrix, matrixName, precision = 3) {
-        // ... implementation ...
-    },
-    updateLatexDisplay: function(elementId, latexString) {
-        // ... implementation ...
-    },
-    displayBPhiMatrix: function(elementId) {
-        // ... implementation using sharedData.B_phi ...
-    }
-    // ... other formatting functions can be added here
+    formatMatrixToLatex: function(matrix, matrixName, precision = 3) { /* ... */ },
+    updateLatexDisplay: function(elementId, latexString) { /* ... */ },
+    displayBPhiMatrix: function(elementId) { /* ... */ },
+    formatPhiToLatex: function(phiValue, phiName, precision = 3) { /* ... */ },
+    displayPhiEst: function(elementId, phiValue, phiName, precision = 3) { /* ... */ },
+    displayBEstMatrix: function(elementId, matrix, matrixName, precision = 3) { /* ... */ },
+    formatVToLatex: function(vValue, vName = 'v', precision = 3) { /* ... */ },
+    displayVWeight: function(elementId, vValue, vName = 'v', precision = 3) { /* ... */ }
+    // Other internal helpers might exist but these are the primary display functions.
 };
 ```
 

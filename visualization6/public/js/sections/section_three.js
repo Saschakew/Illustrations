@@ -60,7 +60,7 @@ async function initializeSectionThree() {
 
     const estimatorNGHTML = `
     <p>
-        The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator <span id="b_est_nG_s3_display"></span>.
+        The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator PLACEHOLDER_b_est_nG_s3_display.
     </p>
     <p><strong>Compare this estimator to the true</strong> <span id="b_true_s3_display"></span></p>
     <ul>
@@ -94,26 +94,15 @@ async function initializeSectionThree() {
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(animationsHTML));
 
-    // Initialize LaTeX displays now that spans are in the DOM
-    if (window.LatexUtils) { 
-        if (window.sharedData && typeof window.sharedData.phi_est_nG !== 'undefined') {
-            window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', window.sharedData.phi_est_nG, '\\hat{\\phi}_{nG}');
-        } else {
-            window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', NaN, '\\hat{\\phi}_{nG}');
-        }
-        if (window.sharedData && window.sharedData.B_est_nG) {
-            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', window.sharedData.B_est_nG, '\\hat{B}_{nG}');
-        } else {
-            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', [[NaN, NaN], [NaN, NaN]], '\\hat{B}_{nG}');
-        }
-        // Display the true B0 matrix
-        if (window.sharedData && window.sharedData.B0) {
-            window.LatexUtils.displayBEstMatrix('b_true_s3_display', window.sharedData.B0, 'B_0');
-        } else {
-            window.LatexUtils.displayBEstMatrix('b_true_s3_display', [[NaN, NaN], [NaN, NaN]], 'B_0');
-        }
+    // Initial rendering of LaTeX elements that are dynamic or require specific data
+    // window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', window.sharedData.phi_est_nG, '\\hat{\\phi}_{nG}');
+    // window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', window.sharedData.B_est_nG, 'B_{\text{est, nG}}');
+    // window.LatexUtils.displayBEstMatrix('b_true_s3_display', window.sharedData.B0, 'B_0');
+
+    if (window.DynamicLatexManager && typeof window.DynamicLatexManager.registerDynamicLatex === 'function') {
+        window.DynamicLatexManager.registerDynamicLatex('b_true_s3_display', 'B0', 'displayBEstMatrix', ['B_0']);
     } else {
-        DebugManager.log('LATEX_UPDATE', 'LatexUtils not available for initial display in Section Three.');
+        DebugManager.error('SEC_THREE_INIT', 'DynamicLatexManager.registerDynamicLatex not available.');
     }
 
     // Typeset MathJax for the whole section

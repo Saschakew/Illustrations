@@ -196,82 +196,15 @@ async function regenerateReducedFormShocksFromExistingEpsilon() {
  * Asynchronously updates all registered dynamic LaTeX displays on the page.
  */
 async function updateDynamicLatexOutputs() {
-    DebugManager.log('LATEX_UPDATE', 'Attempting to update dynamic LaTeX outputs.');
+    DebugManager.log('LATEX_UPDATE', 'Attempting to update dynamic LaTeX outputs via DynamicLatexManager.');
 
-    // Define a list of element IDs that need B(phi) updates
-    const bPhiElementIds = [
-        'b_phi_matrix_s2_display',
-        'b_phi_matrix_s3_display',
-        'b_phi_matrix_s4_display'
-        // Add other B(phi) display element IDs here if they exist in other sections
-    ];
-
-    // Update B0 matrix display in Section One
-    if (window.LatexUtils && typeof window.LatexUtils.displayBEstMatrix === 'function' && window.sharedData) {
-        if (document.getElementById('b0_matrix_s1_display')) {
-            window.LatexUtils.displayBEstMatrix('b0_matrix_s1_display', window.sharedData.B0, 'B_0');
-        }
-        // Update B0 matrix display in Section Three
-        if (document.getElementById('b_true_s3_display')) {
-            window.LatexUtils.displayBEstMatrix('b_true_s3_display', window.sharedData.B0, 'B_0');
-        }
-        // Update B0 matrix display in Section Two
-        if (document.getElementById('b_true_s2_display')) {
-            window.LatexUtils.displayBEstMatrix('b_true_s2_display', window.sharedData.B0, 'B_0');
-        }
+    if (window.DynamicLatexManager && typeof window.DynamicLatexManager.updateAllDynamicLatex === 'function') {
+        window.DynamicLatexManager.updateAllDynamicLatex();
     } else {
-        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBEstMatrix or sharedData not available for B0 display in Section One.');
+        DebugManager.error('LATEX_UPDATE', 'DynamicLatexManager.updateAllDynamicLatex not available.');
     }
 
-    // Update B(phi) matrix displays
-    if (window.LatexUtils && typeof window.LatexUtils.displayBPhiMatrix === 'function') {
-        bPhiElementIds.forEach(id => {
-            if (document.getElementById(id)) { // Check if the element exists in the current DOM
-                window.LatexUtils.displayBPhiMatrix(id);
-            }
-        });
-    } else {
-        DebugManager.log('LATEX_UPDATE', 'LatexUtils.displayBPhiMatrix not available. Cannot update B(phi) displays.');
-    }
-
-    // Update estimated phi and B matrices
-    if (window.LatexUtils && typeof window.LatexUtils.displayPhiEst === 'function' && typeof window.LatexUtils.displayBEstMatrix === 'function' && window.sharedData) {
-        // Section Two: Recursive
-        if (document.getElementById('phi_est_rec_s2_display')) {
-            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', window.sharedData.phi_est_rec, '\\hat{\\phi}_{rec}');
-        }
-        if (document.getElementById('b_est_rec_s2_display')) {
-            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', window.sharedData.B_est_rec, '\\hat{B}_{rec}');
-        }
-
-        // Section Three: Non-Gaussian
-        if (document.getElementById('phi_est_nG_s3_display')) {
-            window.LatexUtils.displayPhiEst('phi_est_nG_s3_display', window.sharedData.phi_est_nG, '\\hat{\\phi}_{nG}');
-        }
-        if (document.getElementById('b_est_nG_s3_display')) {
-            window.LatexUtils.displayBEstMatrix('b_est_nG_s3_display', window.sharedData.B_est_nG, '\\hat{B}_{nG}');
-        }
-
-        // Section Four: Ridge
-        if (document.getElementById('phi_est_ridge_s4_display')) {
-            window.LatexUtils.displayPhiEst('phi_est_ridge_s4_display', window.sharedData.phi_est_ridge, '\\hat{\\phi}_{ridge}');
-        }
-        if (document.getElementById('b_est_ridge_s4_display')) {
-            window.LatexUtils.displayBEstMatrix('b_est_ridge_s4_display', window.sharedData.B_est_ridge, '\\hat{B}_{ridge}');
-        }
-        // Update v weight display in Section Four
-        if (document.getElementById('v_weight_s4_display')) {
-            window.LatexUtils.displayVWeight('v_weight_s4_display', window.sharedData.v, 'v');
-        }
-        // Update lambda display in Section Four
-        if (document.getElementById('lambda_s4_value_display')) { // Assuming this ID exists for lambda in S4
-            window.LatexUtils.displayVWeight('lambda_s4_value_display', window.sharedData.lambda, '\\lambda', 2); // Using 2 decimal places for lambda
-        }
-    } else {
-        DebugManager.log('LATEX_UPDATE', 'LatexUtils display functions for estimated parameters or sharedData not available.');
-    }
-
-    DebugManager.log('LATEX_UPDATE', 'Finished attempting to update dynamic LaTeX outputs.');
+    DebugManager.log('LATEX_UPDATE', 'Finished attempting to update dynamic LaTeX outputs via DynamicLatexManager.');
 }
 
 

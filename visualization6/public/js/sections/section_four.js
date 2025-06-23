@@ -57,17 +57,17 @@ async function initializeSectionFour() {
     // 4. Estimator Comparison
     const estimatorRidgeHTML = `
     <p>
-        The ridge estimator yields the estimated structural matrix <span id="b_est_ridge_s4_display"></span>.
+        The ridge estimator yields the estimated structural matrix PLACEHOLDER_b_est_ridge_s4_display.
     </p>
-    <p><strong>Compare this estimator to the true \\(B_0\\):</strong> <span id="b_true_s4_display"></span></p>
+    <p><strong>Compare this estimator to the true \\(B_0\\):</strong> PLACEHOLDER_b_true_s4_display</p>
     <ul>
         <li>When the true model is <strong>recursive</strong>, the restriction \\(b_{12}=0\\) is correct. The ridge estimator leverages this by shrinking towards the correct restriction, resulting in a more efficient (lower variance) estimate than the pure non-Gaussian estimator from Section Three.</li>
         <li>When the true model is <strong>non-recursive</strong>, the restriction \\(b_{12}=0\\) is incorrect. The ridge estimator is biased towards this wrong restriction, but the bias is mitigated by the adaptive weight. It strikes a balance between the biased Cholesky estimator and the unbiased but volatile non-Gaussian estimator.</li>
     </ul>
     <p>Use the \\(\\lambda\\) slider to see how the trade-off between bias and variance changes. A small \\(\\lambda\\) trusts the data more, while a large \\(\\lambda\\) imposes the restriction more strongly. The current values for the adaptive weight and the penalty parameter are displayed below. Watch how the weight \(v_{12}\) changes when you draw a new sample of data, and how the overall penalty is controlled by your choice of \\(\\lambda\\).</p>
     <div class="estimate-card">
-        <div class="est-line"><span>Derived weight \(v_{12}\):</span><span id="v_est_ridge_s4_display"></span></div>
-        <div class="est-line"><span>Penalty \\(\\lambda\\):</span><span id="lambda_value_s4_display"></span></div>
+        <div class="est-line"><span>Derived weight \(v_{12}\):</span>PLACEHOLDER_v_est_ridge_s4_display</div>
+        <div class="est-line"><span>Penalty \\(\\lambda\\):</span>PLACEHOLDER_lambda_value_s4_display</div>
     </div>
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorRidgeHTML));
@@ -100,26 +100,6 @@ async function initializeSectionFour() {
 
     // Initialize LaTeX displays
     if (window.LatexUtils) {
-        window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s4_display');
-        window.LatexUtils.displayPhiEst('phi_est_ridge_s4_display', window.sharedData.phi_est_ridge, '\\\\hat{\\\\phi}_{ridge}');
-        window.LatexUtils.displayBEstMatrix('b_est_ridge_s4_display', window.sharedData.B_est_ridge, '\\\\hat{B}_{ridge}');
-        // For v_est_ridge_s4_display and lambda_value_s4_display, we'll update them directly in updateSectionFourPlots or a dedicated function
-        // as they might need more frequent updates or specific formatting not covered by generic LatexUtils.
-        // For now, ensure the lambda display is updated.
-        const lambdaElement = document.getElementById('lambda_value_s4_display');
-        if (lambdaElement) {
-            lambdaElement.textContent = `\\(${window.sharedData.lambda.toFixed(2)}\\)`;
-        }
-        const vElement = document.getElementById('v_est_ridge_s4_display');
-        if (vElement && window.sharedData.v_est_ridge !== undefined) {
-            // Assuming v_est_ridge is a number or a simple array that can be stringified for now
-            // For a vector, you might want to format it as e.g., [v1, v2]
-            let v_display_text = typeof window.sharedData.v_est_ridge === 'number' ? window.sharedData.v_est_ridge.toFixed(3) : JSON.stringify(window.sharedData.v_est_ridge);
-            vElement.textContent = `\\(${v_display_text}\\)`;
-        } else if (vElement) {
-            vElement.textContent = `\\(N/A\\)`;
-        }
-
 
     } else {
         DebugManager.log('LATEX_UPDATE', 'LatexUtils not available for initial display in Section Four.');
@@ -146,16 +126,6 @@ async function updateSectionFourPlots() {
 
     // Update LaTeX displays that might change with phi or lambda
     if (window.LatexUtils) {
-        window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s4_display'); // B(phi) depends on current phi slider
-        window.LatexUtils.displayPhiEst('phi_est_ridge_s4_display', phi_est_ridge, '\\hat{\\phi}_{ridge}');
-        window.LatexUtils.displayBEstMatrix('b_est_ridge_s4_display', B_est_ridge, '\\hat{B}_{ridge}');
-
-        // Display the true B0 matrix
-        if (window.sharedData && window.sharedData.B0) {
-            window.LatexUtils.displayBEstMatrix('b_true_s4_display', window.sharedData.B0, 'B_0');
-        } else {
-            window.LatexUtils.displayBEstMatrix('b_true_s4_display', [[NaN, NaN], [NaN, NaN]], 'B_0');
-        }
 
         const lambdaElement = document.getElementById('lambda_value_s4_display');
         if (lambdaElement) {

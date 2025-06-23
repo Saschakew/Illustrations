@@ -65,11 +65,11 @@ async function initializeSectionTwo() {
 
     const EstimatorRecursiveHTML = `
     <p>
-        By imposing the zero restriction \\(b_{12}=0\\), we uniquely identify the model. This is the well-known <strong>Cholesky identification</strong>. It yields the estimator <span id="b_est_rec_s2_display"></span>. 
+        By imposing the zero restriction \(b_{12}=0\), we uniquely identify the model. This is the well-known <strong>Cholesky identification</strong>. It yields the estimator <span id="b_est_rec_s2_display"></span>.
         But is this a good estimate? That depends entirely on whether the restriction is correct.
     </p>
 
-     <p><strong>Compare the estimator to the true  </strong> <span id="b_true_s2_display"></span></p>
+     <p><strong>Compare the estimator to the true  </strong> <span id="b0_display_s2"></span> </p>
         <ul>
             <li>When the true model is <strong>recursive</strong>, the Cholesky estimator is consistent and performs well.</li>
             <li>When the true model is <strong>non-recursive</strong>, the restriction \\(b_{12}=0\\) is incorrect. The resulting estimator is biased and inconsistent—notice that it is not close to the true \\(B_0\\), and this bias does not disappear even with a large sample size.</li>
@@ -101,7 +101,7 @@ async function initializeSectionTwo() {
        <p><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) vs. \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
         <p><strong>Right Plot (Correlation):</strong> Shows the correlation, \\(\\text{mean}(e_{1t}(\\phi) \\cdot e_{2t}(\\phi))\\), across different values of \\(\\phi  \\). A vertical line indicates the current \\(\\phi\\). Another line marks \\(\\phi_0\\) which corresponds to the true \\(B_0\\) which changes with the recursive vs non-recursive slider.</p>
 
-         <p><strong>Observations:</strong> Use the \\(\\phi\\) slider to select a rotation angle and see the corresponding matrix <span class="b-matrix-pill" id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\\phi)^{-1} u_t\\).</p>
+         <p><strong>Observations:</strong> Use the \\(\\phi\\) slider to select a rotation angle and see the corresponding matrix <span id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\\phi)^{-1} u_t\\).</p>
         <ul>
             <li>All \\(B(\\phi)\\) yield uncorrelated innovations \\(e_{1t}(\\phi)\\) and \\(e_{2t}(\\phi)\\).</li>
             <li>The recursive estimator works well when the true model is recursive.</li>
@@ -113,24 +113,20 @@ async function initializeSectionTwo() {
 
  
  
-    // Initialize LaTeX displays now that spans are in the DOM
-    if (window.LatexUtils) {
-        window.LatexUtils.displayBPhiMatrix('b_phi_matrix_s2_display');
-        if (window.sharedData && typeof window.sharedData.phi_est_rec !== 'undefined') {
-            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', window.sharedData.phi_est_rec, '\\hat{\\phi}_{rec}');
-        } else {
-            window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', NaN, '\\hat{\\phi}_{rec}');
-        }
-        if (window.sharedData && window.sharedData.B_est_rec) {
-            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', window.sharedData.B_est_rec, '\\hat{B}_{rec}');
-        } else {
-            window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', [[NaN, NaN],[NaN, NaN]], '\\hat{B}_{rec}');
-        }
-    }
+    // Initial rendering of LaTeX elements that are dynamic or require specific data
+    // window.LatexUtils.displayPhiEst('phi_est_rec_s2_display', 0); // phi is fixed at 0 for recursive
+    // window.LatexUtils.displayBEstMatrix('b_est_rec_s2_display', window.sharedData.B_est_recursive, 'B_{\text{est, rec}}');
+    // window.LatexUtils.displayBEstMatrix('b_true_s2_display', window.sharedData.B0, 'B_0');
 
-    // Typeset MathJax
-    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
-        await window.MathJax.typesetPromise([contentArea]);
+    if (window.DynamicLatexManager && typeof window.DynamicLatexManager.registerDynamicLatex === 'function') {
+        // Register B0 display for Section Two
+        window.DynamicLatexManager.registerDynamicLatex('b0_display_s2', 'B0', 'displayBEstMatrix', ['B_0']);
+        // Register B_est_rec display for Section Two
+        window.DynamicLatexManager.registerDynamicLatex('b_est_rec_s2_display', 'B_est_rec', 'displayBEstMatrix', ['B_{REC}']);
+        // Register B_phi display for Section Two
+        window.DynamicLatexManager.registerDynamicLatex('b_phi_matrix_s2_display', 'B_phi', 'displayBEstMatrix', ['B(\phi)']);
+    } else {
+        DebugManager.error('SEC_TWO_INIT', 'DynamicLatexManager.registerDynamicLatex not available.');
     }
 
     await updateSectionTwoPlots();
