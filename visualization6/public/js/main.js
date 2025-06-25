@@ -159,6 +159,20 @@ async function regenerateReducedFormShocksFromExistingEpsilon() {
 }
 
 /**
+ * Regenerates the penalty = lambda v b_12^2 matrix using current v lambda and B_phi from sharedData,
+ * then stores it back into sharedData.
+ */
+async function regeneratePenaltyRidge() {
+    try {
+        const penalty = window.sharedData.lambda * window.sharedData.v * window.sharedData.B_phi[0][1] * window.sharedData.B_phi[0][1];
+        window.sharedData.penalty = penalty;
+    } catch (error) {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to regenerate penalty:', error);
+    }
+}
+
+
+/**
  * Regenerates the B(phi) matrix using current u_t series and phi from sharedData,
  * then stores it back into sharedData.
  */
@@ -554,6 +568,7 @@ async function initializeApp() {
     await regenerateSvarData(); // Regenerate all SVAR data on initial load
     await regeneratePhi0(); // Calculate initial phi_0 based on initial B0
     await regenerateBPhi(); // Also generate B(phi) based on initial phi and u
+    await regeneratePenaltyRidge(); // Also generate penalty based on initial lambda, v, and B_phi
 
     if (typeof initializeNewDataButtons === 'function') {
         initializeNewDataButtons();
