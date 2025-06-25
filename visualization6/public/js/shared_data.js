@@ -52,20 +52,4 @@ DebugManager.log('SHARED_DATA', 'Initial B_est_nG:', JSON.stringify(window.share
 DebugManager.log('SHARED_DATA', 'Initial phi_est_ridge:', window.sharedData.phi_est_ridge);
 DebugManager.log('SHARED_DATA', 'Initial B_est_ridge:', JSON.stringify(window.sharedData.B_est_ridge));
 
-// Function to update B0 based on isRecursive and log changes
-window.sharedData.updateB0Mode = function() {
-    if (this.isRecursive) {
-        this.B0 = [[1, 0], [0.5, 1]]; // Example Recursive B0
-    } else {
-        this.B0 = [[1, 0.5], [0.5, 1]]; // Example Non-Recursive B0
-    }
-    DebugManager.log('SVAR_DATA_PIPELINE', `B0 mode updated. isRecursive: ${this.isRecursive}, B0:`, JSON.stringify(this.B0));
-    if (typeof window.regeneratePhi0 === 'function') {
-        window.regeneratePhi0(); // Update phi_0 whenever B0 changes
-    } else {
-        DebugManager.log('SVAR_DATA_PIPELINE', 'Warning: window.regeneratePhi0 function not found. Cannot update phi_0.');
-    }
-}
 
-// Initialize B0 based on the default mode
-window.sharedData.updateB0Mode();

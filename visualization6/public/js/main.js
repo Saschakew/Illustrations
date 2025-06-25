@@ -192,22 +192,6 @@ async function regenerateReducedFormShocksFromExistingEpsilon() {
  * Regenerates the B(phi) matrix using current u_t series and phi from sharedData,
  * then stores it back into sharedData.
  */
-/**
- * Asynchronously updates all registered dynamic LaTeX displays on the page.
- */
-async function updateDynamicLatexOutputs() {
-    DebugManager.log('LATEX_UPDATE', 'Attempting to update dynamic LaTeX outputs via DynamicLatexManager.');
-
-    if (window.DynamicLatexManager && typeof window.DynamicLatexManager.updateAllDynamicLatex === 'function') {
-        window.DynamicLatexManager.updateAllDynamicLatex();
-    } else {
-        DebugManager.error('LATEX_UPDATE', 'DynamicLatexManager.updateAllDynamicLatex not available.');
-    }
-
-    DebugManager.log('LATEX_UPDATE', 'Finished attempting to update dynamic LaTeX outputs via DynamicLatexManager.');
-}
-
-
 async function regenerateBPhi() {
     DebugManager.log('SVAR_DATA_PIPELINE', 'Attempting to regenerate B(phi) and store in sharedData...');
 
@@ -246,7 +230,10 @@ async function regenerateBPhi() {
             // After B_phi is updated, regenerate innovations e_t
             await regenerateInnovations();
             
-            await updateDynamicLatexOutputs(); // Update LaTeX displays for B(phi)
+            // Update LaTeX displays for B(phi)
+            if (window.DynamicLatexManager) {
+                window.DynamicLatexManager.updateAllDynamicLatex();
+            }
             await updateAllPlots(); // Update plots as B(phi) might affect them indirectly or directly
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: B(phi) generation returned null. Resetting B_phi to default.');

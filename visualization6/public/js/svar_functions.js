@@ -608,6 +608,86 @@ window.SVARCoreFunctions = {
      * Calculates and stores the weight v = 1 / (B_est_nG[0][1]^2).
      * Handles potential numerical issues if B_est_nG[0][1] is close to zero.
      */
+    /**
+     * Calculates the loss for a given phi value for the recursive model.
+     * Loss = (mean(e_1t * e_2t))^2
+     * @param {number} current_phi_iter - The phi angle to evaluate.
+     * @param {number[][]} P - The Cholesky factor of the covariance of u_t.
+     * @param {number[]} u_1t_series - The first reduced-form shock series.
+     * @param {number[]} u_2t_series - The second reduced-form shock series.
+     * @returns {number|null} The calculated loss or null on error.
+     */
+    calculateRecursiveLossForPhi: function(current_phi_iter, P, u_1t_series, u_2t_series) {
+        const R_phi = window.SVARMathUtil.getRotationMatrix(current_phi_iter);
+        const B_phi = window.SVARMathUtil.matrixMultiply(P, R_phi);
+        if (!B_phi) return null;
+
+        const B_phi_inv = window.SVARMathUtil.invert2x2Matrix(B_phi);
+        if (!B_phi_inv) return null;
+
+        const temp_e_1t = [];
+        const temp_e_2t = [];
+        for (let i = 0; i < u_1t_series.length; i++) {
+            const u_vector = [u_1t_series[i], u_2t_series[i]];
+            const e_vector = window.SVARMathUtil.multiplyMatrixByVector(B_phi_inv, u_vector);
+            if (e_vector) {
+                temp_e_1t.push(e_vector[0]);
+                temp_e_2t.push(e_vector[1]);
+            }
+        }
+
+        if (temp_e_1t.length === 0) return null;
+
+        const products = temp_e_1t.map((val, index) => val * temp_e_2t[index]);
+        const meanOfProducts = window.SVARMathUtil.mean(products);
+        return meanOfProducts !== null ? Math.pow(meanOfProducts, 2) : null;
+    },
+
+    /**
+     * Calculates the loss for a given phi value for the non-Gaussian model.
+     * Loss = (mean(e_1t^2 * e_2t))^2 + (mean(e_1t * e_2t^2))^2
+     * @param {number} phi_val - The phi angle to evaluate.
+     * @param {number[][]} P_chol - The Cholesky factor of the covariance of u_t.
+     * @param {number[]} u1_series - The first reduced-form shock series.
+     * @param {number[]} u2_series - The second reduced-form shock series.
+     * @returns {number|null} The calculated loss or null on error.
+     */
+    calculateNonGaussianLossForPhi: function(phi_val, P_chol, u1_series, u2_series) {
+        if (!window.SVARMathUtil) {
+            DebugManager.log('SVAR_FUNCTIONS', 'SVARMathUtil not found in calculateNonGaussianLossForPhi.');
+            return null;
+        }
+        const R_phi = window.SVARMathUtil.getRotationMatrix(phi_val);
+        const B_phi_candidate = window.SVARMathUtil.matrixMultiply(P_chol, R_phi);
+        if (!B_phi_candidate) return null;
+
+        const B_phi_inv = window.SVARMathUtil.invert2x2Matrix(B_phi_candidate);
+        if (!B_phi_inv) return null;
+
+        const temp_e_1t = [];
+        const temp_e_2t = [];
+        for (let i = 0; i < u1_series.length; i++) {
+            const u_vector = [u1_series[i], u2_series[i]];
+            const e_vector = window.SVARMathUtil.multiplyMatrixByVector(B_phi_inv, u_vector);
+            if (e_vector) {
+                temp_e_1t.push(e_vector[0]);
+                temp_e_2t.push(e_vector[1]);
+            }
+        }
+
+        if (temp_e_1t.length === 0 || temp_e_2t.length === 0) return null;
+
+        const term1_products = temp_e_1t.map((val, index) => Math.pow(val, 2) * temp_e_2t[index]);
+        const mean_of_term1_products = window.SVARMathUtil.mean(term1_products);
+        if (mean_of_term1_products === null) return null;
+
+        const term2_products = temp_e_1t.map((val, index) => val * Math.pow(temp_e_2t[index], 2));
+        const mean_of_term2_products = window.SVARMathUtil.mean(term2_products);
+        if (mean_of_term2_products === null) return null;
+
+        return Math.pow(mean_of_term1_products, 2) + Math.pow(mean_of_term2_products, 2);
+    },
+
     calculateAndStoreVWeight: function() {
         const category = 'SVAR_ESTIMATION';
         const EPSILON = 1e-8; // Small constant to prevent division by zero
@@ -636,18 +716,6 @@ window.SVARCoreFunctions = {
     }
 };
 
-// // Example usage (for testing purposes, can be removed or commented out)
-// document.addEventListener('DOMContentLoaded', () => {
-//     if (window.DebugManager) {
-//        DebugManager.setCategory('SVAR_SETUP', true); // Enable logging for this category if not already
-//     }
-//     if (window.SVARCoreFunctions && window.SVARGeneralUtil) {
-//        const T_sample = 10; // Small sample for quick test
-//        console.log(`Attempting to generate epsilons with T_sample = ${T_sample}`);
-//        const epsilons = window.SVARCoreFunctions.generateEpsilon(T_sample);
-//        console.log("Generated Epsilon 1 (first 5):", epsilons.epsilon_1t.slice(0,5));
-//        console.log("Mean Epsilon 1:", window.SVARGeneralUtil.calculateMean(epsilons.epsilon_1t));
-//        console.log("StdDev Epsilon 1:", window.SVARGeneralUtil.calculateStdDev(epsilons.epsilon_1t));
 //        console.log("Generated Epsilon 2 (first 5):", epsilons.epsilon_2t.slice(0,5));
 //        console.log("Mean Epsilon 2:", window.SVARGeneralUtil.calculateMean(epsilons.epsilon_2t));
 //        console.log("StdDev Epsilon 2:", window.SVARGeneralUtil.calculateStdDev(epsilons.epsilon_2t));

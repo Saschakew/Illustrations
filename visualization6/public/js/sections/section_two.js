@@ -129,6 +129,12 @@ async function initializeSectionTwo() {
         DebugManager.error('SEC_TWO_INIT', 'DynamicLatexManager.registerDynamicLatex not available.');
     }
 
+    // Typeset MathJax for the whole section
+    if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        await window.MathJax.typesetPromise([contentArea]);
+    }
+
+
     await updateSectionTwoPlots();
 }
 
@@ -170,7 +176,7 @@ async function updateSectionTwoPlots() {
         for (let i = 0; i <= steps; i++) {
             const current_phi_iter = min_phi + (i / steps) * (max_phi - min_phi);
             phi_range.push(current_phi_iter);
-            const loss = calculateLossForPhi_S2(current_phi_iter, P, u_1t, u_2t);
+                        const loss = window.SVARCoreFunctions.calculateRecursiveLossForPhi(current_phi_iter, P, u_1t, u_2t);
             loss_values.push(loss);
         }
 
@@ -189,37 +195,5 @@ async function updateSectionTwoPlots() {
     }
 }
 
-/**
- * Helper function to calculate the loss for a single phi value.
- * Loss = (mean(e_1t * e_2t))^2, where e_t = inv(P * R(phi)) * u_t
- * @param {number} current_phi_iter - The angle for which to calculate the loss.
- * @param {number[][]} P - The Cholesky factor of the covariance of u_t.
- * @param {number[]} u_1t_series - The first reduced-form shock series.
- * @param {number[]} u_2t_series - The second reduced-form shock series.
- * @returns {number|null} The calculated loss value or null on error.
- */
-function calculateLossForPhi_S2(current_phi_iter, P, u_1t_series, u_2t_series) {
-    const R_phi = window.SVARMathUtil.getRotationMatrix(current_phi_iter);
-    const B_phi = window.SVARMathUtil.matrixMultiply(P, R_phi);
-    if (!B_phi) return null;
 
-    const B_phi_inv = window.SVARMathUtil.invert2x2Matrix(B_phi);
-    if (!B_phi_inv) return null;
 
-    const temp_e_1t = [];
-    const temp_e_2t = [];
-    for (let i = 0; i < u_1t_series.length; i++) {
-        const u_vector = [u_1t_series[i], u_2t_series[i]];
-        const e_vector = window.SVARMathUtil.multiplyMatrixByVector(B_phi_inv, u_vector);
-        if (e_vector) {
-            temp_e_1t.push(e_vector[0]);
-            temp_e_2t.push(e_vector[1]);
-        }
-    }
-
-    if (temp_e_1t.length === 0) return null;
-
-    const products = temp_e_1t.map((val, index) => val * temp_e_2t[index]);
-    const meanOfProducts = window.SVARMathUtil.mean(products);
-    return meanOfProducts !== null ? Math.pow(meanOfProducts, 2) : null;
-}

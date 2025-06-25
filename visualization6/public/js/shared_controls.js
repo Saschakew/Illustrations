@@ -1,3 +1,27 @@
+// Function to update B0 based on isRecursive and log changes
+function updateB0Mode() {
+    if (window.sharedData.isRecursive) {
+        window.sharedData.B0 = [[1, 0], [0.5, 1]]; // Example Recursive B0
+    } else {
+        window.sharedData.B0 = [[1, 0.5], [0.5, 1]]; // Example Non-Recursive B0
+    }
+    DebugManager.log('SVAR_DATA_PIPELINE', `B0 mode updated. isRecursive: ${window.sharedData.isRecursive}, B0:`, JSON.stringify(window.sharedData.B0));
+    
+    // This was part of the original logic, keeping it here.
+    if (typeof window.regeneratePhi0 === 'function') {
+        window.regeneratePhi0(); // Update phi_0 whenever B0 changes
+    } else {
+        DebugManager.log('SVAR_DATA_PIPELINE', 'Warning: window.regeneratePhi0 function not found. Cannot update phi_0.');
+    }
+
+    // After updating B0, we must regenerate the reduced-form shocks
+    if (typeof regenerateReducedFormShocksFromExistingEpsilon === 'function') {
+        regenerateReducedFormShocksFromExistingEpsilon();
+    } else {
+        DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateReducedFormShocksFromExistingEpsilon function not found. Cannot regenerate u_t on B0 change.');
+    }
+}
+
 function initializeSliders() {
     DebugManager.log('SHARED_CONTROLS', 'Initializing sliders...');
 
@@ -108,6 +132,9 @@ function initializeSliders() {
 
     DebugManager.log('SHARED_CONTROLS', 'All relevant sliders initialized or re-initialized.');
 }
+
+// Initialize B0 based on the default mode upon script load
+updateB0Mode();
 
 // Helper function to calculate max lambda based on T
 function calculateLambdaMax(currentT) {
@@ -243,12 +270,12 @@ function initializeLambdaSliders() {
                 window.SVARCoreFunctions.calculateRidgeEstimates();
                 DebugManager.log('SHARED_CONTROLS', 'Recalculated Ridge estimates due to lambda change.');
 
-                // Call the global updateDynamicLatexOutputs function
-                if (typeof updateDynamicLatexOutputs === 'function') {
-                    updateDynamicLatexOutputs(); // Or window.updateDynamicLatexOutputs();
+                // Update dynamic LaTeX displays
+                if (window.DynamicLatexManager && typeof window.DynamicLatexManager.updateAllDynamicLatex === 'function') {
+                    window.DynamicLatexManager.updateAllDynamicLatex();
                     DebugManager.log('SHARED_CONTROLS', 'Updated dynamic LaTeX outputs.');
                 } else {
-                    DebugManager.log('SHARED_CONTROLS', 'ERROR: updateDynamicLatexOutputs function not found globally.');
+                    DebugManager.log('SHARED_CONTROLS', 'ERROR: DynamicLatexManager.updateAllDynamicLatex function not found.');
                 }
 
                 if (window.sectionFour && typeof window.sectionFour.updatePlots === 'function') {
@@ -340,16 +367,7 @@ function initializeModeSwitches() {
                 const newVisualIsChecked = this.checked;
                 DebugManager.log('SHARED_CONTROLS', `Mode changed. Visual: ${newVisualIsChecked ? 'Recursive (checked)' : 'Non-Recursive (unchecked)'}. Model sharedData.isRecursive is now: ${window.sharedData.isRecursive}`);
 
-                if (typeof window.sharedData.updateB0Mode === 'function') {
-                    window.sharedData.updateB0Mode();
-                    if (typeof regenerateReducedFormShocksFromExistingEpsilon === 'function') {
-                        regenerateReducedFormShocksFromExistingEpsilon();
-                    } else {
-                        DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateReducedFormShocksFromExistingEpsilon function not found.');
-                    }
-                } else {
-                    DebugManager.log('SHARED_CONTROLS', 'ERROR: window.sharedData.updateB0Mode() function not found!');
-                }
+                updateB0Mode();
 
                 // Synchronize all other mode switches to the new VISUAL state
                 modeSwitches.forEach(s => {

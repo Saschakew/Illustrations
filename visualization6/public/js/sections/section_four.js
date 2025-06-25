@@ -57,17 +57,17 @@ async function initializeSectionFour() {
     // 4. Estimator Comparison
     const estimatorRidgeHTML = `
     <p>
-        The ridge estimator yields the estimated structural matrix PLACEHOLDER_b_est_ridge_s4_display.
+        The ridge estimator yields the estimated structural matrix <span id="b_est_ridge_s4_display"></span>.
     </p>
-    <p><strong>Compare this estimator to the true \\(B_0\\):</strong> PLACEHOLDER_b_true_s4_display</p>
+    <p><strong>Compare this estimator to the true </strong> <span id="b_0_display_s4"></span></p>
     <ul>
         <li>When the true model is <strong>recursive</strong>, the restriction \\(b_{12}=0\\) is correct. The ridge estimator leverages this by shrinking towards the correct restriction, resulting in a more efficient (lower variance) estimate than the pure non-Gaussian estimator from Section Three.</li>
         <li>When the true model is <strong>non-recursive</strong>, the restriction \\(b_{12}=0\\) is incorrect. The ridge estimator is biased towards this wrong restriction, but the bias is mitigated by the adaptive weight. It strikes a balance between the biased Cholesky estimator and the unbiased but volatile non-Gaussian estimator.</li>
     </ul>
     <p>Use the \\(\\lambda\\) slider to see how the trade-off between bias and variance changes. A small \\(\\lambda\\) trusts the data more, while a large \\(\\lambda\\) imposes the restriction more strongly. The current values for the adaptive weight and the penalty parameter are displayed below. Watch how the weight \(v_{12}\) changes when you draw a new sample of data, and how the overall penalty is controlled by your choice of \\(\\lambda\\).</p>
     <div class="estimate-card">
-        <div class="est-line"><span>Derived weight \(v_{12}\):</span>PLACEHOLDER_v_est_ridge_s4_display</div>
-        <div class="est-line"><span>Penalty \\(\\lambda\\):</span>PLACEHOLDER_lambda_value_s4_display</div>
+        <div class="est-line"> <span>Derived weight \\(v_{12}\\):</span> <span id="v_s4_display"></span></div>
+        <div class="est-line">Penalty \\(\\lambda v  b_{12}^2\\</div>
     </div>
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorRidgeHTML));
@@ -98,11 +98,13 @@ async function initializeSectionFour() {
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(animationsHTML));
 
 
-    // Initialize LaTeX displays
-    if (window.LatexUtils) {
-
+    // Register dynamic LaTeX elements after they have been added to the DOM
+    if (window.DynamicLatexManager && typeof window.DynamicLatexManager.registerDynamicLatex === 'function') {
+        window.DynamicLatexManager.registerDynamicLatex('b_0_display_s4', 'B0', 'displayBEstMatrix', ['B_0']);
+        window.DynamicLatexManager.registerDynamicLatex('b_est_ridge_s4_display', 'B_est_ridge', 'displayBEstMatrix', ['\\hat{B}_{ridge}']);
+        window.DynamicLatexManager.registerDynamicLatex('v_s4_display', 'v', 'displayVWeight', ['v']);
     } else {
-        DebugManager.log('LATEX_UPDATE', 'LatexUtils not available for initial display in Section Four.');
+        DebugManager.error('SEC_ONE_INIT', 'DynamicLatexManager.registerDynamicLatex not available.');
     }
 
     // Typeset MathJax
