@@ -32,6 +32,8 @@ window.sharedData = {
     phi_est_ridge: 0, // Default to 0
     B_est_ridge: [[1, 0], [0, 1]], // Default to identity matrix
 
+    penalty: 0, // ridge penalty lambda*v*b_12^2
+
     // other shared variables can be added here
 };
 
@@ -51,5 +53,6 @@ DebugManager.log('SHARED_DATA', 'Initial phi_est_nG:', window.sharedData.phi_est
 DebugManager.log('SHARED_DATA', 'Initial B_est_nG:', JSON.stringify(window.sharedData.B_est_nG));
 DebugManager.log('SHARED_DATA', 'Initial phi_est_ridge:', window.sharedData.phi_est_ridge);
 DebugManager.log('SHARED_DATA', 'Initial B_est_ridge:', JSON.stringify(window.sharedData.B_est_ridge));
+DebugManager.log('SHARED_DATA', 'Initial penalty:', window.sharedData.penalty);
 
 
