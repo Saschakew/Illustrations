@@ -470,60 +470,11 @@ async function initializeApp() {
     DebugManager.log('MAIN_APP', 'Finished processing UI control placeholders.');
     // --- End of dynamic control creation ---
 
-    const navLinks = document.querySelectorAll('.main-navigation a');
-    const mainNavElement = document.getElementById('main-nav');
-
-    // Smooth scrolling for nav links
-    DebugManager.log('MAIN_APP', 'Initializing smooth scrolling for nav links.');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (!targetId || targetId === '#') return;
-            const targetElement = document.querySelector(targetId);
-            const currentMainNavHeight = mainNavElement ? mainNavElement.offsetHeight : 70;
-
-            if (targetElement) {
-                const elementPosition = targetElement.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - currentMainNavHeight - 20;
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Active link highlighting on scroll
-    DebugManager.log('MAIN_APP', 'Initializing active link highlighting.');
-    const contentSections = document.querySelectorAll('.content-section');
-    const updateActiveLink = () => {
-        let currentSectionId = '';
-        const currentMainNavHeight = mainNavElement ? mainNavElement.offsetHeight : 70;
-
-        contentSections.forEach(section => {
-            if (section.id) {
-                const sectionTop = section.getBoundingClientRect().top + window.pageYOffset;
-                const activationPoint = sectionTop - currentMainNavHeight - 50;
-                if (window.pageYOffset >= activationPoint) {
-                    currentSectionId = section.id;
-                }
-            }
-        });
-
-        navLinks.forEach(link => {
-            link.classList.remove('active-link');
-            const href = link.getAttribute('href');
-            if (href && href.substring(1) === currentSectionId) {
-                link.classList.add('active-link');
-            }
-        });
-    };
-
-    if (contentSections.length > 0) {
-        window.addEventListener('scroll', updateActiveLink);
-        window.addEventListener('resize', updateActiveLink);
-        updateActiveLink(); // Initial check
+    // Initialize navigation features
+    if (window.Navigation && typeof window.Navigation.initializeNavigation === 'function') {
+        window.Navigation.initializeNavigation();
+    } else {
+        DebugManager.error('MAIN_APP', 'Navigation module not found or failed to initialize.');
     }
 
     // Initialize sliders
