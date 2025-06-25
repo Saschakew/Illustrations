@@ -49,8 +49,9 @@ async function initializeSectionFour() {
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(ridgeMainHTML, adaptivePenaltyCalloutHTML));
     
     const CurrentPenaltyHTML = `
-    <p> Based on the non-Gaussian estimator from Section Three, the current adaptive weight is equal to ....insert weight here....
-    Use the \\(\\phi\\) slider to select a matrix ..insert B(phi) here.. and see how the penalty \\(\\lambda \\tilde{b}_{12}^2\\) changes: ...insert penalty here...</p>
+    <p> Based on the non-Gaussian estimator from Section Three, the current adaptive weight is equal to </span> <span id="v_s4_display"></span>.  
+    Use the \\(\\phi\\) slider to select a matrix  <span id="b_phi_display_s4"></span> and see how the penalty \\(\\lambda v_{12} b_{12}^2\\) changes: <span id="penalty_s4_display"></span>. Use the \\(\\lambda\\) slider to see how the tuning parameter affects the penalty.</p>
+     
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(CurrentPenaltyHTML));
 
@@ -65,11 +66,8 @@ async function initializeSectionFour() {
         <li>When the true model is <strong>non-recursive</strong>, the restriction \\(b_{12}=0\\) is incorrect. The ridge estimator is biased towards this wrong restriction, but the bias is mitigated by the adaptive weight. It strikes a balance between the biased Cholesky estimator and the unbiased but volatile non-Gaussian estimator.</li>
     </ul>
     <p>Use the \\(\\lambda\\) slider to see how the trade-off between bias and variance changes. A small \\(\\lambda\\) trusts the data more, while a large \\(\\lambda\\) imposes the restriction more strongly. The current values for the adaptive weight and the penalty parameter are displayed below. Watch how the weight \(v_{12}\) changes when you draw a new sample of data, and how the overall penalty is controlled by your choice of \\(\\lambda\\).</p>
-    <div class="estimate-card">
-        <div class="est-line"> <span>Derived weight \\(v_{12}\\):</span> <span id="v_s4_display"></span></div>
-        <div class="est-line">Penalty  <span id="penalty_s4_display"></span></div>
-        <div class="est-line">B   <span id="b_phi_display_s4"></span></div>
-    </div>
+    
+   
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorRidgeHTML));
 
