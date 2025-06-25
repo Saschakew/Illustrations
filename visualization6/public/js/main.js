@@ -1,36 +1,6 @@
 // main.js
 
-/**
- * Updates all plots across all sections.
- * This function is called whenever underlying data changes.
- */
-async function updateAllPlots() {
-    DebugManager.log('PLOT_RENDERING', 'Attempting to update all plots...');
-    
-    // Update Section One plots if its update function exists
-    if (window.sectionOne && typeof window.sectionOne.updatePlots === 'function') {
-        await window.sectionOne.updatePlots();
-    }
 
-    // Update Section Two plots if its update function exists
-    if (window.sectionTwo && typeof window.sectionTwo.updatePlots === 'function') {
-        await window.sectionTwo.updatePlots();
-    }
-
-    // Update Section Three plots if its update function exists
-    if (window.sectionThree && typeof window.sectionThree.updatePlots === 'function') {
-        await window.sectionThree.updatePlots();
-    }
-
-    // Update Section Four plots if its update function exists
-    if (window.sectionFour && typeof window.sectionFour.updatePlots === 'function') {
-        await window.sectionFour.updatePlots();
-    }
-
-    // ...add other sections here as they get plots
-
-    DebugManager.log('PLOT_RENDERING', 'Finished updating all plots.');
-}
 
 /**
  * Regenerates the full SVAR data pipeline, starting from epsilon_t.
@@ -234,7 +204,7 @@ async function regenerateBPhi() {
             if (window.DynamicLatexManager) {
                 window.DynamicLatexManager.updateAllDynamicLatex();
             }
-            await updateAllPlots(); // Update plots as B(phi) might affect them indirectly or directly
+            // Plots are updated in the finally block of regenerateInnovations, so no need to call here.
         } else {
             DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: B(phi) generation returned null. Resetting B_phi to default.');
             window.sharedData.B_phi = [[1,0],[0,1]]; // Reset B_phi on error
@@ -322,7 +292,7 @@ async function regenerateInnovations() {
         window.sharedData.e_2t = [];
     } finally {
         // This is the end of the data generation chain, so always update all plots.
-        await updateAllPlots();
+        await window.PlotUtils.updateAllPlots();
     }
 }
 /* --- END OF INNOVATIONS e_t GENERATION --- */

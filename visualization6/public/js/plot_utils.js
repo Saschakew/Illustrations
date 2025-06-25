@@ -220,5 +220,37 @@ window.PlotUtils = {
                 });
             }
         }
+    },
+
+    /**
+     * Updates all plots across all sections.
+     * This function is called whenever underlying data changes.
+     */
+    async updateAllPlots() {
+        DebugManager.log('PLOT_RENDERING', 'Attempting to update all plots via PlotUtils...');
+        
+        // Update Section One plots if its update function exists
+        if (window.sectionOne && typeof window.sectionOne.updatePlots === 'function') {
+            await window.sectionOne.updatePlots();
+        }
+
+        // Update Section Two plots if its update function exists
+        if (window.sectionTwo && typeof window.sectionTwo.updatePlots === 'function') {
+            await window.sectionTwo.updatePlots();
+        }
+
+        // Update Section Three plots if its update function exists
+        if (window.sectionThree && typeof window.sectionThree.updatePlots === 'function') {
+            await window.sectionThree.updatePlots();
+        }
+
+        // Update Section Four plots if its update function exists
+        if (window.sectionFour && typeof window.sectionFour.updatePlots === 'function') {
+            await window.sectionFour.updatePlots();
+        }
+
+        // ...add other sections here as they get plots
+
+        DebugManager.log('PLOT_RENDERING', 'Finished updating all plots via PlotUtils.');
     }
 };
