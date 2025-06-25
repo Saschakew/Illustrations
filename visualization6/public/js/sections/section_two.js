@@ -124,7 +124,7 @@ async function initializeSectionTwo() {
         // Register B_est_rec display for Section Two
         window.DynamicLatexManager.registerDynamicLatex('b_est_rec_s2_display', 'B_est_rec', 'displayBEstMatrix', ['B_{REC}']);
         // Register B_phi display for Section Two
-        window.DynamicLatexManager.registerDynamicLatex('b_phi_matrix_s2_display', 'B_phi', 'displayBEstMatrix', ['B(\phi)']);
+        window.DynamicLatexManager.registerDynamicLatex('b_phi_matrix_s2_display', 'B_phi', 'displayBEstMatrix', ['B(\\phi)']);
     } else {
         DebugManager.error('SEC_TWO_INIT', 'DynamicLatexManager.registerDynamicLatex not available.');
     }

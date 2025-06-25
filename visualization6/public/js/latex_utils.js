@@ -164,7 +164,7 @@
                 }
                 return `\( ${vName} = \text{N/A} \)`;
             }
-            return `\( ${vName} = ${vValue.toFixed(precision)} \)`;
+            return ` ${vName} = ${vValue.toFixed(precision)}`;
         },
 
         displayVWeight: function(elementId, vValue, vName = 'v', precision = 3) {
@@ -196,7 +196,7 @@
             if (penaltyValue === null || typeof penaltyValue === 'undefined') {
                  penaltyLatex = `\( ${penaltyName} = \text{Calculating...} \)`;
             } else {
-                penaltyLatex = this.formatVToLatex(penaltyValue, penaltyName, precision);
+                penaltyLatex =  ` \\(\\lambda v  b_{12}^2\\) =  ${penaltyValue.toFixed(precision)} `;
             }
 
             this.updateLatexDisplay(elementId, penaltyLatex);
