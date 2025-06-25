@@ -24,6 +24,18 @@ async function initializeSectionOne() {
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
+    const explainControlsHTML = `
+    <div class="controls-explanation-card">
+        <h4>Interactive Controls</h4>
+        <p><strong>T Slider:</strong> Adjusts the sample size of the generated data.</p>
+        <p><strong>Mode Switch:</strong> Toggles the true data-generating process between a recursive and non-recursive SVAR model.</p>
+        <p><strong>New Data Button:</strong> Generates a new set of random shocks for the given sample size.</p>
+    </div>
+    `;
+    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(explainControlsHTML));
+   
+
+
     // 2. Sub-topic Heading: Model Variants
     contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Data-Generation'));
 
@@ -34,8 +46,9 @@ async function initializeSectionOne() {
         \\(\\eta_{t}\\) are scaled by a time-varying volatility process \\(\\sigma_t\\) and we obtain the structural shocks \\(\\epsilon_t = \\sigma_t
         \\eta_{t}\\). We normalize the shocks to zero mean and unit variance. </p> 
 
-        <p>The reduced-form shocks \\(u_t\\) are equal to  \\(u_t = B_0 \\epsilon_t\\). We consider two variants of the true \\(B_0\\) matrix. The first is the recursive \\(B_0^{\\mathrm{rec}} = \\begin{bmatrix} 1 & 0 \\\\ 0.5 & 1 \\end{bmatrix}\\) and the second is the non-recursive \\(B_0^{\\mathrm{non-rec}} = \\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}\\).</p>
-        <p>The currently active true matrix is: <span id="b0_display_s1"></span>.</p>
+        <p>The reduced-form shocks \\(u_t\\) are equal to  \\(u_t = B_0 \\epsilon_t\\). We consider two variants of the true \\(B_0\\) matrix. The first is the recursive model with \\(B_0^{\\mathrm{rec}} = \\begin{bmatrix} 1 & 0 \\\\ 0.5 & 1 \\end{bmatrix}\\) 
+        and the second is the non-recursive model with \\(B_0^{\\mathrm{non-rec}} = \\begin{bmatrix} 1 & 0.5 \\\\ 0.5 & 1 \\end{bmatrix}\\).</p>
+        <p>The currently active model is: <span id="b0_display_s1"></span>.</p>
     `;
     const DGPNoteHTML = ContentTemplates.buildInfoCallout(
         '<p><strong>Note:</strong> The raw shocks \\(\\eta_t\\) are generated to be mutually independent. However, because they are scaled by a common time-varying volatility process \\(\\sigma_t\\), the resulting structural shocks \\(\\epsilon_t\\) are no longer fully independent. They are, however, designed to be mean independent (i.e., \\(E[\\epsilon_{it} | \\epsilon_{jt}] = 0\\)).</p>',
@@ -44,30 +57,23 @@ async function initializeSectionOne() {
     );
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(DGPHTML, DGPNoteHTML));
 
-    // 4. Explain controls
-    const ExplainControlsHTML = `
-    <div class="controls-explanation-card">
-        <p><strong>Controls Overview:</strong></p>
-        <ul>
-            <li><strong>T Slider:</strong> Adjusts the sample size (number of observations) for the generated data.</li>
-            <li><strong>\\(B_0\\) Switch:</strong> Toggles the true data-generating matrix between a recursive and a non-recursive structure.</li>
-            <li><strong>New Data Button:</strong> Generates a new dataset with the current settings, allowing you to see how results vary across different random draws.</li>
-        </ul>
-    </div>
-    `;
-    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(ExplainControlsHTML, 'explain-controls-row'));
 
+ 
 
-    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Annimations'));
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Animations'));
 
     // 3. B0 Matrix Options Card and Tip Callout
-    const AnnimationsHTML = `
+    const animationsDescHTML = `
     <p><strong>Left Plot (Structural Shocks):</strong> Displays a scatter plot of \\(\\epsilon_{1t}\\) against \\(\\epsilon_{2t}\\). </p>
     <p><strong>Right Plot (Reduced-Form Shocks):</strong> Displays a scatter plot of \\(u_{1t}\\) against \\(u_{2t}\\). These are the shocks as they would be observed in a reduced-form VAR model. Notice how their distribution changes when you toggle \\(B_0\\), illustrating how different mixtures of the structural shocks \\(\\epsilon_t\\) can produce different patterns in the observed reduced-form residuals.</p>
 
-        <p><strong>Observations:</strong> 1. Observe the skewness of \\(\\epsilon_{2t}\\). There are outliers where \\(\\epsilon_{2t}\\) is very large, however, there are no comparable outliers where \\(\\epsilon_{2t}\\) is very small.</p>
     `;
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(AnnimationsHTML));
+    contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(animationsDescHTML));
+
+    const animationsObsHTML = `
+    <p><strong> </strong> 1. Observe the skewness of \\(\\epsilon_{2t}\\). There are outliers where \\(\\epsilon_{2t}\\) is very large, however, there are no comparable outliers where \\(\\epsilon_{2t}\\) is very small.</p>
+    `;
+    contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(animationsObsHTML));
 
     // Register dynamic LaTeX elements after they have been added to the DOM
     if (window.DynamicLatexManager && typeof window.DynamicLatexManager.registerDynamicLatex === 'function') {

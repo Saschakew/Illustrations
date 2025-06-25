@@ -25,6 +25,19 @@ async function initializeSectionThree() {
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
+    
+   // 5. Explain controls
+   const explainControlsHTML = `
+   <div class="controls-explanation-card">
+       <h4>Interactive Controls</h4>
+       <p><strong>T Slider:</strong> Adjusts the sample size of the generated data.</p>
+       <p><strong>&phi; Slider:</strong> Manually select a rotation angle \\(\\phi\\) for the \\(B(\\phi)\\) parameterization.</p>
+       <p><strong>Mode Switch:</strong> Toggles the true data-generating process between a recursive and non-recursive SVAR model.</p>
+       <p><strong>New Data Button:</strong> Generates a new set of random shocks for the given sample size.</p>
+   </div>
+   `;
+   contentArea.appendChild(ContentTemplates.createFullWidthContentRow(explainControlsHTML));
+
     // 2. Sub-topic Heading: Identification via Non-Gaussianity
     contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Identification via Non-Gaussianity'));
 
@@ -46,7 +59,9 @@ async function initializeSectionThree() {
     // 4. Objective Function Content
 
     const objfunctionHTML = `<p>
-            Under the assumption of mean independence, certain higher-order cross-moments of the true structural shocks are zero. For example, the coskewness terms \\(E[\\epsilon_{it}^2 \\epsilon_{jt}]\\) and \\(E[\\epsilon_{it} \\epsilon_{jt}^2]\\) are both zero. We can therefore find the correct rotation angle \\(\\phi\\) by minimizing an objective function built from the sample analogues of these theoretical moment conditions
+            Under the assumption of mean independence, certain higher-order cross-moments of the true structural shocks are zero. For example, the coskewness terms \\(E[\\epsilon_{it}^2 \\epsilon_{jt}]\\) and 
+            \\(E[\\epsilon_{it} \\epsilon_{jt}^2]\\) are both zero. We can therefore find the correct rotation angle \\(\\phi\\) by minimizing an objective function built from the sample analogues of these theoretical moment conditions.
+            The non-Gaussian estimator solves the following optimization problem:
         </p> 
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(objfunctionHTML));
@@ -54,45 +69,58 @@ async function initializeSectionThree() {
     
     
     const objectiveFunctionMainHTML = `
-        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{nG} = argmin_{\\phi}   \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2')}
+        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{nG} = \\operatorname*{argmin}_{\\phi}   \\mathrm{mean}(e(B(\\phi))_{1t}^2 e(B(\\phi))_{2t})^2 + \\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t}^2)^2')}
          `;
     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
 
     const estimatorNGHTML = `
+    <p> that is ....</p>
+
     <p>
-        The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator <span id="b_est_nG_s3_display"></span>.
+        The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator shown below.
     </p>
-    <p><strong>Compare this estimator to the true</strong> <span id="b_true_s3_display"></span></p>
-    <ul>
-        <li>The non-Gaussian estimator is <strong>consistent</strong> for \\(B_0\\) whether the true model is recursive or non-recursive. This makes it a robust alternative when there is uncertainty about the correct zero restrictions.</li>
-        <li>However, because it relies on higher-order moments (like coskewness), it tends to be <strong>less efficient</strong> (i.e., have higher variance) than the Cholesky estimator, especially in small samples. This means its estimates can be more volatile.</li>
-    </ul>
-    <p>This highlights the trade-off: robustness to misspecification versus efficiency when correctly specified.</p>
+    
+    ${ContentTemplates.createEstimatorComparisonRow('b_est_nG_s3_display', 'b_true_s3_display', 'Estimated (Non-Gaussian)', 'True B₀')}
+    
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorNGHTML));
+
+    // Discussion block for Non-Gaussian estimator performance
+    const NGComparisonDiscussionHTML = `
+        <ul>
+            <li>The non-Gaussian estimator is <strong>consistent</strong> for \\(B_0\\) whether the true model is recursive or non-recursive. This makes it a robust alternative when there is uncertainty about the correct zero restrictions.</li>
+            <li>However, because it relies on higher-order moments (like coskewness), it tends to be <strong>less efficient</strong> (i.e., have higher variance) than the Cholesky estimator, especially in small samples. This means its estimates can be more volatile.</li>
+        </ul>
+        <p>This highlights the trade-off: robustness to misspecification versus efficiency when correctly specified.</p>
+    `;
+    contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(NGComparisonDiscussionHTML));
     
    
 
-   
 
     // 7. Sub-topic Heading: Animations
     contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Animations'));
 
     // 8. Animations Description
-    const animationsHTML = `
+    const animationsDescHTML = `
         <p><strong>Left Plot (Innovations):</strong> Displays a scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) against \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
         <p><strong>Right Plot (Objective Function):</strong> Shows the objective function \\(J(\\phi)\\) plotted against a range of \\(\\phi\\) values. 
             A <span style="color: var(--plot-color-current-phi);">blue vertical line</span> indicates the current \\(\\phi\\) selected by the slider. 
             A <span style="color: var(--plot-color-phi0);">red dashed line</span> marks the true \\(\\phi_0\\) (derived from the selected true \\(B_0\\)).
             A <span style="color: var(--plot-color-estimated-phi);">green long-dashed line</span> marks the estimated \\(\\hat{\\phi}_{nG}\\) that minimizes \\(J(\\phi)\\).
         </p>
-        <p><strong>Observations:</strong></p>
+
+    `;
+    contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(animationsDescHTML));
+
+    // Observations block for animations
+    const animationsObsHTML = `
         <ul>
-            <li>Use the \\(\\phi\\) slider to select a rotation angle and see coskewness of the innovations \\(e_t(\\phi)\\) changes.</li>
-            <li>The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) aligns close to the true \\(\\phi_0\\) in the recursive and non-recursive cases.</li> 
+            <li>Use the \\(\\phi\\) slider to select a rotation angle and see coskewness of the innovations \\n            \(e_t(\\phi)\) changes.</li>
+            <li>The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) aligns close to the true \\(\\phi_0\\) in both recursive and non-recursive cases.</li>
         </ul>
     `;
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(animationsHTML));
+    contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(animationsObsHTML));
 
     // Register dynamic LaTeX elements after they have been added to the DOM
     if (window.DynamicLatexManager && typeof window.DynamicLatexManager.registerDynamicLatex === 'function') {
@@ -126,9 +154,9 @@ async function updateSectionThreePlots() {
             'plot_s3_left',
             e_1t,
             e_2t,
-            'Structural Innovations e(φ) (Non-Gaussian ID)',
-            'e_1t',
-            'e_2t'
+            'Innovations ',
+            '\\(e_{1}(\\\\phi)\\)',
+            '\\(e_{2}(\\\\phi)\\)'
         );
     }
 
@@ -164,7 +192,7 @@ async function updateSectionThreePlots() {
             'plot_s3_right',
             phi_range,
             objective_values,
-            'Objective J(φ) (Non-Gaussian ID)',
+            'Loss Function',
             'φ (radians)',
             'Objective Value',
             phi,    // Current phi from slider (verticalLineX)

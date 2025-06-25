@@ -5,10 +5,10 @@ const DebugManager = (() => {
         UI_FACTORY: false,      // Logs from ui_factory.js
         SHARED_CONTROLS: false, // Logs from shared_controls.js
         MAIN_APP: false,        // Logs from main.js (general app flow)
-        DATA_HANDLING: true,   // Logs from shared_data.js or data operations
+        DATA_HANDLING: false,   // Logs from shared_data.js or data operations
         EVENT_HANDLING: false,  // Logs for event listener setup and triggers
         PLOT_RENDERING: false,  // Logs related to Plotly or other plotting libraries
-        SVAR_DATA_PIPELINE: true, // Logs for the SVAR data generation pipeline
+        SVAR_DATA_PIPELINE: false, // Logs for the SVAR data generation pipeline
         SVAR_MATH: false,          // Logs for SVARMathUtil functions (covariance, cholesky, etc.)
         PLOT_UPDATE: false,
         HERO: false,                 // Logs for hero particle events

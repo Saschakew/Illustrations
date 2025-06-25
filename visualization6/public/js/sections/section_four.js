@@ -25,6 +25,19 @@ async function initializeSectionFour() {
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
+     // 5. Explain controls
+     const explainControlsHTML = `
+     <div class="controls-explanation-card">
+         <h4>Interactive Controls</h4>
+         <p><strong>T Slider:</strong> Adjusts the sample size of the generated data.</p>
+         <p><strong>Mode Switch:</strong> Toggles the true data-generating process between a recursive and non-recursive SVAR model.</p>
+         <p><strong>&phi; Slider:</strong> Manually select a rotation angle \\(\\phi\\) for the \\(B(\\phi)\\) parameterization.</p>
+         <p><strong>&lambda; Slider:</strong> Adjusts the tuning parameter for the ridge penalty. A value of 0 effectively turns off the penalty, making this estimator identical to the one in Section Three.</p>
+         <p><strong>New Data Button:</strong> Generates a new set of random shocks for the given sample size.</p>
+     </div>
+     `;
+     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(explainControlsHTML));
+
     // 2. Sub-topic Heading
     contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('The Ridge Estimator'));
 
@@ -33,13 +46,13 @@ async function initializeSectionFour() {
          <p>
             The estimator minimizes a weighted sum of the non-Gaussian objective function and a penalty term, which penalizes deviations from the restriction \\(b_{12}=0\\).  The ridge-regularised objective function is
         </p> 
-        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{ridge} = \\arg\\min_{\\phi}\\, J(\\phi)  +  \\lambda v_{12}  b_{12}(\\phi)^2')} 
+        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{ridge} =  \\operatorname*{argmin}_{\\phi}   \\, J(\\phi)  +  \\lambda v_{12}  B(\\phi)_{12}^2')} 
 
- <p>The first part of the objective function is the non-Gaussian objective function from Section Three, \\(J(\\phi) = \\mathrm{mean}(e_{1t}^2 e_{2t})^2 + \\mathrm{mean}(e_{1t} e_{2t}^2)^2\\), which tries to minimize the dependency between the shocks \\(e_{1t}\\) and \\(e_{2t}\\).
+ <p>The first part of the objective function is the non-Gaussian objective function from Section Three, \\(J(\\phi) = \\mathrm{mean}(e(B(\\phi))_{1t}^2 e(B(\\phi))_{2t})^2 + \\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t}^2)^2\\), which tries to minimize the dependency between the shocks \\(e(B(\\phi))_{1t}\\) and \\(e(B(\\phi))_{2t}\\).
  </p> 
 
-  <p> The second part of the objective function is the penalty \\(\\lambda v_{12}  b_{12}(\\phi)^2\\), which penalizes deviations from the restriction \\(b_{12}=0\\). The tuning parameter \\(\\lambda\\) and the adaptive weight  \\(v_{12}\\) together govern the cost of deviating from the restriction. 
-    The adaptive weight \\(v_{12}\\) is inversely proportional to the size of the \\(b_{12}\\) element from a preliminary, unrestricted estimate (like the one from Section Three), i.e. \\(v_{12} = 1 / \\tilde{b}_{12,nG}^2\\). </p> 
+  <p> The second part of the objective function is the penalty \\(\\lambda v_{12}  B(\\phi)_{12}^2\\), which penalizes deviations from the restriction \\(B(\\phi)_{12}=0\\). The tuning parameter \\(\\lambda\\) and the adaptive weight  \\(v_{12}\\) together govern the cost of deviating from the restriction. 
+    The adaptive weight \\(v_{12}\\) is inversely proportional to the size of the \\(B(\\phi)_{12}\\) element from a preliminary, unrestricted estimate (like the one from Section Three), i.e. \\(v_{12} = 1 / \\tilde{B}_{12,nG}^2\\). </p> 
     `;
     const adaptivePenaltyCalloutHTML = ContentTemplates.buildInfoCallout(
         `<p><strong>Adaptive Weights:</strong> By adaptively weighting the penalty, the ridge estimator navigates the classic bias-variance trade-off. The intuition is simple: if the data strongly suggest the parameter \\(b_{12}\\) is non-zero (i.e., the preliminary estimate \\(\\tilde{b}_{12}\\) is large), its corresponding weight \\(v_{12}\\) will be small. This makes the penalty for deviating from the zero restriction 'cheap'. Conversely, if the data suggest the parameter is close to zero, its weight will be large, making it 'costly' to deviate. This mechanism effectively lets the data guide the shrinkage process.The tuning parameter \\(\\lambda\\) controls the overall strength of this trade-off.</p>`,
@@ -58,43 +71,44 @@ async function initializeSectionFour() {
     // 4. Estimator Comparison
     const estimatorRidgeHTML = `
     <p>
-        The ridge estimator yields the estimated structural matrix <span id="b_est_ridge_s4_display"></span>.
+        The ridge estimator yields the estimated structural matrix shown below.
     </p>
-    <p><strong>Compare this estimator to the true </strong> <span id="b_0_display_s4"></span></p>
-    <ul>
-        <li>When the true model is <strong>recursive</strong>, the restriction \\(b_{12}=0\\) is correct. The ridge estimator leverages this by shrinking towards the correct restriction, resulting in a more efficient (lower variance) estimate than the pure non-Gaussian estimator from Section Three.</li>
-        <li>When the true model is <strong>non-recursive</strong>, the restriction \\(b_{12}=0\\) is incorrect. The ridge estimator is biased towards this wrong restriction, but the bias is mitigated by the adaptive weight. It strikes a balance between the biased Cholesky estimator and the unbiased but volatile non-Gaussian estimator.</li>
-    </ul>
-    <p>Use the \\(\\lambda\\) slider to see how the trade-off between bias and variance changes. A small \\(\\lambda\\) trusts the data more, while a large \\(\\lambda\\) imposes the restriction more strongly. The current values for the adaptive weight and the penalty parameter are displayed below. Watch how the weight \(v_{12}\) changes when you draw a new sample of data, and how the overall penalty is controlled by your choice of \\(\\lambda\\).</p>
     
+    ${ContentTemplates.createEstimatorComparisonRow('b_est_ridge_s4_display', 'b_0_display_s4', 'Estimated (Ridge)', 'True B₀')}
+    
+     
    
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorRidgeHTML));
 
-    // 5. Explain controls
-    const explainControlsHTML = `
-    <div class="controls-explanation-card">
-        <h4>Interactive Controls</h4>
-        <p><strong>Mode Switch:</strong> Toggles the true data-generating process between a recursive and non-recursive \\(B_0\\) matrix.</p>
-        <p><strong>T Slider:</strong> Adjusts the sample size of the generated data.</p>
-        <p><strong>&lambda; Slider:</strong> Adjusts the tuning parameter for the ridge penalty. A value of 0 effectively turns off the penalty, making this estimator identical to the one in Section Three.</p>
-        <p><strong>&phi; Slider:</strong> Manually select a rotation angle \\(\\phi\\) to see how the innovations and objective function change.</p>
-        <p><strong>New Data Button:</strong> Generates a new set of random shocks for the given sample size.</p>
-    </div>
+        // Discussion block for Cholesky estimator performance
+        const RecComparisonDiscussionHTML = `
+        <ul>
+            <li>---.</li>
+            <li>---.</li>
+        </ul>
+        <p>---.</p>
     `;
-    contentArea.appendChild(ContentTemplates.createFullWidthContentRow(explainControlsHTML));
+    contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(RecComparisonDiscussionHTML));
+   
 
-    // 6. Animations and Observations
-    const animationsHTML = `
+    //2. Sub - topic Heading: Model Variants
+    contentArea.appendChild(ContentTemplates.createSubTopicHeadingRow('Animations'));
+    // 6. Animations description
+    const animationsDescHTML = `
         <p><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) vs. \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
         <p><strong>Right Plot (Objective Function):</strong> Shows the ridge objective function, \\(J_{ridge}(\\phi)\\), across different values of \\(\\phi\\). Vertical lines indicate the current \\(\\phi\\), the true \\(\\phi_0\\), and the estimated \\(\\hat{\\phi}_{ridge}\\).</p>
-        <p><strong>Observations:</strong></p>
+    `;
+    contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(animationsDescHTML));
+
+    // Observations block
+    const animationsObsHTML = `
         <ul>
-            <li>Observe how increasing \\(\\lambda\\) influences the shape of \\(J_{ridge}(\\phi)\\) and the resulting \\(\\hat{\\phi}_{ridge}\\). Higher \\(\\lambda\\) values typically lead to a smoother objective function and can pull \\(\\hat{\\phi}_{ridge}\\) towards angles that result in smaller penalty terms.</li>
-            <li>The ridge estimator can be particularly useful when the non-regularized objective function (from Section Three) is noisy or has multiple local minima.</li>
+            <li>Observe how increasing \\(\\lambda\\) influences the shape of \\(J_{ridge}(\\phi)\\) and the resulting \\n            \(\\hat{\\phi}_{ridge}\\). Higher \\(\\lambda\\) values typically smooth the objective function and can pull \n            \(\\hat{\\phi}_{ridge}\\) towards angles that reduce the penalty term.</li>
+            <li>The ridge estimator is particularly helpful when the unregularized objective function (Section Three) is noisy or has multiple local minima.</li>
         </ul>
     `;
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(animationsHTML));
+    contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(animationsObsHTML));
 
 
     // Register dynamic LaTeX elements after they have been added to the DOM
@@ -164,9 +178,9 @@ async function updateSectionFourPlots() {
             'plot_s4_left',
             e_1t,
             e_2t,
-            'Structural Innovations e(φ) (Ridge ID)',
-            'e_1t',
-            'e_2t'
+            'Innovations',
+            '\\(e_{1}(\\\\phi)\\)',
+            '\\(e_{2}(\\\\phi)\\)'
         );
     }
 
@@ -220,7 +234,7 @@ async function updateSectionFourPlots() {
             'plot_s4_right',
             phi_range,
             objective_values,
-            'Ridge Objective J_ridge(φ)',
+            'Loss Function',
             'φ (radians)',
             'Objective Value',
             phi,    // Current phi from slider

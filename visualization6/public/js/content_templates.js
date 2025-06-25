@@ -120,6 +120,61 @@ window.ContentTemplates = (() => {
             // For more robust escaping, a dedicated library might be needed if complex code is common.
             const escapedCode = codeString.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             return `<div class="code-block"><pre><code class="${langClass}">${escapedCode}</code></pre></div>`;
+        },
+
+        /**
+         * Wraps the provided plot description HTML (typically the two-paragraph left/right explanation)
+         * in a standardized full-width row so it can be appended directly to the section content.
+         * Example:
+         *   const descHTML = `
+         *     <p><strong>Left Plot:</strong> …</p>
+         *     <p><strong>Right Plot:</strong> …</p>`;
+         *   contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(descHTML));
+         *
+         * @param {string} innerHTML – HTML for the plot description.
+         * @returns {HTMLElement} The generated row element.
+         */
+        buildLeftRightPlotExplanation: (innerHTML) => {
+            
+            return createRow('left-right-plot-row', `<div class=\"col-lg-12\">${innerHTML}</div>`);
+        },
+
+        /**
+         * Creates a comparison card for displaying estimator vs true value matrices side by side
+         * @param {string} estId - ID for the estimator matrix container
+         * @param {string} trueId - ID for the true matrix container
+         * @param {string} estLabel - Label for the estimator matrix
+         * @param {string} trueLabel - Label for the true matrix
+         * @returns {string} HTML string for the comparison card
+         */
+        createEstimatorComparisonRow: (estId, trueId, estLabel, trueLabel) => {
+            return `
+            <div class="comparison-card">
+              <div class="comparison-col">
+                <h6 class="comp-heading">${estLabel}</h6>
+                <div id="${estId}" class="comp-matrix"></div>
+              </div>
+              <div class="comparison-col">
+                <h6 class="comp-heading">${trueLabel}</h6>
+                <div id="${trueId}" class="comp-matrix"></div>
+              </div>
+            </div>`;
+        },
+
+        /**
+         * Creates a discussion block to accompany an estimator-vs-true comparison.
+         * @param {string} innerHTML - HTML content (e.g., bullet list and explanatory paragraph).
+         * @returns {HTMLElement} The generated row element.
+         */
+        createComparisonDiscussionRow: (innerHTML, heading = 'Observations') => {
+            return createRow('comparison-discussion-row', `
+                <div class="col-lg-12">
+                    <div class="comparison-discussion">
+                        <h6 class="comp-discussion-heading">${heading}</h6>
+                        ${innerHTML}
+                    </div>
+                </div>
+            `);
         }
     };
 })();

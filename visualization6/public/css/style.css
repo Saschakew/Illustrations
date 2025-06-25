@@ -1015,7 +1015,63 @@ body {
 
 }
 
+/* Estimator comparison card styles */
+.comparison-card{
+  display:flex;
+  gap:var(--space-lg);
+  padding:var(--space-md);
+  background:var(--color-background-card);
+  border:1px solid var(--color-border);
+  border-radius:var(--card-border-radius);
+  box-shadow:var(--card-box-shadow);
+  flex-wrap:wrap;
+  margin-bottom: var(--space-md);
+}
+.comparison-col{
+  flex:1 1 200px;
+  text-align:center;
+}
+.comp-heading{
+  font:700 0.9rem/1 var(--font-family-headings);
+  color:var(--color-accent-primary-darker);
+  margin-bottom:var(--space-xs);
+}
+.comp-matrix{
+  font-size:1rem;
+  font-family:'Lato', serif;
+}
+.comparison-card:hover .comp-matrix{
+  background:rgba(0,173,181,0.05);   /* faint teal */
+}
+.comparison-discussion {
+  border-left:4px solid var(--color-primary);
+  background: var(--color-white);
+  padding: var(--space-md);
+  margin-top: var(--space-sm);
+  font-size:0.95rem;
+  box-shadow: var(--card-box-shadow);
+  border-radius: var(--card-border-radius);
+}
+
+.comp-discussion-heading {
+  font: 700 0.95rem/1 var(--font-family-headings);
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.comparison-discussion-row {
+  margin-bottom: var(--space-md);
+}
+
 @media (max-width: 768px) {
+    .comparison-card {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+    .comparison-col {
+        flex: 0 0 auto; /* avoid tall empty space when stacked */
+    }
+
     
     .main-navigation {
         padding: 0 var(--space-md);

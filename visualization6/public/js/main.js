@@ -449,12 +449,7 @@ async function initializeApp() {
     DebugManager.log('MAIN_APP', 'Finished processing UI control placeholders.');
     // --- End of dynamic control creation ---
 
-    // Initialize navigation features
-    if (window.Navigation && typeof window.Navigation.initializeNavigation === 'function') {
-        window.Navigation.initializeNavigation();
-    } else {
-        DebugManager.error('MAIN_APP', 'Navigation module not found or failed to initialize.');
-    }
+    // Navigation features will be initialized once after initializeApp completes.
 
     // Initialize sliders
     if (typeof initializeSliders === 'function') {
@@ -470,12 +465,8 @@ async function initializeApp() {
         DebugManager.log('MAIN_APP', 'ERROR: initializeStickyMenus function not found. Make sure sticky_menu.js is loaded.');
     }
     
-    // Initialize controls toggle buttons
-    if (typeof initializeControlsToggle === 'function') {
-        initializeControlsToggle(); // Initialize collapsible controls
-    } else {
-        DebugManager.log('MAIN_APP', 'ERROR: initializeControlsToggle function not found. Make sure controls_toggle.js is loaded.');
-    }
+    // Controls toggle buttons are initialized within Navigation.initializeNavigation();
+
 
     // Initialize mode switches
     if (typeof initializeModeSwitches === 'function') {

@@ -7,6 +7,10 @@ function initializeControlsToggle() {
     const controlContainers = document.querySelectorAll('.controls-container');
     
     controlContainers.forEach(container => {
+        // Avoid adding duplicate toggle buttons
+        if (container.querySelector('.controls-toggle-btn')) {
+            return; // Toggle button already exists
+        }
         // Create toggle button
         const toggleButton = document.createElement('button');
         toggleButton.className = 'controls-toggle-btn';
