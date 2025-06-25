@@ -184,7 +184,27 @@
             if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
                 DebugManager.log(category, `Updated ${vName} for ${elementId} with LaTeX: ${vLatex}`);
             }
-        }
+        },
+
+        displayPenalty: function(elementId, penaltyValue, penaltyName = 'penalty', precision = 3) {
+            const category = 'LATEX_UPDATE';
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Attempting to display ${penaltyName} in element: ${elementId}`);
+            }
+            
+            let penaltyLatex;
+            if (penaltyValue === null || typeof penaltyValue === 'undefined') {
+                 penaltyLatex = `\( ${penaltyName} = \text{Calculating...} \)`;
+            } else {
+                penaltyLatex = this.formatVToLatex(penaltyValue, penaltyName, precision);
+            }
+
+            this.updateLatexDisplay(elementId, penaltyLatex);
+            if (window.DebugManager && DebugManager.isCategoryEnabled(category)) {
+                DebugManager.log(category, `Updated ${penaltyName} for ${elementId} with LaTeX: ${penaltyLatex}`);
+            }
+        },
+        
     };
 
     // Add a LATEX_UTIL category for lower-level util functions if it doesn't exist

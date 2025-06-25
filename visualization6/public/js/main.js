@@ -71,7 +71,7 @@ async function regenerateSvarData() {
             } else {
                 DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateRidgeEstimates function not found.');
             }
-
+ 
             // Now that u_t is updated, regenerate B(phi)
             await regenerateBPhi();
         } else {
@@ -158,18 +158,8 @@ async function regenerateReducedFormShocksFromExistingEpsilon() {
     }
 }
 
-/**
- * Regenerates the penalty = lambda v b_12^2 matrix using current v lambda and B_phi from sharedData,
- * then stores it back into sharedData.
- */
-async function regeneratePenaltyRidge() {
-    try {
-        const penalty = window.sharedData.lambda * window.sharedData.v * window.sharedData.B_phi[0][1] * window.sharedData.B_phi[0][1];
-        window.sharedData.penalty = penalty;
-    } catch (error) {
-        DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: Failed to regenerate penalty:', error);
-    }
-}
+ 
+
 
 
 /**
@@ -311,45 +301,7 @@ async function regenerateInnovations() {
 }
 /* --- END OF INNOVATIONS e_t GENERATION --- */
 
-function initializeMainMenuToggle() {
-    DebugManager.log('MAIN_APP', 'Initializing main menu toggle...');
-    const mainNav = document.getElementById('main-nav');
-    const navUl = mainNav ? mainNav.querySelector('ul') : null;
 
-    if (!mainNav || !navUl) {
-        DebugManager.log('MAIN_APP', 'ERROR: Main navigation or its UL not found. Cannot create hamburger menu.');
-        return;
-    }
-
-    // Check if toggle button already exists to prevent duplicates during hot reloads/re-initializations
-    if (mainNav.querySelector('.main-nav-toggle')) {
-        DebugManager.log('MAIN_APP', 'Main menu toggle button already exists.');
-        return;
-    }
-
-    const toggleButton = document.createElement('button');
-    toggleButton.className = 'main-nav-toggle';
-    toggleButton.setAttribute('aria-label', 'Toggle navigation');
-    toggleButton.setAttribute('aria-expanded', 'false');
-    toggleButton.setAttribute('aria-controls', 'main-nav-ul'); // Assuming ul will get this id
-
-    const toggleIcon = document.createElement('span');
-    toggleIcon.className = 'main-nav-toggle-icon';
-    toggleButton.appendChild(toggleIcon);
-
-    // Prepend the button to the main-nav container
-    mainNav.prepend(toggleButton);
-    navUl.id = 'main-nav-ul'; // Ensure the ul has an id for aria-controls
-
-    toggleButton.addEventListener('click', () => {
-        const isExpanded = mainNav.classList.toggle('nav-open');
-        toggleButton.classList.toggle('active');
-        toggleButton.setAttribute('aria-expanded', isExpanded.toString());
-        DebugManager.log('MAIN_APP', `Main navigation toggled. Is open: ${isExpanded}`);
-    });
-
-    DebugManager.log('MAIN_APP', 'Main menu toggle initialized.');
-}
 
 document.addEventListener('DOMContentLoaded', async () => {
     DebugManager.log('MAIN_APP', 'DOMContentLoaded event fired.');
@@ -364,6 +316,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     DebugManager.log('MAIN_APP', 'Initializing app...');
     await initializeApp(); // This initializes JS for all sections (0 to 4)
     DebugManager.log('MAIN_APP', 'App initialized.');
+
+    // Initialize all navigation-related features
+    if (window.Navigation && typeof window.Navigation.initializeNavigation === 'function') {
+        DebugManager.log('MAIN_APP', 'Initializing navigation features from main.js');
+        window.Navigation.initializeNavigation();
+    }
 
     // Hide the loading overlay
     const loadingOverlayElement = document.getElementById('loading-overlay');
@@ -568,15 +526,14 @@ async function initializeApp() {
     await regenerateSvarData(); // Regenerate all SVAR data on initial load
     await regeneratePhi0(); // Calculate initial phi_0 based on initial B0
     await regenerateBPhi(); // Also generate B(phi) based on initial phi and u
-    await regeneratePenaltyRidge(); // Also generate penalty based on initial lambda, v, and B_phi
+  
 
     if (typeof initializeNewDataButtons === 'function') {
         initializeNewDataButtons();
     } else {
         DebugManager.log('MAIN_APP', 'ERROR: initializeNewDataButtons function not found. Make sure shared_controls.js is loaded.');
     }
-    // Initialize main menu toggle (hamburger)
-    initializeMainMenuToggle();
+
 
     DebugManager.log('MAIN_APP', 'All initializations complete.');
 
