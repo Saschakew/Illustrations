@@ -67,7 +67,7 @@ async function initializeSectionFour() {
     <p>Use the \\(\\lambda\\) slider to see how the trade-off between bias and variance changes. A small \\(\\lambda\\) trusts the data more, while a large \\(\\lambda\\) imposes the restriction more strongly. The current values for the adaptive weight and the penalty parameter are displayed below. Watch how the weight \(v_{12}\) changes when you draw a new sample of data, and how the overall penalty is controlled by your choice of \\(\\lambda\\).</p>
     <div class="estimate-card">
         <div class="est-line"> <span>Derived weight \\(v_{12}\\):</span> <span id="v_s4_display"></span></div>
-        <div class="est-line">Penalty \\(\\lambda v  b_{12}^2\\</div>
+        <div class="est-line">Penalty \\(\\lambda v  b_{12}^2\\): <span id="penalty_s4_display"></span></div>
     </div>
     `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(estimatorRidgeHTML));
@@ -103,6 +103,7 @@ async function initializeSectionFour() {
         window.DynamicLatexManager.registerDynamicLatex('b_0_display_s4', 'B0', 'displayBEstMatrix', ['B_0']);
         window.DynamicLatexManager.registerDynamicLatex('b_est_ridge_s4_display', 'B_est_ridge', 'displayBEstMatrix', ['\\hat{B}_{ridge}']);
         window.DynamicLatexManager.registerDynamicLatex('v_s4_display', 'v', 'displayVWeight', ['v']);
+        window.DynamicLatexManager.registerDynamicLatex('penalty_s4_display', 'penalty', 'displayPenalty', ['penalty']);
     } else {
         DebugManager.error('SEC_ONE_INIT', 'DynamicLatexManager.registerDynamicLatex not available.');
     }

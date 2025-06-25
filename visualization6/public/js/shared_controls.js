@@ -216,6 +216,7 @@ function initializePhiSliders() {
                 // After phi is updated, regenerate B(phi)
                 if (typeof regenerateBPhi === 'function') {
                     regenerateBPhi();
+                    window.SVARCoreFunctions.calculateRidgePenalty();
                 } else {
                     DebugManager.log('SHARED_CONTROLS', 'ERROR: regenerateBPhi function not found. Cannot regenerate B(phi) on phi change.');
                 }
@@ -268,6 +269,7 @@ function initializeLambdaSliders() {
             // When lambda changes, recalculate Ridge estimates and update relevant displays/plots
             if (window.SVARCoreFunctions && typeof window.SVARCoreFunctions.calculateRidgeEstimates === 'function') {
                 window.SVARCoreFunctions.calculateRidgeEstimates();
+                window.SVARCoreFunctions.calculateRidgePenalty();
                 DebugManager.log('SHARED_CONTROLS', 'Recalculated Ridge estimates due to lambda change.');
 
                 // Update dynamic LaTeX displays

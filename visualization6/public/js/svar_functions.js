@@ -604,6 +604,12 @@ window.SVARCoreFunctions = {
         }
     },
 
+    calculateRidgePenalty: function() {
+        const category = 'SVAR_DATA_PIPELINE';
+        sharedData.penalty = sharedData.lambda * sharedData.v * sharedData.B_phi[0][1] * sharedData.B_phi[0][1];
+        DebugManager.log(category, 'Ridge penalty:', sharedData.penalty);
+    },
+
     /**
      * Calculates and stores the weight v = 1 / (B_est_nG[0][1]^2).
      * Handles potential numerical issues if B_est_nG[0][1] is close to zero.

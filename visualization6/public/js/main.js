@@ -71,6 +71,13 @@ async function regenerateSvarData() {
             } else {
                 DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateRidgeEstimates function not found.');
             }
+
+            // Calculate Ridge penalty now that Ridge estimates are updated
+            if (typeof window.SVARCoreFunctions.calculateRidgePenalty === 'function') {
+                window.SVARCoreFunctions.calculateRidgePenalty();
+            } else {
+                DebugManager.log('SVAR_DATA_PIPELINE', 'ERROR: SVARCoreFunctions.calculateRidgePenalty function not found.');
+            }
  
             // Now that u_t is updated, regenerate B(phi)
             await regenerateBPhi();
