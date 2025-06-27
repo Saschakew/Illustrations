@@ -92,26 +92,55 @@ This is a one-time setup process for a new EC2 instance.
     *   A domain name configured to point to your EC2 instance's public IP.
 
 2.  **Add SSH Deploy Key to GitHub:**
-    *   On the EC2 instance, generate an SSH key: `ssh-keygen -t rsa -b 4096`
-    *   Copy the public key: `cat ~/.ssh/id_rsa.pub`
+    *   On the EC2 instance, generate a new SSH key with a specific name (e.g., `vis6_key`) to avoid overwriting other keys. The `-f` flag specifies the filename.
+        ```bash
+        ssh-keygen -t rsa -b 4096 -f ~/.ssh/vis6_key
+        ```
+    *   Copy the **public** key content. The filename will have `.pub` at the end.
+        ```bash
+        cat ~/.ssh/vis6_key.pub
+        ```
     *   In your GitHub `Illustrations` repository settings, go to `Settings > Deploy Keys > Add deploy key`, paste the key, and give it a title (e.g., "SVAR Visualizer Deploy Key"). Do not check "Allow write access".
 
-3.  **Clone Repository:**
-    *   In the home directory (`~`) on the EC2 instance, clone the repository:
+3.  **Configure SSH to Use the New Key for GitHub:**
+    *   Create or edit the SSH config file to tell Git which key to use for `github.com`.
+        ```bash
+        nano ~/.ssh/config
+        ```
+    *   Add the following block to the file. This ensures that any SSH connection to `github.com` uses your specific key.
+        ```
+        Host github.com
+          HostName github.com
+          User git
+          IdentityFile ~/.ssh/vis6_key
+        ```
+    *   Save and exit the editor (in `nano`, press `Ctrl+X`, then `Y`, then `Enter`).
+    *   Set the correct permissions for the config file for security:
+        ```bash
+        chmod 600 ~/.ssh/config
+        ```
+
+4.  **Clone Repository:**
+    *   Now you can clone the repository from the home directory (`~`), and Git will automatically use the correct key.
         ```bash
         git clone git@github.com:Saschakew/Illustrations.git
         ```
+    *   **Note:** This project resides within the `visualization6` subdirectory of the `Illustrations` repository. The deployment commands below are configured to only use the contents of this specific subdirectory.
 
-4.  **Configure Nginx:**
+5.  **Configure Nginx:**
     *   Create the web directory:
         ```bash
         sudo mkdir -p /var/www/svar-visualizer
         ```
-    *   Create an Nginx configuration file at `/etc/nginx/conf.d/svar-visualizer.conf` (replace `your-domain.com` with your actual domain):
+    *   Create and edit the Nginx configuration file using a command-line text editor like `nano`:
+        ```bash
+        sudo nano /etc/nginx/conf.d/svar-visualizer.conf
+        ```
+    *   Once the editor is open, copy the following `server` block into it, which is pre-filled with your domain name:
         ```nginx
         server {
             listen 80;
-            server_name your-domain.com;
+            server_name KewelohWang2025.sascha-keweloh.com;
             root /var/www/svar-visualizer;
             index index.html;
             location / {
@@ -121,14 +150,14 @@ This is a one-time setup process for a new EC2 instance.
         ```
     *   Test the Nginx configuration: `sudo nginx -t`
 
-5.  **Set Up SSL with Certbot:**
+6.  **Set Up SSL with Certbot:**
     *   Run Certbot to obtain and install an SSL certificate. It will automatically update your Nginx configuration for HTTPS.
         ```bash
         sudo certbot --nginx
         ```
     *   Reload Nginx to apply changes: `sudo systemctl reload nginx`
 
-6.  **Set Final Permissions:**
+7.  **Set Final Permissions:**
     *   Give the Nginx user ownership of the web directory:
         ```bash
         sudo chown -R nginx:nginx /var/www/svar-visualizer
