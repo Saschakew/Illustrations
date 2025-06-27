@@ -44,7 +44,7 @@ async function initializeSectionThree() {
     // 3. Identification Content & Callout
     const identificationMainHTML = `
         <p>
-            When at most one of the structural shocks \\(\\epsilon_{it}\\) is Gaussian, the matrix \\(B_0\\) is identified up to permutation and scaling of the shocks. We seek a rotation angle \\(\\phi\\) that transforms the reduced-form shocks \\(u_t\\) into innovations \\(e_t(\\phi) = B(\\phi)^{-1} u_t\\) that are "as mean independent as possible." This can be achieved by minimizing an objective function based on higher-order moments of \\(e_t(\\phi)\\).
+            When at most one of the structural shocks \\(\\epsilon_{it}\\) is Gaussian, the matrix \\(B_0\\) is identified up to permutation and scaling of the shocks. We seek a rotation angle \\(\\phi\\) that transforms the reduced-form shocks \\(u_t\\) into innovations \\(e_t(\\phi)  \\) that are "as mean independent as possible." This can be achieved by minimizing an objective function based on higher-order moments of \\(e_t(\\phi)\\).
         </p>
         
     `;
@@ -55,7 +55,7 @@ async function initializeSectionThree() {
     );
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(identificationMainHTML, identificationCalloutHTML));
 
-
+    
     // 4. Objective Function Content
 
     const objfunctionHTML = `<p>
@@ -63,18 +63,20 @@ async function initializeSectionThree() {
             \\(E[\\epsilon_{1t} \\epsilon_{2t}^2]\\) are both zero. We can therefore find the correct rotation angle \\(\\phi\\) by minimizing an objective function built from the sample analogues of these theoretical moment conditions.
             The non-Gaussian estimator solves the following optimization problem:
         </p> 
-    `;
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(objfunctionHTML));
+    `; const meanIndepCalloutHTML = ContentTemplates.buildInfoCallout(`
+        <p><strong>Mean Independence vs. Uncorrelatedness:</strong> Uncorrelated shocks satisfy \\(E[e_{1t} e_{2t}] = 0\\) but may still exhibit higher-order dependence. Mean independence tightens this to \\(E[\\epsilon_{it} | \\epsilon_{jt}] = 0\\) (\\(i \\neq j\\)), allowing common volatility while still enabling identification via coskewness. This is the non-Gaussian objective function below depends on the third-order moments highlighted in Proposition&nbsp;1 of the paper.</p>
+    `, false, true);
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(objfunctionHTML, meanIndepCalloutHTML));
     
     
     
     const objectiveFunctionMainHTML = `
-        ${ContentTemplates.buildLatexEquationBlock('\\begin{align*} J(\\phi) &= \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2 \\end{align*}')}
+        ${ContentTemplates.buildLatexEquationBlock('\\begin{align*} \\hat{\\phi}_{nG} &= \\operatorname*{argmin}_{\\phi}   \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2 \\end{align*}')}
          `;
     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
 
     const estimatorNGHTML = `
-    <p> That is, we search for the rotation angle \\(\\phi\\) that minimizes the dependencies of the innovations measured by the squared coskewness terms \\(\\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))\\) and \\(\\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)\\). </p>
+    <p> That is, we search for the rotation angle \\(\\hat{\\phi}_{nG}\\) that minimizes the dependencies of the innovations measured by the squared coskewness terms \\(\\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))\\) and \\(\\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)\\). </p>
 
     <p>
         The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator \\(\\hat{B}_{nG}\\) shown below.
