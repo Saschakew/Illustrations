@@ -1,0 +1,65 @@
+/* === Utility Typographic & Layout Classes (Added 2025-06-15) === */
+
+/* Sub-heading within a section */
+.sub {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.5rem;
+}
+
+/* Context paragraph – light emphasis */
+.context {
+  border-left: 4px solid var(--color-accent-secondary, var(--color-accent-primary));
+  background: #f9fafc;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+/* Tip / interactive instruction */
+.tip {
+  border-left: 4px solid var(--color-accent-primary);
+  background: var(--color-background-card-hover);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+}
+
+/* Model comparison definition list */
+.model-comparison {
+  margin: 1rem 0;
+}
+.model-comparison dt {
+  font-weight: 600;
+}
+.model-comparison dd {
+  margin: 0 0 0.5rem 1.5rem;
+}
+
+/* Improve LaTeX output containers */
+.latex-output-container.card {
+  overflow-x: auto;
+}
+
+/* Inline pill for B(φ) and similar matrix displays */
+.b-matrix-pill {
+  display: inline-block;
+  background: var(--color-background-chip, var(--color-background-card-hover));
+  padding: 0 0.35rem;
+  border-radius: 3px;
+}
+
+/* Estimate card (used where multiple key/value estimates are grouped) */
+.estimate-card.card {
+  padding: 1rem;
+}
+
+/* Align estimate lines: label left, value right */
+.est-line {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.5rem;
+}
+
+/* Consistent spacing between list items */
+ul li {
+  margin-bottom: 0.5rem;
+}

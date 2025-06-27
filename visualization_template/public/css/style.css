@@ -1,0 +1,1319 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Open+Sans:wght@400;600&display=swap');
+
+.controls-explanation-card {
+    background-color: var(--color-background-card);
+    border-left: 4px solid var(--color-accent-primary);
+    box-shadow: var(--card-box-shadow);
+    border-radius: var(--card-border-radius);
+    padding: var(--space-md) var(--space-lg);
+    margin: var(--space-lg) 0;
+}
+
+.controls-explanation-card > p {
+    font-weight: 600;
+    color: var(--color-accent-primary-darker);
+    margin-bottom: var(--space-sm);
+}
+
+.controls-explanation-card ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.controls-explanation-card li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: var(--space-sm);
+}
+
+.controls-explanation-card li::before {
+    content: "\2022"; /* Bullet */
+    color: var(--color-accent-primary);
+    position: absolute;
+    left: 0;
+    top: 0.4rem;
+    font-size: 0.75rem;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:root {
+    /* Light Theme Color Palette (from guide_style.md) */
+    --color-background-page: #F8F9FA;      /* Very Light Gray */
+    --color-background-card: #FFFFFF;       /* White */
+    --color-text-primary: #212529;        /* Almost Black/Very Dark Gray */
+    --color-text-secondary: #6C757D;      /* Medium Gray */
+    --color-accent-primary: #17A2B8;       /* Teal/Cyan */
+    --color-accent-primary-darker: #138496; /* Darker Teal */
+    --color-accent-secondary-plot-loss: #E83E8C; /* Pink/Magenta */
+    --color-accent-secondary-plot-phi: #28A745;  /* Green */
+    --color-accent-tertiary-particles: #FFC107; /* Soft Orange/Amber for particles */
+    --color-border: #DEE2E6;              /* Light Gray */
+    --color-text-on-accent: #FFFFFF;      /* White */
+    --color-slider-track: #E9ECEF;        /* Light Gray */
+    --color-hero-background: linear-gradient(to bottom right, #E0F7FA, #F8F9FA); /* Very Light Cyan to Very Light Gray gradient */
+
+    /* Typography */
+    --font-family-headings: 'Montserrat', sans-serif;
+    --font-family-body: 'Open Sans', sans-serif;
+    --font-size-base: 1rem; /* 16px */
+    --line-height-base: 1.6;
+    --line-height-headings: 1.4; /* Adjusted from 1.3 to 1.4 as per guide range */
+
+    /* Layout & Spacing (using guide's naming convention) */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-xxl: 48px;
+
+    /* Components */
+    --card-border-radius: 8px; /* As per guide */
+    --card-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* As per guide */
+    --nav-height: 70px; /* Adjusted for potentially larger text/padding */
+    --button-border-radius: 6px; /* Guide: 4px or 6px, choosing 6px */
+}
+
+body {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    color: var(--color-text-primary);
+    background-color: var(--color-background-page) !important;
+    margin: 0;
+    /*padding-top: var(--nav-height); /* Space for the fixed main navigation */
+}
+
+a {
+    color: var(--color-accent-primary) !important;
+    text-decoration: none; /* Optional: removes underline */
+    transition: color 0.2s ease;
+}
+
+a:hover, a:focus {
+    color: var(--color-accent-primary-darker);
+    text-decoration: underline; /* Optional: adds underline on hover */
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-lg) 0;
+}
+
+/* Generic Re-usable Heading Style for Sections */
+.section-heading {
+    font: 700 1.75rem/1.3 var(--font-family-headings);
+    color: var(--color-accent-primary-darker);
+    margin-bottom: var(--space-sm);
+    letter-spacing: 0.2px;
+    position: relative;
+}
+.section-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.3em;
+    width: 3rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-primary-darker));
+}
+
+/* --- Section Specific Styling --- */
+.section-text-content {
+    max-width: 100%;
+    overflow-x: hidden; /* Prevent this container itself from overflowing */
+}
+
+
+/* Hero Section Styling */
+.hero-section {
+    background: var(--color-hero-background);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-xxl) var(--space-lg);
+    min-height: 60vh; /* Larger splash */
+    margin-bottom: var(--space-xl);
+    overflow: hidden; /* Hide overflowing content */
+}
+
+/* Particle Canvas inside hero */
+#hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Ensure particles are behind text and other foreground elements */
+    pointer-events: none;
+    /* background-color: red; Diagnostic style removed */
+}
+
+/* Soft fade-out to merge particle canvas into page background */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0; /* full width bottom strip */
+    height: 160px;
+    background: linear-gradient(to bottom, transparent 0%, var(--color-background-page) 90%);
+    pointer-events: none;
+    z-index: 1; /* sits above canvas but below hero text */
+}
+
+.hero-meta {
+    text-align: center;
+    position: relative;
+    z-index: 2; /* above canvas */
+}
+
+.paper-title {
+    font: 700 2.25rem/1.2 var(--font-family-headings);
+    color: var(--color-accent-primary-darker);
+    margin: 0 0 var(--space-md);
+}
+.author-details {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align blocks at the top if text wraps differently */
+    gap: var(--space-lg); /* Space between author blocks */
+    margin-bottom: var(--space-xs);
+}
+
+.author-block {
+    text-align: center;
+}
+
+.author-name {
+    font-weight: 600; /* Slightly bolder for names */
+    margin: 0 0 var(--space-xxs); /* Minimal space between name and affiliation */
+}
+
+.author-affiliation {
+    font-size: 0.9rem; /* Slightly smaller for affiliation */
+    margin: 0;
+}
+
+.paper-journal, /* Keep styling for journal, remove old paper-authors/affil */
+.paper-authors, /* Retain for potential future single-line use, but not primary for this layout */
+.paper-affil { /* Retain for potential future single-line use, but not primary for this layout */
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 0.95rem;
+}
+/* .paper-authors { margin-bottom: var(--space-xs); } */ /* Handled by author-details margin */
+/* .paper-affil   { margin-bottom: var(--space-xs); } */ /* Handled by author-details margin */
+
+/* legacy selector remains for backwards compatibility */
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-wave path {
+    animation: waveShift 12s linear infinite;
+    transform-origin: center;
+}
+
+@keyframes waveShift {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.hero-section .hero-title, /* Assuming h1 or a class for hero title */
+.hero-section h1 {
+    font-family: var(--font-family-headings);
+    font-size: 2.8rem; /* ~45px, guide: ~2.8rem - 3rem */
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: var(--line-height-headings);
+    margin-bottom: var(--space-sm);
+}
+
+.hero-section .hero-title .accent-text,
+.hero-section h1 .accent-text {
+    color: var(--color-accent-primary);
+}
+
+.hero-section .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-base);
+}
+
+/* Main Navigation */
+.main-navigation {
+    background-color: var(--color-background-card); /* Using card color for nav */
+    height: var(--nav-height);
+    padding: 0 var(--space-lg); /* Increased padding */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Softer shadow */
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+.main-navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.main-navigation li {
+    margin: 0 var(--space-md);
+}
+
+.main-navigation a {
+    font-family: var(--font-family-headings);
+    color: var(--color-text-secondary); /* Secondary text for non-active */
+    text-decoration: none;
+    font-weight: 500; /* Montserrat medium */
+    font-size: 0.9rem;
+    padding: var(--space-sm) 0;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.main-navigation a:hover,
+.main-navigation a:focus {
+    color: var(--color-accent-primary);
+}
+
+.main-navigation a.active-link {
+    color: var(--color-accent-primary);
+    font-weight: 700; /* Montserrat bold */
+    border-bottom: 2px solid var(--color-accent-primary);
+}
+
+/* Permanently hide the main navigation menu */
+.main-navigation {
+    display: none !important;
+}
+
+/* Code and LaTeX Containers */
+.code-block {
+    background-color: var(--color-background-code);
+    border-radius: var(--card-border-radius);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    overflow-x: auto;
+}
+
+.code-block pre {
+    margin: 0;
+}
+
+.code-block code {
+    font-family: var(--font-family-monospace);
+    font-size: 0.9em;
+}
+
+.latex-equation {
+    text-align: center;
+    padding-top: var(--space-lg);
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 10px; /* For scrollbar spacing */
+    margin-bottom: var(--space-lg);
+    overflow-x: auto;   /* Add horizontal scrollbar if content overflows */
+    overflow-y: hidden; /* Prevent vertical scrollbar */
+}
+
+/* Content Sections (Cards) */
+.content-section {
+    margin-bottom: var(--space-xl); /* guide: space-lg or space-xl */
+    padding: var(--space-lg);    /* guide: space-lg or space-xl */
+    background-color: var(--color-background-card);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
+}
+
+/* Intro Section (Section Zero) */
+.intro-section {
+    background-color: var(--color-background-page);
+    border: none;
+    box-shadow: none;
+    text-align: center;
+    padding: calc(var(--space-xl) * 1.5) var(--space-lg);
+}
+
+.intro-section h2 {
+    font-size: 2rem; /* Larger heading */
+    margin-bottom: var(--space-lg);
+    color: var(--color-accent-primary);
+}
+
+.intro-section p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.intro-section ul {
+    list-style: disc inside;
+    max-width: 800px;
+    margin: var(--space-md) auto;
+    padding-left: 0;
+    text-align: left;
+}
+
+.intro-section li {
+    margin-bottom: var(--space-sm);
+}
+
+.section-supertitle {
+    font-size: 0.8rem; /* 12.8px, guide: ~13px */
+    font-weight: 600; /* Open Sans Semibold */
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    margin-bottom: var(--space-xs);
+    display: block;
+}
+
+.content-section h2, .section-title {
+    font-family: var(--font-family-headings);
+    font-size: 1.75rem; /* 28px, as per guide */
+    font-weight: 700; /* Montserrat Bold */
+    color: var(--color-accent-primary);
+    margin-top: 0;
+    margin-bottom: var(--space-lg);
+    line-height: var(--line-height-headings);
+}
+
+/* === New Typographic & Content Elements (Added 2025-07-01) === */
+
+/* Section Introduction Paragraph */
+.section-intro {
+    font-size: 1.1rem;
+    /* Slightly larger than base */
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    /* Softer color for intro */
+    margin-bottom: var(--space-lg); 
+    /* Optimal line length */
+}
+
+/* Sub-Topic Heading (e.g., for h3 or h4 level topics within a section) */
+.sub-topic-heading {
+    font-family: var(--font-family-headings);
+    font-size: 1.3rem; /* Between base and section title */
+    font-weight: 600; /* Montserrat semibold or similar */
+    color: var(--color-text-primary);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+    max-width: 75ch;
+}
+
+/* Informational Callout (for tips, notes, definitions) */
+.info-callout {
+    background-color: #f0f7fa; /* Very light blue/cyan, derived from hero gradient */
+    border-left: 4px solid var(--color-accent-primary);
+    padding: var(--space-md); 
+    border-radius: var(--card-border-radius); /* Consistent with other cards */
+    font-size: 0.95rem;
+    max-width: 75ch;
+    height: fit-content; /* Ensure height wraps content */
+    align-self: start;   /* Prevent stretching in flex/grid containers */
+}
+.info-callout p:last-child {
+    margin-bottom: 0;
+}
+.info-callout strong, .info-callout b { /* Emphasize titles within callouts */
+    color: var(--color-accent-primary-darker);
+    font-weight: 600;
+}
+
+/* Refined Estimate Card */
+.estimate-card { /* Assuming this class is on a div wrapping the estimates */
+    background-color: var(--color-background-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
+    margin: var(--space-lg) 0;
+    max-width: 60ch; /* Cards might be narrower */
+}
+.estimate-card .card-title { /* Optional title for the card */
+    font-family: var(--font-family-headings);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+.est-line { /* For individual key-value lines within the estimate card */
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: var(--space-sm) 0;
+    border-bottom: 1px dashed var(--color-border);
+    font-size: 0.95rem;
+}
+.est-line:last-child {
+    border-bottom: none;
+}
+.est-line .est-label {
+    color: var(--color-text-secondary);
+    margin-right: var(--space-md);
+    flex-shrink: 0;
+}
+.est-line .est-value {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-align: right;
+    flex-grow: 1;
+    word-break: break-all; /* Prevent long values from breaking layout */
+}
+.est-line .b-matrix-pill {
+    font-weight: normal; /* Override potential inherited bold from .est-value */
+}
+
+/* Plot Caption */
+.plot-caption {
+    font-size: 0.875rem; /* 14px */
+    color: var(--color-text-secondary);
+    text-align: center;
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    line-height: 1.5;
+    max-width: 70ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+.plot-caption strong, .plot-caption b {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+/* Refined .b-matrix-pill (was in paragraph_util.css) */
+.b-matrix-pill {
+  display: inline-block;
+  background: #e9ecef; /* Using --color-slider-track for a neutral light gray */
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  line-height: 1.2;
+  color: var(--color-text-primary);
+  margin: 0 0.1em;
+  vertical-align: baseline;
+}
+
+/* General prose styling improvements within content sections */
+.content-section > p, /* Direct children paragraphs */
+.content-section > ul,
+.content-section > ol,
+.content-section > .info-callout > p, /* Paragraphs inside callouts */
+.content-section > .section-intro /* Ensure section intro also adheres */
+ {
+    max-width: 75ch; /* Optimal line length for readability */
+    /* If the content-section is not centered, add margin: auto for these text blocks */
+    /* margin-left: auto; margin-right: auto; */ /* This might be too aggressive globally */
+}
+
+.content-section p,
+.content-section ul,
+.content-section ol {
+    margin-bottom: var(--space-md); /* Consistent paragraph/list spacing */
+}
+.content-section ul, .content-section ol {
+    padding-left: var(--space-lg); /* Indent lists */
+}
+.content-section li {
+    margin-bottom: var(--space-sm); /* Consistent list item spacing */
+}
+
+/* Ensure Katex rendered math also respects text color */
+.katex {
+    color: var(--color-text-primary);
+}
+
+
+/* Controls Area */
+.controls-placeholder {
+    height: 1px;
+    margin-top: -1px;
+}
+.controls-container {
+    background-color: var(--color-background-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-border-radius);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--card-box-shadow);
+    border: 1px solid var(--color-border);
+    position: relative;
+}
+
+.controls-container.sticky-menu {
+    position: fixed;
+    background-color: var(--color-background-card);
+    z-index: 900;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+    border-radius: var(--card-border-radius);
+    border: 1px solid var(--color-border);
+}
+
+.controls-row {
+    display: flex;
+    flex-wrap: nowrap; /* Default: prevent wrapping */
+    gap: var(--space-lg);
+    align-items: center; /* Better vertical alignment */ 
+    justify-content: space-between; /* Distribute items evenly */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    padding-bottom: var(--space-sm); /* Add space for scrollbar */
+}
+
+.control-item {
+    display: flex; /* Keep children inline */
+    align-items: center; 
+    min-width: fit-content; /* Prevent items from shrinking too much */
+    flex-wrap: nowrap; /* Prevent wrapping inside control */
+}
+
+.control-item label {
+    font-size: 0.875rem; /* 14px, as per guide */
+    font-weight: 600; /* Open Sans Semibold */
+    color: var(--color-text-primary);
+}
+
+.control-item input[type="number"],
+.control-item input[type="text"],
+.control-item select {
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background-card);
+    color: var(--color-text-primary);
+    border-radius: var(--button-border-radius); /* Using button radius for consistency */
+    font-family: var(--font-family-body);
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.control-item input[type="number"]:focus,
+.control-item input[type="text"]:focus,
+.control-item select:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-accent-primary), 0.25);
+}
+
+/* Sliders */
+.control-item input[type="range"] {
+    width: 180px; /* Increased width */
+    height: 8px; /* Track height guide: 6-8px */
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-slider-track);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.control-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px; /* Thumb diameter guide: 16-18px */
+    height: 18px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    border: 2px solid var(--color-background-card); /* Optional: border to lift thumb */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.control-item input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--color-accent-primary);
+    border-radius: 50%;
+    border: 2px solid var(--color-background-card);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.control-item output {
+    font-size: 0.875rem; /* 14px, as per guide */
+    font-weight: 400; /* Open Sans Regular */
+    color: var(--color-text-secondary); 
+    min-width: 30px; /* Ensure space for values */
+    text-align: right;
+}
+
+/* Toggle Switch for B₀ Mode */
+.mode-switch-control { /* Container for the B0 label and the toggle */
+    display: flex;
+    align-items: center; /* Vertically align B0 label and toggle */ 
+}
+
+.mode-prefix-label { /* The "B0=" label */
+    font-weight: 600; /* Match other control labels */
+    font-size: 0.875rem; /* Match other control labels */
+    color: var(--color-text-primary);
+    margin-right: var(--space-xs);
+}
+
+.mode-switch-toggle {
+    position: relative;
+    display: inline-block;
+    width: 260px; /* Increased width to fit 'Non-Recursive' */
+    height: 34px;
+}
+
+.mode-switch-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.mode-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-background-card);
+    border: 1px solid var(--color-border);
+    transition: .4s;
+    border-radius: 22px;
+    width: 100%; /* Fills the toggle container and preserves rounded ends */
+    overflow: hidden; /* Clip inner highlight for clean rounding */
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; /* Removed */
+    /* padding: 0 10px; /* Removed */
+}
+
+.mode-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: calc(100% - 4px); /* Full height minus border of parent */
+    width: 126px; /* 50% width minus inner gaps */
+    left: 2px; /* Offset for border */
+    bottom: 2px; /* Offset for border */
+    background-color: var(--color-accent-primary);
+    transition: .4s;
+    border-radius: 22px; /* Match outer slider radius for rounded corners */
+    z-index: 1;
+}
+
+.mode-switch-toggle input:checked + .mode-switch-slider:before {
+    transform: translateX(130px);
+}
+
+.mode-switch-toggle .mode-label {
+    white-space: nowrap; /* Prevent line breaks */
+    color: var(--color-text-secondary); /* Default color for non-active labels */
+    font-size: 0.875rem;
+    font-weight: 600;
+    z-index: 2;
+    position: relative;
+    width: 50%; /* Changed from 85px to 50% */
+    text-align: center;
+    transition: color 0.4s;
+}
+
+.mode-switch-toggle input:checked + .mode-switch-slider .non-recursive-label,
+.mode-switch-toggle input:not(:checked) + .mode-switch-slider .recursive-label {
+    color: var(--color-text-on-accent); /* Active label color */
+}
+
+.mode-switch-control { 
+    align-items: center; 
+}
+
+/* Mode Switch (styling for a select element, can be enhanced with custom control later) */
+.mode-switch select {
+    /* Uses general input styling above */
+    font-weight: 600; /* Semibold for Open Sans */
+}
+
+/* Plot Container */
+.plot-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.plots-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+}
+
+.plot-area {
+    flex-basis: calc(50% - (var(--space-lg) / 2));
+    min-width: 300px;
+    height: 400px; /* Or make aspect-ratio based if desired */
+    background-color: var(--color-background-card);  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.plot-area .plot-title {
+    font-family: var(--font-family-headings);
+    font-size: 0.9rem; /* guide: 0.875rem - 0.9rem */
+    font-weight: 500; /* Montserrat Medium */
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-sm);
+}
+
+/* Ensure Plotly's internal elements respect the .plot-area dimensions */
+.plot-area .js-plotly-plot,
+.plot-area .plot-container.plotly,
+.plot-area .svg-container {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.plot-area .main-svg {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: var(--space-lg) 0; /* guide: space-md or space-lg */
+    margin-top: var(--space-xl);
+    font-size: 0.8rem; /* 12.8px, guide: ~13px */
+    color: var(--color-text-secondary);
+    background-color: var(--color-background-page); /* As per guide */
+    border-top: 1px solid var(--color-border);
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+/* Buttons */
+.btn {
+    font-family: var(--font-family-body); /* Guide: Open Sans */
+    padding: 10px 20px; /* guide: ~10px 20px */
+    font-size: 0.9rem;
+    font-weight: 600; /* Open Sans Semibold */
+    border-radius: var(--button-border-radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease, transform 0.1s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-primary {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border-color: var(--color-accent-primary);
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--color-accent-primary-darker);
+    border-color: var(--color-accent-primary-darker);
+    color: var(--color-text-on-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-accent-primary);
+    border: 1px solid var(--color-accent-primary);
+}
+.btn-secondary:hover, .btn-secondary:focus {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border-color: var(--color-accent-primary);
+}
+
+/* New Data Button - accent style */
+.btn.new-data-button {
+    background-color: var(--color-accent-primary);
+    color: var(--color-text-on-accent);
+    border: 1px solid var(--color-accent-primary);
+    padding: 8px 18px; /* slightly tighter than generic */
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: var(--button-border-radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn.new-data-button:hover,
+.btn.new-data-button:focus {
+    background-color: var(--color-accent-primary-darker);
+    border-color: var(--color-accent-primary-darker);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
+}
+
+.btn.new-data-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* MathJax specific styling if needed */
+.MathJax {
+    color: var(--color-text-primary) !important; /* Ensure MathJax inherits primary text color */
+}
+
+/* Responsive adjustments */
+/* Controls toggle button */
+.controls-toggle-btn { 
+    top: 12px; /* Adjusted for better alignment */
+    right: 12px; /* Adjusted for better alignment */
+    width: 32px;
+    height: 32px;
+    border-radius: var(--button-border-radius); /* Rounded square */
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 0;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.controls-toggle-btn:hover,
+.controls-toggle-btn:focus {
+    background-color: var(--color-background-card-hover);
+    border-color: var(--color-border-strong); /* Or a slightly darker border */
+    outline: none; /* Remove default focus outline if custom is applied */
+}
+
+.toggle-icon {
+    position: relative;
+    width: 16px; /* Adjusted width */
+    height: 2px;
+    background-color: var(--color-text-primary);
+    transition: all 0.3s ease;
+}
+
+.toggle-icon::before,
+.toggle-icon::after {
+    content: '';
+    position: absolute;
+    left: 0; /* Ensure alignment */
+    width: 16px; /* Adjusted width */
+    height: 2px;
+    background-color: var(--color-text-primary);
+    transition: all 0.3s ease;
+}
+
+.toggle-icon::before {
+    transform: translateY(-5px); /* Adjusted spacing */
+}
+
+.toggle-icon::after {
+    transform: translateY(5px); /* Adjusted spacing */
+}
+
+.controls-toggle-btn.active .toggle-icon {
+    background-color: transparent;
+}
+
+.controls-toggle-btn.active .toggle-icon::before {
+    transform: rotate(45deg);
+}
+
+.controls-toggle-btn.active .toggle-icon::after {
+    transform: rotate(-45deg);
+}
+
+/* Collapsed state */
+.controls-container.collapsed .controls-row {
+    display: none;
+}
+
+/* Main Navigation Mobile Styles */
+.main-nav-toggle {
+    display: none; /* Hidden by default, shown in media query */
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index: 1001; /* Above nav content */
+}
+
+.main-nav-toggle-icon {
+    display: block;
+    position: relative;
+    width: 24px; /* Hamburger icon width */
+    height: 2px; /* Thickness of the lines */
+    background-color: var(--color-text-primary);
+    transition: all 0.2s ease-in-out;
+}
+
+.main-nav-toggle-icon::before,
+.main-nav-toggle-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px; /* Thickness of the lines */
+    background-color: var(--color-text-primary);
+    transition: all 0.2s ease-in-out;
+}
+
+.main-nav-toggle-icon::before {
+    transform: translateY(-7px); /* Space between lines */
+}
+
+.main-nav-toggle-icon::after {
+    transform: translateY(7px); /* Space between lines */
+}
+
+/* Active state for hamburger (X) */
+.main-nav-toggle.active .main-nav-toggle-icon {
+    background-color: transparent; /* Middle line disappears */
+}
+
+.main-nav-toggle.active .main-nav-toggle-icon::before {
+    transform: translateY(0) rotate(45deg);
+}
+
+.main-nav-toggle.active .main-nav-toggle-icon::after {
+    transform: translateY(0) rotate(-45deg);
+}
+
+/* Ensure controls toggle button is visible and controls are collapsed by default on small screens, and handle overflow for controls-row on larger screens */
+@media (min-width: 769px) {
+    .controls-toggle-btn {
+        display: none !important;
+    }
+    .controls-container.collapsed .controls-row {
+        display: flex;
+    }
+    .controls-row {
+        flex-wrap: wrap; /* Allow wrapping on large screens */
+        overflow-x: visible; /* No need for horizontal scroll when wrapping */
+        padding-bottom: 0; /* Remove scrollbar padding */
+    }
+
+}
+
+/* Estimator comparison card styles */
+.comparison-card{
+  display:flex;
+  gap:var(--space-lg);
+  padding:var(--space-md);
+  background:var(--color-background-card);
+  border:1px solid var(--color-border);
+  border-radius:var(--card-border-radius);
+  box-shadow:var(--card-box-shadow);
+  flex-wrap:wrap;
+  margin-bottom: var(--space-md);
+}
+.comparison-col{
+  flex:1 1 200px;
+  text-align:center;
+}
+.comp-heading{
+  font:700 0.9rem/1 var(--font-family-headings);
+  color:var(--color-accent-primary-darker);
+  margin-bottom:var(--space-xs);
+}
+.comp-matrix{
+  font-size:1rem;
+  font-family:'Lato', serif;
+}
+.comparison-card:hover .comp-matrix{
+  background:rgba(0,173,181,0.05);   /* faint teal */
+}
+.comparison-discussion {
+  border-left:4px solid var(--color-primary);
+  background: var(--color-white);
+  padding: var(--space-md);
+  margin-top: var(--space-sm);
+  font-size:0.95rem;
+  box-shadow: var(--card-box-shadow);
+  border-radius: var(--card-border-radius);
+}
+
+.comp-discussion-heading {
+  font: 700 0.95rem/1 var(--font-family-headings);
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.comparison-discussion-row {
+  margin-bottom: var(--space-md);
+}
+
+@media (max-width: 768px) {
+    .comparison-card {
+        flex-direction: column;
+        gap: var(--space-md);
+    }
+    .comparison-col {
+        flex: 0 0 auto; /* avoid tall empty space when stacked */
+    }
+
+    
+    .main-navigation {
+        padding: 0 var(--space-md);
+        justify-content: space-between; /* Logo on left, hamburger on right */
+    }
+
+    .main-navigation .main-nav-toggle {
+        display: block; /* Show hamburger on mobile */
+    }
+
+    /* Styles for the navigation list (ul) in mobile view */
+    .main-navigation ul {
+        display: none; /* Hide nav links by default on mobile */
+        flex-direction: column;
+        position: absolute;
+        top: var(--nav-height); /* Position below the nav bar */
+        left: 0;
+        width: 100%;
+        background-color: var(--color-background-card); /* Or var(--color-background) */
+        padding: var(--space-md) 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 1000; /* Ensure it's above content below */
+    }
+
+    /* When the navigation is open, show the list */
+    .main-navigation.nav-open ul {
+        display: flex;
+    }
+
+    /* Styles for list items (li) in mobile view */
+    .main-navigation li {
+        margin: 0; /* Remove default margins */
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Styles for links (a) in mobile view */
+    .main-navigation a {
+        display: block;
+        padding: var(--space-md) var(--space-lg);
+        border-bottom: 1px solid var(--color-border-light); /* Separator for links */
+        width: 100%; /* Make links take full width */
+        /* Inherit general link styles from above, or redefine as needed */
+    }
+    
+    /* Hover, focus, and active states for links in mobile view */
+    .main-navigation a:hover,
+    .main-navigation a:focus,
+    .main-navigation a.active-link {
+        background-color: var(--color-background-card-hover);
+        color: var(--color-accent-primary);
+        border-bottom-color: var(--color-accent-primary); /* Highlight active/hovered link's border */
+    }
+
+    .controls-container.sticky-menu {
+        top: var(--nav-height);
+    }
+    .controls-container {
+        padding: var(--space-sm);
+    }
+    .controls-row { 
+        align-items: stretch;
+        flex-wrap: wrap;
+        overflow: hidden;
+    } 
+    .control-item input[type="range"] {
+        width: 180px; /* Preserve compact width on small screens */
+    }
+
+/* === Layout Enhancements (2025-06-15) === */
+/* 1. Constrain overall section width and center page content */
+.content-section {
+    max-width: 960px;               /* readable line length */
+    margin: 3rem auto;              /* vertical rhythm + center */
+    padding:   1.25rem;             /* horizontal breathing room */
+
+    /* 2-column grid: controls left (fixed), content right (auto) */
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    column-gap: 24px;
+}
+
+/* Full-width heading spans both columns */
+.content-section > h2 {
+    grid-column: 1 / -1;
+}
+
+/* Controls in column 1 */
+.content-section > .controls-container {
+    grid-column: 1;
+}
+
+/* Everything after controls flows into column 2 */
+.content-section > .controls-container ~ * {
+    grid-column: 2;
+}
+
+/* Mobile: collapse to single column */
+@media (max-width: 900px) {
+    .content-section {
+        grid-template-columns: 1fr;
+    }
+    .content-section > .controls-container {
+        grid-column: 1;
+    }
+    .content-section > .controls-container ~ * {
+        grid-column: 1;
+    }
+}
+
+/* 3. Prose typography for better readability */
+.prose,
+.content-section p {
+    max-width: 65ch;    /* ~65 characters per line */
+    line-height: 1.65;  /* relaxed line spacing */
+    margin-bottom: 1rem;
+}
+
+/* Keep cards and plots from stretching full width in grid */
+.plot-container.card,
+.latex-output-container.card,
+.plot-area {
+    max-width: 100%;
+}
+
+    .plot-area {
+        flex-basis: 100%;
+    }
+    .hero-section .hero-title,
+    .hero-section h1 {
+        font-size: 2.2rem;
+    }
+    .content-section h2, .section-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Loading Overlay Styles */
+#loading-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: var(--space-xxl) 0; /* Add some padding when it's inside main-content */
+    min-height: 30vh; /* Give it some minimum height to stabilize content */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-speed-normal) ease-out, visibility var(--transition-speed-normal) ease-out;
+}
+
+#loading-overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    display: none !important; /* Ensure it's removed from layout when hidden */
+}
+
+.loading-spinner {
+    border: 8px solid var(--color-slider-track); /* Light gray for track */
+    border-top: 8px solid var(--color-accent-primary); /* Accent for spinner */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Initial visibility for navigation and footer */
+.main-navigation,
+.footer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed-slow) ease-in-out;
+}
+
+/* Ensure main-content itself is visible by default */
+#main-content {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- Content Loading Transition --- */
+
+/* Initially, hide all content sections that are NOT section-zero.
+   We use max-height for a smooth collapse/expand transition. */
+.content-section:not(#section-zero) {
+    opacity: 0;
+    visibility: hidden;
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Section zero is always visible and does not transition. */
+#section-zero {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* When the main content area is marked as 'loaded', reveal the sections. */
+#main-content.loaded .content-section:not(#section-zero) {
+    opacity: 1;
+    visibility: visible;
+    max-height: 5000px; /* Large enough to not clip content */
+    /* Restore original spacing from .content-section rule */
+    margin: 3rem auto;
+    padding: 1.25rem;
+    border-width: 1px;
+}
+
+/* Also handle the fade-in for nav and footer */
+.main-navigation,
+.footer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-in-out 0.2s; /* Delay slightly */
+}
+
+.main-navigation.loaded,
+.footer.loaded {
+    opacity: 1;
+    visibility: visible;
+}
