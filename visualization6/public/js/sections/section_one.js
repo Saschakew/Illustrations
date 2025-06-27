@@ -70,8 +70,10 @@ async function initializeSectionOne() {
     `;
     contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(animationsDescHTML));
 
-    const animationsObsHTML = `
-    <p><strong> </strong> 1. Observe the skewness of \\(\\epsilon_{2t}\\). There are outliers where \\(\\epsilon_{2t}\\) is very large, however, there are no comparable outliers where \\(\\epsilon_{2t}\\) is very small.</p>
+    const animationsObsHTML = ` 
+    <ul>
+     <li>Observe the skewness of \\(\\epsilon_{2t}\\). There are outliers where \\(\\epsilon_{2t}\\) is very large, however, there are no comparable outliers where \\(\\epsilon_{2t}\\) is very small.</li>
+    </ul> 
     `;
     contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(animationsObsHTML));
 

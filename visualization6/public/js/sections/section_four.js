@@ -21,7 +21,9 @@ async function initializeSectionFour() {
 
     // 1. Intro Paragraph
     const introHTML = `
-      <p class="section-intro">This section introduces the paper's primary contribution: a ridge-regularized GMM estimator that provides a flexible, data-driven framework for incorporating a potentially invalid economic restriction. Instead of treating the zero restriction \\(b_{12}=0\\) as dogmatically true (as in Section Two) or ignoring it entirely (as in Section Three), this approach shrinks the estimate towards the restriction, allowing the data to provide evidence for or against it.</p> 
+      <p class="section-intro">This section introduces the paper's primary contribution: a ridge-regularized GMM estimator that provides a flexible, data-driven framework for incorporating potentially invalid short-run restriction. Instead of treating the zero restriction \\(b_{12}=0\\) as dogmatically true (as in Section Two) or ignoring it entirely (as in Section Three), this approach shrinks the estimate towards the restriction, allowing the data to provide evidence for or against it.</p> 
+
+      
     `;
     contentArea.appendChild(ContentTemplates.createIntroRow(introHTML));
 
@@ -32,7 +34,7 @@ async function initializeSectionFour() {
          <p><strong>T Slider:</strong> Adjusts the sample size of the generated data.</p>
          <p><strong>Mode Switch:</strong> Toggles the true data-generating process between a recursive and non-recursive SVAR model.</p>
          <p><strong>&phi; Slider:</strong> Manually select a rotation angle \\(\\phi\\) for the \\(B(\\phi)\\) parameterization.</p>
-         <p><strong>&lambda; Slider:</strong> Adjusts the tuning parameter for the ridge penalty. A value of 0 effectively turns off the penalty, making this estimator identical to the one in Section Three.</p>
+         <p><strong>&lambda; Slider:</strong> Adjusts the tuning parameter for the ridge penalty. </p>
          <p><strong>New Data Button:</strong> Generates a new set of random shocks for the given sample size.</p>
      </div>
      `;
@@ -51,15 +53,15 @@ async function initializeSectionFour() {
  <p>The first part of the objective function is the non-Gaussian objective function from Section Three, \\(J(\\phi) = \\mathrm{mean}(e(B(\\phi))_{1t}^2 e(B(\\phi))_{2t})^2 + \\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t}^2)^2\\), which tries to minimize the dependency between the shocks \\(e(B(\\phi))_{1t}\\) and \\(e(B(\\phi))_{2t}\\).
  </p> 
 
-  <p> The second part of the objective function is the penalty \\(\\lambda v_{12}  B(\\phi)_{12}^2\\), which penalizes deviations from the restriction \\(B(\\phi)_{12}=0\\). The tuning parameter \\(\\lambda\\) and the adaptive weight  \\(v_{12}\\) together govern the cost of deviating from the restriction. 
-    The adaptive weight \\(v_{12}\\) is inversely proportional to the size of the \\(B(\\phi)_{12}\\) element from a preliminary, unrestricted estimate (like the one from Section Three), i.e. \\(v_{12} = 1 / \\tilde{B}_{12,nG}^2\\). </p> 
-    `;
-    const adaptivePenaltyCalloutHTML = ContentTemplates.buildInfoCallout(
-        `<p><strong>Adaptive Weights:</strong> By adaptively weighting the penalty, the ridge estimator navigates the classic bias-variance trade-off. The intuition is simple: if the data strongly suggest the parameter \\(b_{12}\\) is non-zero (i.e., the preliminary estimate \\(\\tilde{b}_{12}\\) is large), its corresponding weight \\(v_{12}\\) will be small. This makes the penalty for deviating from the zero restriction 'cheap'. Conversely, if the data suggest the parameter is close to zero, its weight will be large, making it 'costly' to deviate. This mechanism effectively lets the data guide the shrinkage process.The tuning parameter \\(\\lambda\\) controls the overall strength of this trade-off.</p>`,
-        false,
-        true
-    );
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(ridgeMainHTML, adaptivePenaltyCalloutHTML));
+  <p> The second part of the objective function is the penalty \\(\\lambda v_{12}  B(\\phi)_{12}^2\\), which penalizes deviations from the restriction \\(b_{12}=0\\). The tuning parameter \\(\\lambda\\) and the adaptive weight  \\(v_{12}\\) together govern the cost of deviating from the restriction. 
+  <ul>
+    <li>A small tuning parameter \\(\\lambda\\) makes it 'cheap' to deviate from the restriction and a large \\(\\lambda\\) makes it 'costly' to deviate.</li>
+    <li>The adaptive weight \\(v_{12}\\) is inversely proportional to the size of the \\(B_{12}\\) element from the unrestricted non-Gaussian estiamtor in Section Three, i.e. \\(v_{12} = 1 / \\tilde{B}_{12,nG}^2\\). </li>
+    <li>If the true data-generating process is recursive such that the restriction \\(b_{12}=0\\) is correct, the non-Gaussian estimator will yield a large adaptive weight \\(v_{12}\\) and it becomes costly to deviate from it. If the true data-generating process is non-recursive such that the restriction \\(b_{12}=0\\) is false, the adaptive weight will be smaller and it becomes cheap to deviate from incorrect restrictions.  This mechanism effectively lets the data guide the shrinkage process.</li>
+  </ul>
+     </p> 
+    `; 
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(ridgeMainHTML));
     
     const CurrentPenaltyHTML = `
     <p> Based on the non-Gaussian estimator from Section Three, the current adaptive weight is equal to </span> <span id="v_s4_display"></span>.  
@@ -83,11 +85,18 @@ async function initializeSectionFour() {
 
         // Discussion block for Cholesky estimator performance
         const RecComparisonDiscussionHTML = `
+        <p> If the true data-generating process is recursive such that the restriction \\(b_{12}=0\\) is correct:</p>
         <ul>
-            <li>---.</li>
-            <li>---.</li>
+            <li>The adaptive weights induce a large penalty for deviating from restrictions and the ridge estimator shrinks towards the restriction. </li>
+            <li> Due to the large adaptive weights, the choice of the tuning parameter \\(\\lambda\\) has a smaller effect on the estimator because of the large penalty induced by the adaptive weights. </li>
+            <li>Compared to the unrestricted non-Gaussian estimator in Section Three, the ridge estimator is more efficient and is closer to the true \\(B_0\\).</li>
         </ul>
-        <p>---.</p>
+        <p>If the true data-generating process is non-recursive such that the restriction \\(b_{12}=0\\) is false:</p>
+        <ul>
+            <li>The adaptive weights induce a small penalty for deviating from restrictions and it becomes less costly to deviate from the restriction.  With a growing sample size, the ridge estimator shrinks less towards the incorrect restrictions. </li>
+            <li>Compared to the dogmatic estimator in Section Two which imposes the restriction as a constrained, the ridge estimator is able to deviate from the restriction.</li>
+        </ul>
+        This high flexibility of the ridge estimator: It can use correct restrictions to increase efficiency and it can ignore incorrect restrictions to remain robust and unbiased. 
     `;
     contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(RecComparisonDiscussionHTML));
    
@@ -97,15 +106,20 @@ async function initializeSectionFour() {
     // 6. Animations description
     const animationsDescHTML = `
         <p><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) vs. \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
-        <p><strong>Right Plot (Objective Function):</strong> Shows the ridge objective function, \\(J_{ridge}(\\phi)\\), across different values of \\(\\phi\\). Vertical lines indicate the current \\(\\phi\\), the true \\(\\phi_0\\), and the estimated \\(\\hat{\\phi}_{ridge}\\).</p>
+        <p><strong>Right Plot (Objective Function):</strong>Shows the Ridge objective function plotted against a range of \\(\\phi\\) values.
+            A   line indicates the current \\(\\phi\\) selected by the slider.
+            Another line marks the true \\(\\phi_0\\) (derived from the selected true \\(B_0\\)).
+            A third line marks the estimated \\(\\hat{\\phi}_{ridge}\\).
+        </p>
     `;
     contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(animationsDescHTML));
 
     // Observations block
     const animationsObsHTML = `
         <ul>
-            <li>Observe how increasing \\(\\lambda\\) influences the shape of \\(J_{ridge}(\\phi)\\) and the resulting \\n            \(\\hat{\\phi}_{ridge}\\). Higher \\(\\lambda\\) values typically smooth the objective function and can pull \n            \(\\hat{\\phi}_{ridge}\\) towards angles that reduce the penalty term.</li>
-            <li>The ridge estimator is particularly helpful when the unregularized objective function (Section Three) is noisy or has multiple local minima.</li>
+            <li>Observe how increasing \\(\\lambda\\) influences the shape of the Ridge objective function: A large tuning parameter \\(\\lambda\\) makes it costly to deviate from restrictions. A small tuning parameter \\(\\lambda\\) makes it cheap to deviate from restrictions.</li>
+            <li> Change between the recursive and non-recursive data-generating process and observe how the Ridge objective function changes: In the recursive model, the restriction is correct and the adaptive weights induces a large penalty and heavy shrinkage towards the restriction. In contrast, in the non-recursive model, the restriction is false and the adaptive weights induces a much smaller penalty and less shrinkage towards the restriction. 
+            </li> 
         </ul>
     `;
     contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(animationsObsHTML));

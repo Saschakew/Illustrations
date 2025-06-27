@@ -55,7 +55,7 @@ async function initializeSectionTwo() {
             However, there are infinialy many such matrices \\(B\\) and hence the assumption of uncorrelated unit variance shocks is not sufficient to identify the true matrix \\(B_0\\). 
         </p>
 
-        <p> The set of  matrices \\(B\\) that yield uncorrelated unit variance innovations \\(e_t(B)\\) can be parameterized by a single rotation angle \\(\\phi\\).  
+        <p> The set of  matrices \\(B\\) that yield uncorrelated unit variance innovations \\(e_t(B)\\) can be parameterized by a single rotation angle \\(\\phi\\). Let \\(B(\\phi)\\) be denote all such matrices \\(B\\) that yield uncorrelated unit variance innovations \\(e_t(B(\\phi))\\). </p>
 
         <p> Given the true data-generating matrix \\(B_0\\) (selected via the toggle), we can calculate the rotation angle
         \\(\\phi_0\\) such that \\(B(\\phi_0) = B_0\\). For the recursive \\(B_0\\) we get \\(\\phi_0^{\\text{rec}} = 0\\). For the non-recursive \\(B_0\\) we get
@@ -73,12 +73,9 @@ async function initializeSectionTwo() {
 
     const RestrictionsMainHTML = `
        <p>
-            The conventional approach to solving the identification problem is to impose economically-motivated short-run zero restrictions on the \\(B\\) matrix. 
+            The conventional approach to solve the identification problem is to impose economically-motivated short-run zero restrictions on the \\(B\\) matrix. 
             In the bivariate example, only a single restriction is required to reduce the set of \\(B(\\phi)\\) which yield uncorrelated innovations to a unique matrix.
-</p>
-
-<p>While this approach provides a unique solution, it comes with a significant drawback: if the model is exactly identified by the restriction, an incorrect restriction cannot be detected by the data, 
-even in large samples. This can lead to biased estimates and flawed inference. The following sections explore methods that relax this rigid assumption.</p>`;
+</p> `;
     contentArea.appendChild(ContentTemplates.createGeneralContentRow(RestrictionsMainHTML));
 
 
@@ -96,11 +93,11 @@ contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunc
 
 
     const EstimatorRecursive2HTML = `
-    <p> That is it .....uncorrelated shocks with restrictions...trivial here</p>
+    <p> That is it we search for the rotation angle \\(\hat{\\phi}_{rec}\\) that minimizes leads to uncorrelated innovations (this is trivial, by construction all \\((\\phi)\\) yield uncorrelated innovations) and which satisfies the restriction \\((\\hat{\\phi}_{rec})_{12}=0\\). </p>
 
     
          <p>It yields the estimator shown below.
-        But is this a good estimate? That depends entirely on whether the restriction is correct.
+        But is this a good estimate? That depends entirely on whether the imposed restriction is correct.
     </p>
 
     ${ContentTemplates.createEstimatorComparisonRow('b_est_rec_s2_display', 'b0_display_s2', 'Estimated (Cholesky)', 'True B₀')}
@@ -126,16 +123,17 @@ contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunc
     // 3. B0 Matrix Options Card and Tip Callout
     const animationsDescHTML = `
        <p><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) vs. \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
-        <p><strong>Right Plot (Correlation):</strong> Shows the correlation, \\(\\text{mean}(e_{1t}(\\phi) \\cdot e_{2t}(\\phi))\\), across different values of \\(\\phi  \\). A vertical line indicates the current \\(\\phi\\). Another line marks \\(\\phi_0\\) which corresponds to the true \\(B_0\\) which changes with the recursive vs non-recursive slider.</p>
+        <p><strong>Right Plot (Correlation):</strong> Shows the correlation, \\(\\text{mean}(e_{1t}(\\phi) \\cdot e_{2t}(\\phi))\\), across different values of \\(\\phi  \\). A vertical line indicates the current \\(\\phi\\). Another line marks \\(\\phi_0\\) which corresponds to the true \\(B_0\\) which changes with the recursive vs non-recursive slider. The green line marks the estimated \\(\\hat{\\phi}_{rec}\\).</p>
 
          
     `;
     contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(animationsDescHTML));
 
     const observationsHTML = `
-    <p><strong>Observations:</strong> Use the \\(\\phi\\) slider to select a rotation angle and see the corresponding matrix <span id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\\phi)^{-1} u_t\\).</p>
+     
         <ul>
-            <li>All \\(B(\\phi)\\) yield uncorrelated innovations \\(e_{1t}(\\phi)\\) and \\(e_{2t}(\\phi)\\).</li>
+        <li>Use the \\(\\phi\\) slider to select a rotation angle and see the corresponding matrix <span id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\\phi)^{-1} u_t\\) shown in the left plot.
+        </li> 
             <li>The recursive estimator works well when the true model is recursive.</li>
             <li>The recursive estimator is biased when the true model is non-recursive.</li>
             <li>The bias does not vanish with an increasing sample size.</li>
@@ -153,7 +151,7 @@ contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunc
         // Register B0 display for Section Two
         window.DynamicLatexManager.registerDynamicLatex('b0_display_s2', 'B0', 'displayBEstMatrix', ['B_0']);
         // Register B_est_rec display for Section Two
-        window.DynamicLatexManager.registerDynamicLatex('b_est_rec_s2_display', 'B_est_rec', 'displayBEstMatrix', ['B_{REC}']);
+        window.DynamicLatexManager.registerDynamicLatex('b_est_rec_s2_display', 'B_est_rec', 'displayBEstMatrix', ['\\hat{B}_{rec}']);
         // Register B_phi display for Section Two
         window.DynamicLatexManager.registerDynamicLatex('b_phi_matrix_s2_display', 'B_phi', 'displayBEstMatrix', ['B(\\phi)']);
     } else {

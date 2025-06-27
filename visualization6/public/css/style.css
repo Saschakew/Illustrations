@@ -88,6 +88,17 @@ body {
     /*padding-top: var(--nav-height); /* Space for the fixed main navigation */
 }
 
+a {
+    color: var(--color-accent-primary) !important;
+    text-decoration: none; /* Optional: removes underline */
+    transition: color 0.2s ease;
+}
+
+a:hover, a:focus {
+    color: var(--color-accent-primary-darker);
+    text-decoration: underline; /* Optional: adds underline on hover */
+}
+
 .container {
     width: 90%;
     max-width: 1200px;

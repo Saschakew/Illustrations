@@ -192,17 +192,17 @@ window.PlotUtils = {
 
         // Vertical line for current phi (slider)
         if (verticalLineX !== undefined && verticalLineX !== null && yData && yData.length > 0) {
-            addVerticalLineTrace(verticalLineX, themeColors.yellow, 'dash', 'Current φ');
+            addVerticalLineTrace(verticalLineX, themeColors.yellow, 'dash', 'Current ϕ');
         }
 
         // Vertical line for true φ₀
         if (phi0LineValue !== undefined && phi0LineValue !== null && yData && yData.length > 0) {
-            addVerticalLineTrace(phi0LineValue, themeColors.blue, 'dot', 'True φ₀');
+            addVerticalLineTrace(phi0LineValue, themeColors.blue, 'dot', 'True ϕ₀');
         }
 
         // Vertical line for estimated φ̂
         if (estimatedPhiLineValue !== undefined && estimatedPhiLineValue !== null && yData && yData.length > 0) {
-            addVerticalLineTrace(estimatedPhiLineValue, themeColors.green, 'longdash', 'Estimated φ̂');
+            addVerticalLineTrace(estimatedPhiLineValue, themeColors.green, 'longdash', 'Estimated ϕ̂');
         }
 
         Plotly.react(elementId, plotData, layout, {responsive: true, staticPlot: true, displayModeBar: false});

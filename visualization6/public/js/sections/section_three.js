@@ -44,12 +44,12 @@ async function initializeSectionThree() {
     // 3. Identification Content & Callout
     const identificationMainHTML = `
         <p>
-            When at most one of the structural shocks \\(\\epsilon_{it}\\) is Gaussian, the matrix \\(B_0\\) is identified up to permutation and scaling of the shocks. We seek a rotation angle \\(\\phi\\) that transforms the reduced-form innovations \\(u_t\\) into innovations \\(e_t(\\phi) = B(\\phi)^{-1} u_t\\) that are "as independent as possible." This can be achieved by minimizing an objective function based on higher-order moments of \\(e_t(\\phi)\\).
+            When at most one of the structural shocks \\(\\epsilon_{it}\\) is Gaussian, the matrix \\(B_0\\) is identified up to permutation and scaling of the shocks. We seek a rotation angle \\(\\phi\\) that transforms the reduced-form shocks \\(u_t\\) into innovations \\(e_t(\\phi) = B(\\phi)^{-1} u_t\\) that are "as mean independent as possible." This can be achieved by minimizing an objective function based on higher-order moments of \\(e_t(\\phi)\\).
         </p>
         
     `;
     const identificationCalloutHTML = ContentTemplates.buildInfoCallout(
-        '<p><strong>Key Insight:</strong> Unlike Gaussian shocks, whose rotated versions remain Gaussian, rotated non-Gaussian shocks exhibit changes in their statistical properties (like skewness and kurtosis), which helps in pinpointing the correct underlying structure.</p>',
+        '<p><strong>Key Insight:</strong> Unlike Gaussian shocks, whose rotated versions remain independent, rotated non-Gaussian shocks exhibit changes in dependencies, which helps in pinpointing the correct underlying structure.</p>',
         false,
         true
     );
@@ -59,8 +59,8 @@ async function initializeSectionThree() {
     // 4. Objective Function Content
 
     const objfunctionHTML = `<p>
-            Under the assumption of mean independence, certain higher-order cross-moments of the true structural shocks are zero. For example, the coskewness terms \\(E[\\epsilon_{it}^2 \\epsilon_{jt}]\\) and 
-            \\(E[\\epsilon_{it} \\epsilon_{jt}^2]\\) are both zero. We can therefore find the correct rotation angle \\(\\phi\\) by minimizing an objective function built from the sample analogues of these theoretical moment conditions.
+            Under the assumption of mean independence, certain higher-order cross-moments of the true structural shocks are zero. For example, the coskewness terms \\(E[\\epsilon_{1t}^2 \\epsilon_{2t}]\\) and 
+            \\(E[\\epsilon_{1t} \\epsilon_{2t}^2]\\) are both zero. We can therefore find the correct rotation angle \\(\\phi\\) by minimizing an objective function built from the sample analogues of these theoretical moment conditions.
             The non-Gaussian estimator solves the following optimization problem:
         </p> 
     `;
@@ -74,10 +74,10 @@ async function initializeSectionThree() {
     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
 
     const estimatorNGHTML = `
-    <p> that is ....</p>
+    <p> That is, we search for the rotation angle \(\\phi\) that minimizes the dependencies of the innovations measured by the squared coskewness terms \\(\\mathrm{mean}(e(B(\\phi))_{1t}^2 e(B(\\phi))_{2t})\\) and \\(\\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t}^2)\\). </p>
 
     <p>
-        The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator shown below.
+        The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator \\(\\hat{B}_{nG}\\) shown below.
     </p>
     
     ${ContentTemplates.createEstimatorComparisonRow('b_est_nG_s3_display', 'b_true_s3_display', 'Estimated (Non-Gaussian)', 'True B₀')}
@@ -89,7 +89,7 @@ async function initializeSectionThree() {
     const NGComparisonDiscussionHTML = `
         <ul>
             <li>The non-Gaussian estimator is <strong>consistent</strong> for \\(B_0\\) whether the true model is recursive or non-recursive. This makes it a robust alternative when there is uncertainty about the correct zero restrictions.</li>
-            <li>However, because it relies on higher-order moments (like coskewness), it tends to be <strong>less efficient</strong> (i.e., have higher variance) than the Cholesky estimator, especially in small samples. This means its estimates can be more volatile.</li>
+            <li>However, because it relies on higher-order moments, it tends to be <strong>less efficient</strong> (i.e., have higher variance) than the Cholesky estimator, especially in small samples. This means its estimates can be more volatile.</li>
         </ul>
         <p>This highlights the trade-off: robustness to misspecification versus efficiency when correctly specified.</p>
     `;
@@ -104,10 +104,10 @@ async function initializeSectionThree() {
     // 8. Animations Description
     const animationsDescHTML = `
         <p><strong>Left Plot (Innovations):</strong> Displays a scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) against \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
-        <p><strong>Right Plot (Objective Function):</strong> Shows the objective function \\(J(\\phi)\\) plotted against a range of \\(\\phi\\) values. 
-            A <span style="color: var(--plot-color-current-phi);">blue vertical line</span> indicates the current \\(\\phi\\) selected by the slider. 
-            A <span style="color: var(--plot-color-phi0);">red dashed line</span> marks the true \\(\\phi_0\\) (derived from the selected true \\(B_0\\)).
-            A <span style="color: var(--plot-color-estimated-phi);">green long-dashed line</span> marks the estimated \\(\\hat{\\phi}_{nG}\\) that minimizes \\(J(\\phi)\\).
+        <p><strong>Right Plot (Objective Function):</strong> Shows the non-Gaussian objective function plotted against a range of \\(\\phi\\) values. 
+            A   line indicates the current \\(\\phi\\) selected by the slider. 
+            Another line marks the true \\(\\phi_0\\) (derived from the selected true \\(B_0\\)).
+            A third line marks the estimated \\(\\hat{\\phi}_{nG}\\).
         </p>
 
     `;
@@ -116,8 +116,10 @@ async function initializeSectionThree() {
     // Observations block for animations
     const animationsObsHTML = `
         <ul>
-            <li>Use the \\(\\phi\\) slider to select a rotation angle and see coskewness of the innovations \\n            \(e_t(\\phi)\) changes.</li>
+            <li>Use the \\(\\phi\\) slider to select a rotation angle and see how the non-Gaussian objective function changes. In contrast to the objective function in the last section based on uncorrelated shocks, the non-Gaussian objective function has a unique minima. </li>
+            <li> With an increasing sample size, the estimator \\(\\hat{\\phi}_{nG}\\) converges to the true \\(\\phi_0\\). </li>
             <li>The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) aligns close to the true \\(\\phi_0\\) in both recursive and non-recursive cases.</li>
+            <li> However, the non-Gaussian estimator tends to be volatile in small samples. Use a small sample and create multiple new data sets and observe the variance of the estimator. </li>
         </ul>
     `;
     contentArea.appendChild(ContentTemplates.createComparisonDiscussionRow(animationsObsHTML));
