@@ -33,6 +33,53 @@ Here are the most important files and directories and what they do:
 
 -   **`public/js/svar_functions.js` & `svar_math_util.js`**: The computational core. These files contain the functions that perform the actual SVAR-related calculations, from generating shocks to estimating models.
 
+## Extended Project Directory Structure and Supporting Utilities
+
+Below is a condensed snapshot of the actual repository (verified against the current codebase). Paths in **bold** are the most relevant entry points discussed earlier.
+
+```text
+.
+├── index.html
+├── guides/
+├── public/
+│   ├── css/
+│   │   ├── style.css
+│   │   ├── paragraph_util.css
+│   │   ├── mobile.css
+│   │   └── resources.css
+│   ├── js/
+│   │   ├── **main.js**               # Orchestrator
+│   │   ├── **sticky_menu.js**        # Keeps control panels visible
+│   │   ├── **navigation.js**         # Smooth scroll + active-link logic
+│   │   ├── **plot_utils.js**         # Plotly helpers / default layouts
+│   │   ├── **dynamic_latex_manager.js**
+│   │   ├── **latex_utils.js**        # Format & render TeX strings
+│   │   ├── **ui_factory.js**         # Generates sliders, switches, buttons
+│   │   ├── **shared_data.js**        # Global state
+│   │   ├── **shared_controls.js**    # Attaches listeners to factory outputs
+│   │   ├── **svar_functions.js**     # Core SVAR logic
+│   │   ├── **svar_math_util.js**     # Matrix helpers
+│   │   ├── debug_manager.js          # Category-based logging
+│   │   └── sections/
+│   │       ├── section_one.js
+│   │       ├── section_two.js
+│   │       ├── section_three.js
+│   │       ├── section_four.js
+│   │       └── section_resources.js
+│   └── sections/                     # HTML snippets (section_one.html …)
+└── assets/
+```
+
+Key supporting utilities not covered in the earlier bullet list:
+
+- **plot_utils.js** – Provides default Plotly layout/config and helpers like `getSquareSize()` used by section scripts for consistent sizing.
+- **dynamic_latex_manager.js** & **latex_utils.js** – Coordinate MathJax re-typesetting whenever data changes.
+- **sticky_menu.js** – Re-positions each section’s control panel (`controls-container_*`) so it stays visible while scrolling.
+- **navigation.js** – Handles smooth scrolling and active-link highlighting in the main navigation bar.
+- **debug_manager.js** – Lightweight logging wrapper that can be toggled per category (e.g., `SVAR_DATA_PIPELINE`).
+
+---
+
 ## The Application Lifecycle: From Load to Interaction
 
 Understanding the sequence of events when the application loads is crucial. Here is the step-by-step flow:

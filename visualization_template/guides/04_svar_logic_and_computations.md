@@ -22,6 +22,26 @@ While the core calculations happen in the files above, the process is orchestrat
 
 -   **`regenerateBPhi()`**: The most specific pipeline. It's called when only the estimation rotation angle `phi` changes. It recalculates the `B(phi)` matrix and any estimates that depend on it, without touching the underlying `u_t` or `epsilon_t` data.
 
+## End-to-End Reactive Pipeline (Verified)
+
+Below is the current sequence executed when the app starts or when the user changes a control.  All function names have been cross-checked with `public/js/main.js` and `shared_controls.js`.
+
+| Stage | Trigger | Main function(s) | Output written to `sharedData` |
+| --- | --- | --- | --- |
+| Generate ε<sub>t</sub> | `regenerateSvarData()` (init or **T** / **New Data** change) | `SVARCoreFunctions.generateEpsilon` | `epsilon_1t`, `epsilon_2t` |
+| Set **B<sub>0</sub>** | mode switch (`updateB0Mode()`) | inline in `shared_controls.js` | `B0`, `phi_0` (via `regeneratePhi0()`) |
+| Compute u<sub>t</sub> | same triggers as above | `SVARCoreFunctions.generateU` (wrapped by `regenerateSvarData()` or `regenerateReducedFormShocksFromExistingEpsilon()`) | `u_1t`, `u_2t` |
+| Build B(φ) | φ-slider or after u<sub>t</sub> update | `regenerateBPhi()` → `SVARCoreFunctions.generateBPhi` | `B_phi` |
+| Innovations e<sub>t</sub> | after B(φ) | `regenerateInnovations()` → `SVARCoreFunctions.generateInnovations` | `e_1t`, `e_2t` |
+| UI/Plots | observers (plots, MathJax via `DynamicLatexManager`) | section-specific `update…` funcs | rendered graphs/LaTeX |
+
+Important observations:
+1. All top-level pipelines (`regenerateSvarData`, `regenerateReducedFormShocksFromExistingEpsilon`, `regenerateBPhi`) are **async**. Await them if you call them manually.
+2. Each stage logs to the console under categories like `SVAR_DATA_PIPELINE`, `SVAR_SETUP`, or `MAIN_APP`.
+3. Never bypass the pipeline by writing directly to arrays—always update the upstream parameter and let the functions cascade.
+
+---
+
 ## Workflow: Adding a New SVAR Computation
 
 Let's walk through adding a new computation. Imagine we want to calculate the trace (the sum of the diagonal elements) of the `B(phi)` matrix and display it.

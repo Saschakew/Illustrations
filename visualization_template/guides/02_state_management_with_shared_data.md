@@ -106,6 +106,39 @@ function generateEpsilon(T) {
 -   **Centralize Updates**: While any script *can* modify `sharedData`, it's best practice to have UI control logic (in `shared_controls.js`) be the primary place where user-driven state changes occur.
 -   **Read, Don't Write (in computations)**: Computation functions (like those in `svar_functions.js`) should generally only *read* from `sharedData`. They take parameters from it, perform calculations, and then the results are stored back into `sharedData` by the orchestrating functions in `main.js`.
 
+## Loading Order and Script Dependencies
+
+`shared_data.js` must be available before any other script that expects the global `window.sharedData` object.  A typical snippet in `index.html` looks like this (order matters):
+
+```html
+<!-- 1. Global state -->
+<script src="public/js/shared_data.js" defer></script>
+<!-- 2. Factories that may read defaults from sharedData -->
+<script src="public/js/ui_factory.js" defer></script>
+<!-- 3. Generic event-binding helpers that write to sharedData -->
+<script src="public/js/shared_controls.js" defer></script>
+<!-- 4. The main orchestration layer -->
+<script src="public/js/main.js" defer></script>
+```
+
+## Reactive `B0` Mode Handling
+
+The boolean flag `sharedData.isRecursive` determines whether the data-generating process follows a **recursive** (lower-triangular) or **non-recursive** structure.
+
+* `updateB0Mode()` (in `shared_controls.js`) recalculates `sharedData.B0` whenever the flag changes.
+* It then invokes `regeneratePhi0()` and `regenerateReducedFormShocksFromExistingEpsilon()` to keep all downstream state consistent.
+* UI mode switches call this helper automatically, so _never_ mutate `sharedData.B0` directly—change `isRecursive` instead.
+
+## Debugging with `DebugManager`
+
+`shared_data.js` logs its initial values under the categories `DATA_HANDLING`, `SHARED_DATA`, and `SVAR_DATA_PIPELINE`.  When you add a new property, consider adding a similar log line:
+
+```javascript
+DebugManager.log('SHARED_DATA', 'Initial gamma:', window.sharedData.gamma);
+```
+
+This lightweight tracing makes it obvious when state is missing or mis-initialised.
+
 ---
 
 This guide has covered the role and usage of `shared_data.js`. With this knowledge, you can confidently manage the application's state. The next guide, **`03_ui_controls_and_the_factory_pattern.md`**, will show you how to build the UI controls that modify these shared variables.

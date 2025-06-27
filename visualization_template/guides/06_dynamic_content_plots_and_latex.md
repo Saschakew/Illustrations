@@ -97,43 +97,81 @@ Add a `<div>` in your section's HTML to serve as the container for the plot.
 
 ## Workflow: Updating LaTeX with MathJax
 
-The template uses [MathJax](https://www.mathjax.org/) to render beautiful mathematics. Updating equations dynamically is a two-step process.
+To keep your LaTeX displays in sync with the application state, this template uses a centralized `DynamicLatexManager`. Instead of manually updating each equation, you *register* an element with the manager and tell it which piece of `sharedData` to watch. When the data changes, the manager automatically handles the update and re-rendering.
 
-**HTML:**
-Place your LaTeX code inside an element with a unique ID. Note the delimiters: `\(` and `\)` for inline math, and `$$` and `$$` for display math.
+### Verified Workflow
 
-```html
-<p>The estimated B(φ) matrix is: <span id="b-phi-matrix-display">$$B(\phi) = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$$</span></p>
-```
+This workflow is confirmed against `public/js/dynamic_latex_manager.js` and `public/js/latex_utils.js`.
 
-**JavaScript:**
+**1. Create the LaTeX Helper in `latex_utils.js`**
 
-1.  **Create an Update Function**: This function will build the new LaTeX string and update the element's content.
+First, all LaTeX string generation is handled by helper functions in `public/js/latex_utils.js`. This keeps the logic clean. Let's create a helper to display our `B(φ)` matrix.
 
-    ```javascript
-    function updateBPhiMatrixDisplay() {
-        const displayElement = document.getElementById('b-phi-matrix-display');
-        if (!displayElement) return;
+```javascript
+// in public/js/latex_utils.js
+window.LatexUtils = {
+    // ... other helpers
 
-        // 1. Get the latest matrix from sharedData
-        const B_phi = window.sharedData.B_phi;
+    displayBPhiMatrix: function(elementId, B_phi) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
         const b11 = B_phi[0][0].toFixed(2);
         const b12 = B_phi[0][1].toFixed(2);
         const b21 = B_phi[1][0].toFixed(2);
         const b22 = B_phi[1][1].toFixed(2);
 
-        // 2. Construct the new LaTeX string
-        const latexString = `$$B(\phi) = \\begin{pmatrix} ${b11} & ${b12} \\\\ ${b21} & ${b22} \\end{pmatrix}$$`;
-
-        // 3. Update the element's inner HTML
-        displayElement.innerHTML = latexString;
-
-        // 4. Tell MathJax to re-render the updated element
-        MathJax.typesetPromise([displayElement]).catch(err => console.error('MathJax typeset failed:', err));
+        const latexString = `$$B(\phi) = \begin{pmatrix} ${b11} & ${b12} \\ ${b21} & ${b22} \end{pmatrix}$$`;
+        el.innerHTML = latexString;
     }
-    ```
+};
+```
 
-2.  **Call from Pipeline**: Just like with plots, call `updateBPhiMatrixDisplay()` from the appropriate pipeline in `main.js` (in this case, `regenerateBPhi()`).
+**2. Add a Placeholder in HTML**
+
+Next, add a `<span>` or `<div>` with a unique ID in your section's HTML. It can be empty or contain default LaTeX.
+
+```html
+<p>The estimated B(φ) matrix is: <span id="b-phi-matrix-display"></span></p>
+```
+
+**3. Register the Element for Updates**
+
+In your section-specific JavaScript file (e.g., `section_three.js`), find the `initialize` function. Inside it, call `DynamicLatexManager.registerDynamicLatex`.
+
+```javascript
+// in public/js/section_three.js
+async function initializeSectionThree() {
+    if (!document.getElementById('section-three')) return;
+
+    // ... other initialization for this section
+
+    window.DynamicLatexManager.registerDynamicLatex(
+        'b-phi-matrix-display', // The ID of our HTML element
+        'B_phi',                // The key in sharedData to watch
+        'displayBPhiMatrix'     // The function in LatexUtils to call
+    );
+}
+```
+
+**4. Let the Pipeline Do the Work**
+
+That's it! You do not need to call the update function manually. The `regenerateBPhi` function in `main.js` already contains this line:
+
+```javascript
+// in main.js, at the end of regenerateBPhi()
+if (window.DynamicLatexManager) {
+    window.DynamicLatexManager.updateAllDynamicLatex();
+}
+```
+
+Whenever `B_phi` changes in `sharedData`, `updateAllDynamicLatex()` will automatically find your registered element, see that its data source (`B_phi`) has changed, and call the specified utility function (`displayBPhiMatrix`) to re-render the LaTeX.
+
+### Key Advantages
+
+-   **Declarative**: You declare the link between data and display once, instead of calling update functions from all over the code.
+-   **Efficient**: The manager includes a simple cache and won't re-render the LaTeX if the underlying data hasn't actually changed.
+-   **Centralized**: All LaTeX generation logic lives in `latex_utils.js`, making it easy to maintain and reuse.
 
 ---
 

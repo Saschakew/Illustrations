@@ -18,6 +18,32 @@ Three files work together to implement this pattern:
 2.  **`public/js/main.js`**: The orchestrator. Its `initializeApp` function finds control placeholders in the HTML and uses the `ui_factory.js` to replace them with the actual controls.
 3.  **`public/js/shared_controls.js`**: The logic hub. It contains the initializer functions (e.g., `initializeSliders`) that attach event listeners to the controls after they have been created.
 
+## Supported Control Types (as of commit)
+
+The factory already exposes the following helpers (see `public/js/ui_factory.js`):
+
+| Control type (in `data-control-type`) | Factory function | CSS class | Core purpose |
+| --- | --- | --- | --- |
+| `t-slider` | `createTSlider` | `.t-slider` | Sample size **T** slider |
+| `phi-slider` | `createPhiSlider` | `.phi-slider` | Estimation angle **φ** slider |
+| `lambda-slider` | `createLambdaSlider` | `.lambda-slider` | Ridge penalty **λ** slider |
+| `mode-switch` | `createModeSwitch` | `.mode-switch` | Toggle Recursive / Non-Recursive |
+| `new-data-button` | `createNewDataButton` | `.new-data-button` | Regenerate new ε-series |
+
+You can inspect the switch statement in `main.js` (around line 430) to see how each placeholder type maps to its factory call.
+
+### Placeholder Guidelines
+
+1. Every control goes inside a `data-control-type` placeholder:
+   ```html
+   <div data-control-type="phi-slider" data-control-id="slider_phi_s1"></div>
+   ```
+2. The **ID** (`data-control-id`) must be unique throughout the whole page because it becomes the element’s actual `id`.
+3. Keep placeholders minimal—`main.js` replaces the entire `<div>` with the generated HTML.
+4. After injection, initialiser functions in `shared_controls.js` locate controls by their CSS class (e.g., `.phi-slider`).
+
+---
+
 ## Workflow: Adding a New Slider
 
 Let's walk through the complete, end-to-end process of adding a new slider. We will use the example from the previous guide: adding a **'volatility scale' (`gamma`) slider**.

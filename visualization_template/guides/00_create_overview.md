@@ -50,7 +50,7 @@ Here is the proposed set of documents that will form the complete guide. Each fi
 ### `05_managing_sections_and_content.md`
 - **Purpose**: To explain the modular section system.
 - **Contents**:
-    - How sections are defined in `html/sections/` and loaded by `main.js`.
+    - How sections are defined in `public/sections/` and loaded by `main.js`."
     - **Workflow: Adding a New Section**:
         1.  Create a new `section_new.html` file.
         2.  Add the corresponding link to the navigation in `index.html`.
@@ -78,6 +78,39 @@ Here is the proposed set of documents that will form the complete guide. Each fi
     4.  Update a plot to reflect the change.
     5.  Display the current `gamma` value using dynamic LaTeX.
 
-## 3. Next Steps
+## 3. Recommended Development Workflow
+
+Following the staged approach from earlier iterations of this template, we recommend the workflow below. Later guides explain each phase in depth, but having the big-picture up-front helps new contributors plan their work.
+
+### Step 1  Establish the Basic Framework (placeholder content)
+1. Read **01_architecture_overview.md** to understand the file/folder layout.
+2. Open `index.html` in the browser and confirm that the placeholder sections (`Section One`, `Section Two`, …) render correctly.
+3. Make sure the navigation menu, sticky behaviour, and loading overlay work as expected.
+
+### Step 2  Practice Adding a New Section
+1. Use **05_managing_sections_and_content.md** together with **03_ui_controls_and_the_factory_pattern.md**.
+2. Duplicate one of the existing section snippets in `public/sections/`, give it a new identifier, and load it via a new `<div id="section-xyz-placeholder" data-section-src="…">` in `index.html`.
+3. Create the corresponding initialization file in `public/js/sections/`.
+4. Register the section’s menu link in the nav bar and verify that it loads without errors.
+
+### Step 3  Replace Placeholder Content with Real SVAR Logic
+1. For each planned SVAR analysis block, design the UI controls (sliders, buttons) with the factory pattern.
+2. Implement the required computations in `svar_functions.js` / `svar_math_util.js`.
+3. Feed the results to Plotly or MathJax elements as described in **06_dynamic_content_plots_and_latex.md**.
+
+### Step 4  Iterate and Refine
+Continue cycling through Steps 2–3, testing performance and UI/UX, until all target functionality is implemented.
+
+## 4. Running the Template Locally
+
+The project is entirely client-side; you can open `index.html` directly in a browser for quick checks.  
+For full functionality (e.g., fetch() calls), serve the root directory with a simple local server:
+
+```bash
+python -m http.server
+# then visit http://localhost:8000
+```
+
+## 5. Next Steps
 
 With this plan in place, the next step is to begin writing the first document: `01_architecture_overview.md`.
