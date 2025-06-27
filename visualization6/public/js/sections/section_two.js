@@ -55,7 +55,7 @@ async function initializeSectionTwo() {
             However, there are infinialy many such matrices \\(B\\) and hence the assumption of uncorrelated unit variance shocks is not sufficient to identify the true matrix \\(B_0\\). 
         </p>
 
-        <p> The set of  matrices \\(B\\) that yield uncorrelated unit variance innovations \\(e_t(B)\\) can be parameterized by a single rotation angle \\(\\phi\\). Let \\(B(\\phi)\\) be denote all such matrices \\(B\\) that yield uncorrelated unit variance innovations \\(e_t(B(\\phi))\\). </p>
+        <p> The set of  matrices \\(B\\) that yield uncorrelated unit variance innovations \\(e_{1t}(\\phi)\\) can be parameterized by a single rotation angle \\(\\phi\\). Let \\(B(\\phi)\\) be denote all such matrices \\(B\\) that yield uncorrelated unit variance innovations and define \\(e_{t}(\\phi) = B(\\phi)^{-1} u_t\\). </p>
 
         <p> Given the true data-generating matrix \\(B_0\\) (selected via the toggle), we can calculate the rotation angle
         \\(\\phi_0\\) such that \\(B(\\phi_0) = B_0\\). For the recursive \\(B_0\\) we get \\(\\phi_0^{\\text{rec}} = 0\\). For the non-recursive \\(B_0\\) we get
@@ -87,13 +87,13 @@ async function initializeSectionTwo() {
 
 
     const objectiveFunctionMainHTML = `
-    ${ContentTemplates.buildLatexEquationBlock('\\begin{align*} \\hat{\\phi}_{rec} &= \\operatorname*{argmin}_{\\phi}   \\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t})^2 \\\\ & \\quad s.t. B(\\phi)_{12}=0 \\end{align*}')}
+    ${ContentTemplates.buildLatexEquationBlock('\\begin{align*} \\hat{\\phi}_{rec} &= \\operatorname*{argmin}_{\\phi}   \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi))^2 \\\\ & \\quad s.t. B(\\phi)_{12}=0 \\end{align*}')}
      `;
 contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
 
 
     const EstimatorRecursive2HTML = `
-    <p> That is it we search for the rotation angle \\(\hat{\\phi}_{rec}\\) that minimizes leads to uncorrelated innovations (this is trivial, by construction all \\((\\phi)\\) yield uncorrelated innovations) and which satisfies the restriction \\((\\hat{\\phi}_{rec})_{12}=0\\). </p>
+    <p> That is it we search for the rotation angle \\(\\hat{\\phi}_{rec}\\) that minimizes leads to uncorrelated innovations (this is trivial, by construction all \\(\\phi\\) yield uncorrelated innovations) and which satisfies the restriction \\(B(\\hat{\\phi}_{rec})_{12}=0\\). </p>
 
     
          <p>It yields the estimator shown below.
@@ -132,7 +132,7 @@ contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunc
     const observationsHTML = `
      
         <ul>
-        <li>Use the \\(\\phi\\) slider to select a rotation angle and see the corresponding matrix <span id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_t(B) = B(\\phi)^{-1} u_t\\) shown in the left plot.
+        <li>Use the \\(\\phi\\) slider to select a rotation angle and see the corresponding matrix <span id="b_phi_matrix_s2_display"></span>. Note that all such matrices yield uncorrelated innovations \\(e_{t}(\\phi) \\) shown in the left plot.
         </li> 
             <li>The recursive estimator works well when the true model is recursive.</li>
             <li>The recursive estimator is biased when the true model is non-recursive.</li>

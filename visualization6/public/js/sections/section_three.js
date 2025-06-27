@@ -69,12 +69,12 @@ async function initializeSectionThree() {
     
     
     const objectiveFunctionMainHTML = `
-        ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{nG} = \\operatorname*{argmin}_{\\phi}   \\mathrm{mean}(e(B(\\phi))_{1t}^2 e(B(\\phi))_{2t})^2 + \\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t}^2)^2')}
+        ${ContentTemplates.buildLatexEquationBlock('\\begin{align*} J(\\phi) &= \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2 \\end{align*}')}
          `;
     contentArea.appendChild(ContentTemplates.createFullWidthContentRow(objectiveFunctionMainHTML));
 
     const estimatorNGHTML = `
-    <p> That is, we search for the rotation angle \(\\phi\) that minimizes the dependencies of the innovations measured by the squared coskewness terms \\(\\mathrm{mean}(e(B(\\phi))_{1t}^2 e(B(\\phi))_{2t})\\) and \\(\\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t}^2)\\). </p>
+    <p> That is, we search for the rotation angle \\(\\phi\\) that minimizes the dependencies of the innovations measured by the squared coskewness terms \\(\\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))\\) and \\(\\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)\\). </p>
 
     <p>
         The non-Gaussian estimator \\(\\hat{\\phi}_{nG}\\) identifies the model by minimizing the objective function above. It yields the estimator \\(\\hat{B}_{nG}\\) shown below.
@@ -103,12 +103,8 @@ async function initializeSectionThree() {
 
     // 8. Animations Description
     const animationsDescHTML = `
-        <p><strong>Left Plot (Innovations):</strong> Displays a scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) against \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
-        <p><strong>Right Plot (Objective Function):</strong> Shows the non-Gaussian objective function plotted against a range of \\(\\phi\\) values. 
-            A   line indicates the current \\(\\phi\\) selected by the slider. 
-            Another line marks the true \\(\\phi_0\\) (derived from the selected true \\(B_0\\)).
-            A third line marks the estimated \\(\\hat{\\phi}_{nG}\\).
-        </p>
+        <p><strong>Left Plot (Innovations):</strong> A scatter plot of the calculated innovations \\(e_{1t}(\\phi)\\) vs. \\(e_{2t}(\\phi)\\) for the currently selected \\(\\phi\\).</p>
+        <p><strong>Right Plot (Objective Function):</strong> Shows the objective function \\(J(\\phi) = \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2\\) across different values of \\(\\phi\\). A vertical line indicates the current \\(\\phi\\). Another line marks \\(\\phi_0\\) which corresponds to the true \\(B_0\\). The green line marks the estimated \\(\\hat{\\phi}_{nG}\\).</p>
 
     `;
     contentArea.appendChild(ContentTemplates.buildLeftRightPlotExplanation(animationsDescHTML));

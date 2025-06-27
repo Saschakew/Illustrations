@@ -94,8 +94,7 @@ window.ContentTemplates = (() => {
          */
         buildInfoCallout: (calloutHTML, isSmall = false, fillHeight = false) => {
             let classes = 'info-callout';
-            if (isSmall) classes += ' info-callout--sm';
-            if (fillHeight) classes += ' h-100';
+            if (isSmall) classes += ' info-callout--sm'; 
             return `<div class="${classes}">${calloutHTML}</div>`;
         },
 

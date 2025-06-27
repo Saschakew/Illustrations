@@ -50,18 +50,28 @@ async function initializeSectionFour() {
         </p> 
         ${ContentTemplates.buildLatexEquationBlock('\\hat{\\phi}_{ridge} =  \\operatorname*{argmin}_{\\phi}   \\, J(\\phi)  +  \\lambda v_{12}  B(\\phi)_{12}^2')} 
 
- <p>The first part of the objective function is the non-Gaussian objective function from Section Three, \\(J(\\phi) = \\mathrm{mean}(e(B(\\phi))_{1t}^2 e(B(\\phi))_{2t})^2 + \\mathrm{mean}(e(B(\\phi))_{1t} e(B(\\phi))_{2t}^2)^2\\), which tries to minimize the dependency between the shocks \\(e(B(\\phi))_{1t}\\) and \\(e(B(\\phi))_{2t}\\).
+ <p>The first part of the objective function is the non-Gaussian objective function from Section Three, \\(J(\\phi) = \\mathrm{mean}(e_{1t}(\\phi)^2 e_{2t}(\\phi))^2 + \\mathrm{mean}(e_{1t}(\\phi) e_{2t}(\\phi)^2)^2\\), which tries to minimize the dependency between the shocks \\(e_{1t}(\\phi)\\) and \\(e_{2t}(\\phi)\\).
  </p> 
 
   <p> The second part of the objective function is the penalty \\(\\lambda v_{12}  B(\\phi)_{12}^2\\), which penalizes deviations from the restriction \\(b_{12}=0\\). The tuning parameter \\(\\lambda\\) and the adaptive weight  \\(v_{12}\\) together govern the cost of deviating from the restriction. 
-  <ul>
+  
+     </p> 
+    `; 
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(ridgeMainHTML));
+
+    const ridgeDescriptionHTML = `
+    <ul>
     <li>A small tuning parameter \\(\\lambda\\) makes it 'cheap' to deviate from the restriction and a large \\(\\lambda\\) makes it 'costly' to deviate.</li>
     <li>The adaptive weight \\(v_{12}\\) is inversely proportional to the size of the \\(B_{12}\\) element from the unrestricted non-Gaussian estiamtor in Section Three, i.e. \\(v_{12} = 1 / \\tilde{B}_{12,nG}^2\\). </li>
     <li>If the true data-generating process is recursive such that the restriction \\(b_{12}=0\\) is correct, the non-Gaussian estimator will yield a large adaptive weight \\(v_{12}\\) and it becomes costly to deviate from it. If the true data-generating process is non-recursive such that the restriction \\(b_{12}=0\\) is false, the adaptive weight will be smaller and it becomes cheap to deviate from incorrect restrictions.  This mechanism effectively lets the data guide the shrinkage process.</li>
   </ul>
-     </p> 
     `; 
-    contentArea.appendChild(ContentTemplates.createGeneralContentRow(ridgeMainHTML));
+    const ridgeCVNoteHTML = ContentTemplates.buildInfoCallout(
+        '<p><strong>Note:</strong> In practice, the tuning parameter is chosen by cross-validation. That is, we split the data into a training and a validation set and choose the tuning parameter that yields the smallest cross-validation error.</p>',
+        false,
+        true
+    );
+    contentArea.appendChild(ContentTemplates.createGeneralContentRow(ridgeDescriptionHTML, ridgeCVNoteHTML));
     
     const CurrentPenaltyHTML = `
     <p> Based on the non-Gaussian estimator from Section Three, the current adaptive weight is equal to </span> <span id="v_s4_display"></span>.  

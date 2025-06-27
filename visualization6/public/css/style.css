@@ -445,6 +445,8 @@ a:hover, a:focus {
     border-radius: var(--card-border-radius); /* Consistent with other cards */
     font-size: 0.95rem;
     max-width: 75ch;
+    height: fit-content; /* Ensure height wraps content */
+    align-self: start;   /* Prevent stretching in flex/grid containers */
 }
 .info-callout p:last-child {
     margin-bottom: 0;
