@@ -76,3 +76,87 @@ Then navigate to `http://localhost:8000` in your browser.
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## Deployment to AWS EC2
+
+This section covers the setup and deployment process for the website on an AWS EC2 instance running Nginx.
+
+### Initial Server Setup
+
+This is a one-time setup process for a new EC2 instance.
+
+1.  **Prerequisites:**
+    *   An AWS EC2 instance running Amazon Linux.
+    *   Nginx installed and running.
+    *   SSH access to the instance.
+    *   A domain name configured to point to your EC2 instance's public IP.
+
+2.  **Add SSH Deploy Key to GitHub:**
+    *   On the EC2 instance, generate an SSH key: `ssh-keygen -t rsa -b 4096`
+    *   Copy the public key: `cat ~/.ssh/id_rsa.pub`
+    *   In your GitHub `Illustrations` repository settings, go to `Settings > Deploy Keys > Add deploy key`, paste the key, and give it a title (e.g., "SVAR Visualizer Deploy Key"). Do not check "Allow write access".
+
+3.  **Clone Repository:**
+    *   In the home directory (`~`) on the EC2 instance, clone the repository:
+        ```bash
+        git clone git@github.com:Saschakew/Illustrations.git
+        ```
+
+4.  **Configure Nginx:**
+    *   Create the web directory:
+        ```bash
+        sudo mkdir -p /var/www/svar-visualizer
+        ```
+    *   Create an Nginx configuration file at `/etc/nginx/conf.d/svar-visualizer.conf` (replace `your-domain.com` with your actual domain):
+        ```nginx
+        server {
+            listen 80;
+            server_name your-domain.com;
+            root /var/www/svar-visualizer;
+            index index.html;
+            location / {
+                try_files $uri $uri/ =404;
+            }
+        }
+        ```
+    *   Test the Nginx configuration: `sudo nginx -t`
+
+5.  **Set Up SSL with Certbot:**
+    *   Run Certbot to obtain and install an SSL certificate. It will automatically update your Nginx configuration for HTTPS.
+        ```bash
+        sudo certbot --nginx
+        ```
+    *   Reload Nginx to apply changes: `sudo systemctl reload nginx`
+
+6.  **Set Final Permissions:**
+    *   Give the Nginx user ownership of the web directory:
+        ```bash
+        sudo chown -R nginx:nginx /var/www/svar-visualizer
+        ```
+
+### Deploying Updates
+
+This is the standard process for deploying updates to the live site.
+
+1.  **Connect to the EC2 Instance:**
+    ```bash
+    ssh -i /path/to/your-key.pem ec2-user@YOUR_EC2_PUBLIC_IP
+    ```
+    *Replace `/path/to/your-key.pem` and `YOUR_EC2_PUBLIC_IP` with your actual key path and EC2 public IP address.*
+
+2.  **Navigate to the project directory:**
+    ```bash
+    cd ~/Illustrations
+    ```
+
+3.  **Pull the latest changes from GitHub:**
+    ```bash
+    git pull
+    ```
+
+4.  **Sync files to the web root:**
+    *This command copies the contents of the `visualization6` sub-directory to your web server's root directory.*
+    ```bash
+    sudo rsync -av --delete ~/Illustrations/visualization6/ /var/www/svar-visualizer/
+    ```
+
