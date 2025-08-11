@@ -170,3 +170,79 @@ Next Developer Start Here
 
 8) Definition of done
  - Six pages complete, feature parity with `visualization1`, modular JS aligned with `visualization4`, QA passed.
+
+ Progress Checklists
+ - Pages content ported
+   - [ ] index
+   - [ ] page2
+   - [ ] page3
+   - [ ] page4
+   - [ ] page5
+   - [ ] page6
+ - Navigation mirrored across all pages (add page5/6 links everywhere)
+   - [x] index
+   - [x] page2
+   - [x] page3
+   - [x] page4
+   - [x] page5
+   - [x] page6
+ - JS modules migrated from `visualization1/main.js`
+   - [ ] variables.js
+   - [ ] dataGeneration.js
+   - [ ] svar.js
+   - [ ] charts.js
+   - [ ] eventListeners.js
+   - [ ] htmlout.js
+   - [ ] ui.js
+ - Page initializers wired and loading order verified
+   - [x] index.js
+   - [x] page2.js
+   - [x] page3.js
+   - [x] page4.js
+   - [x] page5.js
+   - [x] page6.js
+ - MathJax verified per page (no raw TeX after init/updates)
+   - [ ] index
+   - [ ] page2
+   - [ ] page3
+   - [ ] page4
+   - [ ] page5
+   - [ ] page6
+ - Testing passes
+   - [ ] Functional (controls → charts/outputs)
+   - [ ] Visual/responsive (breakpoints, sticky inputs)
+   - [ ] Accessibility/SEO (skip link, ARIA, meta + JSON-LD)
+   - [ ] Performance (loader hides post-init; no thrash)
+   - [ ] Cross-browser (Chrome/Firefox/Edge)
+
+ Differences Matrix (Template)
+ | Area                          | visualization1                         | visualization4                          | Action/Notes |
+ |-------------------------------|----------------------------------------|-----------------------------------------|-------------|
+ | Navigation (items/ordering)   |                                        |                                         |             |
+ | Controls layout/IDs/selectors |                                        |                                         |             |
+ | Chart set/config              |                                        |                                         |             |
+ | Data flow/math functions      |                                        |                                         |             |
+ | MathJax blocks/locations      |                                        |                                         |             |
+ | Asset loading/order           |                                        |                                         |             |
+
+ Ownership and ETA (fill in)
+ | Task Group                      | Owner | Due       | Status        |
+ |---------------------------------|-------|-----------|---------------|
+ | Content port (pages)            |       |           | Not started   |
+ | JS modularization               |       |           | Not started   |
+ | Page initializers + ordering    | SK    | 2025-08-11 | Done          |
+ | Nav mirroring                   | SK    | 2025-08-11 | Done          |
+ | MathJax verification            |       |           | Not started   |
+ | Testing (func/visual/a11y/SEO)  |       |           | Not started   |
+
+ Style and Process Guardrails
+ - CSS colors must use variables from `public/css/style.css` (no raw hex).
+ - When changing files in `public/css/`, run `/style-check`.
+ - Keep cache-busting query params (e.g., `?v=`) during development to avoid stale assets.
+ - Follow `visualization4` script order and initialization sequence.
+
+ Status Tracking Notes
+ - Update checkboxes during work. Add initials/date if helpful, e.g., "[x] page2 — SK — 2025-08-11".
+ - Use small, focused commits tied to the checklist items for easy review.
+ - 2025-08-11: Completed nav mirroring (added Page 5/6 links) across index/page2/page3/page4; placeholders already had full nav. Added aria-current="page" on current-page links for index/page2/page3/page4 for accessibility.
+ - 2025-08-11: Verified page initializers wired across index/page2/page3/page4/page5/page6 and confirmed script loading order matches visualization4. Checked off corresponding roadmap items and updated Ownership status.
