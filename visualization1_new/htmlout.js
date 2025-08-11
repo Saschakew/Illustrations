@@ -229,47 +229,54 @@ function createTableCovariance(thisStats) {
   createTable('stats-e',HTMLInsert)
 }
 function createTableZCovariance(thisStats) {
-  HTMLInsert =   createHTMLTableZCovariance( thisStats, "Loss based on   proxy", "z", "e");
-  createTable('stats-ze',HTMLInsert)
+  // Independence-based: show co-moments of innovations e in the existing container
+  try {
+    const statsE = calculateMoments(e1, e2);
+    const HTMLInsert = createHTMLTableDependency(statsE, "Co-moments of innovations e ", "e");
+    createTable('stats-ze', HTMLInsert);
+  } catch (e) {
+    // Fallback: if e1,e2 are not ready, render an empty table title
+    const HTMLInsert = createHTMLTableDependency({
+      covariance: 0, coskewness1: 0, coskewness2: 0,
+      cokurtosis1: 0, cokurtosis2: 0, cokurtosis3: 0, loss: 0
+    }, "Co-moments of innovations e ", "e");
+    createTable('stats-ze', HTMLInsert);
+  }
 }
 
 function createTableZ2Covariance(u1, u2, z1, z2, phi, color1, color2, color3) {
+  // Independence-based loss summary
+  const lossIndependence = (typeof loss34 === 'function') ? loss34(u1, u2, phi) : 0;
+  const covLoss = (typeof lossCov === 'function') ? Math.pow(lossCov(u1, u2, phi), 2) : 0;
 
-  loss1 = lossZ1(u1, u2, z1, z2, W, phi);
-  loss2 = lossZ2(u1, u2, z1, z2, W, phi);
-  loss3 = lossZ12(u1, u2, z1, z2, W, phi); 
-  HTMLInsert = `
-  <h3> Loss  based on proxies</h3>
+  let HTMLInsert = `
+  <h3>Loss based on independence</h3>
   <table class="stats-table"> 
     <tr>
-      <td class="measure"><span style="color: ${color1};">Loss z₁:</span> </td>
-      <td class="formula">  ${loss1.toFixed(3)}</td>
-    </tr>  
+      <td class="measure"><span style="color: ${color1};">Independence loss:</span></td>
+      <td class="formula"> ${lossIndependence.toFixed(3)}</td>
+    </tr>
     <tr>
-      <td class="measure"><span style="color: ${color2};">Loss z₂:</span></td>
-      <td class="formula">  ${loss2.toFixed(3)}</td>
-    </tr>   
-    <tr>
-      <td class="measure"><span style="color: ${color3};">Loss:</span> </td>
-      <td class="formula">  ${loss3.toFixed(3)}</td>
-    </tr>  
+      <td class="measure"><span style="color: ${color2};">Covariance²:</span></td>
+      <td class="formula"> ${covLoss.toFixed(3)}</td>
+    </tr>
     <tr>
       <td class="measure">Critical value (10%):</td>
       <td class="formula"> ${(2.706 / T).toFixed(3)}</td>
     </tr>  
   </table>
-  `; 
+  `;
 
-  if (loss3 > 2.706 / T) {
+  if (lossIndependence > 2.706 / T) {
     HTMLInsert += `
-    <p>Reject  null  at 10% level.</p>
-    `
+    <p>Reject null at 10% level.</p>
+    `;
   } else {
     HTMLInsert += `
-    <p>Not reject null  at  10% level.</p>
-    `
+    <p>Do not reject null at 10% level.</p>
+    `;
   }
-  createTable('stats-ze2', HTMLInsert)
+  createTable('stats-ze2', HTMLInsert);
 }
 
  
@@ -347,5 +354,55 @@ function createHTMLTableZCovariance(data, title, symbol1, symbol2) {
 }
  
 
+
+// New: Univariate moments table (for u and e)
+function createHTMLTableUnivariateMoments(data, title, symbol) {
+  const m1 = data.mean1 ?? 0;
+  const m2 = data.mean2 ?? 0;
+  const ms1 = data.mean_squared1 ?? 0;
+  const ms2 = data.mean_squared2 ?? 0;
+  const v1 = ms1 - m1 * m1;
+  const v2 = ms2 - m2 * m2;
+  return `
+  <h3>${title}</h3>
+  <table class="stats-table">
+    <tr>
+      <th> </th>
+      <th>Formula</th>
+      <th>i=1</th>
+      <th>i=2</th>
+    </tr>
+    <tr>
+      <td class="measure">Mean</td>
+      <td class="formula">mean(${symbol}ᵢ)</td>
+      <td class="value">${(data.mean1 ?? 0).toFixed(2)}</td>
+      <td class="value">${(data.mean2 ?? 0).toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Variance</td>
+      <td class="formula">mean(${symbol}ᵢ²)</td>
+      <td class="value">${(data.mean_squared1 ?? 0).toFixed(2)}</td>
+      <td class="value">${(data.mean_squared2 ?? 0).toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Skewness</td>
+      <td class="formula">mean(${symbol}ᵢ³)</td>
+      <td class="value">${(data.mean_cubed1 ?? 0).toFixed(2)}</td>
+      <td class="value">${(data.mean_cubed2 ?? 0).toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Excess Kurtosis</td>
+      <td class="formula">mean(${symbol}ᵢ⁴)−3</td>
+      <td class="value">${(data.mean_fourth1 ?? 0).toFixed(2)}</td>
+      <td class="value">${(data.mean_fourth2 ?? 0).toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td class="measure">Loss</td>
+      <td class="formula"></td>
+      <td class="value" colspan="2">${(data.loss ?? 0).toFixed(2)}</td>
+    </tr>
+  </table>
+  `;
+}
 
 

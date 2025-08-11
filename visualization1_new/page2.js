@@ -1,44 +1,16 @@
 // Global variables
 let charts = {};
-let epsilon1, epsilon2, u1, u2, e1, e2;
-let z1, z2, eta1, eta2;
+let epsilon1, epsilon2, u1, u2;
 let selectedPointIndex = null; 
 let s;
 let T;
 let phi0;
-let phi;
-let B0,B;
-let gamma1, gamma2 , gamma3;
+let B0;
 let color1, color2, color3;
-let W;
 
-// Cache-busting version for local assets
-const ASSET_VERSION = '20250811-082303';
+// Using shared Bootstrap.ASSET_VERSION for cache-busting
 
-// Function to load a script
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-      let script = document.createElement('script');
-      // Append cache-busting version to local scripts only
-      let finalSrc = src;
-      try {
-        const isExternal = /^(https?:)?\/\//i.test(src);
-        const hasQuery = src.includes('?');
-        const hasVersion = /[?&]v=/.test(src);
-        if (!isExternal) {
-          if (hasQuery) {
-            finalSrc = hasVersion ? src : `${src}&v=${ASSET_VERSION}`;
-          } else {
-            finalSrc = `${src}?v=${ASSET_VERSION}`;
-          }
-        }
-      } catch (e) { /* noop */ }
-      script.src = finalSrc;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Script load error for ${src}`));
-      document.head.appendChild(script);
-  });
-}
+// Using shared Bootstrap.loadScriptsSequential; local loadScript removed.
 
 // Array of scripts to load
 const scripts = [
@@ -52,34 +24,30 @@ const scripts = [
 ];
 
 // Prevent scrolling during initial render to avoid sticky recalculation jank
-try {
-  document.documentElement.style.overflow = 'hidden';
-  document.body.style.overflow = 'hidden';
-} catch (e) {}
+try { Bootstrap.lockScrollPreInit(); } catch (e) {}
 
-// Load scripts sequentially
-async function loadScripts() {
-  for (const script of scripts) {
-    await loadScript(script);
-  }
-  // Wait for DOM content to be loaded before initializing the app
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp);
-  } else {
+// Load scripts using shared Bootstrap helper and initialize app
+try {
+  Bootstrap.onMathJaxThenDOM(async function() {
+    await Bootstrap.loadScriptsSequential(scripts, Bootstrap.ASSET_VERSION);
     initializeApp();
-  }
+  });
+} catch (e) {
+  // Fallback if Bootstrap unavailable
+  (async () => {
+    for (const s of scripts) {
+      await new Promise((res) => { const el = document.createElement('script'); el.src = s; el.onload = res; el.onerror = () => res(); document.head.appendChild(el); });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+      initializeApp();
+    }
+  })();
 }
 
-// Wait for MathJax to be ready
-document.addEventListener('MathJaxReady', function() {
-  // Wait for DOMContentLoaded event
-  document.addEventListener('DOMContentLoaded', function() {
-      loadScripts();
-  });
-});
 
-
-function initializeApp() {
+async function initializeApp() {
   // Initialize UI elements
   initializeUI();
 
@@ -92,31 +60,11 @@ function initializeApp() {
   // Set up event listeners
   setupEventListeners();
   
-  // Typeset MathJax content
-  if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-    MathJax.typesetPromise();
-  }
-
-  // Allow transitions again (preinit disabled them)
-  try { document.documentElement.classList.remove('ui-preinit'); } catch (e) {}
-
-  // Fade out loader and re-enable scrolling after fade completes
-  const loader = document.getElementById('loading-screen');
-  if (loader) {
-    loader.classList.add('fade-out');
-    loader.addEventListener('transitionend', () => {
-      loader.style.display = 'none';
-      try {
-        document.documentElement.style.overflow = '';
-        document.body.style.overflow = '';
-      } catch (e) {}
-    }, { once: true });
-  } else {
-    try {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    } catch (e) {}
-  }
+  // Stabilize layout, typeset, and finalize loader using shared helpers
+  try { await Bootstrap.awaitFontsAndTypesetAndStabilize(); } catch (e) {}
+  try { Bootstrap.finalizeWithLoaderFadeOut(); } catch (e) {}
+  try { if (typeof resizeAllCharts === 'function') resizeAllCharts(); } catch (e) {}
+  try { setTimeout(() => { try { if (typeof resizeAllCharts === 'function') resizeAllCharts(); } catch (e) {} }, 50); } catch (e) {}
 }
 
 
@@ -133,248 +81,68 @@ function initializeUI() {
   color3 = c3;
   
     // Setup popups for all input labels
-    const popupIds = ['T', 'phi', 'gamma1', 'gamma2' ];
+    const popupIds = ['T', 'phi0' ];
     setupPopup(popupIds)  
 }
 
 
 function initializeVariables() { 
   s =  0;
-  T= getInputValue('T');
-  phi0 = 0.5;
-  phi = getInputValue('phi');
+  T = getInputValue('T');
+  phi0 = getInputValue('phi0');
+  if (isNaN(phi0)) phi0 = 0.5;
   B0 = getB(phi0);
-  B = getB(phi);
-  insertEqSVARe(B);
-
-  
-  gamma1 = getInputValue('gamma1');
-  gamma2 = getInputValue('gamma2');
-  gamma3= 1;
-  insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}');
+  insertEqSVAR(B0);
 
   generateNewData(T); 
- 
-
 }
 
 
 // Event Listeners Setup
 function setupEventListeners() {  
-  
- 
-
-       
- 
-
   createEventListener('T',  
     (value) => document.getElementById('TValue').textContent = value.toFixed(0),
-    (value) => T = value,
-    (value) => generateNewData(T), 
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true),
-    (value) => updateLossPlots(
-      false, // OnlyPoint
-      charts.lossplot,
-      phi0,
-      phi, 
-      [
-        {
-          lossFunction: lossZ1,
-          extraArgs: [u1, u2,z1,z2 ,W],
-          label: 'Loss Function 1',
-          color: color1,
-          lineStyle: 'solid'  
-        } 
-      ],
-      ''
-    ), 
- 
+    (value) => { T = value; generateNewData(T); },
+    (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true),
+    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
   );
 
-
-  createEventListener('phi', 
-    (value) => document.getElementById('phiValue').textContent = value.toFixed(2),
-    (value) => phi = value,
-    (value) => B = getB(phi),
-    (value) => insertEqSVARe(B),
-    (value) => [e1, e2] = getE(u1,u2,B), 
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
-    (value) =>  updateLossPlots(
-      false, // OnlyPoint
-      charts.lossplot,
-      phi0,
-      phi, 
-      [
-        {
-          lossFunction: lossZ1,
-          extraArgs: [u1, u2,z1,z2 ,W],
-          label: 'Loss Function 1',
-          color: color1,
-          lineStyle: 'solid'  
-        } 
-      ],
-      'none'
-    ), 
+  createEventListener('phi0', 
+    (value) => document.getElementById('phi0Value').textContent = value.toFixed(2),
+    (value) => { phi0 = value; B0 = getB(phi0); insertEqSVAR(B0); },
+    (value) => { [u1, u2] = getU(epsilon1, epsilon2, B0); },
+    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
   );
 
-  newDataBtn.addEventListener('click', function() {
-    generateNewData(T);   
-    updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true);
-    updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true);
-    updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true);
-    updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true); 
-    updateLossPlots(
-      false, // OnlyPoint
-      charts.lossplot,
-      phi0,
-      phi, 
-      [
-        {
-          lossFunction: lossZ1,
-          extraArgs: [u1, u2,z1,z2 ,W],
-          label: 'Loss Function 1',
-          color: color1,
-          lineStyle: 'solid'  
-        } 
-      ],
-      ''
-    );
-  })
-
-  createEventListener('gamma1', 
-    (value) => document.getElementById('gamma1Value').textContent = value.toFixed(2),
-    (value) => gamma1 = value, 
-    (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + gamma3 * eta1[i]), 
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true),  
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
-    (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}'),
-    (value) => updateLossPlots(
-      false, // OnlyPoint
-      charts.lossplot,
-      phi0,
-      phi, 
-      [
-        {
-          lossFunction: lossZ1,
-          extraArgs: [u1, u2,z1,z2 ,W],
-          label: 'Loss Function 1',
-          color: color1,
-          lineStyle: 'solid'  
-        } 
-      ],
-      ''
-    ),    
-  );
-
-  createEventListener('gamma2', 
-    (value) => document.getElementById('gamma2Value').textContent = value.toFixed(2),
-    (value) => gamma2 = value, 
-    (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + gamma3 * eta1[i]), 
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true), 
-    (value) => updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true),
-    (value) => updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
-    (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{t}','\\eta_{t}'),
-    (value) =>   updateLossPlots(
-      false, // OnlyPoint
-      charts.lossplot,
-      phi0,
-      phi, 
-      [
-        {
-          lossFunction: lossZ1,
-          extraArgs: [u1, u2,z1,z2 ,W],
-          label: 'Loss Function 1',
-          color: color1,
-          lineStyle: 'solid'  
-        } 
-      ],
-      ''
-    ), 
-  );
- 
-
-     
-
-    // Highlight points in scatter 
-    const scatterPlots = [   
-      'scatterPlotZ1Eps1', 'scatterPlotZ1Eps2', 'scatterPlotZ1E1', 'scatterPlotZ1E2'];
-    scatterPlots.forEach((id) =>   {
-      const canvas = document.getElementById(id); 
-      canvas.addEventListener('click', function() {
-        console.log(`Canvas ${id} clicked`);
-        const chart = charts[id];
-        const elements = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
-        handleChartClick(event, elements, chart);
-      }) 
-    })
-    
-
-    const callbacks = [
-      function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
-      function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
-      function(phi) { 
-        B = getB(phi); 
-        insertEqSVARe(B); 
-      },
-      function(phi) { 
-        [e1, e2] = getE(u1, u2, B); 
-      }, 
-      function(phi) { 
-        updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", false); 
-      },
-      function(phi) { 
-        updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", false); 
-      }, 
-      function(phi) { 
-        updateLossPlots(
-          true, // OnlyPoint
-          charts.lossplot,
-          phi0,
-          phi, 
-          [
-            {
-              lossFunction: lossZ1,
-              extraArgs: [u1, u2,z1,z2 ,W],
-              label: 'Loss Function 1',
-              color: color1,
-              lineStyle: 'solid'  
-            } 
-          ],
-          'none'
-        );
-      },
-    ];
-    
-    let currentAnimationStop = null;
-
-    MinDependenciesBtn.addEventListener('click', function() {
-        // Stop any ongoing animation
-        if (currentAnimationStop) {
-            currentAnimationStop();
-            currentAnimationStop = null;
-        }
-    
-        // Reset phi to its initial value
-        const initialPhi = phi; // Assuming phi0 is your initial phi value
-    
-        // Start a new animation
-        try {
-            currentAnimationStop = animateBallRolling(charts.lossplot, lossZ1, 'min', initialPhi, callbacks, u1, u2, z1, z2,W);
-        } catch (error) {
-            console.error("An error occurred during animation setup:", error);
-            // Implement any error handling or user notification here
-        }
+  const newDataBtn = document.getElementById('newDataBtn');
+  if (newDataBtn) {
+    newDataBtn.addEventListener('click', function() {
+      generateNewData(T);
+      updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
+      updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
     });
+  }
 
-    
-  
+  // Highlight points in scatter
+  const scatterPlots = ['scatterPlot1', 'scatterPlot2'];
+  scatterPlots.forEach((id) => {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    canvas.addEventListener('click', function(evt) {
+      const chart = charts[id];
+      if (!chart) return;
+      const elements = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
+      handleChartClick(evt, elements, chart);
+    });
+  });
+
+  // Keep charts responsive on window resize and final window load
+  try {
+    window.addEventListener('resize', () => { try { resizeAllCharts(); } catch (e) {} });
+  } catch (e) {}
+  try {
+    window.addEventListener('load', () => { try { resizeAllCharts(); } catch (e) {} });
+  } catch (e) {}
 }
 
 
@@ -383,39 +151,12 @@ function setupEventListeners() {
 // Chart Initialization
 function initializeCharts() {
   const ScatterConfig = getScatterPlotConfig();
-  
 
-  createChart('scatterPlotZ1Eps1',ScatterConfig) ; 
-  createChart('scatterPlotZ1Eps2',ScatterConfig) ; 
-    
-  updateChartScatter(charts.scatterPlotZ1Eps1, z1, epsilon1, "Relevance:", "z₁", "ε₁", true);
-  updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Exogeneity:", "z₁", "ε₂", true);
+  createChart('scatterPlot1', ScatterConfig);
+  createChart('scatterPlot2', ScatterConfig);
 
-  
-  createChart('scatterPlotZ1E1',ScatterConfig)  ;
-  createChart('scatterPlotZ1E2',ScatterConfig)  ;
-    
-  updateChartScatter(charts.scatterPlotZ1E1, z1, e1, " ", "z₁", "e₁", true);
-  updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true);
-
- 
-  const LossPlotConfig = getLossPlotConfig(); 
-  
-  createChart('lossplot',LossPlotConfig);  
-
-  updateLossPlots(OnlyPoint=false,charts.lossplot,phi0,phi, [
-    {
-      lossFunction: lossZ1,
-      extraArgs: [u1, u2,z1,z2 ,W],
-      label: 'Loss Function 1',
-      color: color1,
-      lineStyle: 'solid'  
-    }, 
-  ]   ,''  );
- 
-
-   
-
+  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
+  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
 }
 
 
@@ -424,22 +165,24 @@ function initializeCharts() {
 
  
 function generateNewData(T) {  
-
   let rawEpsilon1, rawEpsilon2; 
-  rawEpsilon1 = generateMixedNormalData(T, s);
-  rawEpsilon2 = generateMixedNormalData(T, 0); 
-  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2) ;
-  
-  [u1, u2] = getU(epsilon1, epsilon2, B0)   ; 
-  [e1, e2] = getE(u1,u2,B); 
+  rawEpsilon1 = generateUniformData(T);
+  rawEpsilon2 = generateUniformData(T); 
+  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2);
+  [u1, u2] = getU(epsilon1, epsilon2, B0);
+}
 
-  eta1 = generateMixedNormalData(T, 0); 
-  z1 =  eta1.map((eta, i) => gamma1 * epsilon1[i] + gamma2 * epsilon2[i] + gamma3 * eta ); 
-  eta2 = generateMixedNormalData(T, 0); 
-  z2 = eta2.map((eta, i) => 1 * epsilon1[i]   +   eta ); 
-   
-  
-  W = getW(  epsilon2, z1, z2);  
+// Resize all charts helper (mirrors page6 behavior)
+function resizeAllCharts() {
+  try {
+    if (!charts) return;
+    Object.keys(charts).forEach((key) => {
+      const ch = charts[key];
+      if (ch && typeof ch.resize === 'function') {
+        try { ch.resize(); } catch (e) {}
+      }
+    });
+  } catch (e) {}
 }
 
 

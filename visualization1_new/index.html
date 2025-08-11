@@ -8,16 +8,16 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Proxy SVAR Exogeneity Test</title>
-  <meta name="description" content="Interactive guide on Proxy SVAR Exogeneity Testing, including strong exogeneity tests and visualizations of proxy relevance and exogeneity.">
-  <meta name="keywords" content="SVAR, proxy variables, exogeneity test, econometrics, structural vector autoregression">
+  <title>Non-Gaussian SVAR: An Interactive Guide</title>
+  <meta name="description" content="An introduction to Non-Gaussian Structural Vector Autoregression (SVAR), covering the basic setup, simplifying assumptions, and the relationship between reduced-form shocks and structural shocks.">
+  <meta name="keywords" content="SVAR, structural vector autoregression, non-Gaussian, identification, econometrics">
 
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "Strong Proxy Exogeneity Test",
-      "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+      "headline": "Non-Gaussian SVAR",
+      "description": "An introduction to Non-Gaussian Structural Vector Autoregression (SVAR) models, explaining the basic setup and key assumptions for simplified visualization.",
       "author": {
         "@type": "Person",
         "name": "Sascha Keweloh",
@@ -43,8 +43,8 @@
       {
         "@context": "https://schema.org",
         "@type": "Course",
-        "name": "Strong Proxy Exogeneity Test",
-        "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+        "name": "Non-Gaussian SVAR Analysis",
+        "description": "An interactive course on Non-Gaussian Structural Vector Autoregression models and identification techniques.",
         "provider": {
           "@type": "Person",
           "name": "Sascha Keweloh",
@@ -62,8 +62,8 @@
           },
           {
             "@type": "Thing",
-            "name": "Strong Proxy Exogeneity Test",
-            "description": "A statistical test for the exogeneity of proxy variables in a SVAR model."
+            "name": "Non-Gaussian Analysis",
+            "description": "Statistical methods for analyzing data that does not follow a normal distribution."
           }
         ]
       }
@@ -75,7 +75,7 @@
   </style>
   <link rel="stylesheet" href="styles.css?v=20250811-082303">     
   <script src="loader.js?v=20250811-082303"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  <script src="bootstrap.js?v=20250811-082303"></script>
   <script>
     MathJax = {
       tex: {
@@ -97,7 +97,6 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/core-js-bundle/minified.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
 
   </head>
   <body  class="index">
@@ -109,7 +108,7 @@
 
     
   <header>
-    <h1>Proxy Exogeneity Test</h1>
+    <h1>Non-Gaussian SVAR</h1>
   </header>
  
   <main id="main">
@@ -122,98 +121,24 @@
             <span class="icon">☰</span>
             <span class="text">Menu</span>
         </button>
-        <button id="input-toggle" aria-label="Toggle input">
-            <span class="icon">⚙</span>
-            <span class="text">Input</span>
-        </button>
       </div>
       <nav>
         <ul>
-        <li><a href="index.html" aria-current="page">SVAR</a></li>
-        <li><a href="page2.html">Proxies</a></li> 
-        <li><a href="page3.html">Exogeneity Test   </a></li>
-        <li><a href="page4.html" >Strong Exogeneity Test  </a></li> 
-        <li><a href="page5.html">Page 5</a></li>
-        <li><a href="page6.html">Page 6</a></li>
+        <li><a href="index.html" aria-current="page">Setup</a></li>
+        <li><a href="page2.html">Reduced Form</a></li>
+        <li><a href="page3.html">Identification Problem</a></li>
+        <li><a href="page4.html">Min. Dependencies</a></li>
+        <li><a href="page5.html">Max. non-Gaussianity</a></li>
+        <li><a href="page6.html">Non-Gaussianity</a></li>
         </ul>
       </nav>
 
         
-      <div class="input-content-wrapper expanded">
-
-
-        <div class="input-content"  >
-
-              
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span> 
-                <span class="InputValue" id="TValue"> 250</span>
-               </label> 
-            </div>
-            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999">
-          </div>
-
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="phi0" id="phi0-label" title="Click for more information"><span>$\phi_0 = $ </span>
-                <span class="InputValue" id="phi0Value">  0.00</span>
-              </label> 
-            </div>
-            <input class="InputRange" type="range" id="phi0" min="0" max="2.35" step="0.01" value="0">
-          </div>
-
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span>
-                <span class="InputValue" id="phiValue">  0.00</span>
-              </label> 
-            </div>
-            <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
-          </div>
-           
-           
-    
-
-          <div class="input-wrapper"> 
-            <button id="newDataBtn" class="orange-button">New Data</button>
-          </div> 
-           
-        </div>
-      </div>
+      
       
     </section>
 
-    <div class="popup-container">
-      <div id="T-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Sample Size: $T$</h3>
-          <p>T represents the sample size or the number of observations in the dataset.</p>
-        </div>
-      </div>
     
-      <div id="phi0-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Rotation angle: $\phi_0$</h3>
-          <p>In the bivairate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced form shocks $u_t$   
-          are a rotation with an angle of   $\phi_0  (180 / π)$   degree of the structural form shocks $\epsilon_t$.
-        </div>
-      </div>
-      
-      <div id="phi-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Rotation angle: $\phi$</h3>
-          <p>In the bivairate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced form shocks $u_t$   
-            are a rotation with an angle of   $\phi_0  (180 / π)$   degree of the structural form shocks $\epsilon_t$. 
-          The rotation   $\phi $ allows to calculate the innovations $e_t(B(\phi)) = B(\phi)^{-1} u_t$ as a rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.
-        </p>
-        </div>
-      </div>
- 
-    </div>
 
  
 
@@ -221,23 +146,18 @@
  
       <section id="introduction" class="text-container">
         <h2>Introduction</h2>
-        <p>Proxy variables are among the most popular tools to identify Structural Vector Autoregression (SVAR) models. 
-            This short interactive guide illustrates how endogenous proxy variables lead to biased SVAR estimates and 
-            it illustrates the test for proxy exogeneity in 
-            <a href="https://doi.org/10.1016/j.jeconom.2024.105876" target="_blank">
-            Bruns and Keweloh (2024)</a>.</p>  
+        <p>Welcome to an interactive guide on Non-Gaussian Structural Vector Autoregression (SVAR) models. 
+          This website aims to visualize and explain the identification approach in <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target="_blank">Keweloh (2021)</a>.</p>  
       </section>
 
       <section id="structure" class="text-container">
         <h3>The structure of the guide</h3>
         <p>The guide is structured as follows:</p>
-        <ul  >
+        <ul>
           <li>The <a href="index.html">first</a> page introduces the SVAR model and the identification problem.</li>
-          <li>The <a href="page2.html">second</a> page illustrates how a proxy allows to identify the SVAR.</li>
-          <li>The <a href="page3.html">third</a> page illustrates how the proxy exogeneity assumption can be tested if two proxies are available.</li>
-          <li>The <a href="page4.html">fourth</a> page introduces the test for proxy exogeneity in 
-            <a href="https://doi.org/10.1016/j.jeconom.2024.105876" target="_blank">
-            Bruns and Keweloh (2024)</a>.</li>
+          <li>The <a href="page2.html">second</a> page illustrates the reduced form.</li>
+          <li>The <a href="page3.html">third</a> page discusses the identification problem.</li>
+          <li>The <a href="page4.html">fourth</a> page introduces the minimum dependence approach.</li>
           <li>The <a href="page5.html">fifth</a> page is a placeholder for additional analyses (content to be migrated).</li>
           <li>The <a href="page6.html">sixth</a> page is a placeholder for extended content (content to be migrated).</li>
         </ul>
@@ -270,7 +190,10 @@
           <h5>Assumption 1: No Lags</h5>
           The SVAR has zero lags:
           <p>   
-            <div class="equation-wrapper" style="text-align: center;"> $  y_t =   u_t \quad \text{and} \quad u_t =B_0 \epsilon_t  $$</p> 
+            <div class="equation-wrapper" style="text-align: center;"> 
+            $$  y_t =   u_t \quad \text{and} \quad u_t = B_0 \epsilon_t  $$
+            </div>
+          </p> 
         </div> 
  
       <p>To further simplify, let's consider an SVAR with only two variables and shocks such that each of the two reduced form shocks 
@@ -302,121 +225,6 @@
           </div> 
       </section>
 
-      
-
- 
-      <section  id="shock-relationship" class="text-container">
-        <h3>The relationship between reduced and structural form shocks</h3>
-              
-        <p>In the simplified SVAR model, the reduced form shocks $u_t$ can 
-          be thought of a rotation with an angle of  $\phi_0  (180 / π)$ degree of the structural form shocks $\epsilon_t$:
-          <ul class="input-list">
-            <li>Move the $\phi_0$ slider to adjust the angle of the rotation and observe how the reduced form shocks $u_t$ change in the interactive simulation at the bottom of the page.</li>
-          </ul>
-          <div class="equation-wrapper" style="text-align: center;"> 
-          $   \begin{bmatrix} u_{1,t}   \\ u_{2,t}  \end{bmatrix} 
-          =  
-          \begin{bmatrix} \cos(\phi_0) & -\sin(\phi_0) \\ \sin(\phi_0) & \cos(\phi_0) \end{bmatrix}
-          \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix} 
-          $
-          <span id="current-B0"></span>
-          </div>
-          </p>
-      </section>
- 
-
-      
-    <section id="identification-challenge" class="text-container">
-      <h3>Structural shocks and innovations</h3>
-
-       
-     In a given application, we neither know the rotation matrix $B(\phi_0)$ nor do we observe the structural shocks $\epsilon_t$.
-      Instead, we only observe the reduced form shocks $u_t$  (in practice we only observe the macroeconomic 
-      variables $y_t$ and need to estimate the VAR to get the reduced form shocks $u_t$. However, with the simplifying no-lags assumption it holds that $u_t=y_t$).  
-      Consequently, the question is how can we identify $B(\phi_0)$ and recover the structural shocks $\epsilon_t$ from the reduced form shocks $u_t$?
-       
-      
-      <p>
-      We can always choose an angle $\phi$, calculate $B(\phi)$:
-      </p>
-      <div class="equation-wrapper" style="text-align: center;"> 
-      $
-      B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}
-      $
-      </div>
-      <p> and get the corresponding innovations  $
-      e_t(B(\phi)) = B(\phi)^{-1} u_t 
-      $ 
-      such that    </p>
-      <div class="equation-wrapper" style="text-align: center;"> 
-        $   
-        \begin{bmatrix} e_{1,t} \\ e_{2,t} \end{bmatrix} 
-        =  
-        \begin{bmatrix} \cos(\phi) & \sin(\phi) \\ -\sin(\phi) & \cos(\phi) \end{bmatrix}
-        \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix} 
-        $
-      </div>
-      <p>
-      These innovations represent the shocks that would yield $u_t$ if the true angle of the data-generating process $\phi_0$ were equal to the chosen angle $\phi$.
-      Specifically, for $\phi=\phi_0$ we get $e_t(B(\phi_0)) = \epsilon_t$.</p>
-
-      <ul class="input-list">
-        <li>Move the $\phi$ slider to adjust the angle of the rotation and observe how the innovations $e_t(B(\phi))$ change in the interactive simulation at the bottom of the page.</li>
-      </ul>
-      <div class="equation-wrapper" style="text-align: center;"> 
-        <span id="current-B"></span>  
-        </div>
-      </section>
-
-
-
-
-    <section id="interactive-simulation" class="text-container">
-      <h3>Interactive simulation</h3>
-      
-   
-      <p>
-      Note that all rotations $\phi$ lead to uncorrelated innovations. 
-      Therefore, the assumption of unccorelated shocks can not be used to identify the SVAR.
-      Meaning the assumption of uncorrelated shocks is not sufficient to use the reduced form 
-      shocksto recover the rotation $\phi_0$ and the structural shocks $\epsilon_t$.
-    </p>
-
-
-
-
-      
-    
-  <div class="container three">
-
-    <section class="chart-container"> 
-      <canvas id="scatterPlot1"  aria-label="Scatter plot showing structural form shocks epsilon1 and epsilon2"></canvas>
-    </section> 
-
-    <section class="chart-container"> 
-      <canvas id="scatterPlot2"  aria-label="Scatter plot showing reduced form shocks u1 and u2"></canvas>
-    </section>
-
-    <section class="chart-container"> 
-      <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2"></canvas>
-    </section>
-
-  </div>
-  </section>
-
-
-
-
-
-
-    <div class="text-container" id="next-steps">
-      <h3>Next steps</h3>
-      <p>
-        The <a href="page2.html">next</a> page illustrates how a proxy allows to identify the SVAR.
-      </p>
-      
-    </div>
-
   </main>
 
   <footer>
@@ -426,6 +234,6 @@
     </div>
 </footer>
   
-  <script src="index.js?v=20250810-235816"></script>
+  <script src="index.js?v=20250811-082303"></script>
 </body>
 </html>

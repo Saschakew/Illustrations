@@ -4,11 +4,11 @@ This repository hosts an interactive guide visualizing a research paper on SVAR 
 
 ## Quick Start
 - Clone the repo and open the existing guide pages:
-  - `index.html`, `page2.html`, `page3.html`, `page4.html`
-  - `index.js`, `page2.js`, `page3.js`, `page4.js`
-  - Shared charts/configs (e.g., `charts.js`)
-- Preview locally using any static server (e.g., VS Code “Live Server” or `npx serve`).
-- Deploy via GitHub Pages or your static host.
+  - `index.html`, `page2.html`, `page3.html`, `page4.html`, `page5.html`, `page6.html`
+  - `index.js`, `page2.js`, `page3.js`, `page4.js`, `page5.js`, `page6.js`
+  - Core scripts live at the project root (flat structure): `bootstrap.js`, `main.js`, `charts.js`, `variables.js`, `loader.js`, `ui.js`, `dataGeneration.js`, `eventListeners.js`, `htmlout.js`, `svar.js`
+  - Preview locally using any static server (e.g., VS Code “Live Server” or `npx serve`).
+  - Deploy via GitHub Pages or your static host.
 
 ## How to Create a New Guide
 1. Duplicate an existing page pair
@@ -26,9 +26,9 @@ This repository hosts an interactive guide visualizing a research paper on SVAR 
    - Keep chart sizing consistent; for readability, the loss plot uses `aspectRatio: 1.8` in `charts.js`. Match that pattern for similarly dense plots.
 
 4. Cache-busting (required for reliable updates)
-   - In HTML: append a version query to local CSS/JS links, e.g. `?v=20250810-235816`.
-   - In page scripts: update the `ASSET_VERSION` constant (present in `index.js`, `page2.js`, `page3.js`, `page4.js`) so dynamically loaded local scripts also carry the same version.
-   - Keep the no-cache meta tags in each page (`index.html`, `page2.html`, `page3.html`, `page4.html`) for consistent behavior; replicate in new pages.
+   - In HTML: append a version query to local CSS/JS links, e.g. `?v=20250811-082303`.
+   - Centralized: bump `ASSET_VERSION` once in `bootstrap.js`. Ensure each page includes `bootstrap.js?v=ASSET_VERSION` and its own page script `pageN.js?v=ASSET_VERSION`.
+   - Keep the no-cache meta tags in each page (`index.html`, `page2.html`, `page3.html`, `page4.html`, `page5.html`, `page6.html`) for consistent behavior.
 
 5. Content and pedagogy
    - Follow the “explain, then show” pattern:
@@ -59,5 +59,32 @@ This repository hosts an interactive guide visualizing a research paper on SVAR 
 - Update content and code in the new `pageX.html`/`pageX.js`.
 - Add nav entry and verify links.
 - Keep charts consistent with `charts.js` conventions (e.g., aspectRatio).
-- Bump `ASSET_VERSION` in page scripts and the `?v=` query in HTML includes.
+- Bump `ASSET_VERSION` in `bootstrap.js` and update the `?v=` query in HTML includes.
 - Include the no-cache meta tags in every new HTML page.
+
+## Project-specific notes: visualization1_new (Non-Gaussian SVAR)
+
+- Pages present: `index.html`, `page2.html`, `page3.html`, `page4.html`, `page5.html`, `page6.html`.
+  - Navigation is mirrored across all pages; MathJax v3 verified per page.
+- Modules map (flat files at project root):
+  - `bootstrap.js` (ASSET_VERSION, loader helpers: `loadScriptsSequential`, `onMathJaxThenDOM`, `awaitFontsAndTypesetAndStabilize`, `finalizeWithLoaderFadeOut`)
+  - `main.js` (core app logic and orchestration)
+  - `charts.js` (Chart.js configuration and plotting helpers)
+  - `dataGeneration.js` (data generation utilities)
+  - `eventListeners.js` (event wiring and handlers)
+  - `htmlout.js` (DOM/HTML output helpers)
+  - `svar.js` (SVAR-specific utilities)
+  - `ui.js` (menu/input UI interactions)
+  - `variables.js` (globals/config/constants)
+  - `index.js` + `page2–page6.js` (per-page initialization)
+- Cache-busting: local CSS/JS links use `?v=`; bump per edit. `ASSET_VERSION` is centralized in `bootstrap.js`.
+- Libraries: Chart.js 3.7.1 and MathJax v3 (tex-mml-chtml). Keep script order consistent with `index.html`.
+- Index page scope: `index.html` stops after the assumptions section; no controls/plots. `index.js` is UI-only; head includes MathJax only (no Chart.js/mathjs).
+- Loading overlay: section initializers must be `async` and await long tasks so the loader hides only after full init.
+- UI rules: when adjusting inputs or menus, update `ui.js` and `eventListeners.js`; keep DOM IDs stable across pages.
+- Style guide: use the CSS variables defined in `styles.css` (no raw hex codes).
+- Quick testing checklist:
+  - Controls update charts without console errors.
+  - Layout responsive; sticky inputs stable.
+  - MathJax typeset complete; no raw TeX.
+  - Accessibility basics: skip link, ARIA labels present.

@@ -7,16 +7,16 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Proxy SVAR Exogeneity Test</title>
-    <meta name="description" content="Interactive guide on Proxy SVAR Exogeneity Testing, including strong exogeneity tests and visualizations of proxy relevance and exogeneity.">
+  <title>Minimizing Dependencies in Non-Gaussian SVAR</title>
+    <meta name="description" content="Interactive guide on minimizing dependencies to verify identification in Non-Gaussian SVAR, with sliders, plots, and loss functions.">
   <meta name="keywords" content="SVAR, proxy variables, exogeneity test, econometrics, structural vector autoregression">
 
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "Strong Proxy Exogeneity Test",
-      "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+      "headline": "Minimizing Dependencies in Non-Gaussian SVAR",
+      "description": "This page explores how we can verify whether we've correctly identified the structural shocks by minimizing dependencies between innovations.",
       "author": {
         "@type": "Person",
         "name": "Sascha Keweloh",
@@ -42,8 +42,8 @@
       {
         "@context": "https://schema.org",
         "@type": "Course",
-        "name": "Strong Proxy Exogeneity Test",
-        "description": "This interactive guide provides an introduction to the strong proxy exogeneity test in Bruns and Keweloh (2024).",
+        "name": "Non-Gaussian SVAR Analysis",
+        "description": "Interactive exploration of identification in Non-Gaussian SVAR using minimizing dependencies and related tools.",
         "provider": {
           "@type": "Person",
           "name": "Sascha Keweloh",
@@ -74,6 +74,7 @@
     #loading-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:9999;display:flex;align-items:center;justify-content:center}
   </style>
   <link rel="stylesheet" href="styles.css?v=20250811-082303">
+  <script src="bootstrap.js?v=20250811-082303"></script>
   <script src="loader.js?v=20250811-082303"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <script>
@@ -106,7 +107,7 @@
     <div class="loader"></div>
   </div>
   <header>
-    <h1>Proxy Exogeneity Test</h1>
+    <h1>Non-Gaussian SVAR</h1>
   </header>
 
   <main id="main">
@@ -125,12 +126,12 @@
       </div>
       <nav>
         <ul>
-        <li><a href="index.html" >SVAR</a></li>
-        <li><a href="page2.html">Proxies</a></li> 
-        <li><a href="page3.html">Exogeneity Test   </a></li>
-        <li><a href="page4.html" aria-current="page">Strong Exogeneity Test</a></li> 
-        <li><a href="page5.html">Page 5</a></li>
-        <li><a href="page6.html">Page 6</a></li>
+        <li><a href="index.html">Setup</a></li>
+        <li><a href="page2.html">Reduced Form</a></li>
+        <li><a href="page3.html">Identification Problem</a></li>
+        <li><a href="page4.html" aria-current="page">Min. Dependencies</a></li>
+        <li><a href="page5.html">Max. non-Gaussianity</a></li>
+        <li><a href="page6.html">Non-Gaussianity</a></li>
         </ul>
       </nav>
 
@@ -143,55 +144,28 @@
           <div class="input-wrapper">
             <div class="label-value-wrapper">
               <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span> 
-                <span class="InputValue" id="TValue"> 500</span>
+                <span class="InputValue" id="TValue"> 250</span>
                </label> 
             </div>
-            <input class="InputRange" type="range" id="T" step="1" value="500" min="250" max="999">
+            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999">
+          </div>
+
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="phi0" id="phi0-label" title="True rotation angle"><span>$\phi_0 = $ </span>
+                <span class="InputValue" id="phi0Value"> 0.50</span>
+              </label>
+            </div>
+            <input type="hidden" id="phi0" value="0.5">
           </div>
 
           <div class="input-wrapper">
             <div class="label-value-wrapper">
               <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span>
-                <span class="InputValue" id="phiValue">  0.00</span>
+                <span class="InputValue" id="phiValue">  0.50</span>
               </label> 
             </div>
-            <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0">
-          </div>
-
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="s1" id="s1-label" title="Click for more information"><span>$s_1 = $</span>
-                <span class="InputValue" id="s1Value">  0.00</span>
-              </label> 
-            </div>
-            <input class="InputRange" type="range" id="s1" min="-5" max="5" step="0.01" value="0">
-          </div>
-
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="s2" id="s2-label" title="Click for more information"><span>$s_2 = $</span>
-                <span class="InputValue" id="s2Value">  0.00</span>
-              </label> 
-            </div>
-            <input class="InputRange" type="range" id="s2" min="-5" max="5" step="0.01" value="0">
-          </div>
-
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="gamma1" id="gamma1-label" title="Click for more information"><span>$\gamma_1 = $</span>
-                <span class="InputValue" id="gamma1Value">  3.00</span>
-              </label> 
-            </div>
-            <input class="InputRange" type="range" id="gamma1" min="0" max="5.0" step="0.01" value="3">
-          </div>
-
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="gamma2" id="gamma2-label" title="Click for more information"><span>$\gamma_2 = $</span>
-                <span class="InputValue" id="gamma2Value">  0.00</span>
-              </label> 
-            </div>
-            <input class="InputRange" type="range" id="gamma2" min="0" max="5.0" step="0.01" value="0">
+            <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0.5">
           </div>
 
           <div class="input-wrapper"> 
@@ -226,379 +200,124 @@
         </p>
         </div>
       </div>
-    
-  
-    
-      <div id="gamma1-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Proxy strength: $\gamma_1$</h3>
-          <p>The parameter  $\gamma_1$ governs the strength or relevance of the first proxy. A higher value indicates a stronger relationship between the proxy and the target shock.</p>
-        </div>
-      </div>
-    
-      <div id="gamma2-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Proxy exogeneity:  $\gamma_2$</h3>
-          <p>The parameter  $\gamma_2$ governs the exogeneity of the first proxy. A value of zero indicates an exogenous proxy, while larger values lead to an endogenous proxy.</p>
-        </div>
-      </div>
     </div>
 
-    
-    
-      <div id="s1-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Non-Gaussianity: $s_1$</h3>
-          <p>The parameter $s_1$   affects the non-Gaussianity of the first shock $\epsilon_1$. 
-            A value of zero leads to Gaussian shocks. Values smaller than zero lead to a left skewed distribution and values greater than zero to a right skewed distribution.
-          </p>
-        </div>
-      </div>
-    
-      <div id="s2-popup" class="popup">
-        <div class="popup-content">
-          <span class="close">&times;</span>
-          <h3>Non-Gaussianity: $s_s$</h3>
-          <p>The parameter $s_s$ affects the non-Gaussianity of the second shock $\epsilon_2$. 
-            A value of zero leads to Gaussian shocks. Values smaller than zero lead to a left skewed distribution and values greater than zero to a right skewed distribution.
-        </div>
-      </div>
-     
     </div>
   
 
-      <section id="introduction" class="text-container">
-        <h2>Strong  Proxy Exogeneity Test</h2>
-        <p>
-          This page illustrates the proxy exogeneity test in <a href="https://doi.org/10.1016/j.jeconom.2024.105876" target="_blank">
-            Bruns and Keweloh (2024)</a>.
-          While the proxy exogeneity test from the  <a href="page3.html">previous</a> always requires two proxies, 
-          the test on this page allows to test the proxy exogeneity of a single proxy.
-        </p>
-
-        <p>
-         Note that for illustration purposes, this page slightly deviates from the setup in <a href="https://doi.org/10.1016/j.jeconom.2024.105876" target="_blank">
-          Bruns and Keweloh (2024)</a>.
-         This page uses a test is build on moment conditions around the correlation of the proxy and the innovations $e_t(\phi) = B(\phi)^{-1} u_t$.
-         In <a href="https://doi.org/10.1016/j.jeconom.2024.105876" target="_blank">
-          Bruns and Keweloh (2024)</a>, the test does not require to compute innovations and it is build on moment conditions  
-         closely related to the the proxy SVAR estimator, $\hat{\beta} = \frac{1/T \sum_{t=1}^{T} u_t z_t }{1/T \sum_{t=1}^{T} u_{1t} z_t} $.
-        </p>
-    </section>
+       <section id="introduction" class="text-container">
+        <h2>Minimizing Dependencies</h2>
+        <p>This page explores how we can verify whether we've correctly identified the structural shocks by minimizing dependencies between innovations.</p>
+      </section>
 
 
 
     
-    <section id="Strong-exogeneity" class="text-container">
-      <h2>Strong proxy exogeneity</h2>
-
-      <p>If only a single proxy variable is avaiable, the identifying assumption of an exogenous proxy, meaning a proxy which is uncorrelated
-        with the non-target shock such that $E[\epsilon_{2t} z_t]=0$, cannot be tested without further assumptions.
-        Instead, most applications using proxy variables rely on economic arguments to justify the exogeneity condition. 
-        Bruns and Keweloh (2024), argue that these  economic arguments typically imply a stronger form of exogeneity.
-      </p>
-
-      
-      <div class="assumption-box">
-        <h5>Definition: Strong Exogeneity</h5>
-        <p> A proxy variable $z_t$ for a target shock $\epsilon_{1t}$ is strongly exogenous 
-          if it contains no information on the expected value of the non-target shock, i.e.,
-          $E[\epsilon_{2t} | z_t]=0$.
-        </p> 
-      </div> 
-
-      <p>Without further assumptions, the exogeneity assumption $E[\epsilon_{2t}  z_t]=0$ cannot be tested. However, the 
-        strong exogeneity assumption $E[\epsilon_{2t} | z_t]=0$ is a stronger assumption and can be tested.
-        Before introducing the strong exogeneity test, it is important to discuss whether the strong exogeneity assumptions 
-        is a reasonable economic assumption and what are the economic consequences of rejecting the strong exogeneity?
-      </p>
-
+    <section id="independent-shocks" class="text-container">
+      <h3>Independent Shocks</h3>
       <p>
-        Intuivily, the econmic reasoning used to justify the exogeneity of a proxy typically relies on the argument,
-        that the proxy is a function of the target shock and not affected by the non-target shock. For example, consider the tax 
-        proxy in Mertens and Ravn (2014), constructed as a series of tax shocks based on narrative documents.
-        Intuitvely, if the proxy is equal to
-        a series of tax shocks not containing information on the expected value of
-        other non-target shocks, then the tax proxy contains no information on the expected
-        value of other non-target shocks. Consequently, the economic reasoning used to justify the exogeneity of the tax proxy
-        infact justifies the strong exogeneity assumption and rejecting the strong exogeneity assumption idicates 
-        evidence against the economic reasoning used to justify the exogeneity of the proxy.
+        While we cannot observe the structural shocks $\epsilon_t$, we do know something about their stochastic properties: The structural shocks $\epsilon_t$ are
+        independent, meaning a given shock $\epsilon_{1,t}$ contains no information about the shock $\epsilon_{2,t}$ and vice versa. The same property should apply to the
+        innovations $e_t(B(\phi))$, meaning a given innovation $e_{1,t}$ should contain no information on the innovation $e_{2,t}$ and vice versa.
       </p>
-
       <p>
-        The strong proxy exogeneity test in <a href="https://doi.org/10.1016/j.jeconom.2024.105876" target="_blank">
-          Bruns and Keweloh (2024)</a> is based on a simple idea. 
-        If a proxy $z_t$ is strongly exogenous, i.e. $E[\epsilon_{2t} | z_t]=0$, we can generate additional 
-        synthetic proxies $z_{2t} = h(z_t)$ as functions of the original proxy. Strong exogeneity immediatly implies
-        that the synthetic proxy $z_{2t}$ is exogenous, i.e. $E[\epsilon_{2t}  z_{2t}]=0$. 
-        Consequently, the original proxy and the synthetic proxy should provide a system of two exogenous proxies and 
-        we can apply the proxy exogeneity test described in the  <a href="page3.html">previous</a> page. 
-        The only difference is that the second proxy is now a synthetic proxy and generated based on the first proxy.
+        We can use the stochastic property of independent shocks to verify whether we have chosen $\phi = \phi_0$ and whether our innovations equal the structural shocks. We can do this in two steps:
       </p>
- 
+      <ol class="styled-list">
+        <li>Propose a rotation angle $\phi$ and calculate the corresponding innovations $e_t(B(\phi))$.</li>
+        <li>Measure the dependency of the innovations and rule out rotation angles $\phi$ that lead to dependent innovations.</li>
+      </ol>
     </section>
 
 
-    <section id="strong-proxy-svar" class="text-container">
-      <h2>Proxy SVAR </h2>
+    <section id="measuring-dependencies" class="text-container">
+      <h3>Moment Conditions for Independent Shocks</h3>
+      <p>The dependency of the innovations $ e_t(B(\phi)) $ can be measured using moment conditions. Specifically, independent shocks with mean zero and unit variance will satisfy the following covariance-, coskewness-, and cokurtosis- conditions.</p>
+      <div class="equation-wrapper" style="text-align: center;">
+        Covariance condition:
+        $$E[\varepsilon_{1,t}\varepsilon_{2,t}] = 0 \implies  \ E[e_{1,t}(\phi)e_{2,t}(\phi)]  \overset{!}{=} 0$$
+        Coskewness condition:
+        $$E[\varepsilon_{1,t}^2\varepsilon_{2,t}] = 0 \implies  \ E[e_{1,t}(\phi)^2e_{2,t}(\phi)]  \overset{!}{=} 0$$
+        $$E[\varepsilon_{1,t}\varepsilon_{2,t}^2]=0  \implies \ E[e_{1,t}(\phi)e_{2,t}(\phi)^2] \overset{!}{=} 0$$
+        Cokurtosis condition:
+        $$E[\varepsilon_{1,t}^3\varepsilon_{2,t}]  = 0 \implies \  E[e_{1,t}(\phi)^3 e_{2,t}(\phi)]  \overset{!}{=} 0$$
+        $$E[\varepsilon_{1,t}\varepsilon_{2,t}^3]  = 0 \implies \ E[e_{1,t}(\phi) e_{2,t}(\phi)^3] \overset{!}{=} 0$$
+        $$E[\varepsilon_{1,t}^2\varepsilon_{2,t}^2]  = 1 \implies \   E[e_{1,t}(\phi)^2 e_{2,t}(\phi)^2]  \overset{!}{=} 1$$
+      </div>
+    </section>
 
-      
-      <p>Consider a proxy $z_{ t}$ for the target shock $\epsilon_{1t}$ given by  $
-        z_{ t} = \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t}
-        $, such that $\gamma_1$ governs the strength or relevance of the proxy and 
-        $\gamma_2$ the exogeneity of the proxy. </p>
+    <section id="interactive-simulation" class="text-container">
+      <h3>Interactive Simulation</h3>
+      <p>
+        Explore the reduced-form shocks $u_t$ and the innovations $e_t(B(\phi))$ for the current rotation. The tables below each plot show the corresponding co-moments used in the dependency loss.
+      </p>
+      <div class="equation-wrapper" style="text-align: center;">
+        <span id="current-B"></span>
+      </div>
+
+      <div class="container two">
+        <section class="chart-container">
+          <canvas id="scatterPlot2" aria-label="Scatter plot showing reduced form shocks u1 and u2 with additional stats"></canvas>
+          <div class="stats-tables-container">
+            <div id="stats-u-additional" class="stats-container"></div>
+          </div>
+        </section>
+
+        <section class="chart-container">
+          <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2 with additional stats"></canvas>
+          <div class="stats-tables-container">
+            <div id="stats-e-additional" class="stats-container"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="simulation-results" class="text-container">
+      <h3>Observations</h3>
+      <p>
+        Note that any rotation $\phi$ yields uncorrelated shocks. However, even though all innovations are uncorrelated, some are clearly dependent as measured by the higher-order moment conditions.
+      </p>
+      <p>
+        The loss value simply sums up all squared co-moments to get an overall measure of the dependencies:
+      </p>
+      <div class="equation-wrapper" style="text-align: center;">
+        $$loss(\phi) = mean( e_{1,t}(\phi) e_{2,t}(\phi) )^2 +  \cdots + mean( e_{1,t}(\phi)^2 e_{2,t}(\phi)^2 - 1)^2$$
+      </div>
+    </section>
+
+
+    <section id="interactive-loss" class="text-container">
+      <h3>Interactive Loss Calculation</h3> 
+
+      <p>Use the button to numerically minimize dependencies between innovations by searching over rotation angles $\phi$.</p>
       <ul class="input-list">
-        <li>Move the $\gamma_1$ and $\gamma_2$ slider to adjust the proxy strength and proxy exogeneity.</li>
+        <li>Press the Minimize-Dependencies button to find the rotation angle $\phi$ that minimizes dependence.</li>
+        <li>Try different $T$ and regenerate data using the New Data button.</li>
+        <li>Note: The minimizing $\phi$ should be near the true $\phi_0 = 0.5$.</li>
+        <li>Take-away: Minimizing dependence allows us to estimate $\phi$.</li>
       </ul>
-      <div class="equation-wrapper" style="text-align: center;">  
-        <span id="current-z"></span> 
-      </div>
-
-      <p>Consider a simple synthetic proxy $z_{2t} =  z_{1t}^2 $ equal to the square of the original proxy.</p>      
-      <div class="equation-wrapper" style="text-align: center;">  
-        $ z_{2t} = z_{1t}^2 $
-      </div>
-
-      <p> 
-        It is easy to see that the synthetic proxy $z_{2t}$ is exogenous, i.e. $E[\epsilon_{2t}  z_{2t}]=0$, if   the original proxy $z_{1t}$ is exogenous, i.e. if $\gamma_2=0$.
-        However, as seen on the <a href="page3.html">previous</a> page, the exogeneity test only has power if both proxies are relevant. 
-        Consequently, the strong exogeneity test only has power if the synthetic proxy $z_{2t}$ is relevant.
-        For a linear proxy $z_{1t}$, relevancy of the synthetic proxy $z_{2t}$ depends on the non-Gaussianity of the shocks.  
-        Specifically, a skewed target shock leads to a relevant synthetic proxy $z_{2t}$.
-      </p>
-      <div class="equation-wrapper" style="text-align: center;">  
-        $E[\epsilon_{1t}  z_{2t}] = E[\epsilon_{1t}  z_{1t}^2] 
-         = E[\epsilon_{1t} ( \gamma_1 \epsilon_{1 t} + \gamma_2  \epsilon_{2 t} + \eta_{ t})^2 ] = \gamma_1 E[\epsilon_{1t}^3] $
-      </div> 
-
-      <ul class="input-list">
-        <li>Move the $s_1$ and $s_2$ slider to adjust the non-Gaussianity of the first and second shock respectively.</li>
-      </ul>
-      <div class="equation-wrapper" style="text-align: center;">  
-        <span id="current-nG"></span> 
-        </div>
-    </section>
-
-    
-
-        
-
- 
-
-
-  <section id="interactive-simulation" class="text-container"> 
-    <h2>Proxy relevance and exogeneity</h2>
-  
-     
-    
-    <p>The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$ with the target shock $\epsilon_{2t}$.</p>
-    
-
-    <ul class="input-list">
-      <li>Move the $\gamma_1$  sliders to adjust the relevance of $z_1$.   </li>
-        <li>Move the $s_1$ slider to adjust the non-Gaussianity of the target shock. 
-          Observe how the relevance of the synthetic proxy $z_2$ changes. </li>
-    </ul>
-  
-      <div class="container two">  
-        <section class="chart-container"> 
-          <canvas id="scatterPlotZ1Eps1"  aria-label="Scatter plot of the first proxy and structural target shock."></canvas>
-        </section>
-      
-      <section class="chart-container"> 
-          <canvas id="scatterPlotZ2Eps1"  aria-label="Scatter plot of the synthetic proxy and structural target shock."></canvas>
-      </section> 
-    </div>
-
-    
-    <p>The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$ with the non-target shock $\epsilon_{2t}$.</p>
-    
-
-      
-    <ul class="input-list">
-      <li>Move the $\gamma_2$  sliders to adjust the exogeneity of $z_1$.   </li>
-        <li>Move the $s_2$ slider to adjust the non-Gaussianity of the target and non-target shocks. 
-          Observe how the exogeneity of the synthetic proxy $z_2$ changes. </li>
-    </ul>
-    
-    <div class="container two">  
-        <section class="chart-container"> 
-          <canvas id="scatterPlotZ1Eps2"  aria-label="Scatter plot of the first proxy and structural non-target shock."></canvas>
-        </section>
-      
-      <section class="chart-container"> 
-          <canvas id="scatterPlotZ2Eps2"  aria-label="Scatter plot of the synthetic proxy and structural non-target shock."></canvas>
-      </section> 
-      </div>
-      
-    
-      <p>
-        The following two plots show the covariance of the original proxy $z_{1t}$ and the synthetic proxy $z_{2t}$  with the non-target innovation $e_{2t}$.
-       </p>
-    
-       <ul class="input-list">
-        <li> Move the $\phi$ slider to adjust the rotation. 
-          Observe how the covariance of the proxies with the non-target innovation $e_{2t}$ changes.
-          If the proxies are relevant and exogenous, the correlation of the proxies and the non-target innovation $e_2$ should be zero at $\phi=\phi_0=0.5$.
-           For different values of $\phi$  the proxies and the non-target innovation $e_2$ will be correlated.
-           </li>
-       </ul>
-    
-    <div class="container two">  
-    
-        <section class="chart-container"> 
-          <canvas id="scatterPlotZ1E1"  aria-label="Scatter plot of the first proxy and non-target innovations."></canvas>
-        </section>
-      
-      <section class="chart-container"> 
-          <canvas id="scatterPlotZ1E2"  aria-label="Scatter plot of the synthetic proxy and non-target innovations."></canvas>
-        </section> 
-      </div>
-      
-    </div>  
-    </section>
-    
-     
- 
-    
-
-
-
- 
-    <section id="introduction" class="text-container">
-      <h2> Strong Proxy Exogeneity Test</h2> 
-      <p> If the original proxy $z_1$ is strongly exogenous, the correlation of the original proxy with the non-target innovation $e_2$ as well as the 
-        correlation of the synthetic proxy $z_2$ with the non-target innovation $e_2$ should be zero at the same rotation angle $\phi$.  
-        If one of both correlations differs from zero, the proxy is not strongly exogenous. 
-      We can use this intuition to construct a strong proxy exogeneity test based on a J-test, see  Hansen (1982).</p>
-  
-  
-      <p>  Define the loss measuring the correlation of the original and syntehtic proxies with the non-target shock at a given rotation angle $\phi$:</p>
-      <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
-        $   
-        loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
-        $ 
-      </div> 
-      where $W$ is the asymptotic efficient weighting matrix.
-      
-      <p>Under the null hypothesis of strong proxy exogeneity   </p>
-        <div class="equation-wrapper" style="text-align: center;">  
-          $ H_0: E[z_{1t} e_{2t}(\phi_0)] = E[z_{2t} e_{2t}(\phi_0)] = 0 $
-        </div>
-      <p> the J-test statistic  $ J = T \cdot loss(\hat{\phi})$  where $\hat{\phi}$ is the value minimizing the loss function follows a Chi-Squared distribution with $J \sim \chi^2(r-q)$ where $r=2$ is equal to the number of moment conditions and 
-        $q=1$ is equal to the number of free parameters in $\phi$. </p>
-  
-        <p> Consequently, the null hypothesis of strong proxy exogeneity can be rejected at a significance level of $\alpha$ if $J$ exceeds the critical value of
-           the Chi-Squared distribution with $r-q$ degrees of freedom at the $\alpha$ quantile.
-        </p>
-    </section>
-
-
-   
-
-
-
- 
-
-    
-
-
-
-<section id="interactive-loss" class="text-container">
-  <h3>Interactive Loss Calculation</h3> 
-
-  <p>The following plot shows three different loss functions based on the original proxy   $z_1$ and the syntehtic proxy $z_2$. </p>
-    <ul>
-      <li> The first loss corresponds to the correlation of the original proxy $z_1$ with the non-target innovation $e_{2t}$:  
-        <div class="equation-wrapper" style="text-align: center; border-color: rgb(75, 192, 192); color: rgb(75, 192, 192);"> 
-          $   
-          loss_{z_1}(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \end{bmatrix}'
-          $ 
-        </div> 
-      </li>
-      <li> The second loss corresponds to the correlation of the syntehtic proxy $z_2$ with the non-target innovation $e_{2t}$:  
-        
-        <div class="equation-wrapper" style="text-align: center; border-color: rgb(41, 128, 185); color: rgb(41, 128, 185);"> 
-          $   
-          loss_{z_2}(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
-          $ 
-        </div> 
-      </li>
-      <li> The third loss is the joint loss function and corresponds to the weighteds sum of the correlations of the original proxy $z_1$ and the synthetic proxy $z_2$ with the non-target innovation $e_{2t}$:  
-        <div class="equation-wrapper" style="text-align: center; border-color: rgb(255, 177, 153); color: rgb(255, 177, 153);"> 
-          $   
-          loss(\phi) =  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\ \frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix} W  \begin{bmatrix} \frac{1}{T} \sum_{t=1}^{T} z_{1t} e_{2t}(\phi) \\\frac{1}{T} \sum_{t=1}^{T} z_{2t} e_{2t}(\phi) \end{bmatrix}'
-          $ 
-        </div> 
-      </li>
-    </ul> 
-
- 
-    <p>
-      If the original proxy $z_1$ is strongly  exogenous, all loss functions should (asymptotically) exibit a minimum at the same rotation angle $\phi$.
-      Additionally, the loss of the third loss function measuring the weighted sum of the correlations of the original and synthetic proxy with the non-target innovation $e_{2t}$ should 
-      be smaller than the critical value of the Chi-Squared distribution.
-    </p>
-
-    <ul class="input-list">
-      <li>Hit "Estimate" to find the $\phi$ that minimizes the joint loss function.  </li> 
-  
-          <li>
-            Keep the original proxy valid, i.e. $\gamma_1 \neq 0$ and $\gamma_2 = 0$, and adjust 
-            the non-Gaussianity of the target shock by moving the $s_1$ slider.
-            Observe how the synthetic proxy $z_2$ becomes relevant and the loss function $loss_{z_2}(\phi)$ starts to 
-            show a unique minimum.
-          </li>
-
-          <li>
-            Move the $\gamma_2$ slider to adjust the exogeneity of the proxy.
-            Observe how the minimum of the loss function $loss_{z_1}(\phi)$ moves away from $\phi=\phi_0=0.5$ and 
-            how the minimum of the joint loss function $loss(\phi)$ moves above the critical value of the Chi-Squared distribution.
-            </li>
-
-            <li>Move the $s_1$ and $s_2$ slider back to zero to generate an exogenous but irrelevant syntehtic proxy. 
-              Observe how the exogeneity test looses its ability to detect endogeneity if the synthetic proxy is irrelevant.
-            </li>
-        </ul>
     
 
 
 <div class="container">
-<div class="button-container">
-<button id="MinDependenciesBtn2" class="orange-button">Estimate</button>
-</div>
-<div class="chart-wrapper">
-<section class="chart-loss-container">
-<canvas id="lossplot2"  aria-label="Plot of dependencies"></canvas>
-</section>   
-<div class="equation-wrapper">
-<div class="stats-tables-container">
-  <div id="stats-ze2" class="stats-container"></div>
-</div>
-</div>
-</div>
+  <div class="button-container">
+    <button id="rollBallButton" class="orange-button">Minimize Dependencies</button>
+  </div>
+  <div class="chart-wrapper">
+    <section class="chart-loss-container">
+      <canvas id="lossplot4" aria-label="Plot of dependencies"></canvas>
+    </section>
+  </div>
 </div>
 </section>
 
 
 
-<section id="introduction" class="text-container">
-  <h2>More Resources</h2>
-
-  <ul> 
-    <li>Find the full paper at <a href="https://doi.org/10.1016/j.jeconom.2024.105876" target="_blank">
-      Bruns and Keweloh (2024)</a>.</li> 
-    <li>Access the code of this illustration at <a href="https://github.com/Saschakew/Illustrations/tree/main/visualization4" target="_blank">Github</a>.</li>
-    <li>Visit <a href="https://sascha-keweloh.com/" target="_blank">www.sascha-keweloh.com</a> for more interactive illustrations.</li>
-  </ul>
- 
- 
-
- 
+<section id="next-steps" class="text-container">
+  <h2>Next Steps</h2>
+  <p>Proceed to <a href="page5.html">Maximizing non-Gaussianity</a> to see how maximizing the non-Gaussianity of the innovations can be used to identify the SVAR.</p>
 </section>
+ 
 
 
 

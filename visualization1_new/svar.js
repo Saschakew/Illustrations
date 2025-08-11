@@ -17,6 +17,17 @@ function loss34(u1, u2, phi) {
     return out;
   }
 
+// Univariate non-Gaussianity loss (page 5):
+// Sum of squared skewness and excess kurtosis of e1 and e2
+function lossNonGaussian(u1, u2, phi) {
+    const B = getB(phi);
+    const [e1, e2] = getE(u1, u2, B);
+    const stats = calculateMoments(e1, e2);
+    const skewTerm = Math.pow(stats.mean_cubed1, 2) + Math.pow(stats.mean_cubed2, 2);
+    const kurtTerm = Math.pow(stats.mean_fourth1, 2) + Math.pow(stats.mean_fourth2, 2);
+    return skewTerm + kurtTerm;
+}
+
 function lossCov(u1, u2, phi) {  
     B = getB(phi) 
 
@@ -27,59 +38,26 @@ function lossCov(u1, u2, phi) {
     return out;
 }
 
-function lossZ1(u1, u2,z1,z2,W,  phi) {  
-    B = getB(phi) 
-
-    const [e1, e2] = getE(u1,u2,B)
-
-    const n = u1.length;
-    const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
- 
-    const meanProduct = mean(e2.map((d1, i) => d1 * z1[i])); 
-
-    const out = W[0][0] * meanProduct * meanProduct 
-  
-    return out;
-  }
-
-  function lossZ2(u1, u2,z1,z2,W,  phi) {  
-    B = getB(phi) 
-
-    const [e1, e2] = getE(u1,u2,B)
-
-    const n = u1.length;
-    const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
- 
-    const meanProduct = mean(e2.map((d1, i) => d1 * z2[i])); 
-
-    const out = W[1][1] *  meanProduct * meanProduct 
-  
-    return out;
-  }
-  function lossZ12(u1, u2, z1, z2,W, phi) { 
+function lossZ1(u1, u2, z1, z2, W, phi) {  
+    // Independence-based loss (sum of squared higher co-moments)
     const B = getB(phi);
     const [e1, e2] = getE(u1, u2, B);
-  
-    const n = u1.length;
-    const mean = (arr) => arr.reduce((sum, val) => sum + val, 0) / n;
-  
-    // Calculate e2*z1 and e2*z2
-    const e2z1 = e2.map((e2i, i) => e2i * z1[i]);
-    const e2z2 = e2.map((e2i, i) => e2i * z2[i]);
-   
-    const SInverse = W; 
-  
-    // Calculate [e2*z1, e2*z2]' W [e2*z1, e2*z2]
-    const meanProduct1 = mean(e2z1);
-    const meanProduct2 = mean(e2z2);
-  
-    const result = 
-      SInverse[0][0] * meanProduct1 * meanProduct1 +
-      (SInverse[0][1] + SInverse[1][0]) * meanProduct1 * meanProduct2 +
-      SInverse[1][1] * meanProduct2 * meanProduct2;
-  
-    return result;
-  }
+    return calculateMoments(e1, e2).loss;
+}
+
+function lossZ2(u1, u2, z1, z2, W, phi) {  
+    // Squared covariance of innovations (uncorrelatedness)
+    const B = getB(phi);
+    const [e1, e2] = getE(u1, u2, B);
+    const cov = calculateMoments(e1, e2).covariance;
+    return cov * cov;
+}
+function lossZ12(u1, u2, z1, z2, W, phi) { 
+    // Use the independence co-moment loss for combined loss
+    const B = getB(phi);
+    const [e1, e2] = getE(u1, u2, B);
+    return calculateMoments(e1, e2).loss;
+}
 
   function getW(  epsilon2, z1, z2) {  
   

@@ -6,9 +6,66 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Non-Gaussian SVAR — Placeholder Page 5</title>
-  <meta name="description" content="Placeholder for migrating visualization1/page5.html content into the modern visualization4 structure.">
+  <title>Maximizing Non-Gaussianity — Non-Gaussian SVAR</title>
+  <meta name="description" content="Demonstrates that minimizing innovations' dependencies is equivalent to maximizing shocks' non-Gaussianity in SVAR and illustrates identification via rotation.">
   <meta name="keywords" content="SVAR, proxy variables, econometrics, structural vector autoregression">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Maximizing Non-Gaussianity — Non-Gaussian SVAR",
+      "description": "Demonstrates that minimizing innovations' dependencies is equivalent to maximizing shocks' non-Gaussianity in SVAR and illustrates identification via rotation.",
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      }
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "Maximizing Non-Gaussianity in SVAR",
+      "description": "Demonstrates that minimizing innovations' dependencies is equivalent to maximizing shocks' non-Gaussianity in SVAR and illustrates identification via rotation.",
+      "provider": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "url": "https://sites.google.com/view/sascha-keweloh"
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online"
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Structural Vector Autoregression",
+          "description": "A multivariate time series model used in econometrics and economic analysis."
+        },
+        {
+          "@type": "Thing",
+          "name": "Non-Gaussianity in SVAR",
+          "description": "Using higher moments to identify structural shocks via rotation."
+        }
+      ]
+    }
+  </script>
 
   <style>
     /* Minimal critical CSS for loader */
@@ -16,6 +73,30 @@
   </style>
   <link rel="stylesheet" href="styles.css?v=20250811-082303">
   <script src="loader.js?v=20250811-082303"></script>
+  <script src="bootstrap.js?v=20250811-082303"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            console.log('MathJax initial typesetting complete');
+            // Notify that MathJax is ready
+            document.dispatchEvent(new Event('MathJaxReady'));
+          });
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/core-js-bundle/minified.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
 </head>
 <body class="page5">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -33,31 +114,132 @@
       </div>
       <nav>
         <ul>
-          <li><a href="index.html">SVAR</a></li>
-          <li><a href="page2.html">Proxies</a></li>
-          <li><a href="page3.html">Exogeneity Test</a></li>
-          <li><a href="page4.html">Strong Exogeneity Test</a></li>
-          <li><a href="page5.html" aria-current="page">Page 5</a></li>
-          <li><a href="page6.html">Page 6</a></li>
+          <li><a href="index.html">Setup</a></li>
+          <li><a href="page2.html">Reduced Form</a></li>
+          <li><a href="page3.html">Identification Problem</a></li>
+          <li><a href="page4.html">Min. Dependencies</a></li>
+          <li><a href="page5.html" aria-current="page">Max. non-Gaussianity</a></li>
+          <li><a href="page6.html">Non-Gaussianity</a></li>
         </ul>
       </nav>
 
       <div class="input-content-wrapper expanded">
         <div class="input-content">
-          <!-- Intentionally left minimal for placeholder -->
           <div class="input-wrapper">
-            <p>This page is a placeholder. Content will be ported from <code>visualization1/page5.html</code> and integrated following visualization4 patterns.</p>
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span>
+                <span class="InputValue" id="TValue"> 250</span>
+              </label>
+            </div>
+            <input class="InputRange" type="range" id="T" step="1" value="250" min="10" max="999">
+          </div>
+
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span>
+                <span class="InputValue" id="phiValue">  0.00</span>
+              </label>
+            </div>
+            <input class="InputRange" type="range" id="phi" min="0" max="1.57" step="0.01" value="0">
+          </div>
+
+          <div class="input-wrapper">
+            <button id="newDataBtn" class="orange-button">New Data</button>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="text-container">
-      <h2>Placeholder Page 5</h2>
+    <section id="introduction" class="text-container"> 
+      <h2>Maximizing non-Gaussianity</h2>
       <p>
-        This is a scaffolding page created to host migrated content from the legacy visualization. Refer to
-        <code>visualization1_new/roadmap.md</code> for migration tasks and mapping.
+        This page demonstrates that minimizing the innovations' dependencies (as shown on the <a href="page4.html">previous page</a>) is equivalent 
+        to maximizing the shocks' non-Gaussianity.
+        <span class="info-icon" data-info="They are only equal up to a constant if a specific weighting matrix is used for the coskewness and cokurtosis conditions, see section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span> 
+        Consequently, we can identify $\phi_0$ by finding the most non-Gaussian innovations.
       </p>
+    </section>
+
+    <section id="non-gaussianity-measures" class="text-container">
+      <h3>Measuring Non-Gaussianity</h3>
+      <p>
+        The non-Gaussianity of the innovations $ e_t(B(\phi)) $ can be measured using the skewness and excess kurtosis:
+      </p>
+      <div class="equation-wrapper" style="text-align: center;">
+        $$
+        \begin{matrix} 
+        \text{Skewness} & \; E[e_{1,t}(B)^3]  \\
+        \text{Skewness} & \; E[e_{2,t}(B)^3]  \\
+        \text{Excess\;kurtosis} & \; E[e_{1,t}(B)^4-3]  \\
+        \text{Excess\;kurtosis} & \; E[e_{2,t}(B)^4-3]   
+        \end{matrix}
+        $$
+      </div>
+    </section>
+
+    <section id="interactive-simulation" class="text-container">
+      <h3>Interactive Simulation</h3>
+      <p>
+        Move the $\phi$ slider to see how the rotation angle affects the non-Gaussianity of the innovations displayed in the table below the scatter plot. 
+      </p>
+      <div class="equation-wrapper" style="text-align: center;"> 
+        <span id="current-B"></span>
+      </div>
+
+      <div class="container two">
+        <section class="chart-container"> 
+          <canvas id="scatterPlot2" aria-label="Scatter plot showing reduced form shocks u1 and u2 with additional stats"></canvas>
+          <div class="stats-tables-container">
+            <div id="stats-u-additional" class="stats-container"></div>
+          </div>
+        </section>
+
+        <section class="chart-container"> 
+          <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2 with additional stats"></canvas>
+          <div class="stats-tables-container">
+            <div id="stats-e-additional" class="stats-container"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="interactive-loss" class="text-container">
+      <h3>Interactive Loss Calculation</h3>
+      <p>
+        The loss value in the table above simply sums up all squared higher-order moments to get an overall measure of the non-Gaussianity 
+      </p>
+      <div class="equation-wrapper" style="text-align: center;">
+        $$ 
+        loss(\phi) = \text{mean}(  e_{1,t}(\phi)^3 )^2 + \text{mean}(  e_{2,t}(\phi)^3 )^2 +  
+                      \text{mean}(  e_{1,t}(\phi)^4-3 )^2 + \text{mean}(  e_{2,t}(\phi)^4-3 )^2    
+        $$
+      </div>
+      <p>
+        The plot below shows the loss for all rotation angles $\phi$.
+      </p>
+      <ul>
+        <li>Push the Maximize-Non-Gaussianity button to find the rotation angle $\phi$ which leads to the most non-Gaussian innovations.</li>
+        <li>Try out different sample sizes $T$ and new data sets using the New Data button to see how the rotation $\phi$ which maximizes the innovations' non-Gaussianity is located around the true rotation $\phi_0 = 0.5$.</li>
+      </ul>
+      <p>
+        Take-away: Choosing the angle $\phi$ which minimizes the innovations' non-Gaussianity allows to estimate $\phi_0$.
+        <span class="info-icon" data-info="Details can be found in section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span>
+      </p>
+      <div class="container">
+        <div class="button-container">
+          <button id="rollBallButton" class="orange-button">Maximize non-Gaussianity</button>
+        </div>
+        <div class="chart-wrapper">
+          <section class="chart-loss-container">
+            <canvas id="lossplot4m" aria-label="Plot of non-Gaussianity"></canvas>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="next-steps" class="text-container">
+      <h3>Next Steps</h3>
+      <p>The <a href="page6.html">next page</a> illustrates how the degree of non-Gaussianity of the structural shocks affects the estimation.</p>
     </section>
   </main>
 
@@ -68,6 +250,6 @@
     </div>
   </footer>
 
-  <script src="page5.js"></script>
+  <script src="page5.js?v=20250811-082303"></script>
 </body>
 </html>

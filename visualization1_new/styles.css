@@ -258,6 +258,7 @@ body.page2 #interactive-loss .chart-wrapper {
 }
 .chart-container canvas {
   max-height: 380px;
+  min-height: 260px;
 }
 /* Ensure stats block below loss plot matches plot width */
 .chart-loss-container + .equation-wrapper {
@@ -535,35 +536,45 @@ button {
 }
 
 .stats-table {
-  table-layout: auto;
-  width: auto;
+  table-layout: auto; /* allow browser to size columns based on content to avoid overlap */
+  width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
 }
 .stats-table th:first-child,
 .stats-table td:first-child {
   width: 1%;
-  white-space: nowrap;
-} 
+}
 .stats-table th,
 .stats-table td {
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
 }
 .stats-table th, .stats-table td {
   padding: 8px;
-  text-align: right;
-  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top; /* keep multi-line cells from overlapping */
+  line-height: 1.4;
 }
 
+/* Prefer wider formula column for readability */
+.stats-table th:nth-child(1),
+.stats-table td:nth-child(1) { width: 22%; }
+.stats-table th:nth-child(2),
+.stats-table td:nth-child(2) { width: 48%; }
+.stats-table th:nth-child(3),
+.stats-table td:nth-child(3) { width: 15%; }
+.stats-table th:nth-child(4),
+.stats-table td:nth-child(4) { width: 15%; }
+
 .stats-table th {
-  font-weight: bold;
-  text-align: left;
-  background-color: #f8f8f8;
+  font-weight: 600;
+  background-color: var(--card);
 }
 
 .stats-table tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: var(--bg);
 }
 
 .stats-table tr:last-child td {
@@ -573,15 +584,21 @@ button {
 .stats-table .measure {
   text-align: left;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .stats-table .formula {
   text-align: left;
   font-style: italic;
+  word-break: normal;
+  overflow-wrap: anywhere; /* allow breaks inside long tokens like ε₁³*ε₂ */
 }
 
 .stats-table .value {
-  text-align: left; 
+  text-align: left;
+  white-space: nowrap;        /* keep numbers on one line */
+  word-break: keep-all;       /* avoid breaking digits */
+  overflow-wrap: normal;      /* don't wrap arbitrarily */
 }
 
 .stats-tables-container {
@@ -589,6 +606,7 @@ button {
   flex-direction: column;
   justify-content: space-between;
   gap: 20px;
+  width: 100%;
 }
 
 
@@ -1069,6 +1087,27 @@ nav a:focus-visible {
   transform: translate(-50%, -50%);
   max-height: 80vh;
   overflow-y: auto;
+}
+
+/* Inline info/reference popups attached to icons */
+.info-popup,
+.ref-popup {
+  position: absolute;
+  z-index: 2000; /* above sticky input container/nav (z-index: 1000) */
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px 12px;
+  line-height: 1.4;
+  max-width: 460px;
+}
+
+.info-popup a,
+.ref-popup a {
+  color: var(--brand);
+  text-decoration: underline;
 }
 
 .popup-content h3 {

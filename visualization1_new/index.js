@@ -8,112 +8,48 @@ let phi0;
 let phi;
 let B0,B;
 
-// Cache-busting version for local assets
-const ASSET_VERSION = '20250811-082303';
+// Using shared Bootstrap.ASSET_VERSION for cache-busting
 
 
-// Function to load a script
-function loadScript(src) {
-  return new Promise((resolve, reject) => {
-      let script = document.createElement('script');
-      // Append cache-busting version to local scripts only
-      let finalSrc = src;
-      try {
-        const isExternal = /^(https?:)?\/\//i.test(src);
-        const hasQuery = src.includes('?');
-        const hasVersion = /[?&]v=/.test(src);
-        if (!isExternal) {
-          if (hasQuery) {
-            finalSrc = hasVersion ? src : `${src}&v=${ASSET_VERSION}`;
-          } else {
-            finalSrc = `${src}?v=${ASSET_VERSION}`;
-          }
-        }
-      } catch (e) { /* noop */ }
-      script.src = finalSrc;
-      script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Script load error for ${src}`));
-      document.head.appendChild(script);
-  });
-}
+// Using shared Bootstrap.loadScriptsSequential; local loadScript removed.
 
-// Array of scripts to load
+// Array of scripts to load (index page needs only common UI)
 const scripts = [
-  'variables.js',
-  'ui.js',
-  'charts.js',
-  'dataGeneration.js',
- 'htmlout.js',
- 'svar.js',
- 'eventListeners.js'
+  'ui.js'
 ];
 
 // Prevent scrolling during initial render to avoid sticky recalculation jank
-try {
-  document.documentElement.style.overflow = 'hidden';
-  document.body.style.overflow = 'hidden';
-} catch (e) {}
+try { Bootstrap.lockScrollPreInit(); } catch (e) {}
 
-// Load scripts sequentially
-async function loadScripts() {
-  for (const script of scripts) {
-    await loadScript(script);
-  }
-  // Wait for DOM content to be loaded before initializing the app
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeApp);
-  } else {
+// Load scripts using shared Bootstrap helper and initialize app
+try {
+  Bootstrap.onMathJaxThenDOM(async function() {
+    await Bootstrap.loadScriptsSequential(scripts, Bootstrap.ASSET_VERSION);
     initializeApp();
-  }
+  });
+} catch (e) {
+  // Fallback if Bootstrap unavailable
+  (async () => {
+    for (const s of scripts) {
+      await new Promise((res) => { const el = document.createElement('script'); el.src = s; el.onload = res; el.onerror = () => res(); document.head.appendChild(el); });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+      initializeApp();
+    }
+  })();
 }
 
-// Wait for MathJax to be ready
-document.addEventListener('MathJaxReady', function() {
-  // Wait for DOMContentLoaded event
-  document.addEventListener('DOMContentLoaded', function() {
-      loadScripts();
-  });
-});
+// Initialization handled by Bootstrap.onMathJaxThenDOM
 
 
-function initializeApp() {
-  // Initialize UI elements
-  initializeUI();
-
-  // Initialize UI elements
-  initializeVariables();
-  
-  // Initialize charts (creates empty chart objects)
-  initializeCharts();  
-   
-  // Set up event listeners
-  setupEventListeners();
-   
-  // Typeset MathJax content
-  if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-    MathJax.typesetPromise();
-  }
-
-  // Allow transitions again (preinit disabled them)
-  try { document.documentElement.classList.remove('ui-preinit'); } catch (e) {}
-
-  // Fade out loader and re-enable scrolling after fade completes
-  const loader = document.getElementById('loading-screen');
-  if (loader) {
-    loader.classList.add('fade-out');
-    loader.addEventListener('transitionend', () => {
-      loader.style.display = 'none';
-      try {
-        document.documentElement.style.overflow = '';
-        document.body.style.overflow = '';
-      } catch (e) {}
-    }, { once: true });
-  } else {
-    try {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    } catch (e) {}
-  }
+async function initializeApp() {
+  // Index page: no inputs, no charts. Initialize only common UI.
+  try { initializeCommonUI(); } catch (e) {}
+  // Stabilize layout, typeset math, and finalize loader/scroll using shared Bootstrap helpers
+  try { await Bootstrap.awaitFontsAndTypesetAndStabilize(); } catch (e) {}
+  try { Bootstrap.finalizeWithLoaderFadeOut(); } catch (e) {}
 }
 
 
@@ -193,7 +129,7 @@ function setupEventListeners() {
     generateNewData(T); 
     updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Form Shocks", "ε₁", "ε₂", true);
     updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
-    updateChartScatter(charts.scatterPlot3, u1, u2, "Innovations", "e₁", "e₂", true);
+    updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e₁", "e₂", true);
     statsE = calculateMoments(e1, e2);
     createTableCovariance(statsE);
   })

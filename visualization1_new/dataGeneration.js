@@ -18,6 +18,10 @@ function generateMixedNormalData(length, s) {
     return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
   }
   
+  // Generate uniform random variables in [-1, 1]
+  function generateUniformData(length) {
+    return Array.from({ length }, () => Math.random() * 2 - 1);
+  }
   
   function NormalizeData(rawEpsilon1, rawEpsilon2){
     // Compute sample means and covariance matrix

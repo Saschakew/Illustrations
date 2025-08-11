@@ -92,7 +92,8 @@ function setupNavigationMenu() {
 
   if (menuToggle && nav) {
     menuToggle.addEventListener('click', function() {
-      if (inputContentWrapper.classList.contains('expanded')) {
+      // On pages without an input-content-wrapper (e.g., index), guard against null
+      if (inputContentWrapper && inputContentWrapper.classList.contains('expanded')) {
         inputContentWrapper.classList.remove('expanded');
       }
       nav.classList.toggle('expanded');
@@ -103,13 +104,18 @@ function setupNavigationMenu() {
 }
 
 function createPopup(icon, className) {
+  console.debug('[POPUPS] createPopup called', { className, hasMathJax: !!(window.MathJax) });
   const content = icon.getAttribute(className === 'info-popup' ? 'data-info' : 'data-ref');
+  if (!content) {
+    console.warn('[POPUPS] No content found on icon for', className, icon);
+  }
   
   // Remove any existing pop-ups
-  const existingPopup = document.querySelector('.info-popup');
-  if (existingPopup) {
-    existingPopup.remove();
+  const existingPopups = document.querySelectorAll('.info-popup, .ref-popup');
+  if (existingPopups.length) {
+    console.debug('[POPUPS] Removing existing popups:', existingPopups.length);
   }
+  existingPopups.forEach(p => p.remove());
   
   // Create and position the pop-up
   const popup = document.createElement('div');
@@ -121,21 +127,28 @@ function createPopup(icon, className) {
   popup.style.left = `${iconRect.left + window.scrollX}px`;
   popup.style.top = `${iconRect.bottom + window.scrollY + 5}px`;
   popup.style.display = 'block';
+  console.debug('[POPUPS] Popup created at', { left: popup.style.left, top: popup.style.top });
   
   // Ensure the popup doesn't go off-screen
   const popupRect = popup.getBoundingClientRect();
   if (popupRect.right > window.innerWidth) {
     popup.style.left = `${window.innerWidth - popupRect.width - 10}px`;
+    console.debug('[POPUPS] Adjusted popup to fit viewport', { left: popup.style.left });
   }
   
-  // Process LaTeX in the popup
-  MathJax.typesetPromise([popup]).then(() => {
-    // Reposition after typesetting (LaTeX rendering might change size)
-    const newPopupRect = popup.getBoundingClientRect();
-    if (newPopupRect.right > window.innerWidth) {
-      popup.style.left = `${window.innerWidth - newPopupRect.width - 10}px`;
+  // Process LaTeX in the popup (guard if MathJax is unavailable)
+  try {
+    if (window.MathJax && MathJax.typesetPromise) {
+      MathJax.typesetPromise([popup]).then(() => {
+        // Reposition after typesetting (LaTeX rendering might change size)
+        const newPopupRect = popup.getBoundingClientRect();
+        if (newPopupRect.right > window.innerWidth) {
+          popup.style.left = `${window.innerWidth - newPopupRect.width - 10}px`;
+        }
+        console.debug('[POPUPS] MathJax typeset complete for popup');
+      }).catch(() => {});
     }
-  });
+  } catch (e) {}
   
   // Close the pop-up when clicking outside
   document.addEventListener('click', function closePopup(event) {
@@ -167,11 +180,31 @@ function setupActiveNavLink() {
 
 // Add event listeners for info and ref icons
 function setupInfoIcons() {
-  document.querySelectorAll('.info-icon').forEach(icon => {
-    icon.addEventListener('click', function(e) {
-      createPopup(this, 'info-popup');
+  const icons = document.querySelectorAll('.info-icon');
+  console.debug('[POPUPS] setupInfoIcons: icons found =', icons.length);
+  // Prevent duplicate delegated listeners if initializeCommonUI runs more than once
+  if (document.__infoIconDelegated) {
+    console.debug('[POPUPS] Delegated listener already attached');
+    return;
+  }
+  document.addEventListener('click', function(e) {
+    const icon = e.target && e.target.closest ? e.target.closest('.info-icon') : null;
+    if (icon) {
+      console.debug('[POPUPS] info-icon clicked', icon);
       e.stopPropagation();
-    });
+      createPopup(icon, 'info-popup');
+    }
   });
-    
+  // mark as attached
+  document.__infoIconDelegated = true;
+}
+
+// Common UI initializer to reduce repetition across pages
+function initializeCommonUI() {
+  try { setupStickyInputContainer(); } catch (e) { console.warn('[UI] setupStickyInputContainer error', e); }
+  try { setupNavigationMenu(); } catch (e) { console.warn('[UI] setupNavigationMenu error', e); }
+  try { setupActiveNavLink(); } catch (e) { console.warn('[UI] setupActiveNavLink error', e); }
+  try { setupInputContentWrapper(); } catch (e) { console.warn('[UI] setupInputContentWrapper error', e); }
+  try { setupInfoIcons(); } catch (e) { console.warn('[UI] setupInfoIcons error', e); }
+  console.debug('[UI] initializeCommonUI completed');
 }

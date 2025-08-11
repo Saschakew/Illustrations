@@ -165,28 +165,29 @@ function getLossPlotConfig() {
   const text = (styles.getPropertyValue('--text') || '#0f172a').trim();
   const muted = (styles.getPropertyValue('--muted') || '#6b7280').trim();
   const border = (styles.getPropertyValue('--border') || '#e5e7eb').trim();
+  const { color1: brand, color2: brandEnd } = getThemeAccents();
 
   let ChartConfig = {
     type: 'line',
     data: {
       datasets: [{
         data: [],
-        borderColor: 'rgb(75, 192, 192)',
+        borderColor: brand,
         borderWidth: 2,
         tension: 0.25,
         pointRadius: 0,  // Remove dots
         pointHoverRadius: 0  // Remove hover effect
       }, {
         data: [],
-        borderColor: '#ffa500',
-        backgroundColor: '#ffa500',
+        borderColor: brand,
+        backgroundColor: brand,
         pointRadius: 5,
         pointHoverRadius: 7,
         showLine: false
       }, {
         data: [],
-        borderColor: 'rgb(255, 206, 86)',
-        backgroundColor: 'rgb(255, 206, 86)',
+        borderColor: brandEnd,
+        backgroundColor: brandEnd,
         pointRadius: 5,
         pointHoverRadius: 7,
         showLine: false
@@ -277,12 +278,13 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
   const styles = getComputedStyle(document.documentElement);
   const muted = (styles.getPropertyValue('--muted') || '#6b7280').trim();
   const border = (styles.getPropertyValue('--border') || '#e5e7eb').trim();
+  const card = (styles.getPropertyValue('--card') || '#ffffff').trim();
 
   if (OnlyPoint) {
     // Update only the current phi point for each loss function
     lossFunctions.forEach((lossObj, index) => {
       const { lossFunction, extraArgs = [], label, color } = lossObj;
-      if (label !== 'Critical Value') {
+      if (label !== 'Reference Line') {
         // Calculate the current loss for the new phi
         const currentLoss = lossFunction(...extraArgs, phi);
 
@@ -300,7 +302,7 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
             type: 'scatter',
             id: `current_phi_${index}`,
             data: [{x: phi, y: currentLoss}],
-            backgroundColor: '#ffffff',
+            backgroundColor: card,
             borderColor: color || `color${index + 1}`,
             borderWidth: 2.5,
             pointRadius: 5,
@@ -341,14 +343,14 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
     
       chart.data.datasets.push(datasetConfig);
     
-      if (label !== 'Critical Value') {
+      if (label !== 'Reference Line') {
         // Add current phi point for each loss function
         const currentLoss = lossFunction(...extraArgs, phi);
         chart.data.datasets.push({
           type: 'scatter',
           id: `current_phi_${index}`,
           data: [{x: phi, y: currentLoss}],
-          backgroundColor: '#ffffff',
+          backgroundColor: card,
           borderColor: color || `color${index + 1}`,
           borderWidth: 2.5,
           pointRadius: 5,

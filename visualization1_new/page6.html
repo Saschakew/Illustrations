@@ -6,14 +6,95 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Non-Gaussian SVAR — Placeholder Page 6</title>
-  <meta name="description" content="Placeholder for migrating visualization1/page6.html content into the modern visualization4 structure.">
+  <title>Non-Gaussianity and Estimation — Non-Gaussian SVAR</title>
+  <meta name="description" content="Illustrates how the degree of non-Gaussianity affects identification and estimation in SVAR with independent shocks.">
   <meta name="keywords" content="SVAR, proxy variables, econometrics, structural vector autoregression">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Non-Gaussianity and Estimation — Non-Gaussian SVAR",
+      "description": "Illustrates how the degree of non-Gaussianity affects identification and estimation in SVAR with independent shocks.",
+      "author": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "jobTitle": "Postdoc",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "TU Dortmund University"
+        },
+        "url": "https://wiwi.tu-dortmund.de/fakultaet/fakultaetsangehoerige/sascha-keweloh/"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "TU Dortmund University",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lh4.googleusercontent.com/PJeRLoUaHUQ7TYxU46aGtKY-bwSUBhK-pAW4JWpi3ZpUnx75jyNTnhYfB9xLOwFMbsr27b1OKGFKDaDiqNiu_0iXJARKcowmLOtnndxyOtM"
+        }
+      }
+    }
+  </script>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Course",
+      "name": "Non-Gaussianity and Estimation — Non-Gaussian SVAR",
+      "description": "Illustrates how the degree of non-Gaussianity affects identification and estimation in SVAR with independent shocks.",
+      "provider": {
+        "@type": "Person",
+        "name": "Sascha Keweloh",
+        "url": "https://sites.google.com/view/sascha-keweloh"
+      },
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online"
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Structural Vector Autoregression",
+          "description": "A multivariate time series model used in econometrics and economic analysis."
+        },
+        {
+          "@type": "Thing",
+          "name": "Non-Gaussianity in SVAR",
+          "description": "Using higher moments to identify structural shocks via rotation and assess estimation sensitivity."
+        }
+      ]
+    }
+  </script>
+
   <style>
     #loading-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:#fff;z-index:9999;display:flex;align-items:center;justify-content:center}
   </style>
   <link rel="stylesheet" href="styles.css?v=20250811-082303">
   <script src="loader.js?v=20250811-082303"></script>
+  <script src="bootstrap.js?v=20250811-082303"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady().then(() => {
+            console.log('MathJax initial typesetting complete');
+            // Notify that MathJax is ready
+            document.dispatchEvent(new Event('MathJaxReady'));
+          });
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/core-js-bundle/minified.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js"></script>
 </head>
 <body class="page6">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -31,29 +112,149 @@
       </div>
       <nav>
         <ul>
-          <li><a href="index.html">SVAR</a></li>
-          <li><a href="page2.html">Proxies</a></li>
-          <li><a href="page3.html">Exogeneity Test</a></li>
-          <li><a href="page4.html">Strong Exogeneity Test</a></li>
-          <li><a href="page5.html">Page 5</a></li>
-          <li><a href="page6.html" aria-current="page">Page 6</a></li>
+          <li><a href="index.html">Setup</a></li>
+          <li><a href="page2.html">Reduced Form</a></li>
+          <li><a href="page3.html">Identification Problem</a></li>
+          <li><a href="page4.html">Min. Dependencies</a></li>
+          <li><a href="page5.html">Max. non-Gaussianity</a></li>
+          <li><a href="page6.html" aria-current="page">Non-Gaussianity</a></li>
         </ul>
       </nav>
       <div class="input-content-wrapper expanded">
         <div class="input-content">
           <div class="input-wrapper">
-            <p>This page is a placeholder. Content will be ported from <code>visualization1/page6.html</code> and integrated following visualization4 patterns.</p>
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span>
+                <span class="InputValue" id="TValue"> 999</span>
+              </label>
+            </div>
+            <input class="InputRange" type="range" id="T" step="1" value="999" min="10" max="999">
+          </div>
+
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span>
+                <span class="InputValue" id="phiValue">  0.00</span>
+              </label>
+            </div>
+            <input class="InputRange" type="range" id="phi" min="0" max="1.57" step="0.01" value="0">
+          </div>
+
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" for="sSlider" id="sSlider-label" title="Click for more information"><span>$s = $ </span>
+                <span class="InputValue" id="sValue">  0.00</span>
+              </label>
+            </div>
+            <input class="InputRange" type="range" id="sSlider" min="-5" max="5" step="0.1" value="0">
+          </div>
+
+          <div class="input-wrapper">
+            <button id="newDataBtn" class="orange-button">New Data</button>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="text-container">
-      <h2>Placeholder Page 6</h2>
+    <section id="introduction" class="text-container">
+      <h2>Impact of Non-Gaussianity on Estimation</h2>
+      <p>This page illustrates how the degree of non-Gaussianity affects the estimation of structural shocks in our SVAR model.</p>
+    </section>
+
+    <section id="shock-distributions" class="text-container">
+      <h3>Shock Distributions</h3>
       <p>
-        This is a scaffolding page created to host migrated content from the legacy visualization. Refer to
-        <code>visualization1_new/roadmap.md</code> for migration tasks and mapping.
+        In the simulation below, the second structural form shock $\epsilon_{2,t}$ is independently drawn from a uniform distribution.
+        The first structural form shock $\epsilon_{1,t}$ is independently drawn from a mixture of normal distributions
+        <span class="info-icon" data-info="The shocks are normalized to mean zero, unit variance, and zero correlation.">i</span>
       </p>
+      <div class="equation-wrapper" style="text-align: center;"> 
+        $$ 
+        \epsilon_{1,t} \sim 0.9 \mathcal{N} (0, 1 ) + 0.1 \mathcal{N} (s, 1).
+        $$
+      </div>
+      <p>The mixing coefficient $s$ can be chosen using the slider above:</p>
+      <ul>
+        <li>For $s = 0$, both shocks are normal.</li>
+        <li>For $s < 0$, the first shock is left-skewed.</li>
+        <li>For $s > 0$, the first shock is right-skewed.</li>
+      </ul>
+    </section>
+
+    <section id="interactive-simulation" class="text-container">
+      <h3>Interactive Simulation</h3>
+      <p>
+        Move the $\phi$ and $s$ sliders to see how the rotations and non-Gaussianity affect the dependencies of the innovations displayed in the table below the scatter plot.
+      </p>
+      <div class="equation-wrapper" style="text-align: center;"> 
+        <span id="current-B"></span>
+        <span id="current-nG"></span>
+      </div>
+
+      <div class="container two">
+        <section class="chart-container">
+          <canvas id="scatterPlot1" aria-label="Scatter plot showing structural shocks epsilon1 and epsilon2"></canvas>
+          <div class="stats-tables-container"> 
+            <div id="stats-epsilon" class="stats-container"></div> 
+          </div>
+        </section>
+
+        <section class="chart-container">
+          <canvas id="scatterPlot3" aria-label="Scatter plot showing innovations e1 and e2"></canvas>
+          <div class="stats-tables-container"> 
+            <div id="stats-e" class="stats-container"></div> 
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="interactive-loss" class="text-container">
+      <h3>Interactive Loss Calculation</h3>
+      <p>
+        The loss value in the table again sums up all squared co-moments to get an overall measure of the dependencies 
+      </p>
+      <div class="equation-wrapper" style="text-align: center;"> 
+        $$ 
+        loss(\phi) = \text{mean}(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 + \; .... \; + \text{mean}(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
+        $$
+      </div>
+      <p>The plot below shows the loss for all rotation angles $\phi$.</p>
+      <ul>
+        <li>Push the Minimize-Dependencies button to find the rotation angle $\phi$ which leads to the least dependent innovations.</li>
+        <li>Vary the degree of non-Gaussianity using $s$ to see how it affects the optimization landscape.</li>
+      </ul>
+      <p>
+        Take-away: Gaussian shocks lead to a flat optimization landscape without a unique minimum at $\phi_0$. 
+        This illustrates why non-Gaussianity is crucial for identifying structural shocks in SVAR models based on independent shocks.
+      </p>
+      <div class="container">
+        <div class="button-container">
+          <button id="rollBallButton" class="orange-button">Minimize Dependencies</button>
+        </div>
+        <div class="chart-wrapper">
+          <section class="chart-loss-container">
+            <canvas id="lossplot4" aria-label="Plot of dependencies"></canvas>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section id="next-steps" class="text-container">
+      <h3>More Resources</h3> 
+      <ul>
+        <li>
+          Read <a href="https://www.econstor.eu/bitstream/10419/284151/1/CWP2403.pdf" target="_blank" aria-label="Lewis 2024 literature review on identification approaches based on higher moments">Lewis (2024)</a> for a recent literature review on identification approaches based on higher moments.
+        </li>
+        <li>
+          Explore <a href="https://sites.google.com/view/sascha-keweloh/svarpy" target="_blank" aria-label="SAVARpy preliminary python package for non-Gaussian SVAR models">SVARpy</a>, a preliminary Python package for estimating non-Gaussian SVAR models.
+        </li>
+        <li>
+          Access the code for this dashboard on <a href="https://github.com/Saschakew/SaschaKew.github.io/tree/main/visualization1" target="_blank" aria-label="Github repository for the dashboard code">GitHub</a>.
+        </li>
+        <li>
+          I welcome your feedback:  <a href="mailto:sascha.keweloh@tu-dortmund.de" aria-label="Email Sascha Keweloh for feedback">sascha.keweloh@tu-dortmund.de</a>
+        </li>
+      </ul>
     </section>
   </main>
 
@@ -64,6 +265,6 @@
     </div>
   </footer>
 
-  <script src="page6.js"></script>
+  <script src="page6.js?v=20250811-082303"></script>
 </body>
 </html>
