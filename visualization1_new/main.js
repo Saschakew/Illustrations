@@ -273,6 +273,21 @@ function setupEventListeners() {
  
 // Chart Initialization
 function initializeCharts() {
+  // Pull theme colors from CSS variables
+  const styles = getComputedStyle(document.documentElement);
+  const primary = (styles.getPropertyValue('--color-primary') || styles.getPropertyValue('--brand') || '').trim();
+  const accent = (styles.getPropertyValue('--color-accent') || styles.getPropertyValue('--brand-grad-end') || primary).trim();
+  const rgbaFromHex = (hex, a) => {
+    if (!hex) return '';
+    const m = hex.replace('#','');
+    const full = m.length === 3 ? m.split('').map(c => c + c).join('') : m;
+    const v = parseInt(full, 16);
+    const r = (v >> 16) & 255, g = (v >> 8) & 255, b = v & 255;
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  };
+  const brandWeakVar = (styles.getPropertyValue('--brand-weak') || '').trim();
+  const brandWeak = brandWeakVar || rgbaFromHex(primary, 0.12);
+  const card = (styles.getPropertyValue('--card') || styles.getPropertyValue('--color-white') || '').trim();
   
   const chartConfig = {
     type: 'scatter',
@@ -280,13 +295,13 @@ function initializeCharts() {
       datasets: [{
         label: 'Data',
         data: [],
-        backgroundColor: 'rgba(255, 165, 0, 0.6)',
+        backgroundColor: brandWeak,
         pointRadius: 5,
         pointHoverRadius: 7
       }, {
         label: 'Selected Point',
         data: [],
-        backgroundColor: 'red',
+        backgroundColor: primary,
         pointRadius: 7,
         pointHoverRadius: 9
       }]
@@ -351,21 +366,21 @@ createChartIfExists('scatterPlot2');
         datasets: [{
           label: 'Loss',
           data: [],
-          borderColor: 'rgb(75, 192, 192)',
+          borderColor: primary,
           tension: 0.1
         }, {
           label: 'Current ϕ',
           data: [],
-          borderColor: '#ffa500',
-          backgroundColor: '#ffa500',
+          borderColor: primary,
+          backgroundColor: primary,
           pointRadius: 6,
           pointHoverRadius: 8,
           showLine: false
         }, {
           label: 'ϕ₀',
           data: [],
-          borderColor: 'rgb(255, 206, 86)',
-          backgroundColor: 'rgb(255, 206, 86)',
+          borderColor: accent,
+          backgroundColor: accent,
           pointRadius: 6,
           pointHoverRadius: 8,
           showLine: false
@@ -413,21 +428,21 @@ createChartIfExists('scatterPlot2');
         datasets: [{
           label: 'Loss',
           data: [],
-          borderColor: 'rgb(75, 192, 192)',
+          borderColor: primary,
           tension: 0.1
         }, {
           label: 'Current ϕ',
           data: [],
-          borderColor: '#ffa500',
-          backgroundColor: '#ffa500',
+          borderColor: primary,
+          backgroundColor: primary,
           pointRadius: 6,
           pointHoverRadius: 8,
           showLine: false
         }, {
           label: 'ϕ₀',
           data: [],
-          borderColor: 'rgb(255, 206, 86)',
-          backgroundColor: 'rgb(255, 206, 86)',
+          borderColor: accent,
+          backgroundColor: accent,
           pointRadius: 6,
           pointHoverRadius: 8,
           showLine: false
@@ -620,6 +635,8 @@ function updateLossPlot() {
 const yMin = Math.min(0,...charts.lossplot4.data.datasets[0].data.map(point => point.y));
 const yMax = Math.max(0.5,...charts.lossplot4.data.datasets[0].data.map(point => point.y));
 
+const styles = getComputedStyle(document.documentElement);
+const primary = (styles.getPropertyValue('--color-primary') || styles.getPropertyValue('--brand') || '').trim();
 charts.lossplot4.data.datasets[2] = {
   type: 'line',
   label: 'φ₀',
@@ -627,7 +644,7 @@ charts.lossplot4.data.datasets[2] = {
     { x: phi0, y: yMin },
     { x: phi0, y: yMax }
   ],
-  borderColor: '#ffa500',
+  borderColor: primary,
   borderWidth: 2,
   pointRadius: 0,
   animation: false
@@ -639,7 +656,7 @@ charts.lossplot4.options.annotation = {
     mode: 'vertical',
     scaleID: 'x',
     value: phi0,
-    borderColor: '#ffa500',
+    borderColor: primary,
     borderWidth: 2,
     label: {
       content: 'φ₀',
@@ -722,6 +739,8 @@ function updateLossPlotm() {
       const yMin = Math.min(0,...charts.lossplot4m.data.datasets[0].data.map(point => point.y));
       const yMax = Math.max(0.5,...charts.lossplot4m.data.datasets[0].data.map(point => point.y));
       
+      const styles = getComputedStyle(document.documentElement);
+      const primary = (styles.getPropertyValue('--color-primary') || styles.getPropertyValue('--brand') || '').trim();
       charts.lossplot4m.data.datasets[2] = {
         type: 'line',
         label: 'φ₀',
@@ -729,7 +748,7 @@ function updateLossPlotm() {
           { x: phi0, y: yMin },
           { x: phi0, y: yMax }
         ],
-        borderColor: '#ffa500',
+        borderColor: primary,
         borderWidth: 2,
         pointRadius: 0,
         animation: false
@@ -741,7 +760,7 @@ function updateLossPlotm() {
           mode: 'vertical',
           scaleID: 'x',
           value: phi0,
-          borderColor: '#ffa500',
+          borderColor: primary,
           borderWidth: 2,
           label: {
             content: 'φ₀',

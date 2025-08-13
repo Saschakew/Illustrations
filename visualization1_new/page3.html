@@ -115,7 +115,7 @@
             </div>
             <div class="input-wrapper">
               <div class="label-value-wrapper">
-                <label class="InputLabel"><span>$\phi_0 = $ </span><span class="InputValue"> 0.50</span></label>
+                <label class="InputLabel" for="phi0" id="phi0-label"><span>$\phi_0 = $ </span><span class="InputValue"> 0.50</span></label>
               </div>
             </div>
             <div class="input-wrapper">
@@ -130,6 +130,32 @@
           </div>
         </div>
       </section>
+
+      <div class="popup-container">
+        <div id="T-popup" class="popup">
+          <div class="popup-content">
+            <span class="close">&times;</span>
+            <h3>Sample Size: $T$</h3>
+            <p>$T$ is the number of observations used to compute the sample statistics and plots.</p>
+          </div>
+        </div>
+
+        <div id="phi-popup" class="popup">
+          <div class="popup-content">
+            <span class="close">&times;</span>
+            <h3>Rotation angle: $\phi$</h3>
+            <p>The innovations are computed as $e_t(B(\phi)) = B(\phi)^{-1} u_t$ where $B(\phi)$ is a rotation of the true
+              mixing matrix. Varying $\phi$ rotates the reduced-form shocks $u_t$ and changes the higher moments of $e_t$.</p>
+          </div>
+        </div>
+        <div id="phi0-popup" class="popup">
+          <div class="popup-content">
+            <span class="close">&times;</span>
+            <h3>True rotation angle: $\phi_0$</h3>
+            <p>$\phi_0$ denotes the true rotation used to construct the reduced-form shocks. It is fixed on this page and shown for reference.</p>
+          </div>
+        </div>
+      </div>
 
       <section id="introduction" class="text-container">
         <h2>The identification problem</h2>
@@ -233,6 +259,6 @@
       }
     });
   </script>
-  <script src="main.js?v=20250811-082303"></script>
+  <script src="page3.js?v=20250811-082303"></script>
 </body>
 </html>

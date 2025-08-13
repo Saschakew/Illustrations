@@ -150,14 +150,6 @@
             <input class="InputRange" type="range" id="T" step="1" value="250" min="10" max="999">
           </div>
 
-          <div class="input-wrapper">
-            <div class="label-value-wrapper">
-              <label class="InputLabel" for="phi0" id="phi0-label" title="True rotation angle"><span>$\phi_0 = $ </span>
-                <span class="InputValue" id="phi0Value"> 0.50</span>
-              </label>
-            </div>
-            <input type="hidden" id="phi0" value="0.5">
-          </div>
 
           <div class="input-wrapper">
             <div class="label-value-wrapper">
@@ -198,6 +190,13 @@
             On this page the rotation is fixed at $\phi_0=0.5$.
             The rotation   $\phi $ allows to calculate the innovations $e_t(B(\phi)) = B(\phi)^{-1} u_t$ as a rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.
         </p>
+        </div>
+      </div>
+      <div id="phi0-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>True rotation angle: $\phi_0$</h3>
+          <p>$\phi_0$ denotes the true rotation used to construct the reduced-form shocks. It is fixed on this page and shown for reference.</p>
         </div>
       </div>
     </div>

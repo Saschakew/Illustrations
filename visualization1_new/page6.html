@@ -165,6 +165,41 @@
       </div>
     </section>
 
+    <div class="popup-container">
+      <div id="T-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Sample Size: $T$</h3>
+          <p>$T$ is the number of observations used to compute the sample statistics and plots.</p>
+        </div>
+      </div>
+
+      <div id="phi-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Rotation angle: $\phi$</h3>
+          <p>The innovations are computed as $e_t(B(\phi)) = B(\phi)^{-1} u_t$ where $B(\phi)$ is a rotation of the true
+            mixing matrix. Varying $\phi$ rotates the reduced-form shocks $u_t$ and changes the higher moments of $e_t$.</p>
+        </div>
+      </div>
+
+      <div id="phi0-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>True rotation angle: $\phi_0$</h3>
+          <p>$\phi_0$ denotes the true rotation used to construct the reduced-form shocks. It is fixed on this page and shown for reference.</p>
+        </div>
+      </div>
+
+      <div id="sSlider-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Mixture shift: $s$</h3>
+          <p>$s$ shifts one component of the mixture distribution and controls the degree and direction of non-Gaussianity (skewness) of $\epsilon_{1,t}$.</p>
+        </div>
+      </div>
+    </div>
+
     <section id="introduction" class="text-container">
       <h2>Impact of Non-Gaussianity on Estimation</h2>
       <p>This page illustrates how the degree of non-Gaussianity affects the estimation of structural shocks in our SVAR model.</p>
