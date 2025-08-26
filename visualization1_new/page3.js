@@ -121,7 +121,16 @@ function initializeVariables() {
   // Page 3 doesn't have gamma or rho controls - these are for other pages
 
 
+  // Reflect UI displays for initial values
+  try {
+    const tVal = document.getElementById('TValue'); if (tVal) tVal.textContent = ` ${T.toFixed(0)}`;
+    const pVal = document.getElementById('phiValue'); if (pVal) pVal.textContent = ` ${phi.toFixed(2)}`;
+  } catch (e) {}
+
   generateNewData(T); 
+  // Render initial equations for B0 and A=B(phi)^{-1}
+  try { insertEqSVAR(B0); } catch (e) {}
+  try { insertEqSVARe(B); } catch (e) {}
  
 
 }
@@ -137,6 +146,7 @@ function setupEventListeners() {
     (value) => document.getElementById('phiValue').textContent = value.toFixed(2),
     (value) => phi = value,
     (value) => B = getB(phi), 
+    (value) => { try { insertEqSVARe(B); } catch (e) {} },
     (value) => [e1, e2] = getE(u1,u2,B),
     (value) => updateScatter(charts.scatterPlot2, u1, u2, 'u', true),
     (value) => updateScatter(charts.scatterPlot3, e1, e2, 'e', true)
@@ -154,11 +164,14 @@ function setupEventListeners() {
   );
 
 
-  newDataBtn.addEventListener('click', function() {
-    generateNewData(T);   
-    updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
-    updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
-  })
+  const newDataBtn = document.getElementById('newDataBtn');
+  if (newDataBtn) {
+    newDataBtn.addEventListener('click', function() {
+      generateNewData(T);   
+      updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
+      updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
+    });
+  }
 
   // gamma1 event listener removed - element doesn't exist in page3.html
 
