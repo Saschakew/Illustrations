@@ -220,7 +220,7 @@
     </div>
   </footer>
   <script>
-    // Minimal loader cleanup for pages using main.js (no Bootstrap finalize)
+    // Minimal loader cleanup for pages that don't call Bootstrap finalize directly
     document.addEventListener('DOMContentLoaded', function() {
       try { document.documentElement.classList.remove('ui-preinit'); } catch (e) {}
       var loader = document.getElementById('loading-screen');
