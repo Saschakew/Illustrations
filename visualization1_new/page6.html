@@ -133,12 +133,21 @@
 
           <div class="input-wrapper">
             <div class="label-value-wrapper">
+              <label class="InputLabel" id="phi0-label" title="True rotation"><span>$\phi_0 = $ </span>
+                <span class="InputValue" id="phi0Value"> 0.50</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="input-wrapper">
+            <div class="label-value-wrapper">
               <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span>
                 <span class="InputValue" id="phiValue">  0.00</span>
               </label>
             </div>
             <input class="InputRange" type="range" id="phi" min="0" max="1.57" step="0.01" value="0">
           </div>
+
 
           <div class="input-wrapper">
             <div class="label-value-wrapper">
@@ -164,20 +173,20 @@
     <section id="shock-distributions" class="text-container">
       <h3>Shock Distributions</h3>
       <p>
-        In the simulation below, the second structural form shock $\epsilon_{2,t}$ is independently drawn from a uniform distribution.
-        The first structural form shock $\epsilon_{1,t}$ is independently drawn from a mixture of normal distributions
+        In the simulation below, the first structural shock $\epsilon_{1,t}$ is independently drawn from a standard normal distribution.
+        The second structural shock $\epsilon_{2,t}$ is independently drawn from a mixture of normal distributions
         <span class="info-icon" data-info="The shocks are normalized to mean zero, unit variance, and zero correlation.">i</span>
       </p>
       <div class="equation-wrapper" style="text-align: center;"> 
         $$ 
-        \epsilon_{1,t} \sim 0.9 \mathcal{N} (0, 1 ) + 0.1 \mathcal{N} (s, 1).
+        \epsilon_{2,t} \sim 0.9 \mathcal{N}(0, 1) + 0.1 \mathcal{N}(s, 1).
         $$
       </div>
-      <p>The mixing coefficient $s$ can be chosen using the slider above:</p>
+      <p>The location parameter $s$ of the second component can be chosen using the slider above:</p>
       <ul>
         <li>For $s = 0$, both shocks are normal.</li>
-        <li>For $s < 0$, the first shock is left-skewed.</li>
-        <li>For $s > 0$, the first shock is right-skewed.</li>
+        <li>For $s < 0$, the second shock is left-skewed.</li>
+        <li>For $s > 0$, the second shock is right-skewed.</li>
       </ul>
     </section>
 
@@ -211,20 +220,20 @@
     <section id="interactive-loss" class="text-container">
       <h3>Interactive Loss Calculation</h3>
       <p>
-        The loss value in the table again sums up all squared co-moments to get an overall measure of the dependencies 
+        The loss value in the table again sums up all squared co-moments to get an overall measure of the dependencies.
       </p>
       <div class="equation-wrapper" style="text-align: center;"> 
         $$ 
-        loss(\phi) = \text{mean}(  e_{1,t}(\phi)  e_{2,t}(\phi) )^2 + \; .... \; + \text{mean}(  e_{1,t}(\phi)^2  e_{2,t}(\phi)^2 -1)^2
+        loss(\phi) = \text{mean}(e_{1,t}(\phi)e_{2,t}(\phi))^2 + \cdots + \text{mean}(e_{1,t}(\phi)^2 e_{2,t}(\phi)^2 - 1)^2
         $$
       </div>
       <p>The plot below shows the loss for all rotation angles $\phi$.</p>
       <ul>
-        <li>Push the Minimize-Dependencies button to find the rotation angle $\phi$ which leads to the least dependent innovations.</li>
+        <li>Push the Minimize Dependencies button to find the rotation angle $\phi$ which leads to the least dependent innovations.</li>
         <li>Vary the degree of non-Gaussianity using $s$ to see how it affects the optimization landscape.</li>
       </ul>
       <p>
-        Take-away: Gaussian shocks lead to a flat optimization landscape without a unique minimum at $\phi_0$. 
+        Takeaway: Gaussian shocks lead to a flat optimization landscape without a unique minimum at $\phi_0$. 
         This illustrates why non-Gaussianity is crucial for identifying structural shocks in SVAR models based on independent shocks.
       </p>
       <div class="container">

@@ -57,27 +57,8 @@ function initializeApp() {
 
 // UI Initialization
 function initializeUI() {
-  // Setup sticky input container
-  const inputContainer = document.querySelector('.input-container');
-
-  if (inputContainer) {
-    const inputContainerTop = inputContainer.offsetTop;
-    const paddingTop = 15; // Account for the existing padding-top
-  
-    function handleScroll() {
-      if (window.pageYOffset > inputContainerTop - paddingTop) {
-        inputContainer.classList.add('sticky');
-        document.body.style.paddingTop = `${inputContainer.offsetHeight + paddingTop}px`;
-      } else {
-        inputContainer.classList.remove('sticky');
-        document.body.style.paddingTop = `${paddingTop}px`;
-      }
-    }
-  
-    window.addEventListener('scroll', handleScroll);
-  } else {
-    console.log('Input container not found. Sticky functionality not applied.');
-  }
+  // Enable CSS-only sticky; avoid JS scroll handlers to prevent flicker/layout shifts
+  try { document.documentElement.classList.add('ui-sticky-ready'); } catch (e) {}
 
   // Setup navigation menu toggle
   document.getElementById('menu-toggle').addEventListener('click', function() {
@@ -160,11 +141,16 @@ function setupEventListeners() {
  
   const TElement = document.getElementById('T');
   if (TElement) {
-  document.getElementById('T').addEventListener('input', function() {
-    generateNewData();
-    updateNonGaussianityDisplay();
+    const TValEl = document.getElementById('TValue');
+    const updateTLabel = (val) => { if (TValEl) TValEl.textContent = ` ${Number(val).toFixed(0)}`; };
+    // Initialize label to current slider value
+    updateTLabel(TElement.value);
+    TElement.addEventListener('input', function() {
+      updateTLabel(this.value);
+      generateNewData();
+      updateNonGaussianityDisplay();
     });
-  } 
+  }
 
   const newDataButton = document.getElementById('newDataBtn');
   if (newDataButton) {
@@ -337,131 +323,144 @@ function createChartIfExists(id) {
   }
 }
 
-createChartIfExists('scatterPlot1');
-createChartIfExists('scatterPlot2');
-  createChartIfExists('scatterPlot3');
+  // Only create charts relevant to the current page to avoid logs for missing elements
+  const currentPage = document.body.className;
+  if (currentPage === 'page3') {
+    createChartIfExists('scatterPlot2');
+    createChartIfExists('scatterPlot3');
+  } else {
+    createChartIfExists('scatterPlot1');
+    createChartIfExists('scatterPlot2');
+    createChartIfExists('scatterPlot3');
+  }
 
-  const lossplot4Element = document.getElementById('lossplot4');
-  if (lossplot4Element) {
-    const ctx = lossplot4Element.getContext('2d');
-    charts.lossplot4 = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Loss',
-          data: [],
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }, {
-          label: 'Current ϕ',
-          data: [],
-          borderColor: '#ffa500',
-          backgroundColor: '#ffa500',
-          pointRadius: 6,
-          pointHoverRadius: 8,
-          showLine: false
-        }, {
-          label: 'ϕ₀',
-          data: [],
-          borderColor: 'rgb(255, 206, 86)',
-          backgroundColor: 'rgb(255, 206, 86)',
-          pointRadius: 6,
-          pointHoverRadius: 8,
-          showLine: false
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 1,
-        plugins: {
-          title: {
-            display: false,
-            text: 'Loss Plot'
-          }
+  // Only create lossplot4 on pages that use it (page4 and page6)
+  if (currentPage === 'page4' || currentPage === 'page6') {
+    const lossplot4Element = document.getElementById('lossplot4');
+    if (lossplot4Element) {
+      const ctx = lossplot4Element.getContext('2d');
+      charts.lossplot4 = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Loss',
+            data: [],
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+          }, {
+            label: 'Current ϕ',
+            data: [],
+            borderColor: '#ffa500',
+            backgroundColor: '#ffa500',
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            showLine: false
+          }, {
+            label: 'ϕ₀',
+            data: [],
+            borderColor: 'rgb(255, 206, 86)',
+            backgroundColor: 'rgb(255, 206, 86)',
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            showLine: false
+          }]
         },
-        scales: {
-          x: {
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
+          plugins: {
             title: {
-              display: true,
-              text: 'ϕ'
+              display: false,
+              text: 'Loss Plot'
             }
           },
-          y: {
-            title: {
-              display: true,
-              text: 'Loss'
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'ϕ'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Loss'
+              }
             }
           }
         }
-      }
-    });
-    console.log('lossplot4 chart created');
-  } else {
-    console.log('lossplot4 element not found');
+      });
+      console.log('lossplot4 chart created');
+    } else {
+      console.log('lossplot4 element not found');
+    }
   }
 
 
-  const lossplot4mElement = document.getElementById('lossplot4m');
-  if (lossplot4mElement) {
-    const ctx = lossplot4mElement.getContext('2d');
-    charts.lossplot4m = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Loss',
-          data: [],
-          borderColor: 'rgb(75, 192, 192)',
-          tension: 0.1
-        }, {
-          label: 'Current ϕ',
-          data: [],
-          borderColor: '#ffa500',
-          backgroundColor: '#ffa500',
-          pointRadius: 6,
-          pointHoverRadius: 8,
-          showLine: false
-        }, {
-          label: 'ϕ₀',
-          data: [],
-          borderColor: 'rgb(255, 206, 86)',
-          backgroundColor: 'rgb(255, 206, 86)',
-          pointRadius: 6,
-          pointHoverRadius: 8,
-          showLine: false
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 1,
-        plugins: {
-          title: {
-            display: false,
-            text: 'Loss Plot'
-          }
+  // Only create lossplot4m on the page that uses it (page5)
+  if (currentPage === 'page5') {
+    const lossplot4mElement = document.getElementById('lossplot4m');
+    if (lossplot4mElement) {
+      const ctx = lossplot4mElement.getContext('2d');
+      charts.lossplot4m = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Loss',
+            data: [],
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+          }, {
+            label: 'Current ϕ',
+            data: [],
+            borderColor: '#ffa500',
+            backgroundColor: '#ffa500',
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            showLine: false
+          }, {
+            label: 'ϕ₀',
+            data: [],
+            borderColor: 'rgb(255, 206, 86)',
+            backgroundColor: 'rgb(255, 206, 86)',
+            pointRadius: 6,
+            pointHoverRadius: 8,
+            showLine: false
+          }]
         },
-        scales: {
-          x: {
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
+          plugins: {
             title: {
-              display: true,
-              text: 'ϕ'
+              display: false,
+              text: 'Loss Plot'
             }
           },
-          y: {
-            title: {
-              display: true,
-              text: 'Loss'
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'ϕ'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Loss'
+              }
             }
           }
         }
-      }
-    });
-    console.log('lossplot4m chart created');
-  } else {
-    console.log('lossplot4m element not found');
+      });
+      console.log('lossplot4m chart created');
+    } else {
+      console.log('lossplot4m element not found');
+    }
   }
   
 }

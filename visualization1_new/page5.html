@@ -132,6 +132,12 @@
               </label>
             </div>
             <input class="InputRange" type="range" id="T" step="1" value="250" min="10" max="999">
+          </div><div class="input-wrapper">
+            <div class="label-value-wrapper">
+              <label class="InputLabel" id="phi0-label" title="True rotation"><span>$\phi_0 = $ </span>
+                <span class="InputValue" id="phi0Value"> 0.50</span>
+              </label>
+            </div>
           </div>
 
           <div class="input-wrapper">
@@ -142,7 +148,6 @@
             </div>
             <input class="InputRange" type="range" id="phi" min="0" max="1.57" step="0.01" value="0">
           </div>
-
           <div class="input-wrapper">
             <button id="newDataBtn" class="orange-button">New Data</button>
           </div>
@@ -155,7 +160,7 @@
       <p>
         This page demonstrates that minimizing the innovations' dependencies (as shown on the <a href="page4.html">previous page</a>) is equivalent 
         to maximizing the shocks' non-Gaussianity.
-        <span class="info-icon" data-info="They are only equal up to a constant if a specific weighting matrix is used for the coskewness and cokurtosis conditions, see section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span> 
+        <span class="info-icon" data-info="These criteria are only equivalent up to a constant if a specific weighting matrix is used for the coskewness and cokurtosis conditions; see Section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span> 
         Consequently, we can identify $\phi_0$ by finding the most non-Gaussian innovations.
       </p>
     </section>
@@ -170,8 +175,8 @@
         \begin{matrix} 
         \text{Skewness} & \; E[e_{1,t}(B)^3]  \\
         \text{Skewness} & \; E[e_{2,t}(B)^3]  \\
-        \text{Excess\;kurtosis} & \; E[e_{1,t}(B)^4-3]  \\
-        \text{Excess\;kurtosis} & \; E[e_{2,t}(B)^4-3]   
+        \text{Excess kurtosis} & \; E[e_{1,t}(B)^4-3]  \\
+        \text{Excess kurtosis} & \; E[e_{2,t}(B)^4-3]   
         \end{matrix}
         $$
       </div>
@@ -206,7 +211,7 @@
     <section id="interactive-loss" class="text-container">
       <h3>Interactive Loss Calculation</h3>
       <p>
-        The loss value in the table above simply sums up all squared higher-order moments to get an overall measure of the non-Gaussianity 
+        The loss value in the table above simply sums up all squared higher-order moments to get an overall measure of the non-Gaussianity.
       </p>
       <div class="equation-wrapper" style="text-align: center;">
         $$ 
@@ -218,12 +223,12 @@
         The plot below shows the loss for all rotation angles $\phi$.
       </p>
       <ul>
-        <li>Push the Maximize-Non-Gaussianity button to find the rotation angle $\phi$ which leads to the most non-Gaussian innovations.</li>
+        <li>Push the Maximize non-Gaussianity button to find the rotation angle $\phi$ which leads to the most non-Gaussian innovations.</li>
         <li>Try out different sample sizes $T$ and new data sets using the New Data button to see how the rotation $\phi$ which maximizes the innovations' non-Gaussianity is located around the true rotation $\phi_0 = 0.5$.</li>
       </ul>
       <p>
-        Take-away: Choosing the angle $\phi$ which minimizes the innovations' non-Gaussianity allows to estimate $\phi_0$.
-        <span class="info-icon" data-info="Details can be found in section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span>
+        Takeaway: Choosing the angle $\phi$ that maximizes the innovations' non-Gaussianity allows us to estimate $\phi_0$.
+        <span class="info-icon" data-info="Details can be found in Section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>">i</span>
       </p>
       <div class="container">
         <div class="button-container">

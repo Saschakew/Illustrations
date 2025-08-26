@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Reduced and Structural Form Shocks</title>
+  <title>Reduced Form</title>
   <meta name="description" content="Explore the relationship between reduced-form shocks and structural shocks in a Non-Gaussian SVAR using interactive simulations.">
   <meta name="keywords" content="SVAR, reduced form shocks, structural shocks, rotation, econometrics">
 
@@ -16,7 +16,7 @@
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "Reduced and Structural Form Shocks",
+      "headline": "Reduced Form",
       "description": "An interactive exploration of the relationship between reduced-form and structural shocks in a Non-Gaussian SVAR.",
       "author": {
         "@type": "Person",
@@ -43,8 +43,8 @@
       {
         "@context": "https://schema.org",
         "@type": "LearningResource",
-        "name": "Reduced and Structural Form Shocks in Non-Gaussian SVAR",
-        "description": "This page explores the relationship between reduced form shocks and structural shocks in our Non-Gaussian SVAR model.",
+        "name": "Reduced Form in Non-Gaussian SVAR",
+        "description": "This page explores the relationship between reduced-form shocks and structural shocks in our Non-Gaussian SVAR model.",
         "learningResourceType": "Interactive Simulation",
         "educationalLevel": "Graduate",
         "isPartOf": {
@@ -97,7 +97,7 @@
     <div class="loader"></div>
   </div>
   <header>
-    <h1>Reduced and Structural Form Shocks</h1>
+    <h1>Reduced Form</h1>
   </header>
 
   <main id="main">
@@ -180,21 +180,35 @@
 
 
       <section id="introduction" class="text-container">
-        <h2>Reduced and Structural Form Shocks</h2>
+        <h2>Reduced Form</h2>
         <p>This page explores the relationship between reduced-form shocks and structural shocks in our Non-Gaussian SVAR model.</p>
       </section>
 
-
- 
-
+      <section id="relationship" class="text-container">
+        <h3>The Relationship Between Reduced and Structural Form Shocks</h3>
+        <p>
+          In our simplified SVAR model, the reduced-form shocks $u_t$ can be viewed as a rotation of the structural shocks $\epsilon_t$ by angle $\phi_0$:
+        </p>
+        <div class="equation-wrapper" style="text-align: center;">
+          $
+          \begin{bmatrix} u_{1,t} \\ u_{2,t} \end{bmatrix}
+          =
+          B_0(\phi_0)
+          \begin{bmatrix} \epsilon_{1,t} \\ \epsilon_{2,t} \end{bmatrix}
+          $
+        </div>
+        <div class="equation-wrapper" style="text-align: center;">
+          <span id="current-B0"></span>
+        </div>
+      </section>
 
    
 <section id="interactive-simulation" class="text-container">
   <h3>Interactive Simulation</h3>
   <p>
-    In the simulation below, the structural form shocks are independently drawn from a uniform distribution.
+    In the simulation below, the structural shocks are independently drawn from a uniform distribution.
     Move the $\phi_0$ slider above to see how $B(\phi_0)$ leads to different rotations $u_t$ of $\epsilon_t$.
-    Push the New Data button to draw a new set of structural shocks $\epsilon_t$.
+    Click the New Data button to draw a new set of structural shocks $\epsilon_t$.
   </p>
   <div class="container two">
     <section class="chart-container">

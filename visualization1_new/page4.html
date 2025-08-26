@@ -147,7 +147,7 @@
                 <span class="InputValue" id="TValue"> 250</span>
                </label> 
             </div>
-            <input class="InputRange" type="range" id="T" step="1" value="250" min="250" max="999">
+            <input class="InputRange" type="range" id="T" step="1" value="250" min="10" max="999">
           </div>
 
           <div class="input-wrapper">
@@ -165,7 +165,7 @@
                 <span class="InputValue" id="phiValue">  0.50</span>
               </label> 
             </div>
-            <input class="InputRange" type="range" id="phi" min="0" max="2.35" step="0.01" value="0.5">
+            <input class="InputRange" type="range" id="phi" min="0" max="1.57" step="0.01" value="0.0">
           </div>
 
           <div class="input-wrapper"> 
@@ -193,22 +193,15 @@
         <div class="popup-content">
           <span class="close">&times;</span>
           <h3>Rotation angle: $\phi$</h3>
-          <p>In the bivairate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced form shocks $u_t$   
-            are a rotation with an angle of   $\phi_0  (180 / π)$   degree of the structural form shocks $\epsilon_t$. 
-            On this page the rotation is fixed at $\phi_0=0.5$.
-            The rotation   $\phi $ allows to calculate the innovations $e_t(B(\phi)) = B(\phi)^{-1} u_t$ as a rotation of the reduced form shocks $u_t$ with an angle of $\phi  (180 / π)$ degree.
-        </p>
+          <p>In the bivariate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced-form shocks $u_t$ are a rotation of the structural shocks $\epsilon_t$ by an angle of $\phi_0$ (in radians), i.e., $\phi_0 \cdot (180/\pi)$ degrees. On this page, the true rotation is fixed at $\phi_0 = 0.5$. The rotation $\phi$ allows us to compute the innovations as $e_t(B(\phi)) = B(\phi)^{-1} u_t$, which corresponds to rotating the reduced-form shocks by $\phi \cdot (180/\pi)$ degrees.</p>
         </div>
       </div>
     </div>
 
-    </div>
-  
-
-       <section id="introduction" class="text-container">
-        <h2>Minimizing Dependencies</h2>
-        <p>This page explores how we can verify whether we've correctly identified the structural shocks by minimizing dependencies between innovations.</p>
-      </section>
+    <section id="introduction" class="text-container">
+      <h2>Minimizing Dependencies</h2>
+      <p>This page explores how we can verify whether we've correctly identified the structural shocks by minimizing dependencies between innovations.</p>
+    </section>
 
 
 
@@ -291,10 +284,10 @@
 
       <p>Use the button to numerically minimize dependencies between innovations by searching over rotation angles $\phi$.</p>
       <ul class="input-list">
-        <li>Press the Minimize-Dependencies button to find the rotation angle $\phi$ that minimizes dependence.</li>
+        <li>Press the Minimize Dependencies button to find the rotation angle $\phi$ that minimizes dependence.</li>
         <li>Try different $T$ and regenerate data using the New Data button.</li>
         <li>Note: The minimizing $\phi$ should be near the true $\phi_0 = 0.5$.</li>
-        <li>Take-away: Minimizing dependence allows us to estimate $\phi$.</li>
+        <li>Takeaway: Minimizing dependence allows us to estimate $\phi$.</li>
       </ul>
     
 

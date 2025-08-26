@@ -417,13 +417,13 @@ body.page2 #interactive-loss .chart-wrapper {
 }
 
 .input-container.sticky {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000; 
-  max-width: 1200px;
-  border-radius: 16px 16px 12px 12px;
+  left: auto;
+  transform: none;
+  z-index: 1000;
+  max-width: 100%;
+  border-radius: 16px;
   backdrop-filter: blur(6px);
 }
 
@@ -1166,4 +1166,40 @@ nav a:focus-visible {
 
 .InputRange {
   width: 100%;
+}
+
+/* Inline info icon badge */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  background: var(--brand-weak);
+  color: var(--brand);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  vertical-align: super;
+  margin-left: -2px; /* pull icon closer to preceding text */
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+.info-icon:hover {
+  background: var(--brand);
+  color: var(--brand-contrast);
+}
+
+.info-icon:active {
+  transform: translateY(1px);
+}
+
+.info-icon:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px var(--ring);
 }

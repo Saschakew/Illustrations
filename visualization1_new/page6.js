@@ -81,6 +81,7 @@ function initializeVariables() {
     const tVal = document.getElementById('TValue'); if (tVal) tVal.textContent = ` ${T.toFixed(0)}`;
     const pVal = document.getElementById('phiValue'); if (pVal) pVal.textContent = ` ${phi.toFixed(2)}`;
     const sVal = document.getElementById('sValue'); if (sVal) sVal.textContent = ` ${s.toFixed(2)}`;
+    const p0Val = document.getElementById('phi0Value'); if (p0Val) p0Val.textContent = ` ${phi0.toFixed(2)}`;
   } catch (e) {}
 
   generateNewData(T, s);

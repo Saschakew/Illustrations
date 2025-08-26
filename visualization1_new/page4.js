@@ -155,6 +155,7 @@ function setupEventListeners() {
     B = getB(phi);
     [e1, e2] = getE(u1, u2, B);
     updateAllChartsAndStats(true);
+    try { insertEqSVARe(B); } catch (e) {}
   });
 
   // New Data button
@@ -185,6 +186,7 @@ function setupEventListeners() {
           B = getB(phi);
           [e1, e2] = getE(u1, u2, B);
           updateAllChartsAndStats(true);
+          try { insertEqSVARe(B); } catch (e) {}
         }
       ];
       try {

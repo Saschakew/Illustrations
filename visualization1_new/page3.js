@@ -149,6 +149,8 @@ function setupEventListeners() {
     (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', true),
+    (value) =>updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', true),
     (value) =>updateLossPlots(OnlyPoint=true,charts.lossplot2,phi0,phi, [
       {
         lossFunction: lossZ1,
@@ -195,6 +197,8 @@ function setupEventListeners() {
     (value) =>updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Co-movement z₂–ε₂", "z₂", "ε₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true),
     (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
+    (value) =>updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', true),
+    (value) =>updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', true),
     (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
       {
         lossFunction: lossZ1,
@@ -234,6 +238,8 @@ function setupEventListeners() {
     updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Co-movement z₂–ε₂", "z₂", "ε₂", true),
     updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true);
     updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true);
+    updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', true);
+    updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', true);
     statsZE1 = calculateMoments(z1, e2); 
     createTableZCovariance(statsZE1);
     createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
@@ -468,6 +474,8 @@ function setupEventListeners() {
       function(phi) { 
        updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", false);
        updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", false);
+       updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', false);
+       updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', false);
       },
       function(phi) { 
         statsZE = calculateMoments(z1, e2); 
@@ -549,6 +557,12 @@ function setupEventListeners() {
 function initializeCharts() {
   const ScatterConfig = getScatterPlotConfig()
  
+  // Create and initialize page 3's main scatter plots to match page 4 styling
+  createChart('scatterPlot2',ScatterConfig)
+  createChart('scatterPlot3',ScatterConfig)
+  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced-form shocks", "u\u2081", "u\u2082", true);
+  updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e\u2081", "e\u2082", true);
+
   createChart('scatterPlotZ1Eps2',ScatterConfig)  
   createChart('scatterPlotZ2Eps2',ScatterConfig)  
     

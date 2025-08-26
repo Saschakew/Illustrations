@@ -229,6 +229,8 @@ function getLossPlotConfig() {
             text: 'ϕ',
             color: muted
           },
+          min: 0,
+          max: 1.57,
           ticks: { color: muted },
           grid: { color: border, drawBorder: false }
         },
@@ -312,7 +314,7 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
       }
     });
   } else {
-    const xValues = Array.from({length: 236}, (_, i) => i * 0.01);
+    const xValues = Array.from({length: 158}, (_, i) => i * 0.01);
     // Clear existing datasets
     chart.data.datasets = [];
 
@@ -401,7 +403,7 @@ function updateLossPlots(OnlyPoint, chart, phi0, phi, lossFunctions, animate) {
         color: muted
       },
       min: 0,
-      max: 2.35,
+      max: 1.57,
       ticks: {
         color: muted,
         callback: function(value) {
@@ -452,7 +454,7 @@ function updateLossPlot(OnlyPoint, chart, phi0, phi, lossFunction, animate, ...a
       y: currentLoss
     }];
 
-    const xValues = Array.from({length: 236}, (_, i) => i * 0.01);
+    const xValues = Array.from({length: 158}, (_, i) => i * 0.01);
     const yValues = xValues.map(x => lossFunction(...args, x));
     
     chart.data.labels = xValues.map(x => x.toFixed(2));
@@ -498,7 +500,7 @@ function updateLossPlot(OnlyPoint, chart, phi0, phi, lossFunction, animate, ...a
         color: muted
       },
       min: 0,
-      max: 2.35,
+      max: 1.57,
       ticks: {
         color: muted,
         callback: function(value) {
@@ -686,7 +688,7 @@ function updateChartWithPhi(  ) {
             if (leftLoss < currentLoss && leftLoss < rightLoss) {
                 newPhi = Math.max(0, currentPhi - stepSize);
             } else if (rightLoss < currentLoss && rightLoss < leftLoss) {
-                newPhi = Math.min(2.35, currentPhi + stepSize);
+                newPhi = Math.min(1.57, currentPhi + stepSize);
             } else {
                 console.log("Optima reached");
                 stuckAtBorder = true;
@@ -694,7 +696,7 @@ function updateChartWithPhi(  ) {
              
 
             // Check if the ball is stuck at the border
-            if (newPhi === 0 || newPhi === 2.35) {
+            if (newPhi === 0 || newPhi === 1.57) {
                 stuckAtBorder = true;
             }
 

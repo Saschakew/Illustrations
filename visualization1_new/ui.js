@@ -125,7 +125,8 @@ function createPopup(icon, className) {
   
   const iconRect = icon.getBoundingClientRect();
   popup.style.left = `${iconRect.left + window.scrollX}px`;
-  popup.style.top = `${iconRect.bottom + window.scrollY + 5}px`;
+  // Nudge upward a bit so it visually aligns with superscript icon placement
+  popup.style.top = `${iconRect.bottom + window.scrollY - 2}px`;
   popup.style.display = 'block';
   console.debug('[POPUPS] Popup created at', { left: popup.style.left, top: popup.style.top });
   
@@ -182,21 +183,41 @@ function setupActiveNavLink() {
 function setupInfoIcons() {
   const icons = document.querySelectorAll('.info-icon');
   console.debug('[POPUPS] setupInfoIcons: icons found =', icons.length);
-  // Prevent duplicate delegated listeners if initializeCommonUI runs more than once
-  if (document.__infoIconDelegated) {
-    console.debug('[POPUPS] Delegated listener already attached');
-    return;
-  }
-  document.addEventListener('click', function(e) {
-    const icon = e.target && e.target.closest ? e.target.closest('.info-icon') : null;
-    if (icon) {
-      console.debug('[POPUPS] info-icon clicked', icon);
-      e.stopPropagation();
-      createPopup(icon, 'info-popup');
-    }
+  // Set accessibility attributes for keyboard users
+  icons.forEach((el) => {
+    if (!el.getAttribute('role')) el.setAttribute('role', 'button');
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    if (!el.getAttribute('aria-label')) el.setAttribute('aria-label', 'More information');
   });
-  // mark as attached
-  document.__infoIconDelegated = true;
+
+  // Prevent duplicate delegated listeners if initializeCommonUI runs more than once
+  if (!document.__infoIconDelegated) {
+    document.addEventListener('click', function(e) {
+      const icon = e.target && e.target.closest ? e.target.closest('.info-icon') : null;
+      if (icon) {
+        console.debug('[POPUPS] info-icon clicked', icon);
+        e.stopPropagation();
+        createPopup(icon, 'info-popup');
+      }
+    });
+    document.__infoIconDelegated = true;
+  } else {
+    console.debug('[POPUPS] Click listener already attached');
+  }
+
+  if (!document.__infoIconKeyDelegated) {
+    document.addEventListener('keydown', function(e) {
+      const icon = e.target && e.target.closest ? e.target.closest('.info-icon') : null;
+      if (!icon) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        createPopup(icon, 'info-popup');
+      }
+    });
+    document.__infoIconKeyDelegated = true;
+  } else {
+    console.debug('[POPUPS] Key listener already attached');
+  }
 }
 
 // Common UI initializer to reduce repetition across pages

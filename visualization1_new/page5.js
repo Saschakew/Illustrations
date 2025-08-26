@@ -74,6 +74,9 @@ function initializeVariables() {
   B0 = getB(phi0);
   B = getB(phi);
 
+  // Reflect phi0 in UI if present
+  try { const el = document.getElementById('phi0Value'); if (el) el.textContent = ` ${phi0.toFixed(2)}`; } catch (e) {}
+
   generateNewData(T);
 
   // Initial equations

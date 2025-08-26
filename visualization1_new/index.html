@@ -149,32 +149,32 @@
         <p>Welcome to an interactive guide on Non-Gaussian Structural Vector Autoregression (SVAR) models. 
           This website aims to visualize and explain the identification approach in <a href="https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858" target="_blank">Keweloh (2021)</a>.</p>  
       </section>
-
+  
       <section id="structure" class="text-container">
         <h3>The structure of the guide</h3>
         <p>The guide is structured as follows:</p>
         <ul>
-          <li>The <a href="index.html">first</a> page introduces the SVAR model and the identification problem.</li>
-          <li>The <a href="page2.html">second</a> page illustrates the reduced form.</li>
-          <li>The <a href="page3.html">third</a> page discusses the identification problem.</li>
-          <li>The <a href="page4.html">fourth</a> page introduces the minimum dependence approach.</li>
-          <li>The <a href="page5.html">fifth</a> page is a placeholder for additional analyses (content to be migrated).</li>
-          <li>The <a href="page6.html">sixth</a> page is a placeholder for extended content (content to be migrated).</li>
+          <li><a href="index.html">Setup</a>: introduces the SVAR model, assumptions, and notation.</li>
+          <li><a href="page2.html">Reduced Form</a>: illustrates the reduced form.</li>
+          <li><a href="page3.html">Identification Problem</a>: discusses the identification problem.</li>
+          <li><a href="page4.html">Min. Dependencies</a>: introduces the minimum dependence approach.</li>
+          <li><a href="page5.html">Max. non-Gaussianity</a>: introduces the maximum non-Gaussianity approach.</li>
+          <li><a href="page6.html">Non-Gaussianity</a>: explains the impact of the degree of non-Gaussianity on identification.</li>
         </ul>
       </section>
 
       <section id="svar-model" class="text-container"> 
         <h3>The SVAR model</h3>
-        <p>In a SVAR a vector of time series 
-          $$ y_t = [y_{1t},...,y_{nt}]'$$
+        <p>In an SVAR, a vector of time series 
+          $$ y_t = [y_{1t},\cdots,y_{nt}]' $$
           is explained by its own past and a vector of structural shocks 
-          $$\epsilon_t =[\epsilon_{1t},...,\epsilon_{nt}]'$$ 
+          $$\epsilon_t = [\epsilon_{1t},\cdots,\epsilon_{nt}]' $$ 
           using</p>
           <div class="equation-wrapper" style="text-align: center;"> 
-          $$  y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t$$  $$ \quad u_t =B_0 \epsilon_t.  $$ 
+          $$  y_t = A_1 y_{t-1} + \cdots + A_p y_{t-p} + u_t $$  $$ \quad u_t = B_0 \epsilon_t.  $$ 
           </div>
         <p>
-          The following assumptions allow an easy visualization of the identification problem.
+          The following assumptions simplify the visualization of the identification problem.
         </p>
   
       </section>
@@ -183,8 +183,8 @@
     <section id="assumptions" class="text-container"> 
       <h3>Simplifying assumptions</h3>
       <p>The VAR(p) 
-        <div class="equation-wrapper" style="text-align: center;"> $ y_t = A_1 y_{t-1} + ... + A_p y_{t-p} + u_t   $</div>  can be estimated by OLS. To simplify, consider an SVAR(0) such that the 
-        reduced form shocks $u_t$ can be thought of as observable random variables equal to an unknown linear combination $B_0$ of unknown structural form shocks $\epsilon_t$.  
+        <div class="equation-wrapper" style="text-align: center;"> $ y_t = A_1 y_{t-1} + \cdots + A_p y_{t-p} + u_t $</div> can be estimated by OLS. To simplify, consider an SVAR(0) such that the 
+        reduced-form shocks $u_t$ can be viewed as observable random variables equal to an unknown linear combination (via $B_0$) of structural shocks $\epsilon_t$.  
       </p>
       <div class="assumption-box">
           <h5>Assumption 1: No Lags</h5>
@@ -196,7 +196,7 @@
           </p> 
         </div> 
  
-      <p>To further simplify, let's consider an SVAR with only two variables and shocks such that each of the two reduced form shocks 
+      <p>To further simplify, let's consider an SVAR with only two variables and shocks such that each of the two reduced-form shocks 
         is equal to an unknown linear combination of the two structural shocks.</p>
       <div class="assumption-box">
           <h5>Assumption 2: Bivariate SVAR</h5>
@@ -210,7 +210,7 @@
             \begin{bmatrix} \epsilon_{1,t}   \\ \epsilon_{2,t}  \end{bmatrix}  $</div></p> 
         </div> 
      
-        <p>Finally, assume that  $B_0$ is orthogonal.<span class="info-icon" data-info="If $B_0$ where not orthogonal, 
+        <p>Finally, assume that  $B_0$ is orthogonal.<span class="info-icon" data-info="If $B_0$ were not orthogonal, 
           we could always transform the SVAR such that $B_0$ is orthogonal, see, e.g., section 6 in <a href='https://www.tandfonline.com/doi/pdf/10.1080/07350015.2020.1730858' target='_blank'>Keweloh (2021)</a>. Note that this transformation involves transforming the shocks into uncorrelated shocks, which motivates the transformation of the data on the next page.">i</span>
           Without the orthogonality assumption the matrix $B_0$ contains four unknown parameters. However, an orthogonal matrix $B_0$ essentially 
           only depends on a single unknown parameter, which simplifies the visualizations.</p>
@@ -224,6 +224,11 @@
           </p> 
           </div> 
       </section>
+
+  <div class="text-container" id="next-steps">
+    <h3>Next Steps</h3>
+    <p>The next page illustrates the relation between reduced-form shocks and structural shocks. Proceed to <a href="page2.html">Reduced Form</a>.</p>
+  </div>
 
   </main>
 

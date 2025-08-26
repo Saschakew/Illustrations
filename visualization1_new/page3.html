@@ -106,16 +106,21 @@
           <div class="input-content">
             <div class="input-wrapper">
               <div class="label-value-wrapper">
-                <label class="InputLabel" for="T" id="T-label"><span>$T = $ </span><span class="InputValue" id="TValue"> 250</span></label>
+                <label class="InputLabel" for="T" id="T-label" title="Click for more information"><span>$T = $ </span><span class="InputValue" id="TValue"> 250</span></label>
               </div>
               <input class="InputRange" type="range" id="T" step="1" value="250" min="10" max="999">
             </div>
-            <div class="input-wrapper" style="display:none;">
-              <input type="hidden" id="phi0" value="0.5" min="0" max="1.57" step="0.1">
+            <div class="input-wrapper">
+              <div class="label-value-wrapper">
+                <label class="InputLabel" for="phi0" id="phi0-label" title="True rotation angle"><span>$\phi_0 = $ </span>
+                  <span class="InputValue" id="phi0Value"> 0.50</span>
+                </label>
+              </div>
+              <input type="hidden" id="phi0" value="0.5">
             </div>
             <div class="input-wrapper">
               <div class="label-value-wrapper">
-                <label class="InputLabel" for="phi" id="phi-label"><span>$\phi = $ </span><span class="InputValue" id="phiValue"> 0.00</span></label>
+                <label class="InputLabel" for="phi" id="phi-label" title="Click for more information"><span>$\phi = $ </span><span class="InputValue" id="phiValue"> 0.00</span></label>
               </div>
               <input class="InputRange" type="range" id="phi" min="0" max="1.57" step="0.01" value="0">
             </div>
@@ -129,11 +134,11 @@
       <section id="introduction" class="text-container">
         <h2>The identification problem</h2>
         <p>This page explores the central challenge in SVAR analysis: the identification problem. We'll discuss why identifying structural shocks 
-          from reduced form shocks is difficult and how non-Gaussian properties can help.</p>
+          from reduced-form shocks is difficult and how non-Gaussian properties can help.</p>
       </section>
 
       <section id="identification-challenge" class="text-container">
-        <h3>Structural shocks and Innovations</h3>
+        <h3>Structural Shocks and Innovations</h3>
         
         <p>Let's fix the rotation at $\phi_0=0.5$ such that the reduced form shocks are equal to one specific rotation of the structural shocks:  
         <div class="equation-wrapper" style="text-align: center;"> 
@@ -143,13 +148,12 @@
         
         <p> 
         However, in a given application, we neither know the rotation matrix $B(\phi_0)$ nor do we observe the structural shocks $\epsilon_t$.
-        Instead, we only observe the reduced form shocks $u_t$.<span class="info-icon" data-info="In practice we only observe the macroeconomic 
-        variables $y_t$ and need to estimate the VAR to get the reduced form shocks $u_t$. However, with the simplifying no-lags assumption it holds that $u_t=y_t$.">i</span> 
-        Consequently, the question is how can we identify $B(\phi_0)$ and recover the structural shocks $\epsilon_t$ from the reduced form shocks $u_t$?
+        Instead, we only observe the reduced-form shocks $u_t$.<span class="info-icon" data-info="In practice, we only observe the macroeconomic variables $y_t$ and need to estimate the VAR to obtain the reduced-form shocks $u_t$. However, under the simplifying no-lag assumption, we have $u_t = y_t$.">i</span> 
+        Consequently, the question is how can we identify $B(\phi_0)$ and recover the structural shocks $\epsilon_t$ from the reduced-form shocks $u_t$?
         </p>   
         
         <p>
-        We can always choose an angle $\phi$, calculate $B(\phi)$:
+        We can choose any angle $\phi$ and compute $B(\phi)$:
         <div class="equation-wrapper" style="text-align: center;"> 
         $
         B(\phi) = \begin{bmatrix} \cos(\phi) & -\sin(\phi) \\ \sin(\phi) & \cos(\phi) \end{bmatrix}
@@ -214,7 +218,7 @@
       <a href="https://github.com/Saschakew/Illustrations" target="_blank">Github</a>
         <a href="https://sascha-keweloh.com/">Sascha Keweloh</a>
     </div>
-</footer>
+  </footer>
   <script>
     // Minimal loader cleanup for pages using main.js (no Bootstrap finalize)
     document.addEventListener('DOMContentLoaded', function() {
@@ -225,6 +229,19 @@
         loader.addEventListener('transitionend', function() { loader.style.display = 'none'; }, { once: true });
         // In case CSS transition isn't present
         setTimeout(function(){ try { loader.style.display = 'none'; } catch (e) {} }, 300);
+      }
+
+      // Wire input toggle to expand/collapse the input container (align with page4 behavior)
+      var inputToggle = document.getElementById('input-toggle');
+      var inputContentWrapper = document.querySelector('.input-content-wrapper');
+      var nav = document.querySelector('nav');
+      if (inputToggle && inputContentWrapper) {
+        inputToggle.addEventListener('click', function() {
+          if (nav && nav.classList.contains('expanded')) {
+            nav.classList.remove('expanded');
+          }
+          inputContentWrapper.classList.toggle('expanded');
+        });
       }
     });
   </script>
