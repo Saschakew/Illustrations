@@ -103,7 +103,7 @@ function initializeUI() {
 
   
   // Setup popups for input labels that exist in page3.html
-  const popupIds = ['T', 'phi'];
+  const popupIds = ['T', 'phi', 'phi0'];
   setupPopup(popupIds)  
 }
 

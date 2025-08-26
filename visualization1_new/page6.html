@@ -101,7 +101,7 @@
   <div id="loading-screen"><div class="loader"></div></div>
 
   <header>
-    <h1>SVAR Visualizations</h1>
+    <h1>Non-Gaussian SVAR: Non-Gaussianity</h1>
   </header>
 
   <main id="main">
@@ -164,6 +164,41 @@
         </div>
       </div>
     </section>
+
+    <div class="popup-container">
+      <div id="T-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Sample Size: $T$</h3>
+          <p>T represents the sample size or the number of observations in the dataset.</p>
+        </div>
+      </div>
+
+      <div id="phi0-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Rotation angle: $\phi_0$</h3>
+          <p>In the bivariate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced-form shocks $u_t$ are a rotation of the structural shocks $\epsilon_t$ by angle $\phi_0$ (in radians).</p>
+        </div>
+      </div>
+
+      <div id="phi-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Rotation angle: $\phi$</h3>
+          <p>In the bivariate SVAR $u_t = B_0(\phi_0) \epsilon_t$, the reduced-form shocks $u_t$ are a rotation of the structural shocks $\epsilon_t$ by an angle of $\phi_0$ (in radians), i.e., $\phi_0 \cdot (180/\pi)$ degrees. On this page, the true rotation is fixed at $\phi_0 = 0.5$. The rotation $\phi$ allows us to compute the innovations as $e_t(B(\phi)) = B(\phi)^{-1} u_t$, which corresponds to rotating the reduced-form shocks by $\phi \cdot (180/\pi)$ degrees.</p>
+        </div>
+      </div>
+
+      <div id="sSlider-popup" class="popup">
+        <div class="popup-content">
+          <span class="close">&times;</span>
+          <h3>Non-Gaussianity parameter: $s$</h3>
+          <p>The parameter $\, s$ controls the non-Gaussianity of $\epsilon_{2,t}$.
+            For $s = 0$ the shock is Gaussian; for $s < 0$ the shock is left-skewed; for $s > 0$ it is right-skewed.</p>
+        </div>
+      </div>
+    </div>
 
     <section id="introduction" class="text-container">
       <h2>Impact of Non-Gaussianity on Estimation</h2>
