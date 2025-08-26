@@ -10,6 +10,7 @@ let phi;
 let B0,B;
 let gamma1, gamma2 , gamma3;
 let color1, color2, color3;
+let refLineColor;
 let W;
 
 // Shared scripts to load via Bootstrap
@@ -73,6 +74,12 @@ function initializeUI() {
   color2 = c2;
   color3 = c3;
 
+  // Reference line color from theme border
+  try {
+    const styles = getComputedStyle(document.documentElement);
+    refLineColor = (styles.getPropertyValue('--border') || '#e5e7eb').trim();
+  } catch (e) { refLineColor = '#e5e7eb'; }
+
   // Override colors with the exact equation colors if present in the DOM
   try {
     const scope = document.querySelector('#interactive-loss') || document;
@@ -88,21 +95,15 @@ function initializeUI() {
         [color1, color2, color3] = eqColors.slice(0, 3);
       }
     } else {
-      // Fallback to the known RGBs used in the equations
-      color1 = 'rgb(75, 192, 192)';
-      color2 = 'rgb(41, 128, 185)';
-      color3 = 'rgb(255, 177, 153)';
+      // Keep theme accents as fallback; no hardcoded colors
     }
   } catch (e) {
-    // Fallback in case computed styles are not available yet
-    color1 = 'rgb(75, 192, 192)';
-    color2 = 'rgb(41, 128, 185)';
-    color3 = 'rgb(255, 177, 153)';
+    // Keep previously set theme accents as fallback
   }
 
   
   // Setup popups for all input labels
-  const popupIds = ['T', 'phi', 'gamma1', 'gamma2',  'rho1', 'rho2'];
+  const popupIds = ['T', 'phi', 'phi0', 'gamma1', 'gamma2',  'rho1', 'rho2'];
   setupPopup(popupIds)  
 }
 
@@ -177,7 +178,7 @@ function setupEventListeners() {
         lossFunction: () => 2.706 / T,  
         extraArgs: [],
         label: 'Reference Line',
-        color: 'black',  
+        color: refLineColor,  
         lineStyle: 'dash'  
       },
     ] ,'none'  ),
@@ -225,7 +226,7 @@ function setupEventListeners() {
         lossFunction: () => 2.706 / T,  
         extraArgs: [],
         label: 'Reference Line',
-        color: 'black',  
+        color: refLineColor,  
         lineStyle: 'dash'  
       },
     ]  ,''  ), 
@@ -269,7 +270,7 @@ function setupEventListeners() {
         lossFunction: () => 2.706 / T,  
         extraArgs: [],
         label: 'Reference Line',
-        color: 'black',  
+        color: refLineColor,  
         lineStyle: 'dash'  
       },
     ]  ,''  );
@@ -311,7 +312,7 @@ function setupEventListeners() {
         lossFunction: () => 2.706 / T,  
         extraArgs: [],
         label: 'Reference Line',
-        color: 'black',  
+        color: refLineColor,  
         lineStyle: 'dash'  
       },
     ]  ,''  ),
@@ -353,7 +354,7 @@ function setupEventListeners() {
         lossFunction: () => 2.706 / T,  
         extraArgs: [],
         label: 'Reference Line',
-        color: 'black',  
+        color: refLineColor,  
         lineStyle: 'dash'  
       },
     ]  ,''  ),
@@ -398,7 +399,7 @@ function setupEventListeners() {
         lossFunction: () => 2.706 / T,  
         extraArgs: [],
         label: 'Reference Line',
-        color: 'black',  
+        color: refLineColor,  
         lineStyle: 'dash'  
       },
     ]  ,''  ),
@@ -518,7 +519,7 @@ function setupEventListeners() {
               lossFunction: () => 2.706 / T,  
               extraArgs: [],
               label: 'Reference Line',
-              color: 'black',  
+              color: refLineColor,  
               lineStyle: 'dash'  
             },
           ],
@@ -609,7 +610,7 @@ function initializeCharts() {
       lossFunction: () => 2.706 / T,  
       extraArgs: [],
       label: 'Reference Line',
-      color: 'black',  
+      color: refLineColor,  
       lineStyle: 'dash'  
     },
   ]   ,''  );

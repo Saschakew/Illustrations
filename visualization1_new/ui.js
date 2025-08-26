@@ -24,6 +24,10 @@ function setupPopup(popupIds) {
   popupIds.forEach(id => {
     const label = document.getElementById(`${id}-label`);
     const popup = document.getElementById(`${id}-popup`);
+    if (!label || !popup) {
+      try { console.warn(`[POPUPS] Skipping id="${id}": label or popup not found`); } catch (e) {}
+      return;
+    }
     const closeBtn = popup.querySelector('.close');
     const popupContent = popup.querySelector('.popup-content');
 
@@ -50,6 +54,7 @@ function setupPopup(popupIds) {
   window.addEventListener('resize', function() {
     popupIds.forEach(id => {
       const popup = document.getElementById(`${id}-popup`);
+      if (!popup) { return; }
       const popupContent = popup.querySelector('.popup-content');
       if (popup.style.display === 'block') {
         positionPopup(popup, popupContent);
@@ -60,6 +65,7 @@ function setupPopup(popupIds) {
   window.addEventListener('scroll', function() {
     popupIds.forEach(id => {
       const popup = document.getElementById(`${id}-popup`);
+      if (!popup) { return; }
       const popupContent = popup.querySelector('.popup-content');
       if (popup.style.display === 'block') {
         positionPopup(popup, popupContent);
@@ -226,6 +232,6 @@ function initializeCommonUI() {
   try { setupNavigationMenu(); } catch (e) { console.warn('[UI] setupNavigationMenu error', e); }
   try { setupActiveNavLink(); } catch (e) { console.warn('[UI] setupActiveNavLink error', e); }
   try { setupInputContentWrapper(); } catch (e) { console.warn('[UI] setupInputContentWrapper error', e); }
-  try { setupInfoIcons(); } catch (e) { console.warn('[UI] setupInfoIcons error', e); }
+
   console.debug('[UI] initializeCommonUI completed');
 }

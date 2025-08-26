@@ -52,13 +52,9 @@ async function initializeApp() {
 }
 
 function initializeUI() {
-  try { initializeCommonUI(); } catch (e) {
-    try { setupStickyInputContainer(); } catch (e2) {}
-    try { setupNavigationMenu(); } catch (e2) {}
-    try { setupActiveNavLink(); } catch (e2) {}
-    try { setupInputContentWrapper(); } catch (e2) {}
-    try { setupInfoIcons(); } catch (e2) {}
-  }
+  initializeCommonUI();
+  // Wire label-based overlay popups for existing labels (gracefully skips if missing)
+  setupPopup(['T', 'phi', 'phi0', 'sSlider']);
 }
 
 function initializeVariables() {
@@ -66,7 +62,30 @@ function initializeVariables() {
   try {
     const accents = getThemeAccents();
     color1 = accents.color1; color2 = accents.color2; color3 = accents.color3;
-  } catch (e) { color1 = '#ff8c00'; color2 = '#ffb34d'; color3 = 'rgba(255,140,0,0.55)'; }
+  } catch (e) {
+    // Derive from CSS variables to avoid hardcoded literals
+    try {
+      const styles = getComputedStyle(document.documentElement);
+      const primary = (styles.getPropertyValue('--color-primary') || styles.getPropertyValue('--brand') || '').trim();
+      const accent = (styles.getPropertyValue('--color-accent') || styles.getPropertyValue('--brand-grad-end') || primary).trim();
+      const weakVar = (styles.getPropertyValue('--brand-weak') || '').trim();
+      const rgbaFromHex = (hex, a) => {
+        if (!hex) return '';
+        const m = hex.replace('#','');
+        const full = m.length === 3 ? m.split('').map(c => c + c).join('') : m;
+        const v = parseInt(full, 16);
+        const r = (v >> 16) & 255, g = (v >> 8) & 255, b = v & 255;
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+      };
+      const weak = weakVar && weakVar.length > 0 ? weakVar : rgbaFromHex(primary, 0.55);
+      color1 = primary || accent || '#ff8c00';
+      color2 = accent || primary || '#ffb34d';
+      color3 = weak || rgbaFromHex('#ff8c00', 0.55);
+    } catch (e2) {
+      // Last resort fallbacks (should rarely be used)
+      color1 = '#ff8c00'; color2 = '#ffb34d'; color3 = 'rgba(255,140,0,0.55)';
+    }
+  }
 
   // Inputs
   T = getInputValue('T', 250);

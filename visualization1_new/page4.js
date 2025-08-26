@@ -95,20 +95,14 @@ function initializeUI() {
         [color1, color2, color3] = eqColors.slice(0, 3);
       }
     } else {
-      // Fallback to the known RGBs used in the equations
-      color1 = 'rgb(75, 192, 192)';
-      color2 = 'rgb(41, 128, 185)';
-      color3 = 'rgb(255, 177, 153)';
+      // Keep theme accents as fallback; avoid hardcoded colors
     }
   } catch (e) {
-    // Fallback in case computed styles are not available yet
-    color1 = 'rgb(75, 192, 192)';
-    color2 = 'rgb(41, 128, 185)';
-    color3 = 'rgb(255, 177, 153)';
+    // Keep previously set theme accents as fallback
   }
   
   // Setup popups for all input labels
-  const popupIds = ['T', 'phi'];
+  const popupIds = ['T', 'phi', 'phi0'];
   setupPopup(popupIds)  
 }
 

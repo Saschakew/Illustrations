@@ -6,9 +6,10 @@
     const text = (styles.getPropertyValue('--text') || '#0f172a').trim();
     const muted = (styles.getPropertyValue('--muted') || '#6b7280').trim();
     const border = (styles.getPropertyValue('--border') || '#e5e7eb').trim();
+    const card = (styles.getPropertyValue('--card') || '#ffffff').trim();
 
     Chart.defaults.font = Chart.defaults.font || {};
-    Chart.defaults.font.family = "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'";
+    Chart.defaults.font.family = "Lato, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji'";
     Chart.defaults.font.size = 12;
     Chart.defaults.color = muted;
 
@@ -26,7 +27,24 @@
     // Tooltip base styling
     Chart.defaults.plugins = Chart.defaults.plugins || {};
     Chart.defaults.plugins.tooltip = Chart.defaults.plugins.tooltip || {};
-    Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(255,255,255,0.95)';
+    Chart.defaults.plugins.tooltip.backgroundColor = (function() {
+      // Derive tooltip background from CSS var --card with 0.95 alpha
+      const c = (styles.getPropertyValue('--card') || '#ffffff').trim();
+      // If rgb/rgba string, reuse components and apply alpha
+      if (c.startsWith('rgb')) {
+        const parts = c.replace(/rgba?\(/, '').replace(')', '').split(',').map(s => s.trim());
+        const r = parts[0], g = parts[1], b = parts[2];
+        return `rgba(${r}, ${g}, ${b}, 0.95)`;
+      }
+      // Assume hex (#rgb or #rrggbb)
+      const m = c.replace('#','');
+      const hex = m.length === 3 ? m.split('').map(ch => ch + ch).join('') : m;
+      const bigint = parseInt(hex, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+      return `rgba(${r}, ${g}, ${b}, 0.95)`;
+    })();
     Chart.defaults.plugins.tooltip.titleColor = text;
     Chart.defaults.plugins.tooltip.bodyColor = text;
     Chart.defaults.plugins.tooltip.borderColor = border;
@@ -52,8 +70,9 @@ function cloneConfigPreserveFns(obj) {
 // Expose theme-based accent colors derived from CSS variables
 function getThemeAccents() {
   const styles = getComputedStyle(document.documentElement);
-  const brand = (styles.getPropertyValue('--brand') || '#ff8c00').trim();
-  const brandEnd = (styles.getPropertyValue('--brand-grad-end') || '#ffb34d').trim();
+  // Prefer alias variables for parity; fall back to brand variables
+  const primary = (styles.getPropertyValue('--color-primary') || styles.getPropertyValue('--brand') || '#ff8c00').trim();
+  const accent = (styles.getPropertyValue('--color-accent') || styles.getPropertyValue('--brand-grad-end') || '#ffb34d').trim();
 
   function hexToRgb(hex) {
     const m = hex.replace('#','');
@@ -70,20 +89,29 @@ function getThemeAccents() {
   }
 
   return {
-    color1: brand,
-    color2: brandEnd,
-    color3: rgba(brand, 0.55)
+    color1: primary,
+    color2: accent,
+    color3: rgba(primary, 0.55)
   };
 }
 
 function getScatterPlotConfig() {
   // Pull theme colors from CSS variables for cohesive styling
   const styles = getComputedStyle(document.documentElement);
-  const brand = (styles.getPropertyValue('--brand') || '#ff8c00').trim();
-  const brandWeak = (styles.getPropertyValue('--brand-weak') || 'rgba(255, 140, 0, 0.12)').trim();
+  const primary = (styles.getPropertyValue('--color-primary') || styles.getPropertyValue('--brand') || '#ff8c00').trim();
+  // Prefer provided weak; otherwise derive from primary with alpha
+  const brandWeakVar = (styles.getPropertyValue('--brand-weak') || '').trim();
+  const brandWeak = brandWeakVar && brandWeakVar.length > 0 ? brandWeakVar : (function(hex){
+    const m = hex.replace('#','');
+    const full = m.length === 3 ? m.split('').map(c => c + c).join('') : m;
+    const v = parseInt(full, 16);
+    const r = (v >> 16) & 255, g = (v >> 8) & 255, b = v & 255;
+    return `rgba(${r}, ${g}, ${b}, 0.12)`;
+  })(primary);
   const text = (styles.getPropertyValue('--text') || '#0f172a').trim();
   const muted = (styles.getPropertyValue('--muted') || '#6b7280').trim();
   const border = (styles.getPropertyValue('--border') || '#e5e7eb').trim();
+  const card = (styles.getPropertyValue('--card') || '#ffffff').trim();
 
   let ChartConfig = {
     type: 'scatter',
@@ -92,16 +120,16 @@ function getScatterPlotConfig() {
         label: 'Data',
         data: [],
         backgroundColor: brandWeak,
-        borderColor: brand,
+        borderColor: primary,
         pointBorderWidth: 1.5,
         pointRadius: 4,
         pointHoverRadius: 6,
-        pointHoverBackgroundColor: brand,
+        pointHoverBackgroundColor: primary,
       }, {
         label: 'Selected Point',
         data: [],
-        backgroundColor: '#ffffff',
-        borderColor: brand,
+        backgroundColor: card,
+        borderColor: primary,
         pointBorderWidth: 2.5,
         pointRadius: 6,
         pointHoverRadius: 8
@@ -209,7 +237,22 @@ function getLossPlotConfig() {
           enabled: true,
           intersect: false,
           mode: 'index',
-          backgroundColor: 'rgba(255,255,255,0.95)',
+          backgroundColor: (function(){
+            const styles = getComputedStyle(document.documentElement);
+            const c = (styles.getPropertyValue('--card') || '#ffffff').trim();
+            if (c.startsWith('rgb')) {
+              const parts = c.replace(/rgba?\(/, '').replace(')', '').split(',').map(s => s.trim());
+              const r = parts[0], g = parts[1], b = parts[2];
+              return `rgba(${r}, ${g}, ${b}, 0.95)`;
+            }
+            const m = c.replace('#','');
+            const hex = m.length === 3 ? m.split('').map(ch => ch + ch).join('') : m;
+            const bigint = parseInt(hex, 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return `rgba(${r}, ${g}, ${b}, 0.95)`;
+          })(),
           titleColor: text,
           bodyColor: text,
           borderColor: border,
@@ -533,6 +576,7 @@ function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate 
   const text = (styles.getPropertyValue('--text') || '#0f172a').trim();
   const muted = (styles.getPropertyValue('--muted') || '#6b7280').trim();
   const border = (styles.getPropertyValue('--border') || '#e5e7eb').trim();
+  const card = (styles.getPropertyValue('--card') || '#ffffff').trim();
 
   const newData = xData.map((x, i) => ({ x: x, y: yData[i] }));
 
@@ -724,4 +768,3 @@ function updateChartWithPhi(  ) {
     // Return the stopAnimation function
     return stopAnimation;
 }
-
