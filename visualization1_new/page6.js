@@ -130,8 +130,8 @@ function initializeCharts() {
   const scatterCfg = getScatterPlotConfig();
   createChart('scatterPlot1', scatterCfg);
   createChart('scatterPlot3', scatterCfg);
-  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, 'Structural shocks', 'ε₁', 'ε₂', true);
-  updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e₁', 'e₂', true);
+  updateScatter(charts.scatterPlot1, epsilon1, epsilon2, 'epsilon', true);
+  updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
 
   const lossCfg = getLossPlotConfig();
   createChart('lossplot4', lossCfg);
@@ -140,8 +140,8 @@ function initializeCharts() {
 
 function updateAllChartsAndStats(onlyPoint = false) {
   // Update scatter
-  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, 'Structural shocks', 'ε₁', 'ε₂');
-  updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e₁', 'e₂');
+  updateScatter(charts.scatterPlot1, epsilon1, epsilon2, 'epsilon', true);
+  updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
   // Update loss
   updateLossPlot(onlyPoint, charts.lossplot4, phi0, phi, loss34, '', u1, u2);
   // Update equations and NG display
@@ -239,6 +239,9 @@ function setupEventListeners() {
       try { updateAllChartsAndStats(false); } catch (e) {}
     });
   } catch (e) {}
+
+  // Standardize point-click highlighting across scatter plots
+  try { attachScatterClickHandlers(['scatterPlot1', 'scatterPlot3']); } catch (e) {}
 }
 
 function resizeAllCharts() {

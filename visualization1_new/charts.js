@@ -95,6 +95,18 @@ function getThemeAccents() {
   };
 }
 
+// Standardized labels/titles for scatter kinds
+// usage: SCATTER_LABELS.epsilon, SCATTER_LABELS.u, SCATTER_LABELS.e
+const SCATTER_LABELS = {
+  epsilon: { title: 'Structural Shocks', x: 'ε₁', y: 'ε₂' },
+  u:       { title: 'Reduced Form Shocks', x: 'u₁', y: 'u₂' },
+  e:       { title: 'Innovations', x: 'e₁', y: 'e₂' }
+};
+
+function getScatterLabels(kind) {
+  return SCATTER_LABELS[kind] || { title: '', x: '', y: '' };
+}
+
 function getScatterPlotConfig() {
   // Pull theme colors from CSS variables for cohesive styling
   const styles = getComputedStyle(document.documentElement);
@@ -119,12 +131,14 @@ function getScatterPlotConfig() {
       datasets: [{
         label: 'Data',
         data: [],
-        backgroundColor: brandWeak,
+        // Hollow points: keep border colored, fill with card/transparent
+        backgroundColor: 'transparent',
+        pointBackgroundColor: 'transparent',
         borderColor: primary,
         pointBorderWidth: 1.5,
         pointRadius: 4,
         pointHoverRadius: 6,
-        pointHoverBackgroundColor: primary,
+        pointHoverBackgroundColor: 'transparent',
       }, {
         label: 'Selected Point',
         data: [],
@@ -570,50 +584,112 @@ function updateLossPlot(OnlyPoint, chart, phi0, phi, lossFunction, animate, ...a
   chart.update(animate);
 }
 
-function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate = false) {
-  if (!chart) return; 
+// Unified scatter updater
+// usage 1: updateScatter(chart, x, y, 'epsilon', true)
+// usage 2: updateScatter(chart, x, y, { title, xLabel, yLabel, animate, showCov })
+function updateScatter(chart, xData, yData, kindOrOptions, animateArg) {
+  if (!chart) return;
   const styles = getComputedStyle(document.documentElement);
   const text = (styles.getPropertyValue('--text') || '#0f172a').trim();
   const muted = (styles.getPropertyValue('--muted') || '#6b7280').trim();
   const border = (styles.getPropertyValue('--border') || '#e5e7eb').trim();
-  const card = (styles.getPropertyValue('--card') || '#ffffff').trim();
 
-  const newData = xData.map((x, i) => ({ x: x, y: yData[i] }));
-
-  chart.data.datasets[0].data = newData;
-  
-  // The selected point will be updated in highlightPointOnBothCharts
-  chart.data.datasets[1].data = [];
-
-  // Calculate covariance
-  const meanX = xData.reduce((sum, x) => sum + x, 0) / xData.length;
-  const meanY = yData.reduce((sum, y) => sum + y, 0) / yData.length;
-  const meanProduct = xData.reduce((sum, x, i) => sum + (x - meanX) * (yData[i] - meanY), 0) / (xData.length - 1);
-
-  // Append covariance to the title
-  const updatedTitle = `${title} E[${xLabel} ${yLabel}] = ${meanProduct.toFixed(2)}`;
-
-  chart.options.plugins.title.text = updatedTitle;
-  chart.options.plugins.title.color = text;
-  chart.options.scales.x.title.text = xLabel;
-  chart.options.scales.x.title.color = muted;
-  chart.options.scales.y.title.text = yLabel;
-  chart.options.scales.y.title.color = muted;
-  chart.options.scales.x.ticks = { ...(chart.options.scales.x.ticks||{}), color: muted };
-  chart.options.scales.y.ticks = { ...(chart.options.scales.y.ticks||{}), color: muted };
-  chart.options.scales.x.grid = { ...(chart.options.scales.x.grid||{}), color: border, drawBorder: false };
-  chart.options.scales.y.grid = { ...(chart.options.scales.y.grid||{}), color: border, drawBorder: false };
-
-  chart.options.animation = animate ? 
-    { duration: 400, easing: 'easeOutCubic' } : 
-    { duration: 0 };
-
-  // Maintain the selected point
-  if (selectedPointIndex !== null) {
-    highlightPointOnAllCharts(selectedPointIndex);
+  let opts;
+  if (typeof kindOrOptions === 'string') {
+    const L = getScatterLabels(kindOrOptions);
+    opts = { title: L.title, xLabel: L.x, yLabel: L.y, animate: !!animateArg, showCov: true };
+  } else {
+    opts = Object.assign({ title: '', xLabel: '', yLabel: '', animate: false, showCov: true }, kindOrOptions || {});
   }
 
+  const newData = xData.map((x, i) => ({ x: x, y: yData[i] }));
+  chart.data.datasets[0].data = newData;
+  // Clear selected dataset; selection is re-applied below if any
+  if (chart.data.datasets[1]) chart.data.datasets[1].data = [];
+
+  // Covariance for title suffix
+  let updatedTitle = opts.title || '';
+  if (opts.showCov && xData.length > 1) {
+    const meanX = xData.reduce((s, v) => s + v, 0) / xData.length;
+    const meanY = yData.reduce((s, v) => s + v, 0) / yData.length;
+    const cov = xData.reduce((s, x, i) => s + (x - meanX) * (yData[i] - meanY), 0) / (xData.length - 1);
+    updatedTitle = `${updatedTitle} E[${opts.xLabel} ${opts.yLabel}] = ${cov.toFixed(2)}`.trim();
+  }
+
+  // Apply labels and theme-aware tick/grid colors
+  chart.options.plugins.title.text = updatedTitle;
+  chart.options.plugins.title.color = text;
+  chart.options.scales.x.title.text = opts.xLabel;
+  chart.options.scales.x.title.color = muted;
+  chart.options.scales.y.title.text = opts.yLabel;
+  chart.options.scales.y.title.color = muted;
+  chart.options.scales.x.ticks = { ...(chart.options.scales.x.ticks || {}), color: muted };
+  chart.options.scales.y.ticks = { ...(chart.options.scales.y.ticks || {}), color: muted };
+  chart.options.scales.x.grid = { ...(chart.options.scales.x.grid || {}), color: border, drawBorder: false };
+  chart.options.scales.y.grid = { ...(chart.options.scales.y.grid || {}), color: border, drawBorder: false };
+
+  chart.options.animation = opts.animate ? { duration: 400, easing: 'easeOutCubic' } : { duration: 0 };
+
+  // Maintain the selected point
+  if (typeof selectedPointIndex !== 'undefined' && selectedPointIndex !== null) {
+    try { highlightPointOnAllCharts(selectedPointIndex); } catch (e) {}
+  }
+
+  // Debug logs for page3 only: inspect scatter styling and resolved point style once per chart
+  try {
+    var isPg3 = document.body && document.body.classList && document.body.classList.contains('page3');
+    if (isPg3) {
+      window.__page3LoggedCharts = window.__page3LoggedCharts || new Set();
+      var cid = (chart.canvas && chart.canvas.id) || (chart.$id || 'unknown');
+      if (!window.__page3LoggedCharts.has(cid)) {
+        window.__page3LoggedCharts.add(cid);
+        var ds0 = (chart.data && chart.data.datasets && chart.data.datasets[0]) || {};
+        var ds1 = (chart.data && chart.data.datasets && chart.data.datasets[1]) || {};
+        var resolved = null;
+        try {
+          var meta = chart.getDatasetMeta ? chart.getDatasetMeta(0) : null;
+          var ctrl = meta && meta.controller;
+          resolved = (ctrl && ctrl.getStyle) ? ctrl.getStyle(0, false) : null;
+        } catch (e) {}
+        var canvas = chart.canvas;
+        var cs = canvas ? getComputedStyle(canvas) : null;
+        console.groupCollapsed('[page3] scatter debug:', cid);
+        console.log('Chart.js version:', (typeof Chart !== 'undefined' && Chart.version) ? Chart.version : 'unknown');
+        console.log('Dataset[0] style:', {
+          borderColor: ds0.borderColor,
+          backgroundColor: ds0.backgroundColor,
+          pointBackgroundColor: ds0.pointBackgroundColor,
+          pointBorderWidth: ds0.pointBorderWidth,
+          pointRadius: ds0.pointRadius,
+          pointHoverRadius: ds0.pointHoverRadius,
+          pointHoverBackgroundColor: ds0.pointHoverBackgroundColor
+        });
+        console.log('Dataset[1] style (selected):', {
+          backgroundColor: ds1.backgroundColor,
+          borderColor: ds1.borderColor,
+          pointBorderWidth: ds1.pointBorderWidth,
+          pointRadius: ds1.pointRadius
+        });
+        console.log('Chart.defaults.elements.point:', (typeof Chart !== 'undefined' && Chart.defaults && Chart.defaults.elements) ? Chart.defaults.elements.point : null);
+        console.log('chart.options.elements.point:', chart.options && chart.options.elements ? chart.options.elements.point : null);
+        console.log('Resolved first point style:', resolved);
+        console.log('Canvas computed styles:', cs ? { backgroundColor: cs.backgroundColor, color: cs.color } : null);
+        console.log('Title and axes labels:', {
+          title: chart.options && chart.options.plugins && chart.options.plugins.title ? chart.options.plugins.title.text : undefined,
+          x: chart.options && chart.options.scales && chart.options.scales.x && chart.options.scales.x.title ? chart.options.scales.x.title.text : undefined,
+          y: chart.options && chart.options.scales && chart.options.scales.y && chart.options.scales.y.title ? chart.options.scales.y.title.text : undefined
+        });
+        console.groupEnd();
+      }
+    }
+  } catch (e) { /* no-op */ }
+
   chart.update();
+}
+
+// Backward-compatible wrapper
+function updateChartScatter(chart, xData, yData, title, xLabel, yLabel, animate = false) {
+  return updateScatter(chart, xData, yData, { title, xLabel, yLabel, animate, showCov: true });
 }
 
 function updateChartWithPhi(  ) { 
@@ -657,6 +733,30 @@ function updateChartWithPhi(  ) {
     }
     
     chart.update();
+  }
+
+  // Setter to update selection index and propagate highlight
+  function setSelectedPointIndex(index) {
+    selectedPointIndex = (typeof index === 'number') ? index : null;
+    highlightPointOnAllCharts(selectedPointIndex);
+  }
+
+  // Helper to attach click handlers to multiple scatter canvases by id
+  function attachScatterClickHandlers(ids) {
+    if (!Array.isArray(ids)) return;
+    ids.forEach((id) => {
+      const canvas = document.getElementById(id);
+      if (!canvas || !charts || !charts[id]) return;
+      canvas.addEventListener('click', function(event) {
+        const chart = charts[id];
+        try {
+          const elements = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+          handleChartClick(event, elements, chart);
+        } catch (e) {
+          console.warn('attachScatterClickHandlers error for', id, e);
+        }
+      });
+    });
   }
 
 

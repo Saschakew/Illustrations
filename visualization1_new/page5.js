@@ -117,8 +117,8 @@ function initializeCharts() {
   const scatterCfg = getScatterPlotConfig();
   createChart('scatterPlot2', scatterCfg);
   createChart('scatterPlot3', scatterCfg);
-  updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u₁', 'u₂', true);
-  updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e₁', 'e₂', true);
+  updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
+  updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
 
   const lossCfg = getLossPlotConfig();
   createChart('lossplot4m', lossCfg);
@@ -127,8 +127,8 @@ function initializeCharts() {
 
 function updateAllChartsAndStats(onlyPoint = false) {
   // Update scatter
-  updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u₁', 'u₂');
-  updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e₁', 'e₂');
+  updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
+  updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
   // Update loss
   updateLossPlot(onlyPoint, charts.lossplot4m, phi0, phi, lossNonGaussian, '', u1, u2);
   // Update equation
@@ -200,4 +200,7 @@ function setupEventListeners() {
       }
     });
   }
+
+  // Standardize point-click highlighting across scatter plots
+  try { attachScatterClickHandlers(['scatterPlot2', 'scatterPlot3']); } catch (e) {}
 }

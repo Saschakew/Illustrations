@@ -102,8 +102,8 @@ function initializeUI() {
   }
 
   
-  // Setup popups for all input labels
-  const popupIds = ['T', 'phi', 'phi0', 'gamma1', 'gamma2',  'rho1', 'rho2'];
+  // Setup popups for input labels that exist in page3.html
+  const popupIds = ['T', 'phi'];
   setupPopup(popupIds)  
 }
 
@@ -118,14 +118,7 @@ function initializeVariables() {
   B = getB(phi); 
 
   
-  gamma1 = getInputValue('gamma1');
-  gamma2 = getInputValue('gamma2');
-  gamma3 = 1;
-  insertEqZ2(gamma1, gamma2, 'current-z', 'z_{1t}','\\eta_{1t}');
-  
-  rho1 = getInputValue('rho1');
-  rho2 = getInputValue('rho2');
-  insertEqZ2(rho1, rho2, 'current-z2', 'z_{2t}','\\eta_{2t}');
+  // Page 3 doesn't have gamma or rho controls - these are for other pages
 
 
   generateNewData(T); 
@@ -145,43 +138,8 @@ function setupEventListeners() {
     (value) => phi = value,
     (value) => B = getB(phi), 
     (value) => [e1, e2] = getE(u1,u2,B),
-    (value) =>statsZE1 = calculateMoments(z1, e2), 
-    (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
-    (value) =>updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', true),
-    (value) =>updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', true),
-    (value) =>updateLossPlots(OnlyPoint=true,charts.lossplot2,phi0,phi, [
-      {
-        lossFunction: lossZ1,
-        extraArgs: [u1, u2,z1,z2 ,W],
-        label: 'Loss 1',
-        color: color1,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ2,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Loss 2',
-        color: color2,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ12,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Joint Loss',
-        color: color3,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: () => 2.706 / T,  
-        extraArgs: [],
-        label: 'Reference Line',
-        color: refLineColor,  
-        lineStyle: 'dash'  
-      },
-    ] ,'none'  ),
+    (value) => updateScatter(charts.scatterPlot2, u1, u2, 'u', true),
+    (value) => updateScatter(charts.scatterPlot3, e1, e2, 'e', true)
   );
 
        
@@ -191,363 +149,30 @@ function setupEventListeners() {
     (value) => document.getElementById('TValue').textContent = value.toFixed(0),
     (value) => T = value,
     (value) => generateNewData(T),
-    (value) =>statsZE1 = calculateMoments(z1, e2), 
-    (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Co-movement z₁–ε₂", "z₁", "ε₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Co-movement z₂–ε₂", "z₂", "ε₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true),
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
-    (value) =>updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', true),
-    (value) =>updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', true),
-    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
-      {
-        lossFunction: lossZ1,
-        extraArgs: [u1, u2,z1,z2 ,W],
-        label: 'Loss 1',
-        color: color1,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ2,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Loss 2',
-        color: color2,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ12,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Joint Loss',
-        color: color3,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: () => 2.706 / T,  
-        extraArgs: [],
-        label: 'Reference Line',
-        color: refLineColor,  
-        lineStyle: 'dash'  
-      },
-    ]  ,''  ), 
+    (value) => updateScatter(charts.scatterPlot2, u1, u2, 'u', true),
+    (value) => updateScatter(charts.scatterPlot3, e1, e2, 'e', true)
   );
 
 
   newDataBtn.addEventListener('click', function() {
     generateNewData(T);   
-    updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Co-movement z₁–ε₂", "z₁", "ε₂", true),
-    updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Co-movement z₂–ε₂", "z₂", "ε₂", true),
-    updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true);
-    updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true);
-    updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', true);
-    updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', true);
-    statsZE1 = calculateMoments(z1, e2); 
-    createTableZCovariance(statsZE1);
-    createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
-    updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
-      {
-        lossFunction: lossZ1,
-        extraArgs: [u1, u2,z1,z2,W ],
-        label: 'Loss 1',
-        color: color1,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ2,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Loss 2',
-        color: color2,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ12,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Joint Loss',
-        color: color3,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: () => 2.706 / T,  
-        extraArgs: [],
-        label: 'Reference Line',
-        color: refLineColor,  
-        lineStyle: 'dash'  
-      },
-    ]  ,''  );
+    updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
+    updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
   })
 
-  createEventListener('gamma1', 
-    (value) => document.getElementById('gamma1Value').textContent = value.toFixed(2),
-    (value) => gamma1 = value, 
-    (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + gamma3* eta1[i]), 
-    (value) =>statsZE1 = calculateMoments(z1, e2), 
-    (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),  
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Co-movement z₁–ε₂", "z₁", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z1, e2, " ", "z₁", "e₂", true), 
-    (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{1t}','\\eta_{1t}'), 
-    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
-      {
-        lossFunction: lossZ1,
-        extraArgs: [u1, u2,z1,z2 ,W],
-        label: 'Loss 1',
-        color: color1,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ2,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Loss 2',
-        color: color2,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ12,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Joint Loss',
-        color: color3,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: () => 2.706 / T,  
-        extraArgs: [],
-        label: 'Reference Line',
-        color: refLineColor,  
-        lineStyle: 'dash'  
-      },
-    ]  ,''  ),
-  );
+  // gamma1 event listener removed - element doesn't exist in page3.html
 
-  createEventListener('gamma2', 
-    (value) => document.getElementById('gamma2Value').textContent = value.toFixed(2),
-    (value) => gamma2 = value, 
-    (value) => z1 =  epsilon1.map((e1, i) => gamma1 * e1 + gamma2 * epsilon2[i] + gamma3* eta1[i]), 
-    (value) =>statsZE1 = calculateMoments(z1, e2), 
-    (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),  
-    (value) =>updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Co-movement z₁–ε₂", "z₁", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true), 
-    (value) => insertEqZ2(gamma1, gamma2, 'current-z', 'z_{1t}','\\eta_{1t}'), 
-    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
-      {
-        lossFunction: lossZ1,
-        extraArgs: [u1, u2,z1,z2 ,W],
-        label: 'Loss 1',
-        color: color1,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ2,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Loss 2',
-        color: color2,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ12,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Joint Loss',
-        color: color3,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: () => 2.706 / T,  
-        extraArgs: [],
-        label: 'Reference Line',
-        color: refLineColor,  
-        lineStyle: 'dash'  
-      },
-    ]  ,''  ),
-  );
+  // gamma2 event listener removed - element doesn't exist in page3.html
  
 
    
   
-  createEventListener('rho1', 
-    (value) => document.getElementById('rho1Value').textContent = value.toFixed(2),
-    (value) => rho1 = value,  
-    (value) => z2 =  eta2.map((eta, i) => rho1 * epsilon1[i] + rho2 * epsilon2[i] + 1* eta),
-    (value) =>statsZE1 = calculateMoments(z1, e2), 
-    (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Co-movement z₂–ε₂", "z₂", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
-    (value) => insertEqZ2(rho1, rho2, 'current-z2', 'z_{2t}','\\eta_{2t}'), 
-    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
-      {
-        lossFunction: lossZ1,
-        extraArgs: [u1, u2,z1,z2 ,W],
-        label: 'Loss 1',
-        color: color1,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ2,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Loss 2',
-        color: color2,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ12,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Joint Loss',
-        color: color3,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: () => 2.706 / T,  
-        extraArgs: [],
-        label: 'Reference Line',
-        color: refLineColor,  
-        lineStyle: 'dash'  
-      },
-    ]  ,''  ),
-  );
+  // rho1 event listener removed - element doesn't exist in page3.html
 
-  createEventListener('rho2', 
-    (value) => document.getElementById('rho2Value').textContent = value.toFixed(2),
-    (value) => rho2 = value,  
-    (value) => z2 =  eta2.map((eta, i) => rho1 * epsilon1[i] + rho2 * epsilon2[i] + 1* eta),
-    (value) =>statsZE1 = calculateMoments(z1, e2), 
-    (value) =>createTableZCovariance(statsZE1),
-    (value) =>createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3),   
-    (value) =>updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Co-movement z₂–ε₂", "z₂", "ε₂", true), 
-    (value) =>updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true),
-    (value) => insertEqZ2(rho1, rho2, 'current-z2', 'z_{2t}','\\eta_{2t}'), 
-    (value) =>updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
-      {
-        lossFunction: lossZ1,
-        extraArgs: [u1, u2,z1,z2 ,W],
-        label: 'Loss 1',
-        color: color1,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ2,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Loss 2',
-        color: color2,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: lossZ12,
-        extraArgs: [u1, u2,z1,z2,W],
-        label: 'Joint Loss',
-        color: color3,
-        lineStyle: 'solid'  
-      },
-      {
-        lossFunction: () => 2.706 / T,  
-        extraArgs: [],
-        label: 'Reference Line',
-        color: 'black',  
-        lineStyle: 'dash'  
-      },
-    ]  ,''  ),
-  );
- 
+  // rho2 event listener removed - element doesn't exist in page3.html
 
-    // Highlight points in scatter 
-    const scatterPlots = [   
-      'scatterPlotZ1Eps2', 'scatterPlotZ2Eps2', 'scatterPlotZ1E1', 'scatterPlotZ1E2'];
-    scatterPlots.forEach((id) =>   {
-      const canvas = document.getElementById(id); 
-      canvas.addEventListener('click', function() {
-        console.log(`Canvas ${id} clicked`);
-        const chart = charts[id];
-        const elements = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
-        handleChartClick(event, elements, chart);
-      }) 
-    })
-
-  
-
-    const callbacks2 = [
-      function(phi) { document.getElementById('phi').value = phi.toFixed(2); },
-      function(phi) { document.getElementById('phiValue').textContent = phi.toFixed(2); },
-      function(phi) { 
-        B = getB(phi);  
-      },
-      function(phi) { 
-        [e1, e2] = getE(u1, u2, B); 
-      }, 
-      function(phi) { 
-       updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", false);
-       updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", false);
-       updateChartScatter(charts.scatterPlot2, u1, u2, 'Reduced-form shocks', 'u\u2081', 'u\u2082', false);
-       updateChartScatter(charts.scatterPlot3, e1, e2, 'Innovations', 'e\u2081', 'e\u2082', false);
-      },
-      function(phi) { 
-        statsZE = calculateMoments(z1, e2); 
-        createTableZCovariance(statsZE);
-      },
-      function(phi) { 
-        statsZE1 = calculateMoments(z1, e2); 
-        createTableZCovariance(statsZE1);
-        createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
-      },
-      function(phi) { 
-        updateLossPlots(
-          true, // OnlyPoint
-          charts.lossplot2,
-          phi0,
-          phi, 
-          [
-            {
-              lossFunction: lossZ1,
-              extraArgs: [u1, u2,z1,z2,W ],
-              label: 'Loss 1',
-              color: color1,
-              lineStyle: 'solid'  
-            },
-            {
-              lossFunction: lossZ2,
-              extraArgs: [u1, u2,z1,z2,W],
-              label: 'Loss 2',
-              color: color2,
-              lineStyle: 'solid'  
-            },
-            {
-              lossFunction: lossZ12,
-              extraArgs: [u1, u2,z1,z2,W],
-              label: 'Joint Loss',
-              color: color3,
-              lineStyle: 'solid'  
-            },
-            {
-              lossFunction: () => 2.706 / T,  
-              extraArgs: [],
-              label: 'Reference Line',
-              color: refLineColor,  
-              lineStyle: 'dash'  
-            },
-          ],
-          'none'
-        );
-      },
-    ];
-    
-    let currentAnimationStop = null;
-
-    MinDependenciesBtn2.addEventListener('click', function() {
-        // Stop any ongoing animation
-        if (currentAnimationStop) {
-            currentAnimationStop();
-            currentAnimationStop = null; 
-        }
-    
-        // Reset phi to its initial value
-        const initialPhi = phi; // Assuming phi0 is your initial phi value
-    
-        // Start a new animation
-        try {
-            currentAnimationStop = animateBallRolling(charts.lossplot2, lossZ12, 'min', initialPhi, callbacks2, u1, u2, z1, z2,W);
-        } catch (error) {
-            console.error("An error occurred during animation setup:", error);
-            // Implement any error handling or user notification here
-        }
-    });
+  // Standardized click handlers for existing scatter plots on page 3
+  attachScatterClickHandlers(['scatterPlot2','scatterPlot3']);
 
   
 }
@@ -561,63 +186,10 @@ function initializeCharts() {
   // Create and initialize page 3's main scatter plots to match page 4 styling
   createChart('scatterPlot2',ScatterConfig)
   createChart('scatterPlot3',ScatterConfig)
-  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced-form shocks", "u\u2081", "u\u2082", true);
-  updateChartScatter(charts.scatterPlot3, e1, e2, "Innovations", "e\u2081", "e\u2082", true);
+  updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
+  updateScatter(charts.scatterPlot3, e1, e2, 'e', true);
 
-  createChart('scatterPlotZ1Eps2',ScatterConfig)  
-  createChart('scatterPlotZ2Eps2',ScatterConfig)  
-    
-  updateChartScatter(charts.scatterPlotZ1Eps2, z1, epsilon2, "Co-movement z₁–ε₂", "z₁", "ε₂", true);
-  updateChartScatter(charts.scatterPlotZ2Eps2, z2, epsilon2, "Co-movement z₂–ε₂", "z₂", "ε₂", true);
-
-  
-  createChart('scatterPlotZ1E1',ScatterConfig)  
-  createChart('scatterPlotZ1E2',ScatterConfig)  
-    
-  updateChartScatter(charts.scatterPlotZ1E1, z1, e2, " ", "z₁", "e₂", true);
-  updateChartScatter(charts.scatterPlotZ1E2, z2, e2, " ", "z₂", "e₂", true);
-
-  
-
-
-  const LossPlotConfig = getLossPlotConfig(); 
-  
-  createChart('lossplot2',LossPlotConfig);  
-
-  updateLossPlots(OnlyPoint=false,charts.lossplot2,phi0,phi, [
-    {
-      lossFunction: lossZ1,
-      extraArgs: [u1, u2,z1,z2 ,W],
-      label: 'Loss 1',
-      color: color1,
-      lineStyle: 'solid'  
-    },
-    {
-      lossFunction: lossZ2,
-      extraArgs: [u1, u2,z1,z2,W],
-      label: 'Loss 2',
-      color: color2,
-      lineStyle: 'solid'  
-    },
-    {
-      lossFunction: lossZ12,
-      extraArgs: [u1, u2,z1,z2,W],
-      label: 'Joint Loss',
-      color: color3,
-      lineStyle: 'solid'  
-    },
-    {
-      lossFunction: () => 2.706 / T,  
-      extraArgs: [],
-      label: 'Reference Line',
-      color: refLineColor,  
-      lineStyle: 'dash'  
-    },
-  ]   ,''  );
-  
-  statsZE1 = calculateMoments(z1, e2); 
-  createTableZCovariance(statsZE1);
-  createTableZ2Covariance(u1, u2, z1, z2, phi,color1, color2, color3);
+  // Page 3 only has scatterPlot2 and scatterPlot3 - other charts don't exist in the HTML
 
 }
 
@@ -628,20 +200,13 @@ function initializeCharts() {
  
 function generateNewData(T) {  
 
-  let rawEpsilon1, rawEpsilon2; 
-  rawEpsilon1 = generateUniformData(T);
-  rawEpsilon2 = generateUniformData(T); 
-  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2) ;
-  
-  [u1, u2] = getU(epsilon1, epsilon2, B0)   ; 
-  [e1, e2] = getE(u1,u2,B); 
+  // Generate independent non-Gaussian shocks and derive u and e
+  const rawEpsilon1 = generateUniformData(T);
+  const rawEpsilon2 = generateUniformData(T); 
+  [epsilon1, epsilon2] = NormalizeData(rawEpsilon1, rawEpsilon2);
 
-  eta1 = generateMixedNormalData(T, 0); 
-  z1 =  eta1.map((eta, i) => gamma1 * epsilon1[i] + gamma2 * epsilon2[i] + gamma3* eta );  
-  eta2 = generateMixedNormalData(T, 0); 
-  z2 =  eta2.map((eta, i) =>  rho1 * epsilon1[i] + rho2 * epsilon2[i] + + eta );  
+  [u1, u2] = getU(epsilon1, epsilon2, B0);
+  [e1, e2] = getE(u1, u2, B);
 
-  
-  W = getW(  epsilon2, z1, z2);  
-   
+  // Page 3 does not use z1/z2 or W; omit their generation to avoid undefined rho/gamma
 }

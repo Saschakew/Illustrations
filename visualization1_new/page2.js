@@ -103,38 +103,28 @@ function setupEventListeners() {
   createEventListener('T',  
     (value) => document.getElementById('TValue').textContent = value.toFixed(0),
     (value) => { T = value; generateNewData(T); },
-    (value) => updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true),
-    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
+    (value) => updateScatter(charts.scatterPlot1, epsilon1, epsilon2, 'epsilon', true),
+    (value) => updateScatter(charts.scatterPlot2, u1, u2, 'u', true),
   );
 
   createEventListener('phi0', 
     (value) => document.getElementById('phi0Value').textContent = value.toFixed(2),
     (value) => { phi0 = value; B0 = getB(phi0); insertEqSVAR(B0); },
     (value) => { [u1, u2] = getU(epsilon1, epsilon2, B0); },
-    (value) => updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true),
+    (value) => updateScatter(charts.scatterPlot2, u1, u2, 'u', true),
   );
 
   const newDataBtn = document.getElementById('newDataBtn');
   if (newDataBtn) {
     newDataBtn.addEventListener('click', function() {
       generateNewData(T);
-      updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
-      updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+      updateScatter(charts.scatterPlot1, epsilon1, epsilon2, 'epsilon', true);
+      updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
     });
   }
 
-  // Highlight points in scatter
-  const scatterPlots = ['scatterPlot1', 'scatterPlot2'];
-  scatterPlots.forEach((id) => {
-    const canvas = document.getElementById(id);
-    if (!canvas) return;
-    canvas.addEventListener('click', function(evt) {
-      const chart = charts[id];
-      if (!chart) return;
-      const elements = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: true }, false);
-      handleChartClick(evt, elements, chart);
-    });
-  });
+  // Highlight points in scatter using DRY helper
+  attachScatterClickHandlers(['scatterPlot1', 'scatterPlot2']);
 
   // Keep charts responsive on window resize and final window load
   try {
@@ -155,8 +145,8 @@ function initializeCharts() {
   createChart('scatterPlot1', ScatterConfig);
   createChart('scatterPlot2', ScatterConfig);
 
-  updateChartScatter(charts.scatterPlot1, epsilon1, epsilon2, "Structural Shocks", "ε₁", "ε₂", true);
-  updateChartScatter(charts.scatterPlot2, u1, u2, "Reduced Form Shocks", "u₁", "u₂", true);
+  updateScatter(charts.scatterPlot1, epsilon1, epsilon2, 'epsilon', true);
+  updateScatter(charts.scatterPlot2, u1, u2, 'u', true);
 }
 
 
