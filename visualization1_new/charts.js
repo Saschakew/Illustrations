@@ -635,55 +635,6 @@ function updateScatter(chart, xData, yData, kindOrOptions, animateArg) {
     try { highlightPointOnAllCharts(selectedPointIndex); } catch (e) {}
   }
 
-  // Debug logs for page3 only: inspect scatter styling and resolved point style once per chart
-  try {
-    var isPg3 = document.body && document.body.classList && document.body.classList.contains('page3');
-    if (isPg3) {
-      window.__page3LoggedCharts = window.__page3LoggedCharts || new Set();
-      var cid = (chart.canvas && chart.canvas.id) || (chart.$id || 'unknown');
-      if (!window.__page3LoggedCharts.has(cid)) {
-        window.__page3LoggedCharts.add(cid);
-        var ds0 = (chart.data && chart.data.datasets && chart.data.datasets[0]) || {};
-        var ds1 = (chart.data && chart.data.datasets && chart.data.datasets[1]) || {};
-        var resolved = null;
-        try {
-          var meta = chart.getDatasetMeta ? chart.getDatasetMeta(0) : null;
-          var ctrl = meta && meta.controller;
-          resolved = (ctrl && ctrl.getStyle) ? ctrl.getStyle(0, false) : null;
-        } catch (e) {}
-        var canvas = chart.canvas;
-        var cs = canvas ? getComputedStyle(canvas) : null;
-        console.groupCollapsed('[page3] scatter debug:', cid);
-        console.log('Chart.js version:', (typeof Chart !== 'undefined' && Chart.version) ? Chart.version : 'unknown');
-        console.log('Dataset[0] style:', {
-          borderColor: ds0.borderColor,
-          backgroundColor: ds0.backgroundColor,
-          pointBackgroundColor: ds0.pointBackgroundColor,
-          pointBorderWidth: ds0.pointBorderWidth,
-          pointRadius: ds0.pointRadius,
-          pointHoverRadius: ds0.pointHoverRadius,
-          pointHoverBackgroundColor: ds0.pointHoverBackgroundColor
-        });
-        console.log('Dataset[1] style (selected):', {
-          backgroundColor: ds1.backgroundColor,
-          borderColor: ds1.borderColor,
-          pointBorderWidth: ds1.pointBorderWidth,
-          pointRadius: ds1.pointRadius
-        });
-        console.log('Chart.defaults.elements.point:', (typeof Chart !== 'undefined' && Chart.defaults && Chart.defaults.elements) ? Chart.defaults.elements.point : null);
-        console.log('chart.options.elements.point:', chart.options && chart.options.elements ? chart.options.elements.point : null);
-        console.log('Resolved first point style:', resolved);
-        console.log('Canvas computed styles:', cs ? { backgroundColor: cs.backgroundColor, color: cs.color } : null);
-        console.log('Title and axes labels:', {
-          title: chart.options && chart.options.plugins && chart.options.plugins.title ? chart.options.plugins.title.text : undefined,
-          x: chart.options && chart.options.scales && chart.options.scales.x && chart.options.scales.x.title ? chart.options.scales.x.title.text : undefined,
-          y: chart.options && chart.options.scales && chart.options.scales.y && chart.options.scales.y.title ? chart.options.scales.y.title.text : undefined
-        });
-        console.groupEnd();
-      }
-    }
-  } catch (e) { /* no-op */ }
-
   chart.update();
 }
 
