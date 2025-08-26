@@ -6,7 +6,7 @@ This repository hosts an interactive guide visualizing a research paper on SVAR 
 - Clone the repo and open the existing guide pages:
   - `index.html`, `page2.html`, `page3.html`, `page4.html`, `page5.html`, `page6.html`
   - `index.js`, `page2.js`, `page3.js`, `page4.js`, `page5.js`, `page6.js`
-  - Core scripts live at the project root (flat structure): `bootstrap.js`, `main.js`, `charts.js`, `variables.js`, `loader.js`, `ui.js`, `dataGeneration.js`, `eventListeners.js`, `htmlout.js`, `svar.js`
+  - Core scripts live at the project root (flat structure): `bootstrap.js`, `charts.js`, `variables.js`, `loader.js`, `ui.js`, `dataGeneration.js`, `eventListeners.js`, `htmlout.js`, `svar.js`
   - Preview locally using any static server (e.g., VS Code “Live Server” or `npx serve`).
   - Deploy via GitHub Pages or your static host.
 
@@ -68,7 +68,6 @@ This repository hosts an interactive guide visualizing a research paper on SVAR 
   - Navigation is mirrored across all pages; MathJax v3 verified per page.
 - Modules map (flat files at project root):
   - `bootstrap.js` (ASSET_VERSION, loader helpers: `loadScriptsSequential`, `onMathJaxThenDOM`, `awaitFontsAndTypesetAndStabilize`, `finalizeWithLoaderFadeOut`)
-  - `main.js` (core app logic and orchestration)
   - `charts.js` (Chart.js configuration and plotting helpers)
   - `dataGeneration.js` (data generation utilities)
   - `eventListeners.js` (event wiring and handlers)
